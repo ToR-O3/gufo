@@ -1,10 +1,12 @@
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string_view>
 #include <vector>
 
 #include "src/models/qwen38_flash_next/cpu_ops.hpp"

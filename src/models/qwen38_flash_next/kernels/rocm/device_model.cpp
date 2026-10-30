@@ -406,8 +406,8 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
     const ModelWeights& w, const core::GgufReader& reader,
     const MtpWeights* mtp, const core::GgufReader* mtp_reader,
     std::string* error_msg) {
-  // The CPU reference also reads Q6_K, but the production embedding, dense
-  // and routed kernels do not. Reject it before allocating device weights.
+  // The Q6_K output head uses the shared Qwen dense kernels. Embedding and
+  // routed Q6_K remain unsupported; reject them before allocating weights.
   const auto supported = [&](const TensorRef& t) {
     if (t.type != core::GgmlType::kQ6_K)
       return true;
@@ -419,7 +419,7 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
     return supported(l.ffn_gate_exps) && supported(l.ffn_up_exps) &&
            supported(l.ffn_down_exps);
   };
-  if (!supported(w.token_embd) || !supported(w.output) ||
+  if (!supported(w.token_embd) ||
       !std::all_of(w.layers.begin(), w.layers.end(), layer_supported) ||
       (mtp != nullptr && !layer_supported(mtp->block))) {
     return nullptr;

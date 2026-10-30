@@ -20,6 +20,7 @@
 #include "src/core/hip/managed_alloc.hpp"
 #include "src/core/hip/snapshot_transfer.hpp"
 #include "src/core/platform/pages.hpp"
+#include "src/models/qwen/hip/ops/gemm.hpp"
 #include "src/models/qwen38_flash_next/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 
@@ -1686,6 +1687,11 @@ bool Executor::DenseF16Route(const DeviceTensor& w,
 
 bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
                      std::uint32_t n_tokens, std::string* error_msg) const {
+  if (w.type == GgmlType::kQ6_K) {
+    gufo::hip::LaunchBatchedQuantGEMMFp32(w.type, w.data, x, out, n_tokens,
+                                          w.rows, w.cols, stream_);
+    return Check(hipGetLastError(), "Q6_K output projection", error_msg);
+  }
   if (w.type == GgmlType::kQ8_0) {
     if (!MatrixRows(n_tokens)) {
       Q8Input q;
