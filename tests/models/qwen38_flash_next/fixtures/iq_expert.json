@@ -1,0 +1,45 @@
+{
+  "revision": "11fe02151f79c41d0d4af7da708755d73b9c0da6",
+  "sources": {
+    "ggml-common.h": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/11fe02151f79c41d0d4af7da708755d73b9c0da6/ggml/src/ggml-common.h",
+      "sha256": "0061131b615c5721fc88a78feeb22c1f8c450f1c2646a317d80796a653bf595c"
+    },
+    "ggml-quants.c": {
+      "url": "https://raw.githubusercontent.com/ggml-org/llama.cpp/11fe02151f79c41d0d4af7da708755d73b9c0da6/ggml/src/ggml-quants.c",
+      "sha256": "5574a2dccf7c07e75b143733e04a5412d3d8c819e7945f5217a7b83a2b2ff8ab"
+    }
+  },
+  "formats": [
+    {
+      "name": "iq3_s",
+      "type_id": 21,
+      "cols": 2560,
+      "rows": 3,
+      "experts": 2,
+      "block": 256,
+      "bytes_per_block": 110
+    },
+    {
+      "name": "iq4_xs",
+      "type_id": 23,
+      "cols": 2560,
+      "rows": 3,
+      "experts": 2,
+      "block": 256,
+      "bytes_per_block": 136
+    },
+    {
+      "name": "iq4_nl",
+      "type_id": 20,
+      "cols": 640,
+      "rows": 3,
+      "experts": 2,
+      "block": 32,
+      "bytes_per_block": 18
+    }
+  ],
+  "fixture_sha256": "3fe62c8e5b0af694e4df2b964ff94e89cc86211b8d52355ee683603a0ca7c52c",
+  "source_fixture_sha256": "97461ae339424c2a81ece52b4440a3db5801a3216cc24d9a723a61ef0df3bedf",
+  "extraction": "Packed bytes and pinned llama.cpp scalar-decoder results copied verbatim for the three IQ expert formats; no expected values regenerated."
+}
