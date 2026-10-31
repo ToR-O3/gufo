@@ -1642,6 +1642,16 @@ bool Executor::GatedDense(const DeviceTensor& up, const DeviceTensor& gate,
   // the tiled Q8 layout; the cache lets Dense skip its activation pass.
   if (down != nullptr && down->cols == up.rows && MatrixRows(n_tokens) &&
       n_tokens <= options_.max_batch) {
+    const bool iq4_half =
+        prefill_phase && down->type == GgmlType::kIQ4_NL && down->rows > 512;
+    if (iq4_half) {
+      // Keep the original F32 rounding without storing F32 rows. The
+      // private F16 buffer leaves the routed token input intact.
+      SwigluHalf(out, s_.shexp_gate, s_.shexp_half,
+                 static_cast<std::size_t>(n_tokens) * up.rows, true, stream_);
+      shexp_half_ready_ = true;
+      return true;
+    }
     if (DenseF16Route(*down, n_tokens)) {
       // A private F16 buffer: s_.x_half keeps the narrowed token rows the
       // router left there, which the routed experts read next.
@@ -2794,9 +2804,13 @@ bool Executor::Moe(const DeviceLayer& l, const float* x, float* out,
     }
     if (shexp_half_ready_) {
       shexp_half_ready_ = false;
-      if (!DenseF16Gemm(l.shexp_down.data, s_.shexp_half, s_.shexp_out,
-                        n_tokens, l.shexp_down.rows, l.shexp_down.cols,
-                        stream_)) {
+      if (l.shexp_down.type == GgmlType::kIQ4_NL) {
+        NativeIq4DenseF16(l.shexp_down.data, l.shexp_down.type, s_.shexp_half,
+                          s_.shexp_out, n_tokens, l.shexp_down.rows,
+                          l.shexp_down.cols, stream_);
+      } else if (!DenseF16Gemm(l.shexp_down.data, s_.shexp_half, s_.shexp_out,
+                               n_tokens, l.shexp_down.rows, l.shexp_down.cols,
+                               stream_)) {
         AssignError(error_msg, "shared expert F16 GEMM failed");
         return false;
       }

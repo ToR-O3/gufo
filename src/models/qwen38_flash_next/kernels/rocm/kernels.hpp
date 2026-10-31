@@ -174,6 +174,11 @@ void Swiglu(float* gate, const float* up, std::size_t count,
 /// out[i] = silu(gate[i]) * up[i] as F16 (`count` elements).
 void SwigluHalf(const float* gate, const float* up, __half* out,
                 std::size_t count, hipStream_t stream);
+/// IQ4 staging: preserve Swiglu followed by NarrowActivations bitwise,
+/// including signed zeros and the intermediate F32 rounding boundary.
+/// Existing callers keep the original contraction through the overload above.
+void SwigluHalf(const float* gate, const float* up, __half* out,
+                std::size_t count, bool preserve_f32, hipStream_t stream);
 /// silu(gate) * up over n_rows rows of k elements, written only into the
 /// W8A8 tiled Q8 layout `out_q8`; false (nothing launched) unless k % 32 == 0.
 bool SwigluQ8Tiled(const float* gate, const float* up, void* out_q8,

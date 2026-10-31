@@ -1212,7 +1212,20 @@ __global__ void SiluScaleQ8Kernel(float* x, float scale, std::size_t count,
   QuantizeQ8_1Lane(v, x_q8, (i / k) * k_padded + i % k);
 }
 
+/// Retain the stored F32 boundary for IQ4's existing activation contract.
+/// Materialize only the final product: fencing SiluF itself changes the
+/// reassociation used by SwigluKernel under fast-math.
+template<bool PreserveF32>
+__device__ __forceinline__ float SwigluValue(float gate, float up) {
+  const float v = SiluF(gate) * up;
+  if constexpr (PreserveF32) {
+    return Materialize(v);
+  }
+  return v;
+}
+
 /// out = silu(gate) * up as F16, four elements per thread.
+template<bool PreserveF32>
 __global__ void SwigluHalfKernel(const float* __restrict__ gate,
                                  const float* __restrict__ up,
                                  __half* __restrict__ out, std::size_t count) {
@@ -1220,14 +1233,16 @@ __global__ void SwigluHalfKernel(const float* __restrict__ gate,
       (blockIdx.x * static_cast<std::size_t>(blockDim.x) + threadIdx.x) * 4;
   if (i + 4 > count) {
     for (std::size_t j = i; j < count; ++j) {
-      out[j] = __float2half(SiluF(gate[j]) * up[j]);
+      out[j] = __float2half(SwigluValue<PreserveF32>(gate[j], up[j]));
     }
     return;
   }
   const float4 g = *reinterpret_cast<const float4*>(gate + i);
   const float4 u = *reinterpret_cast<const float4*>(up + i);
-  const __half2 lo = __floats2half2_rn(SiluF(g.x) * u.x, SiluF(g.y) * u.y);
-  const __half2 hi = __floats2half2_rn(SiluF(g.z) * u.z, SiluF(g.w) * u.w);
+  const __half2 lo = __floats2half2_rn(SwigluValue<PreserveF32>(g.x, u.x),
+                                       SwigluValue<PreserveF32>(g.y, u.y));
+  const __half2 hi = __floats2half2_rn(SwigluValue<PreserveF32>(g.z, u.z),
+                                       SwigluValue<PreserveF32>(g.w, u.w));
   *reinterpret_cast<__half2*>(out + i) = lo;
   *reinterpret_cast<__half2*>(out + i + 2) = hi;
 }
@@ -6323,7 +6338,17 @@ void Swiglu(float* gate, const float* up, std::size_t count,
 
 void SwigluHalf(const float* gate, const float* up, __half* out,
                 std::size_t count, hipStream_t stream) {
-  hipLaunchKernelGGL(SwigluHalfKernel, dim3(Blocks((count + 3) / 4)),
+  hipLaunchKernelGGL(SwigluHalfKernel<false>, dim3(Blocks((count + 3) / 4)),
+                     dim3(kThreads), 0, stream, gate, up, out, count);
+}
+
+void SwigluHalf(const float* gate, const float* up, __half* out,
+                std::size_t count, bool preserve_f32, hipStream_t stream) {
+  if (!preserve_f32) {
+    SwigluHalf(gate, up, out, count, stream);
+    return;
+  }
+  hipLaunchKernelGGL(SwigluHalfKernel<true>, dim3(Blocks((count + 3) / 4)),
                      dim3(kThreads), 0, stream, gate, up, out, count);
 }
 
