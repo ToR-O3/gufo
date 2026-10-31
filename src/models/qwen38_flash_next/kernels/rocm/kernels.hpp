@@ -84,6 +84,13 @@ void HcMixEpilogueVec4(const float* xn, const float* gate,
                        const float* inject_w, float* mixed, float* inject,
                        std::uint32_t n_tokens, std::uint32_t hidden,
                        std::uint32_t streams, hipStream_t stream);
+/// Preserve the F32 mix and also write its F16 copy for the next projection.
+/// `mixed_half` must hold n_tokens * hidden elements.
+void HcMixEpilogueVec4(const float* xn, const float* gate,
+                       const float* inject_w, float* mixed, __half* mixed_half,
+                       float* inject, std::uint32_t n_tokens,
+                       std::uint32_t hidden, std::uint32_t streams,
+                       hipStream_t stream);
 /// The vec4 epilogue over an F16 `xn` (the F16 mixer input route); the
 /// four-stream geometry is the caller's contract. Non-null `mixed_half` /
 /// `mixed_q8` also receive the mixed rows as F16 and in the W8A8 tiled Q8

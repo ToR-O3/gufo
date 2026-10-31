@@ -378,10 +378,11 @@ __device__ __forceinline__ float4 Load4(const __half* p) {
   return float4{lo.x, lo.y, hi.x, hi.y};
 }
 
-template<typename XnT>
+template<typename XnT, bool kHalfOutput = false>
 __global__ void HcMixEpilogueVec4Kernel(const XnT* xn, const float* gate,
                                         const float* inject_w, float* mixed,
-                                        float* inject, std::uint32_t hidden) {
+                                        float* inject, std::uint32_t hidden,
+                                        __half* mixed_half) {
   constexpr std::uint32_t kStreams = 4;
   const std::uint32_t t = blockIdx.x;
   const std::uint32_t i = (blockIdx.y * blockDim.x + threadIdx.x) * 4;
@@ -410,6 +411,13 @@ __global__ void HcMixEpilogueVec4Kernel(const XnT* xn, const float* gate,
     acc.w *= kInvStreams;
     *reinterpret_cast<float4*>(mixed + static_cast<std::size_t>(t) * hidden +
                                i) = acc;
+    if constexpr (kHalfOutput) {
+      auto* dst = mixed_half + static_cast<std::size_t>(t) * hidden + i;
+      dst[0] = __half(acc.x);
+      dst[1] = __half(acc.y);
+      dst[2] = __half(acc.z);
+      dst[3] = __half(acc.w);
+    }
   }
   if (inject_w == nullptr) {
     return;
@@ -6125,7 +6133,26 @@ void HcMixEpilogueVec4(const float* xn, const float* gate,
   }
   hipLaunchKernelGGL(HcMixEpilogueVec4Kernel<float>,
                      dim3(n_tokens, HcInjectPartsVec4(hidden)), dim3(kThreads),
-                     0, stream, xn, gate, inject_w, mixed, inject, hidden);
+                     0, stream, xn, gate, inject_w, mixed, inject, hidden,
+                     nullptr);
+}
+
+void HcMixEpilogueVec4(const float* xn, const float* gate,
+                       const float* inject_w, float* mixed, __half* mixed_half,
+                       float* inject, std::uint32_t n_tokens,
+                       std::uint32_t hidden, std::uint32_t streams,
+                       hipStream_t stream) {
+  if (streams != 4 || hidden % 4 != 0) {
+    HcMixEpilogue(xn, gate, inject_w, mixed, inject, n_tokens, hidden, streams,
+                  stream);
+    NarrowActivations(mixed, mixed_half, false,
+                      static_cast<std::size_t>(n_tokens) * hidden, stream);
+    return;
+  }
+  hipLaunchKernelGGL((HcMixEpilogueVec4Kernel<float, true>),
+                     dim3(n_tokens, HcInjectPartsVec4(hidden)), dim3(kThreads),
+                     0, stream, xn, gate, inject_w, mixed, inject, hidden,
+                     mixed_half);
 }
 
 void HcMixEpilogueVec4F16(const __half* xn, const float* gate,
@@ -6142,7 +6169,8 @@ void HcMixEpilogueVec4F16(const __half* xn, const float* gate,
   }
   hipLaunchKernelGGL(HcMixEpilogueVec4Kernel<__half>,
                      dim3(n_tokens, HcInjectPartsVec4(hidden)), dim3(kThreads),
-                     0, stream, xn, gate, inject_w, mixed, inject, hidden);
+                     0, stream, xn, gate, inject_w, mixed, inject, hidden,
+                     nullptr);
   if (mixed_half != nullptr) {
     NarrowActivations(mixed, mixed_half, false,
                       static_cast<std::size_t>(n_tokens) * hidden, stream);

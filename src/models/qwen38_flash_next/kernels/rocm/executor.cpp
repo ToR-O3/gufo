@@ -2131,6 +2131,13 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
   const bool vectorized =
       xn_half_ ||
       (MatrixRows(n_tokens) && c.hc_count == 4 && c.hidden_size % 4 == 0);
+  // Orca's small IQ4 inject projection uses only FP32 and leaves x_half
+  // untouched. Keep all other mixers on their existing output routes.
+  const bool iq4_half_output =
+      prefill_phase && !xn_half_ && extras && vectorized && c.hc_count == 4 &&
+      c.hidden_size == 2560 && m.down.type == GgmlType::kIQ4_XS &&
+      inject != nullptr && m.inject.type == GgmlType::kIQ4_XS &&
+      m.inject.rows == c.hc_count && m.inject.cols == c.HcDim();
   // `mixed` is being rewritten: whatever the input caches held of it is
   // stale. The wide F16 route also emits the F16 and tiled Q8 copies the
   // projections that follow read.
@@ -2166,6 +2173,10 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
         q8t_cols_ = c.hidden_size;
       }
     }
+  } else if (iq4_half_output) {
+    HcMixEpilogueVec4(xn, s_.hc_gate, nullptr, mixed,
+                      static_cast<__half*>(s_.x_half), inject, n_tokens,
+                      c.hidden_size, c.hc_count, stream_);
   } else if (vectorized) {
     HcMixEpilogueVec4(xn, s_.hc_gate, fused_inject ? m.inject.f32() : nullptr,
                       mixed, inject, n_tokens, c.hidden_size, c.hc_count,
@@ -2195,6 +2206,14 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
     if (!Dense(m.inject, xn, inject, n_tokens, error_msg)) {
       return false;
     }
+  }
+  if (iq4_half_output) {
+    // Dense conservatively invalidates the input cache for the FP32 inject
+    // route above. Publish the still-valid mixed copy only after that call.
+    half_src_ = mixed;
+    half_rows_ = n_tokens;
+    half_cols_ = c.hidden_size;
+    half_bf16_ = false;
   }
   return true;
 }

@@ -186,10 +186,73 @@ void CheckFusedProjection(std::uint32_t tokens) {
   std::cerr << "HC projection fusion exact at " << tokens << " tokens\n";
 }
 
+void CheckF32HalfOutput(std::uint32_t tokens) {
+  const std::size_t dim = kStreams * kHidden;
+  const std::size_t rows = static_cast<std::size_t>(tokens) * dim;
+  const std::size_t count = static_cast<std::size_t>(tokens) * kHidden;
+  const std::size_t inject_count = static_cast<std::size_t>(tokens) * kStreams *
+                                   q::HcInjectPartsVec4(kHidden);
+  const auto xn = MakeValues(rows, 0x1234ABCDU, tokens == 9 ? 1e-7F : 0.5F);
+  const auto gate = MakeValues(rows, 0xBADC0FFEU, 2.0F);
+  HipBuffer<float> d_xn(rows), d_gate(rows), d_weight(kStreams * dim);
+  HipBuffer<float> d_ref(count), d_out(count);
+  HipBuffer<float> d_ref_inject(inject_count), d_out_inject(inject_count);
+  HipBuffer<__half> d_ref_half(count), d_out_half(count);
+  Upload(&d_xn, xn);
+  Upload(&d_gate, gate);
+  Upload(&d_weight, MakeValues(kStreams * dim, 0xDEADBEEFU, 0.1F));
+  const auto exact = [](auto& reference, auto& actual, const char* name) {
+    std::vector<std::uint8_t> a(reference.bytes()), b(actual.bytes());
+    CheckHip(
+        hipMemcpy(a.data(), reference.get(), a.size(), hipMemcpyDeviceToHost),
+        "reference download");
+    CheckHip(hipMemcpy(b.data(), actual.get(), b.size(), hipMemcpyDeviceToHost),
+             "half-output download");
+    if (a != b)
+      throw std::runtime_error(std::string("HC half output changed ") + name);
+  };
+  for (bool inject : {false, true}) {
+    const float* weights = inject ? d_weight.get() : nullptr;
+    q::HcMixEpilogueVec4(d_xn.get(), d_gate.get(), weights, d_ref.get(),
+                         d_ref_inject.get(), tokens, kHidden, kStreams,
+                         nullptr);
+    q::NarrowActivations(d_ref.get(), d_ref_half.get(), false, count, nullptr);
+    q::HcMixEpilogueVec4(d_xn.get(), d_gate.get(), weights, d_out.get(),
+                         d_out_half.get(), d_out_inject.get(), tokens, kHidden,
+                         kStreams, nullptr);
+    exact(d_ref, d_out, "FP32 mixed rows");
+    exact(d_ref_half, d_out_half, "FP16 copy");
+    if (inject)
+      exact(d_ref_inject, d_out_inject, "inject partials");
+  }
+  const auto got = Download(&d_out, count);
+  double worst = 0.0;
+  for (std::uint32_t t = 0; t < tokens; ++t) {
+    for (std::uint32_t i = 0; i < kHidden; ++i) {
+      double expected = 0.0;
+      for (std::uint32_t s = 0; s < kStreams; ++s) {
+        const auto at = static_cast<std::size_t>(t) * dim + s * kHidden + i;
+        expected += double(xn[at]) / (1.0 + std::exp(-double(gate[at])));
+      }
+      expected /= kStreams;
+      const float value = got[static_cast<std::size_t>(t) * kHidden + i];
+      if (!std::isfinite(value))
+        throw std::runtime_error("HC half-output nonfinite FP32 value");
+      worst = std::max(worst, std::abs(double(value) - expected));
+    }
+  }
+  if (worst > 1e-6)
+    throw std::runtime_error("HC half-output CPU reference mismatch");
+  std::cerr << "HC FP32/F16 output exact at " << tokens
+            << " tokens, CPU absolute error " << worst << '\n';
+}
+
 }  // namespace
 
 int main() {
   try {
+    for (const auto tokens : {1U, 8U, 9U, 33U, 2049U})
+      CheckF32HalfOutput(tokens);
     CheckFusedProjection(96);
     CheckFusedProjection(2049);
     constexpr std::size_t kHcDim = static_cast<std::size_t>(kHidden) * kStreams;
