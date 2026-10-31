@@ -2445,14 +2445,22 @@ bool Executor::LinearAttention(const DeviceLayer& l, Session::LinearState& s,
   const bool tiled = MatrixRows(n_tokens) &&
                      l.ssm_out.type == GgmlType::kQ8_0 &&
                      n_tokens <= options_.max_batch;
+  // IQ4 prefill already consumes F16 activations. Reuse the GDN epilogue's
+  // direct F16 output instead of storing F32 rows and narrowing them again.
+  const bool iq4_half_output =
+      prefill_phase && !speculative && project_output &&
+      l.ssm_out.type == GgmlType::kIQ4_XS && n_tokens <= options_.max_batch &&
+      l.ssm_out.rows == 2560 && l.ssm_out.cols == 6144;
   const bool half_output =
-      tiled && l.ssm_out.rows == 2560 && l.ssm_out.cols == 6144;
+      iq4_half_output ||
+      (tiled && l.ssm_out.rows == 2560 && l.ssm_out.cols == 6144);
   auto* out_half =
       half_output ? reinterpret_cast<__half*>(s_.gdn_out) : nullptr;
   // Shift successive rows off the 12 KiB pitch while retaining every half.
   // The existing F32 scratch has room for these slightly padded F16 rows.
   const std::uint32_t half_stride =
-      half_output && n_tokens >= 1024 ? l.ssm_out.cols + 32 : 0;
+      half_output && !iq4_half_output && n_tokens >= 1024 ? l.ssm_out.cols + 32
+                                                          : 0;
   // A decode batch's output projection reads the epilogue's Q8_1 rows.
   const std::uint32_t value_dim = c.SsmValueDim();
   const bool out_q8_1 = project_output && !tiled && !MatrixRows(n_tokens) &&
@@ -2478,6 +2486,11 @@ bool Executor::LinearAttention(const DeviceLayer& l, Session::LinearState& s,
     return true;
   }
   if (half_output) {
+    if (iq4_half_output) {
+      NativeIq4DenseF16(l.ssm_out.data, l.ssm_out.type, out_half, out, n_tokens,
+                        l.ssm_out.rows, l.ssm_out.cols, stream_);
+      return true;
+    }
     if (!DenseF16Gemm(l.ssm_out.data, out_half, out, n_tokens, l.ssm_out.rows,
                       l.ssm_out.cols, stream_, half_stride)) {
       AssignError(error_msg, "SSM output F16 GEMM failed");

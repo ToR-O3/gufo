@@ -287,6 +287,34 @@ int RunCase(std::uint32_t kTokens, bool extreme_gates = false) {
       if (std::memcmp(half_state.data(), states[route].data(),
                       kStateCount * sizeof(float)) != 0)
         throw std::runtime_error("GDN F16 epilogue changed the state");
+      // The executor reuses its F32 output allocation for these F16 rows.
+      // Verify that aliasing the output pointers preserves the same bytes
+      // and leaves the unused half of the allocation untouched.
+      Upload(&d_conv_state, conv_state);
+      Upload(&d_state, state);
+      CheckHip(hipMemset(d_out.get(), 0x7F, d_out.bytes()),
+               "aliased half guard");
+      q::GatedDeltaNet(d_qkv.get(), kChannels, d_z.get(), kZ,
+                       d_alpha_beta.get(), d_conv_w.get(), d_a.get(),
+                       d_dt.get(), d_norm_w.get(), d_conv_state.get(),
+                       d_scratch.get(), d_qn.get(), d_kn.get(), d_raw.get(),
+                       d_state.get(), d_out.get(), nullptr, {}, {}, kTokens,
+                       kKHeads, kVHeads, kDim, kKernel, route == 1, false, kEps,
+                       nullptr, reinterpret_cast<__half*>(d_out.get()));
+      std::vector<std::uint16_t> aliased(kOut * 2);
+      CheckHip(hipMemcpy(aliased.data(), d_out.get(), d_out.bytes(),
+                         hipMemcpyDeviceToHost),
+               "aliased half output");
+      if (std::memcmp(aliased.data(), half.data(), kOut * sizeof(__half)) != 0)
+        throw std::runtime_error("GDN aliased F16 output changed rounding");
+      for (std::size_t i = kOut; i < aliased.size(); ++i) {
+        if (aliased[i] != 0x7F7F)
+          throw std::runtime_error("GDN aliased F16 output wrote unused rows");
+      }
+      const auto aliased_state = Download(&d_state, kStateCount);
+      if (std::memcmp(aliased_state.data(), states[route].data(),
+                      kStateCount * sizeof(float)) != 0)
+        throw std::runtime_error("GDN aliased F16 output changed the state");
       constexpr std::size_t kHalfStride = kZ + 32;
       const auto padded_count = (kTokens - 1) * kHalfStride + kZ + kHalfGuard;
       HipBuffer<__half> padded(padded_count);
