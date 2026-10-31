@@ -2825,12 +2825,21 @@ bool Executor::JoinSide(std::string* error_msg) const {
 
 bool Executor::WmmaExperts(const DeviceLayer& l, std::uint32_t n_tokens) const {
   const Config& c = config();
-  return ExpertMatrixRows(n_tokens) &&
-         (l.ffn_gate_exps.type == GgmlType::kQ4_K ||
-          l.ffn_gate_exps.type == GgmlType::kQ5_K) &&
+  const bool affine_experts = (l.ffn_gate_exps.type == GgmlType::kQ4_K ||
+                               l.ffn_gate_exps.type == GgmlType::kQ5_K) &&
+                              (l.ffn_down_exps.type == GgmlType::kQ5_1 ||
+                               l.ffn_down_exps.type == GgmlType::kQ8_0);
+  // Keep non-prefill batched verification on its existing MMQ path.
+  // Keep IQ experts packed and reuse the existing Q4 routing and WMMA.
+  const bool iq_experts = prefill_phase &&
+                          (l.ffn_gate_exps.type == GgmlType::kIQ4_XS ||
+                           l.ffn_gate_exps.type == GgmlType::kIQ2_S ||
+                           l.ffn_gate_exps.type == GgmlType::kIQ3_XXS ||
+                           l.ffn_gate_exps.type == GgmlType::kIQ3_S) &&
+                          (l.ffn_down_exps.type == GgmlType::kIQ4_NL ||
+                           l.ffn_down_exps.type == GgmlType::kQ2_0);
+  return ExpertMatrixRows(n_tokens) && (affine_experts || iq_experts) &&
          l.ffn_up_exps.type == l.ffn_gate_exps.type &&
-         (l.ffn_down_exps.type == GgmlType::kQ5_1 ||
-          l.ffn_down_exps.type == GgmlType::kQ8_0) &&
          c.hidden_size % 256 == 0 && c.expert_ff % 64 == 0;
 }
 
@@ -2853,23 +2862,12 @@ bool Executor::MoeExperts(const DeviceLayer& l, const float* x, float* out,
                   stream_);
     // The GEMMs read F16 token rows: the router's F16 GEMM (or the mix)
     // usually left them in s_.x_half already.
-    if (!(half_src_ == x && half_rows_ == n_tokens &&
-          half_cols_ == c.hidden_size && !half_bf16_)) {
-      NarrowActivations(x, s_.x_half, false,
-                        static_cast<std::size_t>(n_tokens) * c.hidden_size,
-                        stream_);
-      half_src_ = x;
-      half_rows_ = n_tokens;
-      half_cols_ = c.hidden_size;
-      half_bf16_ = false;
-    }
+    PrepareHalfInput(x, n_tokens, c.hidden_size);
     const auto* x_half = static_cast<const __half*>(s_.x_half);
     // Prefill pairs the gate/up projections and applies SwiGLU without
     // materializing the gate; decode-time batches keep separate projections.
     auto* up_half = reinterpret_cast<__half*>(s_.up_e);
-    const WeightType gate_type = l.ffn_gate_exps.type == GgmlType::kQ5_K
-                                     ? WeightType::kQ5_K
-                                     : WeightType::kQ4_K;
+    const WeightType gate_type = static_cast<WeightType>(l.ffn_gate_exps.type);
     const bool gated_ok =
         routed_64_tiles_ != 0
             ? RoutedGatedF16Gemm(
@@ -2891,9 +2889,7 @@ bool Executor::MoeExperts(const DeviceLayer& l, const float* x, float* out,
       AssignError(error_msg, "routed F16 gate/up GEMM failed");
       return false;
     }
-    const WeightType down_type = l.ffn_down_exps.type == GgmlType::kQ8_0
-                                     ? WeightType::kQ8_0
-                                     : WeightType::kQ5_1;
+    const WeightType down_type = static_cast<WeightType>(l.ffn_down_exps.type);
     // Prefill takes the 64-token down tiles: they decode each expert's
     // weights over more rows, also where narrower tiles would be fewer.
     const bool wide_down = routed_64_tiles_ != 0;
