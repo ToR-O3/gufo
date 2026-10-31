@@ -1,6 +1,7 @@
 #include <hip/hip_fp16.h>
 #include <hip/hip_runtime.h>
 
+#include <algorithm>
 #include <bit>
 #include <cmath>
 #include <cstdint>
@@ -39,10 +40,88 @@ struct Buffer {
   Buffer& operator=(const Buffer&) = delete;
 };
 
+void CheckBf16Chunks() {
+  using gufo::models::qwen38_flash_next::rocm::BlasLt;
+  std::string error;
+  auto blas = BlasLt::Create(nullptr, &error);
+  Require(blas != nullptr, error);
+  for (const auto [m, k] :
+       {std::pair{320, 10240}, std::pair{10240, 320}, std::pair{4, 10240},
+        std::pair{10240, 2560}, std::pair{2560, 2560}}) {
+    constexpr int max_n = 2048;
+    std::vector<std::uint16_t> weights(std::size_t(m) * k),
+        input(std::size_t(max_n) * k);
+    unsigned rng = 117;
+    for (auto* values : {&weights, &input}) {
+      for (auto& v : *values) {
+        rng ^= rng << 13;
+        rng ^= rng >> 17;
+        rng ^= rng << 5;
+        const auto bits = std::bit_cast<std::uint32_t>(
+            float(int(rng % 8193) - 4096) / 4096.0F);
+        v = static_cast<std::uint16_t>((bits + 0x7fffU + ((bits >> 16) & 1U)) >>
+                                       16);
+      }
+    }
+    Buffer a(weights.size() * sizeof(std::uint16_t)),
+        b(input.size() * sizeof(std::uint16_t));
+    Buffer c(std::size_t(m) * max_n * sizeof(float));
+    Check(hipMemcpy(a.data, weights.data(),
+                    weights.size() * sizeof(std::uint16_t),
+                    hipMemcpyHostToDevice));
+    Check(hipMemcpy(b.data, input.data(), input.size() * sizeof(std::uint16_t),
+                    hipMemcpyHostToDevice));
+    double max_error = 0;
+    for (const auto [total, boundary] :
+         {std::pair{136, 94}, std::pair{136, 103}, std::pair{136, 104},
+          std::pair{136, 127}, std::pair{136, 128}, std::pair{136, 135},
+          std::pair{2048, 1025}}) {
+      std::vector<float> bulk(std::size_t(m) * total), split(bulk.size());
+      Require(blas->Gemm(a.data, b.data, static_cast<float*>(c.data),
+                         HIP_R_16BF, m, total, k, &error),
+              error);
+      Check(hipMemcpy(bulk.data(), c.data, bulk.size() * sizeof(float),
+                      hipMemcpyDeviceToHost));
+      for (const auto [off, n] :
+           {std::pair{0, boundary}, std::pair{boundary, total - boundary}}) {
+        Require(blas->Gemm(
+                    a.data,
+                    static_cast<std::uint16_t*>(b.data) + std::size_t(off) * k,
+                    static_cast<float*>(c.data) + std::size_t(off) * m,
+                    HIP_R_16BF, m, n, k, &error),
+                error);
+      }
+      Check(hipMemcpy(split.data(), c.data, split.size() * sizeof(float),
+                      hipMemcpyDeviceToHost));
+      Require(bulk == split,
+              "BF16 HC/PLE projection changed across chunks: m=" +
+                  std::to_string(m) + " k=" + std::to_string(k) +
+                  " split=" + std::to_string(boundary));
+      for (int sample = 0; sample < 32; ++sample) {
+        const int row = (sample * 79) % total, col = (sample * 127) % m;
+        double ref = 0;
+        for (int j = 0; j < k; ++j)
+          ref += double(std::bit_cast<float>(
+                     std::uint32_t(weights[std::size_t(col) * k + j]) << 16)) *
+                 std::bit_cast<float>(
+                     std::uint32_t(input[std::size_t(row) * k + j]) << 16);
+        const float actual = bulk[std::size_t(row) * m + col];
+        max_error = std::max(max_error, std::abs(ref - actual));
+        Require(std::isfinite(actual) && std::abs(ref - actual) < 0.002,
+                "BF16 HC/PLE projection differs from FP64");
+      }
+    }
+    std::cout << "BF16 HC/PLE m=" << m << " k=" << k
+              << " exact across seven splits; FP64 max_abs=" << max_error
+              << std::endl;
+  }
+}
+
 }  // namespace
 
 int main() {
   try {
+    CheckBf16Chunks();
     using gufo::models::qwen38_flash_next::rocm::BlasLt;
     std::string error;
     auto warmed = BlasLt::Create(nullptr, &error);

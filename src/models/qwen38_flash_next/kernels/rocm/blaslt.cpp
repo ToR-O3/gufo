@@ -141,6 +141,13 @@ bool BlasLt::Gemm(const void* weights, const void* input, float* out,
     return UnquantizedF16Gemm(weights, static_cast<const __half*>(input), out,
                               n, m, k, stream_);
   }
+  // BF16 HC/PLE projections need the same ordered reduction for a
+  // token before and after an unaligned prefix-cache boundary. Keep the
+  // original BF16 weight/input bytes and share Q4's dense WMMA machinery.
+  if (type == HIP_R_16BF &&
+      ((k == 10240 && (m == 320 || m == 4)) || (k == 320 && m == 10240) ||
+       (k == 2560 && (m == 10240 || m == 2560))))
+    return UnquantizedBf16Gemm(weights, input, out, n, m, k, stream_);
   // The library's MT32x32x64 BF16 kernel starts each 32-token tile's K loop
   // at a block rotated by the tile's index in the batch, so a token's indexer
   // score depended on its position modulo 128 tokens within the prefill
