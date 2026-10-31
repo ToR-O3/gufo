@@ -438,15 +438,15 @@ inline constexpr bool kKQuantDistributedOutput =
       (WType == core::GgmlType::kQ4_K || WType == core::GgmlType::kQ5_K ||
        WType == core::GgmlType::kIQ4_XS)));
 
-template<std::uint32_t WavesPerBlock, std::size_t Batch,
-         std::size_t RowsPerWave, core::GgmlType WType,
-         std::size_t TilesPerStage = 1, std::uint32_t MinWaves = 12,
-         std::size_t TokenGroups = 1, bool NarrowIndex = false,
-         std::size_t TokensPerStep = Batch, std::uint32_t HardwareWaveSize = 32,
-         std::uint32_t LogicalLanes = 32,
-         bool DistributedOutput =
-             kKQuantDistributedOutput<Batch, WType, HardwareWaveSize>,
-         bool FusedSwiGLU = false, bool Ragged = false>
+template<
+    std::uint32_t WavesPerBlock, std::size_t Batch, std::size_t RowsPerWave,
+    core::GgmlType WType, std::size_t TilesPerStage = 1,
+    std::uint32_t MinWaves = 12, std::size_t TokenGroups = 1,
+    bool NarrowIndex = false, std::size_t TokensPerStep = Batch,
+    std::uint32_t HardwareWaveSize = 32, std::uint32_t LogicalLanes = 32,
+    bool DistributedOutput =
+        kKQuantDistributedOutput<Batch, WType, HardwareWaveSize>,
+    bool FusedSwiGLU = false, bool Ragged = false, bool GroupedGrid = false>
 __launch_bounds__(WavesPerBlock * 32, (MinWaves * 32 / HardwareWaveSize > 0
                                            ? MinWaves * 32 / HardwareWaveSize
                                            : 1)) __global__
@@ -471,6 +471,10 @@ __launch_bounds__(WavesPerBlock * 32, (MinWaves * 32 / HardwareWaveSize > 0
   using Index = std::conditional_t<NarrowIndex, std::uint32_t, std::size_t>;
   const Index m = static_cast<Index>(wide_m);
   const Index k = static_cast<Index>(wide_k);
+  if constexpr (GroupedGrid) {
+    x += std::size_t{blockIdx.y} * Batch * k;
+    y += std::size_t{blockIdx.y} * Batch * m;
+  }
   x += (blockIdx.x % TokenGroups) * Batch * k;
   const Index output_rows = FusedSwiGLU ? m / 2 : m;
   y += (blockIdx.x % TokenGroups) * Batch * output_rows;

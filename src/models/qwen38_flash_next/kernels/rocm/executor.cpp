@@ -20,9 +20,9 @@
 #include "src/core/hip/managed_alloc.hpp"
 #include "src/core/hip/snapshot_transfer.hpp"
 #include "src/core/platform/pages.hpp"
-#include "src/models/qwen/hip/ops/gemm.hpp"
 #include "src/models/qwen38_flash_next/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
@@ -1687,10 +1687,24 @@ bool Executor::DenseF16Route(const DeviceTensor& w,
 
 bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
                      std::uint32_t n_tokens, std::string* error_msg) const {
-  if (w.type == GgmlType::kQ6_K) {
-    gufo::hip::LaunchBatchedQuantGEMMFp32(w.type, w.data, x, out, n_tokens,
-                                          w.rows, w.cols, stream_);
-    return Check(hipGetLastError(), "Q6_K output projection", error_msg);
+  if (IsNativeIq4Dense(w.type)) {
+    const auto piece = options_.max_batch;
+    for (std::uint32_t first = 0; first < n_tokens; first += piece) {
+      const auto rows = std::min(piece, n_tokens - first);
+      const float* src = x + std::size_t{first} * w.cols;
+      float* dst = out + std::size_t{first} * w.rows;
+      if (prefill_phase && w.rows > 512) {
+        // Reuse the Q4/Q8 preparation and its cache of narrowed rows.
+        PrepareHalfInput(src, rows, w.cols);
+        NativeIq4DenseF16(w.data, w.type, s_.x_half, dst, rows, w.rows, w.cols,
+                          stream_);
+      } else {
+        NativeIq4Dense(w.data, w.type, src, s_.x_half, dst, rows, w.rows,
+                       w.cols, MatrixRows(n_tokens), stream_);
+        half_src_ = nullptr;
+      }
+    }
+    return true;
   }
   if (w.type == GgmlType::kQ8_0) {
     if (!MatrixRows(n_tokens)) {

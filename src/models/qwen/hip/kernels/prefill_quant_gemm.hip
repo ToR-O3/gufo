@@ -1705,6 +1705,43 @@ void LaunchBatchedQuantGEMMBf16(core::GgmlType type, const void* w,
       type, w, reinterpret_cast<const hip_bfloat16*>(bf16_x), y, m, k);
 }
 
+void LaunchGroupedQuantGEMMFp32(core::GgmlType type, const void* w,
+                                const float* x, float* y, std::size_t batch,
+                                std::size_t m, std::size_t k,
+                                hipStream_t stream) {
+  const bool iq4 =
+      type == core::GgmlType::kIQ4_XS && m <= 512 && (k == 2560 || k == 10240);
+  const bool q5 = type == core::GgmlType::kQ5_K && m == 512 && k == 2560;
+  if (batch > 8 && (iq4 || q5)) {
+    const auto groups = static_cast<unsigned>(batch / 8);
+    if (iq4 && m == 320 && k == 10240) {
+      // HC down reuses each staged input across four output rows. Finish one
+      // token's dots at a time to bound live registers; the existing compact
+      // staging preserves every FP32 product and reduction order.
+      SmallBatchKQuantExactFp32GEMMKernel<8, 8, 4, core::GgmlType::kIQ4_XS, 1,
+                                          4, 1, true, 1, 32, 32, false, false,
+                                          false, true>
+          <<<dim3((m + 31) / 32, groups), 256, 0, stream>>>(w, x, y, m, k);
+    } else if (iq4) {
+      SmallBatchKQuantExactFp32GEMMKernel<16, 8, 3, core::GgmlType::kIQ4_XS, 1,
+                                          12, 1, false, 8, 32, 32, false, false,
+                                          false, true>
+          <<<dim3((m + 47) / 48, groups), 512, 0, stream>>>(w, x, y, m, k);
+    } else {
+      SmallBatchKQuantExactFp32GEMMKernel<8, 8, 4, core::GgmlType::kQ5_K, 1, 4,
+                                          1, true, 8, 32, 32, false, false,
+                                          false, true>
+          <<<dim3((m + 31) / 32, groups), 256, 0, stream>>>(w, x, y, m, k);
+    }
+    const auto consumed = std::size_t{groups} * 8;
+    x += consumed * k;
+    y += consumed * m;
+    batch -= consumed;
+  }
+  if (batch != 0)
+    LaunchBatchedQuantGEMMFp32(type, w, x, y, batch, m, k, stream);
+}
+
 void LaunchBatchedQuantGEMMFp32(core::GgmlType type, const void* w,
                                 const float* fp32_x, float* y,
                                 std::size_t batch, std::size_t m, std::size_t k,

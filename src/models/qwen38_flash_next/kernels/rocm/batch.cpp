@@ -7,6 +7,7 @@
 #include "src/models/qwen38_flash_next/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp"
 #include "src/models/qwen38_flash_next/mtp_sampling.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
@@ -679,8 +680,13 @@ bool Executor::QuantizeBatch(const float* x, std::uint32_t rows,
 
 bool Executor::DenseBatch(const DeviceTensor& w, const float* x, float* out,
                           std::uint32_t rows, std::string* error) const {
-  if (rows <= kDecodeRows || w.type == core::GgmlType::kQ6_K)
+  if (rows <= kDecodeRows)
     return Dense(w, x, out, rows, error);
+  if (IsNativeIq4Dense(w.type)) {
+    NativeIq4Dense(w.data, w.type, x, nullptr, out, rows, w.rows, w.cols, false,
+                   stream_);
+    return true;
+  }
   if (w.type != core::GgmlType::kQ8_0) {
     SmallGemm(w.data, EmbeddingType(w.type), x, out, rows, w.rows, w.cols,
               stream_);
