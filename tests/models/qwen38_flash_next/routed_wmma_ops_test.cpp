@@ -12,8 +12,9 @@
 #include <string>
 #include <vector>
 
+#include "src/core/quant/ggml_dequant.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
-#include "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h"
+#include "tests/models/qwen38_flash_next/iq_expert_test.hpp"
 
 namespace q = gufo::models::qwen38_flash_next::rocm;
 namespace {
@@ -47,6 +48,17 @@ T* Upload(const std::vector<T>& host, std::size_t extra_bytes = 0) {
   CheckHip(hipMemcpy(device, host.data(), host.size() * sizeof(T),
                      hipMemcpyHostToDevice),
            "upload");
+  return device;
+}
+
+// The candidate must not rely on MMQ's padded allocations at ragged tails.
+template<typename T>
+T* UploadExact(const std::vector<T>& host) {
+  T* device = nullptr;
+  CheckHip(hipMalloc(&device, host.size() * sizeof(T)), "exact hipMalloc");
+  CheckHip(hipMemcpy(device, host.data(), host.size() * sizeof(T),
+                     hipMemcpyHostToDevice),
+           "exact upload");
   return device;
 }
 
@@ -261,6 +273,83 @@ Experts MakeQ8_0(std::size_t e, std::size_t m, std::size_t k,
   return w;
 }
 
+/// Independent packed IQ4 generator and scalar codebook decode. No GPU
+/// decode helpers or converted weight buffers are used as the oracle.
+Experts MakeIQ4(q::WeightType type, std::size_t e, std::size_t m, std::size_t k,
+                std::uint32_t seed) {
+  constexpr int codebook[] = {-127, -104, -83, -65, -49, -35, -22, -10,
+                              1,    13,   25,  38,  53,  69,  89,  113};
+  const bool xs = type == q::WeightType::kIQ4_XS;
+  const std::size_t block_elems = xs ? 256 : 32;
+  const std::size_t block_bytes = xs ? 136 : 18;
+  const std::size_t blocks = e * m * k / block_elems;
+  Experts w;
+  w.packed.resize(blocks * block_bytes);
+  w.values.resize(e * m * k);
+  for (std::size_t b = 0; b < blocks; ++b) {
+    auto* blk = w.packed.data() + b * block_bytes;
+    const __half d = __float2half(Uniform(&seed, xs ? 0.0005F : 0.01F));
+    std::memcpy(blk, &d, 2);
+    unsigned scale_codes[8]{};
+    if (xs) {
+      unsigned high = 0;
+      for (unsigned sb = 0; sb < 8; ++sb) {
+        scale_codes[sb] = NextRandom(&seed) & 63U;
+        blk[4 + sb / 2] |= (scale_codes[sb] & 15U) << (4 * (sb % 2));
+        high |= (scale_codes[sb] >> 4) << (2 * sb);
+      }
+      const auto packed_high = static_cast<std::uint16_t>(high);
+      std::memcpy(blk + 2, &packed_high, 2);
+    }
+    auto* codes = blk + (xs ? 8 : 2);
+    for (std::size_t j = 0; j < block_elems / 2; ++j)
+      codes[j] = static_cast<std::uint8_t>(NextRandom(&seed));
+    for (std::size_t j = 0; j < block_elems; ++j) {
+      const std::size_t sb = j / 32, local = j % 32;
+      const unsigned code =
+          (codes[sb * 16 + local % 16] >> (local < 16 ? 0 : 4)) & 15U;
+      const float scale =
+          __half2float(d) *
+          (xs ? static_cast<float>(static_cast<int>(scale_codes[sb]) - 32)
+              : 1.0F);
+      w.values[b * block_elems + j] = scale * codebook[code];
+    }
+  }
+  return w;
+}
+
+// The CPU dequantizers match the pinned upstream scalar fixtures.
+// Random packed fields exercise every sign, high bit and fractional scale.
+Experts MakeLowIQ(q::WeightType type, std::size_t e, std::size_t m,
+                  std::size_t k, std::uint32_t seed) {
+  const std::size_t elems = type == q::WeightType::kQ2_0 ? 64 : 256;
+  const std::size_t bytes = type == q::WeightType::kIQ2_S     ? 82
+                            : type == q::WeightType::kIQ3_XXS ? 98
+                            : type == q::WeightType::kIQ3_S   ? 110
+                                                              : 18;
+  const auto decode =
+      type == q::WeightType::kIQ2_S     ? gufo::quant::DequantizeIQ2_S
+      : type == q::WeightType::kIQ3_XXS ? gufo::quant::DequantizeIQ3_XXS
+      : type == q::WeightType::kIQ3_S   ? gufo::quant::DequantizeIQ3_S
+                                        : gufo::quant::DequantizeQ2_0;
+  Experts w;
+  w.packed.resize(e * m * k / elems * bytes);
+  w.values.resize(e * m * k);
+  for (std::size_t b = 0; b < w.packed.size() / bytes; ++b) {
+    auto* blk = w.packed.data() + b * bytes;
+    for (std::size_t i = 0; i < bytes; ++i)
+      blk[i] = static_cast<std::uint8_t>(NextRandom(&seed));
+    if (b % 29 == 0)
+      std::memset(blk, 255, bytes);
+    if (b % 31 == 0)
+      std::memset(blk, 0, bytes);
+    const __half d = __float2half(Uniform(&seed, elems == 64 ? 0.1F : 0.0005F));
+    std::memcpy(blk, &d, 2);
+    decode(blk, w.values.data() + b * elems, elems);
+  }
+  return w;
+}
+
 struct Result {
   double vs_mmq;
   double vs_ref;
@@ -271,10 +360,30 @@ struct Result {
 };
 
 const char* TypeName(q::WeightType type) {
-  return type == q::WeightType::kQ4_K   ? "Q4_K"
-         : type == q::WeightType::kQ5_K ? "Q5_K"
-         : type == q::WeightType::kQ5_1 ? "Q5_1"
-                                        : "Q8_0";
+  switch (type) {
+    case q::WeightType::kQ4_K:
+      return "Q4_K";
+    case q::WeightType::kQ5_K:
+      return "Q5_K";
+    case q::WeightType::kQ5_1:
+      return "Q5_1";
+    case q::WeightType::kQ8_0:
+      return "Q8_0";
+    case q::WeightType::kIQ2_S:
+      return "IQ2_S";
+    case q::WeightType::kIQ3_XXS:
+      return "IQ3_XXS";
+    case q::WeightType::kIQ3_S:
+      return "IQ3_S";
+    case q::WeightType::kQ2_0:
+      return "Q2_0";
+    case q::WeightType::kIQ4_XS:
+      return "IQ4_XS";
+    case q::WeightType::kIQ4_NL:
+      return "IQ4_NL";
+    default:
+      return "unknown";
+  }
 }
 
 /// Runs the MMQ tier and the F16 route over the same routing and reports
@@ -285,11 +394,18 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
            std::size_t experts, std::size_t m, std::size_t k,
            std::uint32_t seed, std::uint32_t tile_rows = 48,
            float input_scale = 2.0F) {
+  const bool packed_iq =
+      type == q::WeightType::kIQ4_XS || type == q::WeightType::kIQ4_NL ||
+      type == q::WeightType::kIQ2_S || type == q::WeightType::kIQ3_XXS ||
+      type == q::WeightType::kIQ3_S || type == q::WeightType::kQ2_0;
   const Experts w =
       type == q::WeightType::kQ4_K   ? MakeQ4K(experts, m, k, seed)
       : type == q::WeightType::kQ5_K ? MakeQ5K(experts, m, k, seed)
       : type == q::WeightType::kQ5_1 ? MakeQ5_1(experts, m, k, seed)
-                                     : MakeQ8_0(experts, m, k, seed);
+      : type == q::WeightType::kQ8_0 ? MakeQ8_0(experts, m, k, seed)
+      : (type == q::WeightType::kIQ4_XS || type == q::WeightType::kIQ4_NL)
+          ? MakeIQ4(type, experts, m, k, seed)
+          : MakeLowIQ(type, experts, m, k, seed);
   const std::size_t slots = n_tokens * used;
   // Skewed top-k without replacement: the low experts see most rows.
   std::vector<std::int32_t> ids(slots);
@@ -309,6 +425,11 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
   std::vector<float> x(n_tokens * k);
   for (float& v : x) {
     v = Uniform(&state, input_scale);
+  }
+  if (packed_iq) {
+    for (std::size_t t = 1; t < n_tokens; t += 2)
+      for (std::size_t i = 0; i < k; ++i)
+        x[t * k + i] *= 1.0F / 128.0F;
   }
   std::vector<std::uint32_t> counts(experts, 0);
   for (std::int32_t e : ids) {
@@ -337,11 +458,22 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
                        : type == q::WeightType::kQ5_1 ? qfn_mmq_q5_1_moe_raw
                                                       : qfn_mmq_q8_0_moe_raw;
   const int rc =
-      mmq_raw(d_w, d_x, d_ids, d_mmq, static_cast<int>(m), static_cast<int>(k),
-              static_cast<int>(n_tokens), static_cast<int>(experts),
-              static_cast<int>(used), nullptr);
+      packed_iq
+          ? gufo::test::NativeExpertProjection(
+                static_cast<int>(type), d_w, d_x, d_ids, d_mmq,
+                static_cast<int>(m), static_cast<int>(k),
+                static_cast<int>(n_tokens), static_cast<int>(experts),
+                static_cast<int>(used), nullptr)
+          : mmq_raw(d_w, d_x, d_ids, d_mmq, static_cast<int>(m),
+                    static_cast<int>(k), static_cast<int>(n_tokens),
+                    static_cast<int>(experts), static_cast<int>(used), nullptr);
   if (rc != 0) {
     throw std::runtime_error("MMQ routed GEMM failed");
+  }
+  if (packed_iq) {
+    CheckHip(hipDeviceSynchronize(), "MMQ reference before exact allocation");
+    CheckHip(hipFree(d_w), "free padded MMQ weights");
+    d_w = UploadExact(w.packed);
   }
   // The F16 route over the same assignments: F16 activation rows and the
   // host-built tile map. `used == 1` (the down projection's view) gathers
@@ -448,22 +580,32 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
       throw std::runtime_error("routed F16 output overwrote its guard");
   }
 
-  // Prefill pairs gate/up for buckets the separate 16- and 48-row tiles take.
-  if ((tile_rows == 16 || tile_rows == 48) &&
-      (type == q::WeightType::kQ4_K || type == q::WeightType::kQ5_K)) {
+  // Preserve IQ fixture coverage and upstream 16-/48-row affine coverage.
+  if (((tile_rows == 16 || tile_rows == 48) &&
+       (type == q::WeightType::kQ4_K || type == q::WeightType::kQ5_K)) ||
+      (tile_rows == 48 &&
+       (type == q::WeightType::kIQ4_XS || type == q::WeightType::kIQ2_S ||
+        type == q::WeightType::kIQ3_XXS || type == q::WeightType::kIQ3_S))) {
     // Different gate/up weights, with the up scale small enough that these
     // deliberately large synthetic weights do not overflow the F16 output.
     auto up = w.packed;
-    const std::size_t block_bytes = type == q::WeightType::kQ4_K ? 144 : 176;
+    const std::size_t block_bytes = type == q::WeightType::kQ4_K      ? 144
+                                    : type == q::WeightType::kQ5_K    ? 176
+                                    : type == q::WeightType::kIQ2_S   ? 82
+                                    : type == q::WeightType::kIQ3_XXS ? 98
+                                    : type == q::WeightType::kIQ3_S   ? 110
+                                                                      : 136;
     for (std::size_t b = 0; b < up.size(); b += block_bytes) {
       for (std::size_t offset : {0U, 2U}) {
+        if (packed_iq && offset != 0)
+          continue;
         __half scale;
         std::memcpy(&scale, up.data() + b + offset, sizeof(scale));
         scale = __float2half(__half2float(scale) / 1024.0F);
         std::memcpy(up.data() + b + offset, &scale, sizeof(scale));
       }
     }
-    auto* d_up = Upload(up);
+    auto* d_up = packed_iq ? UploadExact(up) : Upload(up);
     __half* d_pair = nullptr;
     CheckHip(hipMalloc(&d_pair, (slots * m + kHalfGuard) * sizeof(__half)),
              "paired output allocation");
@@ -533,19 +675,28 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
   }
 
   Result r{0.0, 0.0, 0.0, 0.0};
+  double rounded_error = 0.0, rounded_scale = 0.0;
   for (std::size_t s = 0; s < slots; ++s) {
     const std::size_t t = s / used;
     const std::int32_t e = ids[s];
     for (std::size_t row = 0; row < m; ++row) {
-      double ref = 0.0;
+      double ref = 0.0, rounded_ref = 0.0;
       const float* wr = w.values.data() + (e * m + row) * k;
       const float* xr = x.data() + t * k;
       for (std::size_t i = 0; i < k; ++i) {
         ref += static_cast<double>(wr[i]) * xr[i];
+        if (packed_iq)
+          rounded_ref +=
+              static_cast<double>(__half2float(__float2half(wr[i]))) *
+              __half2float(x_half[t * k + i]);
       }
       const float f = f16[s * m + row];
       if (!std::isfinite(f)) {
         throw std::runtime_error("routed F16 output is not finite");
+      }
+      if (packed_iq) {
+        rounded_error = std::max(rounded_error, std::abs(rounded_ref - f));
+        rounded_scale = std::max(rounded_scale, std::abs(rounded_ref));
       }
       const float v = mmq[s * m + row];
       r.vs_mmq = std::max(r.vs_mmq, std::abs(static_cast<double>(v - f)));
@@ -556,12 +707,16 @@ Result Run(q::WeightType type, std::size_t n_tokens, std::size_t used,
       r.ref_sq += ref * ref;
     }
   }
+  if (packed_iq && rounded_error > 2e-5 * rounded_scale)
+    throw std::runtime_error(
+        "packed IQ WMMA exceeds independent rounded FP64 error limit");
   std::cout << TypeName(type) << " routed n=" << n_tokens << " used=" << used
             << " E=" << experts << " m=" << m << " k=" << k
             << ": worst |F16 - MMQ| " << r.vs_mmq << ", worst |F16 - F64| "
             << r.vs_ref << ", worst |MMQ - F64| " << r.mmq_vs_ref
             << ", MMQ NMSE " << r.mmq_sq_error / r.ref_sq << " (scale "
             << r.scale << ", widest bucket " << max_bucket << ")\n";
+
   for (void* p : {static_cast<void*>(d_w), static_cast<void*>(d_x),
                   static_cast<void*>(d_ids), static_cast<void*>(d_counts),
                   static_cast<void*>(d_bounds), static_cast<void*>(d_cursors),
@@ -959,6 +1114,29 @@ int main() {
     ok = Ok(Run(q::WeightType::kQ8_0, 3000, 1, 64, 2560, 640, 0x16160004U,
                 16)) &&
          ok;
+    // Same production geometry, every shared tile width, empty/skewed
+    // expert buckets and ragged token/output tails. Existing limits apply.
+    ok = Ok(Run(q::WeightType::kIQ4_XS, 300, 10, 64, 640, 2560, 0x140023U)) &&
+         ok;
+    ok = Ok(Run(q::WeightType::kIQ4_NL, 3000, 1, 64, 2560, 640, 0x140020U,
+                64)) &&
+         ok;
+    for (auto type : {q::WeightType::kIQ4_XS, q::WeightType::kIQ4_NL}) {
+      for (std::uint32_t n : {1U, 8U, 9U, 32U, 33U})
+        ok = Ok(Run(type, n, 2, 8, 129, 512, 0x140000U + n, 16)) && ok;
+      ok = Ok(Run(type, 97, 2, 8, 129, 512, 0x146464U, 64)) && ok;
+    }
+    // ISTA's mixed gate/up and down formats use the same Q4 machinery.
+    for (auto type : {q::WeightType::kIQ2_S, q::WeightType::kIQ3_XXS,
+                      q::WeightType::kIQ3_S, q::WeightType::kQ2_0}) {
+      if (type != q::WeightType::kQ2_0)
+        ok = Ok(Run(type, 300, 10, 64, 640, 2560, 0x117000U)) && ok;
+      else
+        ok = Ok(Run(type, 3000, 1, 64, 2560, 640, 0x117042U, 64)) && ok;
+      for (std::uint32_t n : {1U, 8U, 9U, 32U, 33U})
+        ok = Ok(Run(type, n, 2, 8, 129, 512, 0x117000U + n, 16)) && ok;
+      ok = Ok(Run(type, 97, 2, 8, 129, 512, 0x117064U, 64)) && ok;
+    }
     return ok ? 0 : 1;
   } catch (const std::exception& error) {
     std::cerr << error.what() << '\n';
