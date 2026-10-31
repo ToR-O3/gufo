@@ -49,6 +49,8 @@ struct ModelOptions {
   /// Maximum proposals per cycle; acceptance history selects the length.
   std::uint32_t max_draft_tokens = kMaxMtpDraftTokens;
   std::string vision_model_path;
+  /// Optional PLE table sidecar. Empty uses the embedded n-gram table.
+  std::string ple_model_path{};
   /// Fixed serving capacity used by the calibrated MTP cost model. Keeping
   /// it independent of scheduler timing preserves seeded request replay.
   std::uint32_t decode_concurrency = 1;
@@ -90,6 +92,10 @@ public:
     return options_.max_context;
   }
   [[nodiscard]] bool HasMtp() const noexcept;
+  /// Bound external PLE artifact, or null when using the embedded table.
+  [[nodiscard]] const core::GgufReader* PleReader() const noexcept {
+    return ple_reader_.get();
+  }
   /// Trunk tensors the official GGUF keeps in F32 but this artifact stores
   /// as Q8_0 (see `ExpandedQ8_0Tensors`). The official MTP sidecar ships its
   /// inject as Q8_0, so the draft block is not counted.
@@ -118,6 +124,7 @@ private:
   ModelOptions options_;
   std::shared_ptr<core::GgufReader> reader_;
   std::shared_ptr<core::GgufReader> mtp_reader_;
+  std::shared_ptr<core::GgufReader> ple_reader_;
   std::unique_ptr<ModelWeights> weights_;
   std::unique_ptr<MtpWeights> mtp_weights_;
   std::unique_ptr<tokenization::QwenTokenizer> tokenizer_;

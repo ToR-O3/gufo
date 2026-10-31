@@ -55,6 +55,7 @@ struct TextDiskCacheConfig {
   std::size_t staging_capacity_bytes{0};
   std::string model_artifact_fingerprint;
   std::string draft_model_artifact_fingerprint;
+  std::string ple_artifact_fingerprint{};
 };
 
 /// Thread-safe HTTP inference facade over shared immutable GPU model resources
@@ -84,7 +85,7 @@ public:
             const TextDiskCacheConfig& disk_cache_config = {},
             const std::string& vision_model_path = {},
             TextRunnerRamCacheOptions ram_cache_config = {},
-            bool enable_yarn = false);
+            bool enable_yarn = false, const std::string& ple_model_path = {});
 
 #if defined(ENGINE_ENABLE_HIP)
   /// Installs a previously loaded model without duplicating mapped weights.

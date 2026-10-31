@@ -88,6 +88,12 @@ public:
       std::uint64_t rows, std::uint32_t row_dim, core::GgmlType type,
       std::string* error_msg = nullptr);
 
+  /// Replaces the model's embedded table with a compatible GGUF sidecar.
+  /// Validates the PLE hash metadata and shape before opening its rows.
+  [[nodiscard]] static std::unique_ptr<NgramTable> Open(
+      const core::GgufReader& reader, const core::GgufReader& model,
+      std::string* error_msg = nullptr);
+
   /// Gathers `rows.size()` rows into `out` (rows.size() * row_dim floats).
   /// Duplicate ids are read once. Returns false on any failed read.
   [[nodiscard]] bool Read(std::span<const std::uint32_t> rows,

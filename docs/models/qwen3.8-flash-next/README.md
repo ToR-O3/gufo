@@ -22,6 +22,17 @@ MTP=/path/to/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
   --mtp-model "$MTP" --sessions 2 --context 32768
 ```
 
+To use a higher-precision PLE table with the same quantized trunk, pass
+`--ple-model /path/to/standalone-ple.gguf` to `gufo serve llm`. The sidecar must
+contain `per_layer_token_embd.weight` in BF16 or IQ4_NL with the same shape and
+PLE metadata as the trunk, including hash multipliers, head offsets/vocabularies
+and special token IDs. Use a sidecar from the same base model; matching metadata
+alone does not prove that independently trained embedding weights are compatible.
+The table uses the existing disk row reader and bounded host cache; it is not
+uploaded to the GPU. Omitting the option preserves the embedded table. Persistent
+continuation caches include the external table's fingerprint. The original model
+shards are still required, even when one contains the unused embedded table.
+
 The loader discovers the remaining shards. Omit the speculative options for AR;
 AR sessions allocate no predictor state even if a shared model has MTP loaded.
 Adaptive MTP is default, with `--draft-tokens` capping 1–7 proposals. Eligible

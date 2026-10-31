@@ -76,6 +76,54 @@ NgramTable::~NgramTable() {
   }
 }
 
+std::unique_ptr<NgramTable> NgramTable::Open(const core::GgufReader& reader,
+                                             const core::GgufReader& model,
+                                             std::string* error_msg) {
+  const auto fail = [&](const std::string& message) {
+    if (error_msg != nullptr) {
+      *error_msg = "incompatible PLE sidecar: " + message;
+    }
+    return std::unique_ptr<NgramTable>{};
+  };
+  if (model.GetMetadataString("general.architecture") != "qwen4exp") {
+    return fail("expected Qwen3.8-Flash-Next");
+  }
+  for (const auto* key :
+       {"general.architecture", "qwen4exp.ple.layers",
+        "qwen4exp.ple.ngram_size", "qwen4exp.ple.heads_per_ngram",
+        "qwen4exp.ple.conv_kernel", "qwen4exp.ple.eos_token_id",
+        "qwen4exp.embedding_length_per_layer_input",
+        "qwen4exp.ple.layer_multipliers", "qwen4exp.ple.head_offsets",
+        "qwen4exp.ple.head_vocab_sizes", "qwen4exp.ple.image_token_id"}) {
+    const auto* source = reader.FindMetadata(key);
+    const auto* target = model.FindMetadata(key);
+    if (source == nullptr || target == nullptr ||
+        source->value != target->value) {
+      return fail(std::string("missing or mismatched ") + key);
+    }
+  }
+  const auto* source = reader.FindTensor("per_layer_token_embd.weight");
+  const auto* target = model.FindTensor("per_layer_token_embd.weight");
+  if (source == nullptr || target == nullptr ||
+      source->dimensions.size() != 2 ||
+      source->dimensions != target->dimensions || source->dimensions[0] == 0 ||
+      source->dimensions[0] > std::numeric_limits<std::uint32_t>::max() ||
+      source->dimensions[1] == 0) {
+    return fail("missing or mismatched per_layer_token_embd.weight shape");
+  }
+  const auto address = reinterpret_cast<std::uintptr_t>(source->data);
+  for (const auto& region : reader.GetMappedRegions()) {
+    const auto base = reinterpret_cast<std::uintptr_t>(region.data);
+    if (address >= base && address - base < region.size &&
+        source->size_bytes <= region.size - (address - base)) {
+      return Open(region.file_descriptor, address - base, source->dimensions[1],
+                  static_cast<std::uint32_t>(source->dimensions[0]),
+                  source->type, error_msg);
+    }
+  }
+  return fail("per_layer_token_embd.weight is outside its GGUF shard");
+}
+
 std::unique_ptr<NgramTable> NgramTable::Open(
     platform::PlatformFile file, std::uint64_t file_offset, std::uint64_t rows,
     std::uint32_t row_dim, core::GgmlType type, std::string* error_msg) {

@@ -112,6 +112,10 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
                                " tokens");
     return nullptr;
   }
+  if (!options.ple_model_path.empty() && c.ple_layer < 0) {
+    AssignError(error_msg, "PLE sidecar requires an embedded n-gram table");
+    return nullptr;
+  }
   try {
     m->vision_ = qwen::vision::Encoder::Open(
         model_path, options.vision_model_path, c.hidden_size);
@@ -125,10 +129,19 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
     return nullptr;
   }
   if (c.ple_layer >= 0) {
-    const auto& t = m->weights_->ple_table;
-    m->ngram_ = NgramTable::Open(
-        m->reader_->GetMappedRegions()[t.shard].file_descriptor, t.file_offset,
-        t.rows, c.ple_head_dim, t.type, error_msg);
+    if (options.ple_model_path.empty()) {
+      const auto& t = m->weights_->ple_table;
+      m->ngram_ = NgramTable::Open(
+          m->reader_->GetMappedRegions()[t.shard].file_descriptor,
+          t.file_offset, t.rows, c.ple_head_dim, t.type, error_msg);
+    } else {
+      m->ple_reader_ =
+          core::GgufReader::OpenFile(options.ple_model_path, error_msg);
+      if (!m->ple_reader_) {
+        return nullptr;
+      }
+      m->ngram_ = NgramTable::Open(*m->ple_reader_, *m->reader_, error_msg);
+    }
     if (!m->ngram_) {
       return nullptr;
     }

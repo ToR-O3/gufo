@@ -288,8 +288,9 @@ std::vector<std::uint8_t> DeepSeekCompatibilityIdentity(
 
 std::vector<std::uint8_t> QwenFlashNextCompatibilityIdentity(
     std::string_view artifact_fingerprint, std::string_view mtp_fingerprint,
-    bool has_mtp, std::uint32_t max_context, std::uint32_t max_draft_tokens,
-    std::uint32_t decode_concurrency, std::string_view position_policy) {
+    std::string_view ple_fingerprint, bool has_mtp, std::uint32_t max_context,
+    std::uint32_t max_draft_tokens, std::uint32_t decode_concurrency,
+    std::string_view position_policy) {
   if (!IsSha256Hex(artifact_fingerprint)) {
     throw std::invalid_argument(
         "Qwen3.8-Flash-Next disk cache requires an artifact fingerprint");
@@ -321,6 +322,13 @@ std::vector<std::uint8_t> QwenFlashNextCompatibilityIdentity(
              << mtp_fingerprint << '\n'
              << "draft_max_tokens=" << max_draft_tokens << '\n'
              << "draft_cost_concurrency=" << decode_concurrency << '\n';
+  }
+  if (!ple_fingerprint.empty()) {
+    if (!IsSha256Hex(ple_fingerprint)) {
+      throw std::invalid_argument("invalid PLE artifact fingerprint");
+    }
+    identity << "ple_artifact_id=" << core::kGgufIdentityScheme << ':'
+             << ple_fingerprint << '\n';
   }
   const std::string canonical = identity.str();
   return {canonical.begin(), canonical.end()};
@@ -2443,7 +2451,8 @@ public:
                           std::uint32_t max_context, bool use_mtp,
                           std::uint32_t max_draft_tokens,
                           std::string artifact_fingerprint = {},
-                          std::string mtp_fingerprint = {})
+                          std::string mtp_fingerprint = {},
+                          std::string ple_fingerprint = {})
       : model_(std::move(model)),
         max_context_(max_context),
         use_mtp_(use_mtp),
@@ -2453,11 +2462,15 @@ public:
     // lifetime is an exact process-local identity; durable caches still
     // require the validated full artifact fingerprints below.
     if (!artifact_fingerprint.empty()) {
+      if (model_->PleReader() && !IsSha256Hex(ple_fingerprint)) {
+        throw std::invalid_argument(
+            "external PLE requires an artifact fingerprint for persistence");
+      }
       persistence_ = TextRunnerPersistenceDescriptor{
           .compatibility_identity = QwenFlashNextCompatibilityIdentity(
               artifact_fingerprint, use_mtp_ ? mtp_fingerprint : std::string{},
-              use_mtp_, max_context_, max_draft_tokens_,
-              model_->DecodeConcurrency(),
+              model_->PleReader() ? ple_fingerprint : std::string{}, use_mtp_,
+              max_context_, max_draft_tokens_, model_->DecodeConcurrency(),
               models::qwen38_flash_next::RopePositionPolicy(
                   model_->config().rope_scaling)),
           .payload_version =
@@ -3089,7 +3102,8 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
                             const TextDiskCacheConfig& disk_cache_config,
                             const std::string& vision_model_path,
                             TextRunnerRamCacheOptions ram_cache_config,
-                            bool enable_yarn) {
+                            bool enable_yarn,
+                            const std::string& ple_model_path) {
 #if defined(ENGINE_ENABLE_HIP)
   TextDiskCacheConfig resolved_disk_cache_config = disk_cache_config;
   std::string load_error;
@@ -3103,6 +3117,10 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
       reader->GetMetadataString("general.architecture").value_or("");
   if (enable_yarn && architecture != "qwen4exp") {
     SetError(error, "--enable-yarn applies only to Qwen3.8-Flash-Next");
+    return false;
+  }
+  if (!ple_model_path.empty() && architecture != "qwen4exp") {
+    SetError(error, "--ple-model applies only to Qwen3.8-Flash-Next");
     return false;
   }
   // Read once, reused below to derive YaRN from --context for qwen4exp.
@@ -3231,6 +3249,7 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
                     : std::string{},
             .max_draft_tokens = speculative_config.max_draft_tokens,
             .vision_model_path = vision_model_path,
+            .ple_model_path = ple_model_path,
             .decode_concurrency = static_cast<std::uint32_t>(
                 std::clamp<std::size_t>(session_count, 1, 8)),
             .rope_scaling = rope_scaling,
@@ -3240,6 +3259,12 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
       SetError(error,
                "Failed to create Qwen3.8-Flash-Next model: " + load_error);
       return false;
+    }
+    if (const auto* ple = model->PleReader()) {
+      const auto* table = ple->FindTensor("per_layer_token_embd.weight");
+      Logger::Info("loader", "event=ple_sidecar type=" +
+                                 std::string(core::ToString(table->type)) +
+                                 " path=" + ple_model_path);
     }
     if (const std::size_t expanded = model->ExpandedQ8_0Tensors();
         expanded != 0) {
@@ -3273,6 +3298,12 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
             "Qwen3.8-Flash-Next MTP", speculative_config.draft_model_path,
             &resolved_disk_cache_config.draft_model_artifact_fingerprint,
             error)) {
+      return false;
+    }
+    if (DiskCacheEnabled(resolved_disk_cache_config) && model->PleReader() &&
+        !FingerprintArtifact(
+            "Qwen3.8-Flash-Next PLE", *model->PleReader(),
+            &resolved_disk_cache_config.ple_artifact_fingerprint, error)) {
       return false;
     }
     return load(std::move(model), error, max_context, session_count,
@@ -3321,6 +3352,7 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,
   (void)vision_model_path;
   (void)ram_cache_config;
   (void)enable_yarn;
+  (void)ple_model_path;
   SetError(error, "HTTP inference requires the HIP backend");
   return false;
 #endif
@@ -3601,6 +3633,8 @@ bool InferenceBackend::load(
       (!IsSha256Hex(disk_cache_config.model_artifact_fingerprint) ||
        (speculative_config.backend == TextSpeculativeBackend::kMtp &&
         !IsSha256Hex(disk_cache_config.draft_model_artifact_fingerprint)) ||
+       (model->PleReader() &&
+        !IsSha256Hex(disk_cache_config.ple_artifact_fingerprint)) ||
        disk_cache_config.capacity_bytes == 0)) {
     SetError(error,
              "Qwen3.8-Flash-Next persistent disk cache configuration is "
@@ -3618,7 +3652,8 @@ bool InferenceBackend::load(
         speculative_config.backend == TextSpeculativeBackend::kMtp,
         speculative_config.max_draft_tokens,
         disk_cache_config.model_artifact_fingerprint,
-        disk_cache_config.draft_model_artifact_fingerprint);
+        disk_cache_config.draft_model_artifact_fingerprint,
+        disk_cache_config.ple_artifact_fingerprint);
     new_state->model_id = runner->Descriptor().model_id;
     new_state->max_context = max_context;
     std::optional<TextRunnerDiskCacheOptions> runner_disk_cache;

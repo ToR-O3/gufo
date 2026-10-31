@@ -8,8 +8,11 @@
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <map>
 #include <stdexcept>
 #include <system_error>
+#include <type_traits>
+#include <variant>
 #include <vector>
 
 #include "src/core/platform/fs.hpp"
@@ -58,6 +61,146 @@ void Check(bool ok, const char* what) {
     std::fprintf(stderr, "FAIL: %s\n", what);
     ++failures;
   }
+}
+
+using PleValue =
+    std::variant<std::uint32_t, std::string, std::vector<std::uint64_t>>;
+using PleMetadata = std::map<std::string, PleValue>;
+
+PleMetadata SidecarMetadata() {
+  return {{"general.architecture", std::string("qwen4exp")},
+          {"qwen4exp.ple.layers", std::vector<std::uint64_t>{1}},
+          {"qwen4exp.ple.ngram_size", 3U},
+          {"qwen4exp.ple.heads_per_ngram", 1U},
+          {"qwen4exp.ple.conv_kernel", 4U},
+          {"qwen4exp.ple.eos_token_id", 7U},
+          {"qwen4exp.ple.image_token_id", 8U},
+          {"qwen4exp.embedding_length_per_layer_input", 32U},
+          {"qwen4exp.ple.layer_multipliers",
+           std::vector<std::uint64_t>{11, 13, 17}},
+          {"qwen4exp.ple.head_offsets", std::vector<std::uint64_t>{0, 2}},
+          {"qwen4exp.ple.head_vocab_sizes", std::vector<std::uint64_t>{2, 2}}};
+}
+
+// Tiny file-backed GGUFs exercise the production sidecar binding without
+// loading a model. The trunk table is IQ4_NL; the replacement is BF16.
+void WritePle(const std::filesystem::path& path, const PleMetadata& fields,
+              std::uint64_t rows = 4,
+              gufo::core::GgmlType type = gufo::core::GgmlType::kBF16) {
+  std::vector<std::uint8_t> bytes;
+  const auto pod = [&]<class T>(T value) {
+    const auto begin = bytes.size();
+    bytes.resize(begin + sizeof(value));
+    std::memcpy(bytes.data() + begin, &value, sizeof(value));
+  };
+  const auto text = [&](std::string_view value) {
+    pod(std::uint64_t{value.size()});
+    bytes.insert(bytes.end(), value.begin(), value.end());
+  };
+  pod(std::uint32_t{0x46554747});
+  pod(std::uint32_t{3});
+  pod(std::uint64_t{1});
+  pod(std::uint64_t{fields.size()});
+  for (const auto& [key, value] : fields) {
+    text(key);
+    std::visit(
+        [&](const auto& item) {
+          using T = std::decay_t<decltype(item)>;
+          if constexpr (std::is_same_v<T, std::uint32_t>) {
+            pod(std::uint32_t{4});
+            pod(item);
+          } else if constexpr (std::is_same_v<T, std::string>) {
+            pod(std::uint32_t{8});
+            text(item);
+          } else {
+            pod(std::uint32_t{9});
+            pod(std::uint32_t{10});
+            pod(std::uint64_t{item.size()});
+            for (const auto entry : item)
+              pod(entry);
+          }
+        },
+        value);
+  }
+  text("per_layer_token_embd.weight");
+  pod(std::uint32_t{2});
+  pod(std::uint64_t{32});
+  pod(rows);
+  pod(static_cast<std::uint32_t>(type));
+  pod(std::uint64_t{0});
+  bytes.resize((bytes.size() + 31) / 32 * 32);
+  if (type == gufo::core::GgmlType::kBF16) {
+    for (std::uint64_t row = 0; row < rows; ++row)
+      for (std::uint32_t col = 0; col < 32; ++col)
+        pod(static_cast<std::uint16_t>(0x3f80 + row * 0x80));
+  } else {
+    const auto row_bytes = type == gufo::core::GgmlType::kIQ4_NL ? 18 : 128;
+    bytes.resize(bytes.size() + rows * row_bytes);
+  }
+  std::ofstream file(path, std::ios::binary);
+  file.write(reinterpret_cast<const char*>(bytes.data()),
+             static_cast<std::streamsize>(bytes.size()));
+  Check(file.good(), "write PLE GGUF fixture");
+}
+
+void TestSidecar() {
+  TemporaryDirectory temp("qwen-ngram-sidecar");
+  const auto trunk_path = temp.path() / "trunk.gguf";
+  const auto sidecar_path = temp.path() / "qwen4exp.ple.gguf";
+  const auto metadata = SidecarMetadata();
+  WritePle(trunk_path, metadata, 4, gufo::core::GgmlType::kIQ4_NL);
+  WritePle(sidecar_path, metadata);
+  std::string error;
+  auto trunk = gufo::core::GgufReader::OpenFile(trunk_path, &error);
+  auto sidecar = gufo::core::GgufReader::OpenFile(sidecar_path, &error);
+  Check(trunk && sidecar, "open PLE GGUF fixtures");
+  if (!trunk || !sidecar)
+    return;
+  auto table = q::NgramTable::Open(*sidecar, *trunk, &error);
+  Check(table != nullptr, error.c_str());
+  sidecar.reset();
+  if (table) {
+    std::array<std::uint32_t, 3> ids{2, 0, 2};
+    std::array<float, 96> output{};
+    Check(table->RowBytes() == 64 && table->Rows() == 4,
+          "sidecar selects BF16 storage instead of the trunk's IQ4_NL");
+    Check(table->Read(ids, output), "read sidecar after its mapping is closed");
+    for (std::size_t i = 0; i < output.size(); ++i)
+      Check(output[i] == (i / 32 == 1 ? 1.0F : 4.0F),
+            "sidecar row values and duplicate gathers");
+  }
+  table.reset();
+  const auto reject = [&](const PleMetadata& fields, std::uint64_t rows = 4,
+                          gufo::core::GgmlType type =
+                              gufo::core::GgmlType::kBF16) {
+    WritePle(sidecar_path, fields, rows, type);
+    error.clear();
+    auto reader = gufo::core::GgufReader::OpenFile(sidecar_path, &error);
+    Check(reader != nullptr, "open incompatible PLE fixture");
+    if (reader)
+      Check(!q::NgramTable::Open(*reader, *trunk, &error) && !error.empty(),
+            "reject incompatible PLE sidecar");
+  };
+  for (const auto& [key, value] : metadata) {
+    auto missing = metadata;
+    missing.erase(key);
+    reject(missing);
+    auto wrong = metadata;
+    std::visit(
+        [](auto& item) {
+          using T = std::decay_t<decltype(item)>;
+          if constexpr (std::is_same_v<T, std::string>)
+            item = "wrong";
+          else if constexpr (std::is_same_v<T, std::uint32_t>)
+            ++item;
+          else
+            ++item.front();
+        },
+        wrong.at(key));
+    reject(wrong);
+  }
+  reject(metadata, 5);
+  reject(metadata, 4, gufo::core::GgmlType::kF32);
 }
 
 // Expected rows computed independently (Python, llama.cpp hash) for
@@ -482,6 +625,7 @@ void TestCounters() {
 }  // namespace
 
 int main() {
+  TestSidecar();
   TestReplacedPath();
   TestHash();
   TestTable();
