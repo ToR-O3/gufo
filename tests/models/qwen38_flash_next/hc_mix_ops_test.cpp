@@ -555,6 +555,30 @@ int main() {
         }
       }
     }
+    // Native IQ4 mixers consume the FP32 norm, so chunk invariance must
+    // hold before any half rounding can hide a changed reduction order.
+    for (const std::uint32_t chunk : {1U, 8U, 9U, 15U, 16U}) {
+      Upload(&d_res_ref, res);
+      Upload(&d_inject_vec, inject_vec);
+      for (std::uint32_t off = 0; off < kTokens; off += chunk) {
+        q::HcCombine(
+            d_res_ref.get() + std::size_t(off) * kHcDim,
+            d_block_out.get() + std::size_t(off) * kHidden,
+            d_inject_vec.get() + std::size_t(off) * kStreams * vec_parts,
+            vec_parts, d_gamma.get(),
+            d_xn_ref.get() + std::size_t(off) * kHcDim,
+            std::min(chunk, kTokens - off), kHidden, kStreams, kEps, nullptr,
+            false, true);
+      }
+      CheckHip(hipDeviceSynchronize(), "short FP32 HC prefill");
+      const auto actual_res = Download(&d_res_ref, kRows);
+      const auto actual_norm = Download(&d_xn_ref, kRows);
+      if (std::memcmp(actual_res.data(), res_ref.data(),
+                      kRows * sizeof(float)) != 0 ||
+          std::memcmp(actual_norm.data(), xn_ref.data(),
+                      kRows * sizeof(float)) != 0)
+        throw std::runtime_error("FP32 HC prefill depends on chunk width");
+    }
     for (const std::uint32_t chunk : {1U, 8U, 9U, 16U}) {
       Upload(&d_res_f16, res);
       Upload(&d_inject_vec, inject_vec);

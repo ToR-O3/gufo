@@ -11,6 +11,7 @@
 #include "src/core/hip/weight_upload.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h"
+#include "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
 namespace {
@@ -102,7 +103,8 @@ struct Uploader {
     d.cols = static_cast<std::uint32_t>(t.cols);
     d.rows = static_cast<std::uint32_t>(t.rows);
     d.experts = static_cast<std::uint32_t>(t.experts);
-    if (t.type == core::GgmlType::kBF16 || t.type == core::GgmlType::kF16) {
+    if (t.type == core::GgmlType::kBF16 || t.type == core::GgmlType::kF16 ||
+        (t.experts == 1 && IsNativeIq4Dense(t.type))) {
       max_half_cols = std::max<std::size_t>(max_half_cols, t.cols);
     }
     if (t.type == core::GgmlType::kQ8_0 && t.experts == 1) {
@@ -201,8 +203,9 @@ struct Uploader {
     const core::GgmlType type = (*parts.begin())->type;
     for (const TensorRef* t : parts) {
       if (t->empty() || t->type != type || t->cols != (*parts.begin())->cols ||
-          (type != core::GgmlType::kF32 && type != core::GgmlType::kQ8_0)) {
-        Fail("stacked upload needs F32 or Q8_0 tensors of one shape");
+          (type != core::GgmlType::kF32 && type != core::GgmlType::kQ8_0 &&
+           type != core::GgmlType::kIQ4_XS)) {
+        Fail("stacked upload needs F32, Q8_0 or IQ4_XS tensors of one shape");
         return d;
       }
       rows += t->rows;
@@ -226,7 +229,8 @@ struct Uploader {
         offset += t->SizeBytes();
       }
     }
-    if (type == core::GgmlType::kQ8_0 && !expand_q8) {
+    if ((type == core::GgmlType::kQ8_0 && !expand_q8) ||
+        type == core::GgmlType::kIQ4_XS) {
       if (Measuring()) {
         return d;
       }
@@ -236,7 +240,10 @@ struct Uploader {
       d.type = type;
       d.cols = static_cast<std::uint32_t>((*parts.begin())->cols);
       d.rows = static_cast<std::uint32_t>(rows);
-      max_q8_cols = std::max<std::size_t>(max_q8_cols, d.cols);
+      if (type == core::GgmlType::kQ8_0)
+        max_q8_cols = std::max<std::size_t>(max_q8_cols, d.cols);
+      else
+        max_half_cols = std::max<std::size_t>(max_half_cols, d.cols);
       return d;
     }
     void* f32 = ptr;

@@ -122,6 +122,8 @@ __device__ __forceinline__ float RowElement(const void* row, WeightType type,
       return Bf16ToF32(static_cast<const std::uint16_t*>(row)[i]);
     case WeightType::kF16:
       return __half2float(static_cast<const __half*>(row)[i]);
+    case WeightType::kIQ4_XS:
+      return gufo::hip::QuantBlockElement(core::GgmlType::kIQ4_XS, row, i);
     case WeightType::kQ8_0: {
       const auto* blk = static_cast<const std::uint8_t*>(row) + (i / 32) * 34;
       const __half d = *reinterpret_cast<const __half*>(blk);
@@ -143,6 +145,8 @@ __device__ __forceinline__ std::size_t RowBytes(WeightType type,
       return static_cast<std::size_t>(k) * 2;
     case WeightType::kQ8_0:
       return static_cast<std::size_t>(k / 32) * 34;
+    case WeightType::kIQ4_XS:
+      return static_cast<std::size_t>(k / 256) * 136;
   }
   return 0;
 }
@@ -6199,11 +6203,11 @@ void HcCombine(float* res, const float* block_out, const float* inject,
                std::uint32_t inject_parts, const float* gamma, float* xn,
                std::uint32_t n_tokens, std::uint32_t hidden,
                std::uint32_t streams, float eps, hipStream_t stream,
-               bool decode) {
-  // One block per token wants a batch: a decode step keeps the
-  // one-block-per-stream kernel's parallelism.
-  if (!decode && n_tokens >= 16 && streams == 4 && hidden % 128 == 0 &&
-      hidden <= 2560) {
+               bool decode, bool prefill) {
+  // Keep FP32 prompt normalization independent of chunk width. Decode
+  // retains the one-block-per-stream kernel's parallelism and arithmetic.
+  if (!decode && (prefill || n_tokens >= 16) && streams == 4 &&
+      hidden % 128 == 0 && hidden <= 2560) {
     hipLaunchKernelGGL(HcCombineVec4Kernel<float>, dim3(n_tokens),
                        dim3(kThreads), 0, stream, res, block_out, inject,
                        inject_parts, gamma, xn, nullptr, hidden, eps, nullptr);
