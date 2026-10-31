@@ -1064,10 +1064,12 @@ static __device__ __forceinline__ float vec_dot_iq2_s_q8_1(
             sumi1 = ggml_hip_dp4a(grid_h, u1, sumi1);
         }
     }
-    const int sumi = (sumi0*ls0 + sumi1*ls1 + (sumi0 + sumi1)/2)/4;
+    // IQ2_S grid entries can be odd. Preserve the subscale's exact eighth
+    // until floating conversion; integer /2 and /4 truncate valid weights.
+    const int numerator = (2*ls0 + 1)*sumi0 + (2*ls1 + 1)*sumi1;
 
     const float d = __half2float(bq2->d) * __low2float(bq8_1[iqs/2].ds);
-    return d * sumi;
+    return d * (0.125f * float(numerator));
 }
 
 #define VDR_IQ3_XXS_Q8_1_MMVQ 2
@@ -1103,9 +1105,11 @@ static __device__ __forceinline__ float vec_dot_iq3_xxs_q8_1(
     }
 
     const int ls = aux32 >> 28;
-    sumi = (ls*sumi + sumi/2)/2;
+    // Grid entries such as 62 produce a half-integer result at ls=0.
+    // Keep the numerator exact instead of truncating the final /2 to int.
+    const int numerator = (2*ls + 1)*sumi;
     const float d = __half2float(bq3->d) * __low2float(bq8_1[iqs/2].ds);
-    return d * sumi;
+    return d * (0.25f * float(numerator));
 }
 
 #define VDR_IQ3_S_Q8_1_MMVQ 2

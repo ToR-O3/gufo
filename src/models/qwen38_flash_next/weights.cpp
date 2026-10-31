@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+#include "src/core/quant/ggml_dequant.hpp"
+
 namespace gufo::models::qwen38_flash_next {
 namespace {
 
@@ -14,34 +16,18 @@ struct Format {
   std::uint32_t bytes;
 };
 
-/// Storage geometry of the formats this runtime decodes. Unknown types get a
+/// Common GGUF storage geometry; accepted execution formats are role-specific.
+/// Unknown types get a
 /// zero block, which every validation below rejects.
 [[nodiscard]] Format FormatOf(GgmlType type) noexcept {
-  switch (type) {
-    case GgmlType::kF32:
-      return {1, 4};
-    case GgmlType::kF16:
-    case GgmlType::kBF16:
-      return {1, 2};
-    case GgmlType::kQ8_0:
-      return {32, 34};
-    case GgmlType::kQ5_1:
-      return {32, 24};
-    case GgmlType::kIQ3_S:
-      return {256, 110};
-    case GgmlType::kIQ4_NL:
-      return {32, 18};
-    case GgmlType::kIQ4_XS:
-      return {256, 136};
-    case GgmlType::kQ4_K:
-      return {256, 144};
-    case GgmlType::kQ5_K:
-      return {256, 176};
-    case GgmlType::kQ6_K:
-      return {256, 210};
-    default:
-      return {0, 0};
-  }
+  if (type == GgmlType::kF32)
+    return {1, 4};
+  if (type == GgmlType::kF16 || type == GgmlType::kBF16)
+    return {1, 2};
+  const auto block = gufo::quant::QuantizedBlockElements(type);
+  return {
+      static_cast<std::uint32_t>(block),
+      static_cast<std::uint32_t>(gufo::quant::QuantizedRowBytes(type, block))};
 }
 
 struct Binder {

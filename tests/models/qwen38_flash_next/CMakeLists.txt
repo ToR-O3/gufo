@@ -13,6 +13,7 @@ function(add_qwen38_flash_next_test name library labels)
 endfunction()
 
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
+add_qwen38_flash_next_test(native_quant gufo_core "cpu;quant")
 add_qwen38_flash_next_test(continuation_layout gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(ngram gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(iq_rows gufo_qwen38_flash_next_reference "cpu")

@@ -5,6 +5,8 @@
 #include <cstring>
 #include <limits>
 
+#include "src/core/quant/iq_codebooks.hpp"
+
 namespace gufo::quant {
 
 // Standard half-precision float to single-precision float conversion
@@ -206,6 +208,15 @@ std::size_t QuantizedRowBytes(core::GgmlType type,
       break;
     case core::GgmlType::kQ8_0:
       block_bytes = sizeof(block_q8_0);
+      break;
+    case core::GgmlType::kQ2_0:
+      block_bytes = sizeof(block_q2_0);
+      break;
+    case core::GgmlType::kIQ2_S:
+      block_bytes = sizeof(block_iq2_s);
+      break;
+    case core::GgmlType::kIQ3_XXS:
+      block_bytes = sizeof(block_iq3_xxs);
       break;
     case core::GgmlType::kIQ4_NL:
       block_bytes = sizeof(block_iq4_nl);
@@ -601,12 +612,86 @@ const std::uint32_t* Iq3sGrid() noexcept {
   return kIq3sGrid;
 }
 
+void DequantizeQ2_0(const void* src, float* dst, std::size_t k) {
+  const auto* blocks = static_cast<const block_q2_0*>(src);
+  for (std::size_t b = 0; b < k / 64; ++b) {
+    const float d = Fp16ToFloat(blocks[b].d);
+    float* y = dst + b * 64;
+    for (std::size_t i = 0; i < 16; ++i) {
+      const unsigned packed = blocks[b].qs[i];
+      for (unsigned j = 0; j < 4; ++j) {
+        const int code = (packed >> (2 * j)) & 3;
+        y[4 * i + j] = static_cast<float>(code - 1) * d;
+      }
+    }
+  }
+}
+
+void DequantizeIQ2_S(const void* src, float* dst, std::size_t k) {
+  const auto* blocks = static_cast<const block_iq2_s*>(src);
+  for (std::size_t b = 0; b < k / 256; ++b) {
+    const auto& block = blocks[b];
+    const float d = Fp16ToFloat(block.d);
+    for (std::size_t group = 0; group < 8; ++group) {
+      const float scales[2] = {
+          d * (0.5F + static_cast<float>(block.scales[group] & 15)) * 0.25F,
+          d * (0.5F + static_cast<float>(block.scales[group] >> 4)) * 0.25F};
+      for (std::size_t lane = 0; lane < 4; ++lane) {
+        const unsigned code =
+            block.qs[group * 4 + lane] |
+            ((static_cast<unsigned>(block.qh[group]) << (8 - 2 * lane)) &
+             0x300U);
+        const auto grid = detail::iq2s_grid[code];
+        const unsigned signs = block.qs[32 + group * 4 + lane];
+        const float dl = scales[lane / 2];
+        float* y = dst + b * 256 + group * 32 + lane * 8;
+        for (unsigned j = 0; j < 8; ++j) {
+          const unsigned magnitude = (grid >> (8 * j)) & 255U;
+          const bool negative = (signs >> j) & 1U;
+          y[j] = dl * static_cast<float>(magnitude) * (negative ? -1.0F : 1.0F);
+        }
+      }
+    }
+  }
+}
+
+void DequantizeIQ3_XXS(const void* src, float* dst, std::size_t k) {
+  const auto* blocks = static_cast<const block_iq3_xxs*>(src);
+  for (std::size_t b = 0; b < k / 256; ++b) {
+    const auto& block = blocks[b];
+    const float d = Fp16ToFloat(block.d);
+    for (std::size_t group = 0; group < 8; ++group) {
+      std::uint32_t aux;
+      std::memcpy(&aux, block.qs + 64 + 4 * group, sizeof(aux));
+      const float dl = d * (0.5F + static_cast<float>(aux >> 28)) * 0.5F;
+      for (unsigned lane = 0; lane < 4; ++lane) {
+        const auto grid1 = detail::iq3xxs_grid[block.qs[group * 8 + 2 * lane]];
+        const auto grid2 =
+            detail::iq3xxs_grid[block.qs[group * 8 + 2 * lane + 1]];
+        const unsigned signs = detail::ksigns_iq2xs[(aux >> (7 * lane)) & 127U];
+        float* y = dst + b * 256 + group * 32 + lane * 8;
+        for (unsigned j = 0; j < 4; ++j) {
+          const unsigned magnitude1 = (grid1 >> (8 * j)) & 255U;
+          const unsigned magnitude2 = (grid2 >> (8 * j)) & 255U;
+          y[j] = dl * static_cast<float>(magnitude1) *
+                 ((signs & (1U << j)) ? -1.0F : 1.0F);
+          y[j + 4] = dl * static_cast<float>(magnitude2) *
+                     ((signs & (1U << (j + 4))) ? -1.0F : 1.0F);
+        }
+      }
+    }
+  }
+}
+
 void DequantizeIQ4_NL(const void* src, float* dst, std::size_t k) {
   const auto* blocks = static_cast<const block_iq4_nl*>(src);
-  const std::size_t nb = k / 32;
-  for (std::size_t b = 0; b < nb; ++b) {
-    for (std::size_t i = 0; i < 32; ++i) {
-      dst[(b * 32) + i] = Iq4NlValue(blocks[b], i);
+  for (std::size_t b = 0; b < k / 32; ++b) {
+    const float d = Fp16ToFloat(blocks[b].d);
+    float* y = dst + b * 32;
+    for (std::size_t j = 0; j < 16; ++j) {
+      const unsigned packed = blocks[b].qs[j];
+      y[j] = d * static_cast<float>(kValuesIq4Nl[packed & 15U]);
+      y[j + 16] = d * static_cast<float>(kValuesIq4Nl[packed >> 4]);
     }
   }
 }

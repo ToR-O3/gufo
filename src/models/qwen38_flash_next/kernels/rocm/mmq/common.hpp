@@ -880,6 +880,21 @@ struct ggml_hip_type_traits<GGML_TYPE_IQ3_S> {
     static constexpr int qi = QI3_S;
 };
 
+// Q2_0 packs four consecutive values in each byte. It is distinct from
+// Q2_K and has its own 64-value / 18-byte expert row stride.
+struct block_q2_0 {
+    ggml_half d;
+    uint8_t qs[16];
+};
+static_assert(sizeof(block_q2_0) == 18, "wrong Q2_0 block size");
+
+template<>
+struct ggml_hip_type_traits<GGML_TYPE_Q2_0> {
+    static constexpr int qk = 64;
+    static constexpr int qr = 4;
+    static constexpr int qi = 4;
+};
+
 //////////////////////
 
 struct ggml_hip_device_info {

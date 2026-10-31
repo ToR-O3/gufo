@@ -60,6 +60,23 @@ struct block_q8_0 {
   std::int8_t qs[32];
 };
 
+// Mixed-quantization expert layouts follow llama.cpp commit
+// 11fe02151f79c41d0d4af7da708755d73b9c0da6, ggml-common.h.
+struct block_q2_0 {
+  std::uint16_t d;
+  std::uint8_t qs[16];
+};
+struct block_iq2_s {
+  std::uint16_t d;
+  std::uint8_t qs[64];
+  std::uint8_t qh[8];
+  std::uint8_t scales[8];
+};
+struct block_iq3_xxs {
+  std::uint16_t d;
+  std::uint8_t qs[96];
+};
+
 // IQ4_NL: fp16 scale + 32 non-linear 4-bit codebook indices (QK=32). The
 // codebook is kValuesIq4Nl; the index nibble order matches Q4_0 (low nibbles
 // give the first 16 elements, high nibbles the second 16).
@@ -96,6 +113,9 @@ static_assert(sizeof(block_q6_K) == 210, "block_q6_K must be 210 bytes");
 static_assert(sizeof(block_q3_K) == 110, "block_q3_K must be 110 bytes");
 static_assert(sizeof(block_q8_K) == 292, "block_q8_K must be 292 bytes");
 static_assert(sizeof(block_q8_0) == 34, "block_q8_0 must be 34 bytes");
+static_assert(sizeof(block_q2_0) == 18, "block_q2_0 must be 18 bytes");
+static_assert(sizeof(block_iq2_s) == 82, "block_iq2_s must be 82 bytes");
+static_assert(sizeof(block_iq3_xxs) == 98, "block_iq3_xxs must be 98 bytes");
 static_assert(sizeof(block_iq4_nl) == 18, "block_iq4_nl must be 18 bytes");
 static_assert(sizeof(block_iq4_xs) == 136, "block_iq4_xs must be 136 bytes");
 static_assert(sizeof(block_iq3_s) == 110, "block_iq3_s must be 110 bytes");
@@ -117,6 +137,10 @@ inline constexpr std::int8_t kValuesIq4Nl[16] = {
     case core::GgmlType::kQ8_0:
     case core::GgmlType::kIQ4_NL:
       return 32;
+    case core::GgmlType::kQ2_0:
+      return 64;
+    case core::GgmlType::kIQ2_S:
+    case core::GgmlType::kIQ3_XXS:
     case core::GgmlType::kQ2_K:
     case core::GgmlType::kIQ2_XXS:
     case core::GgmlType::kIQ4_XS:
@@ -175,6 +199,11 @@ float DotProductQ8_K(const void* row_data, std::span<const float> vec,
 
 // Dequantize row of Q8_0 to float
 void DequantizeQ8_0(const void* src, float* dst, std::size_t k);
+
+// Dequantize packed low-bit expert rows; Q2_0 codes are {-1, 0, 1, 2}.
+void DequantizeQ2_0(const void* src, float* dst, std::size_t k);
+void DequantizeIQ2_S(const void* src, float* dst, std::size_t k);
+void DequantizeIQ3_XXS(const void* src, float* dst, std::size_t k);
 
 // Dequantize row of IQ4_NL to float
 void DequantizeIQ4_NL(const void* src, float* dst, std::size_t k);

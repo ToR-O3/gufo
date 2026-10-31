@@ -31,7 +31,8 @@ int qfn_mmq_q4_K_moe_pair_unique(const void* W_a, const void* W_b,
                                  int n_tokens, int n_experts, int n_expert_used,
                                  hipStream_t stream);
 
-// Routed vector projection for Q4_K/Q5_K/Q5_1/Q8_0 and IQ3_S/IQ4_NL/IQ4_XS.
+// Routed vector projection for Q4_K/Q5_K/Q5_1/Q8_0 and
+// IQ2_S/IQ3_XXS/IQ3_S/IQ4_NL/IQ4_XS/Q2_0.
 // Optional paired weights use the same shape, routing and quantized input;
 // both outputs are
 // [n_tokens][n_expert_used][M]. W_b and out_b must be supplied together.
@@ -75,6 +76,19 @@ int qfn_mmq_q8_0_moe_raw(
     const void * W, const float * X_f32, const int32_t * ids, float * out,
     int M, int K, int n_tokens, int n_experts, int n_expert_used,
     hipStream_t stream);
+
+int qfn_mmq_iq2_s_moe_raw(const void* W, const float* X,
+    const int32_t* ids, float* out, int M, int K,
+    int n_tokens, int n_experts, int n_expert_used, hipStream_t stream);
+
+int qfn_mmq_iq3_xxs_moe_raw(const void* W, const float* X,
+    const int32_t* ids, float* out, int M, int K,
+    int n_tokens, int n_experts, int n_expert_used, hipStream_t stream);
+
+// Q2_0 reuses the bounded vector path at every batch width.
+int qfn_mmq_q2_0_moe_raw(const void* W, const float* X,
+    const int32_t* ids, float* out, int M, int K,
+    int n_tokens, int n_experts, int n_expert_used, hipStream_t stream);
 
 int qfn_mmq_iq3_s_moe_raw(
     const void * W, const float * X_f32, const int32_t * ids, float * out,

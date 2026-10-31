@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstring>
+#include <stdexcept>
 #include <vector>
 
 #include "src/core/quant/ggml_dequant.hpp"
@@ -39,6 +40,14 @@ void DequantizeQ5_1(const std::uint8_t* src, float* dst, std::size_t k) {
 
 void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,
                    float* out) {
+  if (t.RowBytes() == 0) {
+    throw std::invalid_argument("unsupported or misaligned CPU tensor " +
+                                std::string(t.name) + " format " +
+                                std::string(core::ToString(t.type)));
+  }
+  if (t.empty() || out == nullptr || e >= t.experts || row >= t.rows) {
+    throw std::out_of_range("CPU tensor row/expert is outside its extent");
+  }
   const std::uint8_t* src = t.Expert(e) + row * t.RowBytes();
   const std::size_t k = t.cols;
   switch (t.type) {
@@ -66,14 +75,23 @@ void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,
     case GgmlType::kQ5_1:
       DequantizeQ5_1(src, out, k);
       break;
+    case GgmlType::kQ2_0:
+      gufo::quant::DequantizeQ2_0(src, out, k);
+      break;
+    case GgmlType::kIQ2_S:
+      gufo::quant::DequantizeIQ2_S(src, out, k);
+      break;
+    case GgmlType::kIQ3_XXS:
+      gufo::quant::DequantizeIQ3_XXS(src, out, k);
+      break;
     case GgmlType::kIQ3_S:
       gufo::quant::DequantizeIQ3_S(src, out, k);
       break;
-    case GgmlType::kIQ4_NL:
-      gufo::quant::DequantizeIQ4_NL(src, out, k);
-      break;
     case GgmlType::kIQ4_XS:
       gufo::quant::DequantizeIQ4_XS(src, out, k);
+      break;
+    case GgmlType::kIQ4_NL:
+      gufo::quant::DequantizeIQ4_NL(src, out, k);
       break;
     case GgmlType::kQ4_K:
       gufo::quant::DequantizeQ4_K(src, out, k);
@@ -85,8 +103,8 @@ void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,
       gufo::quant::DequantizeQ6_K(src, out, k);
       break;
     default:
-      std::memset(out, 0, k * sizeof(float));
-      break;
+      throw std::invalid_argument("unsupported CPU tensor format " +
+                                  std::string(core::ToString(t.type)));
   }
 }
 

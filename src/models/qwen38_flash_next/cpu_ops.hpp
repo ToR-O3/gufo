@@ -13,6 +13,7 @@
 namespace gufo::models::qwen38_flash_next::cpu {
 
 /// Decodes one row of `t` (expert `e`) into `out` (t.cols floats).
+/// Throws for unsupported storage, misaligned rows, or invalid row/expert.
 void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,
                    float* out);
 
