@@ -4,6 +4,7 @@ add_library(gufo_qwen38_flash_next STATIC
   config.cpp
   continuation_layout.cpp
   ngram.cpp
+  float_weights.cpp
   rope_scaling.cpp
   weights.cpp)
 

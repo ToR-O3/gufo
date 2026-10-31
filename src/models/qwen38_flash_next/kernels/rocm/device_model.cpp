@@ -9,6 +9,7 @@
 
 #include "src/core/hip/managed_alloc.hpp"
 #include "src/core/hip/weight_upload.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/float_upload.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h"
 #include "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp"
@@ -46,6 +47,7 @@ struct Uploaded {
 /// no device work, so the weight placement can be decided from the tensors.
 struct Uploader {
   hip::WeightUpload& stager;
+  FloatUpload& floats;
   const hip::WeightAllocator* weights;
   std::vector<Conversion>& conversions;
   std::vector<void*>& allocations;
@@ -79,7 +81,13 @@ struct Uploader {
     if (t.empty() || !ok) {
       return d;
     }
-    const std::size_t size = t.SizeBytes();
+    const auto type = (t.type == core::GgmlType::kF16 &&
+                       t.name.ends_with(".ple_conv1d.weight"))
+                          ? core::GgmlType::kF32
+                          : t.type;
+    const bool convert = type != t.type;
+    const std::size_t size =
+        convert ? FloatUpload::RowBytes(t, type) * t.rows : t.SizeBytes();
     void* ptr = nullptr;
     if (Allocate(&ptr, size + kTailMargin) != hipSuccess) {
       Fail("device allocation failed for " + std::string(t.name) + " (" +
@@ -91,7 +99,9 @@ struct Uploader {
     }
     allocations.push_back(ptr);
     bytes += size + kTailMargin;
-    if (!stager.Copy(shard_base + t.shard, t.file_offset, size, ptr, error)) {
+    if (!(convert ? floats.Copy(t, type, shard_base, ptr)
+                  : stager.Copy(shard_base + t.shard, t.file_offset, size, ptr,
+                                error))) {
       Fail("upload failed for " + std::string(t.name) +
            (error != nullptr ? ": " + *error : std::string()));
       return d;
@@ -99,15 +109,15 @@ struct Uploader {
     (void)hipMemsetAsync(static_cast<std::uint8_t*>(ptr) + size, 0, kTailMargin,
                          nullptr);
     d.data = ptr;
-    d.type = t.type;
+    d.type = type;
     d.cols = static_cast<std::uint32_t>(t.cols);
     d.rows = static_cast<std::uint32_t>(t.rows);
     d.experts = static_cast<std::uint32_t>(t.experts);
-    if (t.type == core::GgmlType::kBF16 || t.type == core::GgmlType::kF16 ||
-        (t.experts == 1 && IsNativeIq4Dense(t.type))) {
+    if (type == core::GgmlType::kBF16 || type == core::GgmlType::kF16 ||
+        (t.experts == 1 && IsNativeIq4Dense(type))) {
       max_half_cols = std::max<std::size_t>(max_half_cols, t.cols);
     }
-    if (t.type == core::GgmlType::kQ8_0 && t.experts == 1) {
+    if (type == core::GgmlType::kQ8_0 && t.experts == 1) {
       max_q8_cols = std::max<std::size_t>(max_q8_cols, t.cols);
     }
     return d;
@@ -196,6 +206,66 @@ struct Uploader {
                      bool expand_q8 = false) {
     DeviceTensor d;
     if (!ok) {
+      return d;
+    }
+    // Convert only BF16/F16 small stacks.
+    // Existing F32 and native-Q8 stacks retain their original upload path.
+    const bool needs_conversion =
+        std::any_of(parts.begin(), parts.end(), [](const auto* t) {
+          return t->type == core::GgmlType::kBF16 ||
+                 t->type == core::GgmlType::kF16;
+        });
+    if (needs_conversion) {
+      const auto runtime_type = core::GgmlType::kF16;
+      std::size_t total_rows = 0;
+      for (const auto* t : parts) {
+        const bool floating = t->type == core::GgmlType::kF32 ||
+                              t->type == core::GgmlType::kF16 ||
+                              t->type == core::GgmlType::kBF16;
+        if (t->empty() || t->experts != 1 ||
+            t->cols != (*parts.begin())->cols || !floating) {
+          Fail("incompatible converted stack");
+          return d;
+        }
+        total_rows += t->rows;
+      }
+      const auto row_bytes =
+          FloatUpload::RowBytes(**parts.begin(), runtime_type);
+      const auto size = row_bytes * total_rows;
+      void* ptr = nullptr;
+      if (Allocate(&ptr, size + kTailMargin) != hipSuccess) {
+        Fail("converted stack allocation failed");
+        return d;
+      }
+      if (Measuring()) {
+        return d;
+      }
+      allocations.push_back(ptr);
+      bytes += size + kTailMargin;
+      std::size_t offset = 0;
+      for (const auto* t : parts) {
+        auto* dst = static_cast<std::uint8_t*>(ptr) + offset;
+        const bool copied =
+            t->type == runtime_type
+                ? stager.Copy(shard_base + t->shard, t->file_offset,
+                              t->SizeBytes(), dst, error)
+                : floats.Copy(*t, runtime_type, shard_base, dst);
+        if (!copied) {
+          Fail("converted stack upload failed" +
+               (error ? ": " + *error : std::string{}));
+          return d;
+        }
+        offset += row_bytes * t->rows;
+      }
+      (void)hipMemsetAsync(static_cast<std::uint8_t*>(ptr) + size, 0,
+                           kTailMargin, nullptr);
+      d.data = ptr;
+      d.type = runtime_type;
+      d.cols = static_cast<std::uint32_t>((*parts.begin())->cols);
+      d.rows = static_cast<std::uint32_t>(total_rows);
+      auto& max_cols =
+          runtime_type == core::GgmlType::kQ8_0 ? max_q8_cols : max_half_cols;
+      max_cols = std::max<std::size_t>(max_cols, d.cols);
       return d;
     }
     std::size_t rows = 0;
@@ -413,8 +483,8 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
     const ModelWeights& w, const core::GgufReader& reader,
     const MtpWeights* mtp, const core::GgufReader* mtp_reader,
     std::string* error_msg) {
-  // The Q6_K output head uses the shared Qwen dense kernels. Embedding and
-  // routed Q6_K remain unsupported; reject them before allocating weights.
+  // Q6_K dense projections use the shared Qwen kernels. Embedding and
+  // routed Q6_K remain unsupported and must fail before allocating weights.
   const auto supported = [&](const TensorRef& t) {
     if (t.type != core::GgmlType::kQ6_K)
       return true;
@@ -449,6 +519,7 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
   if (!stager) {
     return nullptr;
   }
+  FloatUpload floating_upload(shards, error_msg);
   // Measure first: the placement is decided once, from the bytes this walk
   // will request of the device heap.
   std::uint64_t measured = 0;
@@ -458,8 +529,9 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
     std::size_t bytes = 0;
     std::size_t max_half_cols = 1;
     std::size_t max_q8_cols = 32;
-    Uploader measure{*stager, nullptr,       conversions, allocations,
-                     bytes,   max_half_cols, max_q8_cols, error_msg};
+    Uploader measure{*stager,       floating_upload, nullptr,
+                     conversions,   allocations,     bytes,
+                     max_half_cols, max_q8_cols,     error_msg};
     (void)measure.Model(w, mtp, shard_count);
     if (!measure.ok) {
       return nullptr;
@@ -468,8 +540,9 @@ std::unique_ptr<DeviceModel> DeviceModel::Upload(
   }
   const hip::WeightAllocator weights(measured);
   std::vector<Conversion> conversions;
-  Uploader up{*stager,   &weights,          conversions,     m->allocations_,
-              m->bytes_, m->max_half_cols_, m->max_q8_cols_, error_msg};
+  Uploader up{*stager,           floating_upload, &weights,
+              conversions,       m->allocations_, m->bytes_,
+              m->max_half_cols_, m->max_q8_cols_, error_msg};
   Uploaded uploaded = up.Model(w, mtp, shard_count);
   if (!up.ok || !stager->Finish(error_msg)) {
     return nullptr;

@@ -198,7 +198,13 @@ bool ReferenceModel::Ple(const LayerWeights& l, std::int32_t token,
   const std::uint32_t hist = c_.PleConvHistory();
   const std::uint32_t kern = c_.ple_conv_kernel;
   const std::uint32_t dil = c_.ple_ngram_size;
-  const auto* conv_w = static_cast<const float*>(l.ple_conv1d.data);
+  std::vector<float> conv_weights(l.ple_conv1d.ElementCount());
+  for (std::uint32_t ch = 0; ch < hc_dim; ++ch) {
+    cpu::DequantizeRow(
+        l.ple_conv1d, 0, ch,
+        conv_weights.data() + static_cast<std::size_t>(ch) * kern);
+  }
+  const auto* conv_w = conv_weights.data();
   std::vector<float> conv_out(hc_dim, 0.0F);
   for (std::uint32_t k = 0; k < kern; ++k) {
     const std::uint32_t back = (kern - 1 - k) * dil;
@@ -238,8 +244,12 @@ void ReferenceModel::LinearAttention(const LayerWeights& l, LinearState& s,
   std::vector<float> beta(c_.ssm_num_v_heads);
   MatVec(l.ssm_qkv, 0, x, qkv);
   MatVec(l.ssm_gate, 0, x, z);
-  MatVec(l.ssm_alpha, 0, x, alpha);
-  MatVec(l.ssm_beta, 0, x, beta);
+  // Only BF16/F16 alpha/beta stacks are converted to F16 on upload.
+  const auto narrow = [](core::GgmlType type) {
+    return type == core::GgmlType::kBF16 || type == core::GgmlType::kF16;
+  };
+  MatVec(l.ssm_alpha, 0, x, alpha, narrow(l.ssm_alpha.type));
+  MatVec(l.ssm_beta, 0, x, beta, narrow(l.ssm_beta.type));
 
   // Causal depthwise conv over the last `kern` projections, then SiLU.
   const auto* conv_w = static_cast<const float*>(l.ssm_conv1d.data);

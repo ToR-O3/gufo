@@ -14,6 +14,7 @@ endfunction()
 
 add_qwen38_flash_next_test(config gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(native_quant gufo_core "cpu;quant")
+add_qwen38_flash_next_test(float_weights gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(continuation_layout gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(ngram gufo_qwen38_flash_next "cpu")
 add_qwen38_flash_next_test(iq_rows gufo_qwen38_flash_next_reference "cpu")
@@ -31,10 +32,11 @@ target_link_libraries(qwen38_flash_next_reference_probe PRIVATE
   gufo_qwen38_flash_next_reference)
 set_source_files_properties(reference_probe.cpp PROPERTIES COMPILE_OPTIONS "-O2")
 
-add_executable(qwen38_flash_next_iq4xs_bind_probe EXCLUDE_FROM_ALL iq4xs_bind_probe.cpp)
-target_link_libraries(qwen38_flash_next_iq4xs_bind_probe PRIVATE gufo_qwen38_flash_next)
+add_executable(qwen38_flash_next_weights_probe EXCLUDE_FROM_ALL weights_probe.cpp)
+target_link_libraries(qwen38_flash_next_weights_probe PRIVATE gufo_qwen38_flash_next)
 
 if (ENGINE_ENABLE_HIP)
+  add_qwen38_flash_next_test(float_upload gufo_qwen38_flash_next "hip;gpu;gfx1151")
   add_qwen38_flash_next_test(native_iq4_ops gufo_qwen38_flash_next_reference "hip;gpu;gfx1151;quant")
   add_qwen38_flash_next_test(native_expert_ops gufo_qwen38_flash_next "hip;gpu;gfx1151;quant")
   add_qwen38_flash_next_test(swiglu_half gufo_qwen38_flash_next "hip;gpu;gfx1151;quant")

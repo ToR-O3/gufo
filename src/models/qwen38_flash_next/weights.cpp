@@ -133,9 +133,11 @@ struct Binder {
     const auto dense = {GgmlType::kQ8_0, GgmlType::kBF16,   GgmlType::kF16,
                         GgmlType::kF32,  GgmlType::kIQ4_XS, GgmlType::kQ4_K,
                         GgmlType::kQ5_K, GgmlType::kQ6_K};
-    const auto experts = {GgmlType::kQ4_K,   GgmlType::kQ5_K,  GgmlType::kQ6_K,
-                          GgmlType::kQ5_1,   GgmlType::kQ8_0,  GgmlType::kIQ3_S,
-                          GgmlType::kIQ4_XS, GgmlType::kIQ4_NL};
+    const auto experts = {
+        GgmlType::kQ4_K,    GgmlType::kQ5_K,  GgmlType::kQ6_K,
+        GgmlType::kQ5_1,    GgmlType::kQ8_0,  GgmlType::kIQ2_S,
+        GgmlType::kIQ3_XXS, GgmlType::kIQ3_S, GgmlType::kIQ4_XS,
+        GgmlType::kIQ4_NL,  GgmlType::kQ2_0};
 
     l.hc_attn = Mixer(p + "hc_attn", c, true);
     l.hc_ffn = Mixer(p + "hc_ffn", c, true);
@@ -191,19 +193,19 @@ struct Binder {
       l.ple_norm_conv =
           Get(p + "ple_norm_conv.weight", hc_dim, 1, 1, {GgmlType::kF32});
       l.ple_conv1d = Get(p + "ple_conv1d.weight", c.ple_conv_kernel, hc_dim, 1,
-                         {GgmlType::kF32});
+                         {GgmlType::kF32, GgmlType::kF16});
     }
 
     l.router = Get(p + "ffn_gate_inp.weight", hidden, c.num_experts, 1,
-                   {GgmlType::kF32});
+                   {GgmlType::kF32, GgmlType::kBF16});
     l.ffn_gate_exps = Get(p + "ffn_gate_exps.weight", hidden, c.expert_ff,
                           c.num_experts, experts);
     l.ffn_up_exps = Get(p + "ffn_up_exps.weight", hidden, c.expert_ff,
                         c.num_experts, experts);
     l.ffn_down_exps = Get(p + "ffn_down_exps.weight", c.expert_ff, hidden,
                           c.num_experts, experts);
-    l.shexp_gate_inp =
-        Get(p + "ffn_gate_inp_shexp.weight", hidden, 1, 1, {GgmlType::kF32});
+    l.shexp_gate_inp = Get(p + "ffn_gate_inp_shexp.weight", hidden, 1, 1,
+                           {GgmlType::kF32, GgmlType::kBF16});
     l.shexp_gate =
         Get(p + "ffn_gate_shexp.weight", hidden, c.shared_expert_ff, 1, dense);
     l.shexp_up =
