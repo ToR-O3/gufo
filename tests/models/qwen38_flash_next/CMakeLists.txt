@@ -40,7 +40,7 @@ if (ENGINE_ENABLE_HIP)
   add_qwen38_flash_next_test(native_iq4_ops gufo_qwen38_flash_next_reference "hip;gpu;gfx1151;quant")
   add_qwen38_flash_next_test(native_expert_ops gufo_qwen38_flash_next "hip;gpu;gfx1151;quant")
   add_qwen38_flash_next_test(swiglu_half gufo_qwen38_flash_next "hip;gpu;gfx1151;quant")
-  foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops gdn_ops
+  foreach(name IN ITEMS mtp_ops blaslt_ops hc_mix_ops hc_route_ops gdn_ops
       attention_ops moe_epilogue_ops moe_ids_ops projection_ops routed_wmma_ops
       iq_expert_ops
       select_ops snapshot_copy verification_sampling)
