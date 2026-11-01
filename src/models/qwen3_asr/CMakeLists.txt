@@ -37,6 +37,13 @@ function(gufo_qwen3_asr_register_tests)
   set_tests_properties(qwen3_asr_config_test PROPERTIES
     LABELS "cpu;models;qwen3-asr;config;quality")
 
+  add_executable(qwen3_asr_checkpoint_test
+    ${PROJECT_SOURCE_DIR}/src/models/qwen3_asr/tests/checkpoint_test.cpp)
+  target_link_libraries(qwen3_asr_checkpoint_test PRIVATE gufo_qwen3_asr)
+  add_test(NAME qwen3_asr_checkpoint_test COMMAND qwen3_asr_checkpoint_test)
+  set_tests_properties(qwen3_asr_checkpoint_test PROPERTIES
+    LABELS "cpu;models;qwen3-asr;loader;safetensors")
+
   add_executable(qwen3_asr_loader_test
     ${PROJECT_SOURCE_DIR}/src/models/qwen3_asr/tests/loader_test.cpp)
   target_link_libraries(qwen3_asr_loader_test PRIVATE gufo_qwen3_asr)

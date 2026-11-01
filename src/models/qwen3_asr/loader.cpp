@@ -232,8 +232,12 @@ LoadResult LoadModelDirectory(const std::string& model_dir) {
   }
 
   const std::filesystem::path root(model_dir);
-  for (const std::string_view shard : {"model-00001-of-00002.safetensors",
-                                       "model-00002-of-00002.safetensors"}) {
+  const std::vector<std::string_view> shards =
+      std::filesystem::exists(root / "model.safetensors")
+          ? std::vector<std::string_view>{"model.safetensors"}
+          : std::vector<std::string_view>{"model-00001-of-00002.safetensors",
+                                          "model-00002-of-00002.safetensors"};
+  for (const std::string_view shard : shards) {
     const std::filesystem::path path = root / shard;
     std::string load_error;
     if (!LoadSafetensors(path, result.store.get(), &result.mappings,
@@ -241,6 +245,21 @@ LoadResult LoadModelDirectory(const std::string& model_dir) {
       result.error = "qwen3_asr: cannot load " + path.string();
       if (!load_error.empty())
         result.error += ": " + load_error;
+      return result;
+    }
+  }
+  if (result.config.text.tie_word_embeddings &&
+      result.store->Find("thinker.lm_head.weight") == nullptr) {
+    const Tensor* embedding =
+        result.store->Find("thinker.model.embed_tokens.weight");
+    if (embedding == nullptr) {
+      result.error = "qwen3_asr: tied output requires text embedding weights";
+      return result;
+    }
+    Tensor output = *embedding;
+    output.name = "thinker.lm_head.weight";
+    if (!result.store->Add(std::move(output))) {
+      result.error = "qwen3_asr: cannot register tied output weights";
       return result;
     }
   }

@@ -36,6 +36,7 @@ struct TextConfig {
   float rope_theta{1000000.0F};
   std::vector<std::uint32_t> mrope_section{24, 20, 20};
   bool mrope_interleaved{true};
+  bool tie_word_embeddings{false};
 };
 
 struct ModelConfig {

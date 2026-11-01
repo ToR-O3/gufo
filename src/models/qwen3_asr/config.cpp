@@ -85,6 +85,10 @@ void ParseTextConfig(const json::Value& value, TextConfig* output) {
   ParseU32(value, "max_position_embeddings", &output->max_position_embeddings);
   ParseFloat(value, "rms_norm_eps", &output->rms_norm_eps);
   ParseFloat(value, "rope_theta", &output->rope_theta);
+  if (const json::Value* tied = value.find("tie_word_embeddings");
+      tied != nullptr && tied->is_bool()) {
+    output->tie_word_embeddings = tied->as_bool();
+  }
   if (const json::Value* rope = value.find("rope_scaling");
       rope != nullptr && rope->is_object()) {
     if (const json::Value* section = rope->find("mrope_section")) {

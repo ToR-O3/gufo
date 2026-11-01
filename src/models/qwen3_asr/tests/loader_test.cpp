@@ -37,8 +37,10 @@ int main(int argc, char** argv) {
   qwen3_asr::LoadResult loaded =
       qwen3_asr::LoadModelDirectory(model_root.string());
   Check(loaded.ok, loaded.error);
-  Check(loaded.mapped_regions.size() == 2,
-        "the official checkpoint must map two shards");
+  const std::size_t expected_shards =
+      std::filesystem::exists(model_root / "model.safetensors") ? 1U : 2U;
+  Check(loaded.mapped_regions.size() == expected_shards,
+        "the checkpoint must map its single file or official shards");
   Check(loaded.store != nullptr && loaded.store->size() > 300,
         "the tensor inventory must be populated");
 

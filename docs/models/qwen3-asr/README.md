@@ -1,7 +1,11 @@
 # Qwen3-ASR 1.7B
 
 Native BF16 safetensors speech recognition on gfx1151. The 1.7B checkpoint is
-supported; 0.6B, forced alignment and audio GGUFs are unsupported. Python runs
+supported, including compatible fine-tunes saved as a single
+`model.safetensors` file. If the output head is omitted and
+`thinker_config.text_config.tie_word_embeddings` is true, the decoder reuses
+the token embeddings without duplicating their storage. The original two-shard
+checkpoint remains supported; 0.6B, forced alignment and audio GGUFs are unsupported. Python runs
 only offline reference checks. Generation is deterministic greedy decoding.
 
 [Benchmarks](BENCHMARKS.md) · [Quality](QUALITY.md) · [Experiments](EXPERIMENTS.md)

@@ -70,6 +70,16 @@ int main() {
   Check(config->supported_languages.size() == 2,
         "supported language inventory must parse");
 
+  Check(!config->text.tie_word_embeddings,
+        "missing weight tying metadata must not imply shared weights");
+  std::string tied_json(kConfig);
+  const auto text_config = tied_json.find("\"text_config\": {");
+  tied_json.insert(text_config + std::string_view("\"text_config\": {").size(),
+                   "\"tie_word_embeddings\": true,");
+  const auto tied = qwen3_asr::ParseModelConfig(tied_json);
+  Check(tied.has_value() && tied->text.tie_word_embeddings,
+        "explicit shared output weights must parse");
+
   auto small = *config;
   small.text.hidden_size = 1024;
   Check(!qwen3_asr::IsSupportedModelConfig(small),
