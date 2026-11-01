@@ -809,6 +809,112 @@ void CheckLists(std::uint32_t n_tokens, std::uint32_t start_pos,
   std::cout << " bitwise-equal\n";
 }
 
+// A batch can cross the dense window while its earlier rows still see every
+// key. Those rows must keep the single-token reduction, including incomplete
+// four-key tails. Replay the same graph at new device positions on both sides.
+void CheckDenseWindow(std::uint32_t n, std::uint32_t splits, bool lists) {
+  constexpr std::uint32_t kDense = 2048, kBudget = kDense / kRatio;
+  constexpr std::uint32_t kRows = kDense + 16, kWords = 17;
+  const std::size_t count = std::size_t(n) * kQWidth;
+  const auto queries = MakeValues(count, 0xA771U, 4.0F);
+  const auto gates = MakeValues(count, 0xBC29U, 3.0F);
+  std::vector<__half> keys(std::size_t(kRows) * kKvWidth), values(keys.size());
+  for (auto* destination : {&keys, &values}) {
+    const auto f =
+        MakeValues(keys.size(), destination == &keys ? 891 : 347, 1.0F);
+    std::transform(f.begin(), f.end(), destination->begin(),
+                   [](float x) { return __float2half(x); });
+  }
+  HipBuffer<float> qv(count), gate(count), out(count), single(count);
+  HipBuffer<__half> k(keys.size()), v(values.size());
+  HipBuffer<std::uint32_t> mask(std::size_t(n) * kWords), pos(1), row_pos(1);
+  HipBuffer<std::uint32_t> selected(std::size_t(n) * kBudget), counts(n);
+  HipBuffer<float> partials(std::size_t(n) * kHeads * std::max(splits, 1U) *
+                            (kDim + 2));
+  Upload(&qv, queries);
+  Upload(&gate, gates);
+  Upload(&k, keys);
+  Upload(&v, values);
+  struct Capture {
+    hipStream_t stream{nullptr};
+    hipGraph_t graph{nullptr};
+    hipGraphExec_t exec{nullptr};
+    Capture() {
+      CheckHip(hipStreamCreateWithFlags(&stream, hipStreamNonBlocking),
+               "dense window stream");
+    }
+    ~Capture() {
+      if (exec)
+        (void)hipGraphExecDestroy(exec);
+      if (graph)
+        (void)hipGraphDestroy(graph);
+      (void)hipStreamDestroy(stream);
+    }
+  } capture;
+  float* scratch = splits == 0 ? nullptr : partials.get();
+  for (const std::uint32_t start : {2041U, 2045U, 2049U}) {
+    std::vector<std::uint32_t> words(std::size_t(n) * kWords);
+    for (std::uint32_t t = 0; t < n; ++t) {
+      // Beyond the guaranteed dense window a mask must still be honored.
+      std::fill_n(words.data() + std::size_t(t) * kWords, kWords,
+                  start + t < kDense ? 0xFFFFFFFFU : 0x55555555U);
+    }
+    Upload(&mask, words);
+    Upload(&pos, std::vector<std::uint32_t>{start});
+    for (std::uint32_t t = 0; t < n; ++t) {
+      Upload(&row_pos, std::vector<std::uint32_t>{start + t});
+      const auto offset = std::size_t(t) * kQWidth;
+      q::Attention(
+          qv.get() + offset, k.get(), v.get(),
+          start + t < kDense ? nullptr : mask.get() + std::size_t(t) * kWords,
+          kWords, single.get() + offset, scratch, splits, 1, row_pos.get(),
+          kHeads, kKvHeads, kDim, kRatio, nullptr);
+    }
+    CheckHip(hipDeviceSynchronize(), "dense window single-token reference");
+    if (capture.exec == nullptr) {
+      CheckHip(
+          hipStreamBeginCapture(capture.stream, hipStreamCaptureModeGlobal),
+          "dense window capture");
+      q::Attention(qv.get(), k.get(), v.get(), mask.get(), kWords, out.get(),
+                   scratch, splits, n, pos.get(), kHeads, kKvHeads, kDim,
+                   kRatio, capture.stream, lists ? selected.get() : nullptr,
+                   lists ? counts.get() : nullptr, lists ? kBudget : 0, kDense);
+      CheckHip(hipStreamEndCapture(capture.stream, &capture.graph),
+               "dense window capture end");
+      CheckHip(hipGraphInstantiate(&capture.exec, capture.graph, nullptr,
+                                   nullptr, 0),
+               "dense window instantiate");
+    }
+    CheckHip(hipGraphLaunch(capture.exec, capture.stream),
+             "dense window replay");
+    CheckHip(hipStreamSynchronize(capture.stream), "dense window ready");
+    const auto reference = Download(&single, count);
+    const auto actual = Download(&out, count);
+    if (std::memcmp(reference.data(), actual.data(), count * sizeof(float)) !=
+        0) {
+      throw std::runtime_error(
+          "attention changed across the dense window: n=" + std::to_string(n) +
+          " start=" + std::to_string(start) + " splits=" +
+          std::to_string(splits) + " lists=" + std::to_string(lists));
+    }
+    q::SigmoidMul(out.get(), gate.get(), count, nullptr);
+    const auto gated = Download(&out, count);
+    const auto exact = Fp64Attention(queries, gates, keys, values, words.data(),
+                                     kWords, n, start);
+    double error = 0.0;
+    for (std::size_t i = 0; i < count; ++i) {
+      if (!std::isfinite(gated[i]))
+        throw std::runtime_error("dense window attention is not finite");
+      error = std::max(error, std::abs(gated[i] - exact[i]));
+    }
+    if (error > kFp64Limit)
+      throw std::runtime_error("dense window attention exceeds its FP64 limit");
+    std::cout << "dense window n=" << n << " start=" << start
+              << " splits=" << splits << " lists=" << lists
+              << ": bitwise-equal, FP64 error " << error << '\n';
+  }
+}
+
 // The position is a device value while the host sizes the mask rows. A
 // position past a row must attend as if the blocks after it were not
 // selected, without reading the words that follow the row.
@@ -954,6 +1060,10 @@ void CheckWmmaLiveExtent() {
 
 int main() {
   try {
+    for (const std::uint32_t n : {2U, 4U, 8U})
+      for (const std::uint32_t splits : {0U, 8U})
+        for (const bool lists : {false, true})
+          CheckDenseWindow(n, splits, lists);
     CheckChunks(136, 94);
     CheckChunks(2048, 1025);
     CheckWmmaLiveExtent();

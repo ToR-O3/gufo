@@ -1,5 +1,34 @@
 # Qwen3.8 Flash-Next quality
 
+## Dense-window attention at narrow batch boundaries, November 1, 2026
+
+A narrow verification batch can cross the indexer's 2,048-token dense window.
+Passing its mask to every row changed the reduction for earlier rows: dense
+attention keeps an incomplete four-key tail in its normal tile, while sparse
+attention handles the tail separately. The keys were identical, but FP32
+rounding differed from single-token decoding and could change greedy output.
+
+The executor now supplies the dense-window limit to per-token attention. Each
+row checks its device position, including on graph replay, and uses dense tiles
+below that limit. This is an explicit caller guarantee that all causal keys are
+visible; the default limit is zero, preserving arbitrary-mask callers. No extra
+kernel launch, allocation, quantization rule or model-name dispatch is added.
+
+`attention_ops` covers 2/4/8-row batches at device positions 2041/2045/2049,
+unsplit and eight-way reductions, mask walks and compacted lists. Replays must
+match per-row calls bit for bit; sparse rows beyond the window still obey their
+mask. The gated results also retain the independent FP64 limit of 1e-6. A local
+ROCm 10.1 gfx1151 run passed all 36 combinations (maximum FP64 error 8.24e-8).
+Running the same fixture with a zero dense-window limit reproduced the previous
+mismatch, so the regression check detects the disabled fix.
+
+The full attention operator test and both HC route tests passed on the same
+build. A bounded Huihui UD-IQ4_XS plus external BF16 PLE check used a cached
+2,040-token prompt, six concurrent requests, and the supported MTP limits
+(maximum 7, minimum 1). All six 128-token replies matched an isolated AR
+reference byte for byte. This is one smoke cohort, not the full repeated
+concurrency benchmark.
+
 ## Sampled draft-head costs, October 23, 2026
 
 Based on main `41d93463`, including the expanded greedy-head eligibility.
