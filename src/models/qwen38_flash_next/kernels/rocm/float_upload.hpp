@@ -7,6 +7,7 @@
 #include <chrono>
 #include <cstring>
 #include <gufo/ext/gguf_reader.hpp>
+#include <gufo/ext/platform/fs.hpp>
 #include <gufo/ext/sha256.hpp>
 #include <iostream>
 #include <span>

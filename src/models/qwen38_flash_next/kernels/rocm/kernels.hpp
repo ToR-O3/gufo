@@ -295,9 +295,6 @@ bool DenseF16Gemm(const void* w, const __half* x, float* out, std::size_t batch,
                   std::size_t m, std::size_t k, hipStream_t stream,
                   std::size_t input_stride = 0);
 /// HC/PLE shapes with a token-position-independent BF16 accumulation.
-bool UnquantizedBf16Gemm(const void* w, const void* x, float* out,
-                         std::size_t batch, std::size_t m, std::size_t k,
-                         hipStream_t stream);
 
 /// BF16 weight rows [m][k] times BF16 activation rows [batch][k] with one
 /// F32 K16 chain per output, in K order for every token: a row's result does

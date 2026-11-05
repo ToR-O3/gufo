@@ -2,7 +2,6 @@
 
 #include <bit>
 #include <cmath>
-#include <cstring>
 #include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <stdexcept>
 
@@ -38,26 +37,11 @@ std::uint16_t FloatToHalf(float value) {
 void DecodeFloatRow(core::GgmlType type, const void* source,
                     std::span<float> values) {
   using core::GgmlType;
-  switch (type) {
-    case GgmlType::kF32:
-      std::memcpy(values.data(), source, values.size_bytes());
-      break;
-    case GgmlType::kF16:
-    case GgmlType::kBF16: {
-      const auto* bytes = static_cast<const std::uint8_t*>(source);
-      for (std::size_t i = 0; i < values.size(); ++i) {
-        std::uint16_t h;
-        std::memcpy(&h, bytes + i * 2, 2);
-        values[i] =
-            type == GgmlType::kF16
-                ? quant::Fp16ToFloat(h)
-                : std::bit_cast<float>(static_cast<std::uint32_t>(h) << 16);
-      }
-      break;
-    }
-    default:
-      throw std::invalid_argument("unsupported floating weight type");
-  }
+  if (type != GgmlType::kF32 && type != GgmlType::kF16 &&
+      type != GgmlType::kBF16)
+    throw std::invalid_argument("unsupported floating weight type");
+  if (!quant::DequantizeRow(type, source, values.data(), values.size()))
+    throw std::runtime_error("floating weight expansion failed");
   for (float v : values)
     if (!std::isfinite(v))
       throw std::runtime_error("nonfinite floating weight");

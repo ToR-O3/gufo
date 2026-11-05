@@ -8660,24 +8660,6 @@ bool UnquantizedF16Gemm(const void* w, const __half* x, float* out,
   return true;
 }
 
-bool UnquantizedBf16Gemm(const void* w, const void* x, float* out,
-                         std::size_t batch, std::size_t m, std::size_t k,
-                         hipStream_t stream) {
-  if (batch == 0 ||
-      !((k == 10240 && (m == 320 || m == 4)) || (k == 320 && m == 10240) ||
-        (k == 2560 && (m == 10240 || m == 2560))))
-    return false;
-  // Same Q4 dense staging/WMMA/epilogue, using the original BF16 operands.
-  // A fixed K order is essential: the HC/PLE library path changes accumulation
-  // with a token's tile position, so a cached prefix could alter all logits.
-  hipLaunchKernelGGL((DenseF16GEMMKernel<64, 64, 2, 2, 4, 1, false, false,
-                                         false, false, true, false, false>),
-                     dim3((batch + 63) / 64, (m + 63) / 64), dim3(kThreads), 0,
-                     stream, w, static_cast<const __half*>(x), out, batch, m,
-                     k);
-  return true;
-}
-
 bool DenseBf16Gemm(const void* w, const void* x, float* out, std::size_t batch,
                    std::size_t m, std::size_t k, hipStream_t stream) {
   if (m == 0 || batch == 0 || k == 0 || k % 32 != 0)
