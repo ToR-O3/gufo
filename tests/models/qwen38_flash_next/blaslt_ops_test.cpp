@@ -6,9 +6,11 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -40,14 +42,16 @@ struct Buffer {
   Buffer& operator=(const Buffer&) = delete;
 };
 
-void CheckBf16Chunks() {
+void CheckBf16Chunks(bool compare_library = false) {
   using gufo::models::qwen38_flash_next::rocm::BlasLt;
   std::string error;
   auto blas = BlasLt::Create(nullptr, &error);
   Require(blas != nullptr, error);
+  Require(!BlasLt::UsesOwnKernel(HIP_R_16BF, 4, 10240),
+          "obsolete BF16 inject shape retained");
   for (const auto [m, k] :
-       {std::pair{320, 10240}, std::pair{10240, 320}, std::pair{4, 10240},
-        std::pair{10240, 2560}, std::pair{2560, 2560}}) {
+       {std::pair{320, 10240}, std::pair{10240, 320}, std::pair{10240, 2560},
+        std::pair{2560, 2560}, std::pair{512, 2560}}) {
     constexpr int max_n = 2048;
     std::vector<std::uint16_t> weights(std::size_t(m) * k),
         input(std::size_t(max_n) * k);
@@ -93,10 +97,51 @@ void CheckBf16Chunks() {
       }
       Check(hipMemcpy(split.data(), c.data, split.size() * sizeof(float),
                       hipMemcpyDeviceToHost));
-      Require(bulk == split,
+      Require(std::memcmp(bulk.data(), split.data(),
+                          bulk.size() * sizeof(float)) == 0,
               "BF16 HC/PLE projection changed across chunks: m=" +
                   std::to_string(m) + " k=" + std::to_string(k) +
                   " split=" + std::to_string(boundary));
+      std::vector<float> library, library_split;
+      if (compare_library) {
+        library.resize(bulk.size());
+        library_split.resize(bulk.size());
+        Require(blas->LibraryGemm(a.data, b.data, static_cast<float*>(c.data),
+                                  HIP_R_16BF, m, total, k, &error),
+                error);
+        Check(hipMemcpy(library.data(), c.data, library.size() * sizeof(float),
+                        hipMemcpyDeviceToHost));
+        for (const auto [off, n] :
+             {std::pair{0, boundary}, std::pair{boundary, total - boundary}}) {
+          Require(blas->LibraryGemm(
+                      a.data,
+                      static_cast<const std::uint16_t*>(b.data) +
+                          std::size_t(off) * k,
+                      static_cast<float*>(c.data) + std::size_t(off) * m,
+                      HIP_R_16BF, m, n, k, &error),
+                  error);
+        }
+        Check(hipMemcpy(library_split.data(), c.data,
+                        library_split.size() * sizeof(float),
+                        hipMemcpyDeviceToHost));
+        std::size_t split_differ = 0, path_differ = 0;
+        double path_max_abs = 0;
+        for (std::size_t i = 0; i < bulk.size(); ++i) {
+          Require(std::isfinite(library[i]) && std::isfinite(library_split[i]),
+                  "nonfinite library output");
+          split_differ += std::bit_cast<std::uint32_t>(library[i]) !=
+                          std::bit_cast<std::uint32_t>(library_split[i]);
+          path_differ += std::bit_cast<std::uint32_t>(bulk[i]) !=
+                         std::bit_cast<std::uint32_t>(library[i]);
+          path_max_abs =
+              std::max(path_max_abs, std::abs(double(bulk[i]) - library[i]));
+        }
+        std::cout << std::defaultfloat << std::setprecision(10) << "COMPARE,"
+                  << m << ',' << k << ',' << total << ',' << boundary << ','
+                  << bulk.size() << ",0," << split_differ << ',' << path_differ
+                  << ',' << path_max_abs << '\n';
+      }
+      double fixed_ref = 0, library_ref = 0;
       for (int sample = 0; sample < 32; ++sample) {
         const int row = (sample * 79) % total, col = (sample * 127) % m;
         double ref = 0;
@@ -107,9 +152,79 @@ void CheckBf16Chunks() {
                      std::uint32_t(input[std::size_t(row) * k + j]) << 16);
         const float actual = bulk[std::size_t(row) * m + col];
         max_error = std::max(max_error, std::abs(ref - actual));
+        fixed_ref = std::max(fixed_ref, std::abs(ref - actual));
+        if (compare_library)
+          library_ref = std::max(
+              library_ref, std::abs(ref - library[std::size_t(row) * m + col]));
         Require(std::isfinite(actual) && std::abs(ref - actual) < 0.002,
                 "BF16 HC/PLE projection differs from FP64");
       }
+      if (compare_library)
+        std::cout << std::defaultfloat << std::setprecision(10) << "REFERENCE,"
+                  << m << ',' << k << ',' << total << ',' << boundary << ','
+                  << fixed_ref << ',' << library_ref << '\n';
+    }
+    if (compare_library) {
+      // Rotate at least 64 MiB of weights to avoid reporting a MALL-only win.
+      const std::size_t matrix_bytes = weights.size() * sizeof(std::uint16_t);
+      const auto copies =
+          (64U * 1024U * 1024U + matrix_bytes - 1) / matrix_bytes;
+      Buffer rotating(copies * matrix_bytes);
+      for (std::size_t i = 0; i < copies; ++i)
+        Check(hipMemcpy(
+            static_cast<std::uint8_t*>(rotating.data) + i * matrix_bytes,
+            weights.data(), matrix_bytes, hipMemcpyHostToDevice));
+      std::size_t free_bytes = 0, total_bytes = 0;
+      Check(hipMemGetInfo(&free_bytes, &total_bytes));
+      std::cout << "MEMORY," << m << ',' << k << ',' << free_bytes << ','
+                << total_bytes << '\n';
+      hipEvent_t begin = nullptr, end = nullptr;
+      Check(hipEventCreate(&begin));
+      Check(hipEventCreate(&end));
+      for (int n : {128, 512, 2048}) {
+        const auto launch = [&](bool library, std::size_t i) {
+          const void* w = static_cast<const std::uint8_t*>(rotating.data) +
+                          (i % copies) * matrix_bytes;
+          Require(library ? blas->LibraryGemm(w, b.data,
+                                              static_cast<float*>(c.data),
+                                              HIP_R_16BF, m, n, k, &error)
+                          : blas->Gemm(w, b.data, static_cast<float*>(c.data),
+                                       HIP_R_16BF, m, n, k, &error),
+                  error);
+        };
+        for (std::size_t i = 0; i < copies; ++i) {
+          launch(false, i);
+          launch(true, i);
+        }
+        Check(hipDeviceSynchronize());
+        const auto measure = [&](bool library) {
+          constexpr std::size_t cycles = 4;
+          Check(hipEventRecord(begin));
+          for (std::size_t i = 0; i < copies * cycles; ++i)
+            launch(library, i);
+          Check(hipEventRecord(end));
+          Check(hipEventSynchronize(end));
+          float ms = 0;
+          Check(hipEventElapsedTime(&ms, begin, end));
+          return ms / (copies * cycles);
+        };
+        for (int repeat = 0; repeat < 3; ++repeat) {
+          float fixed_ms = 0, library_ms = 0;
+          if (repeat % 2 == 0) {
+            fixed_ms = measure(false);
+            library_ms = measure(true);
+          } else {
+            library_ms = measure(true);
+            fixed_ms = measure(false);
+          }
+          std::cout << std::defaultfloat << std::setprecision(10) << "TIME,"
+                    << m << ',' << k << ',' << n << ',' << repeat + 1 << ','
+                    << copies * matrix_bytes << ',' << fixed_ms << ','
+                    << library_ms << '\n';
+        }
+      }
+      Check(hipEventDestroy(begin));
+      Check(hipEventDestroy(end));
     }
     std::cout << "BF16 HC/PLE m=" << m << " k=" << k
               << " exact across seven splits; FP64 max_abs=" << max_error
@@ -119,8 +234,20 @@ void CheckBf16Chunks() {
 
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
   try {
+    if (argc == 2 && std::string_view(argv[1]) == "--compare") {
+      std::cout << std::defaultfloat << std::setprecision(10)
+                << "COMPARE,m,k,tokens,split,elements,fixed_split_differ,"
+                   "library_split_differ,path_differ,path_max_abs\n"
+                   "REFERENCE,m,k,tokens,split,fixed_fp64_max_abs,library_fp64_"
+                   "max_abs\n"
+                   "TIME,m,k,tokens,repeat,rotating_weight_bytes,fixed_ms,"
+                   "library_ms\n";
+      CheckBf16Chunks(true);
+      return 0;
+    }
+    Require(argc == 1, "usage: blaslt_ops_test [--compare]");
     CheckBf16Chunks();
     using gufo::models::qwen38_flash_next::rocm::BlasLt;
     std::string error;
