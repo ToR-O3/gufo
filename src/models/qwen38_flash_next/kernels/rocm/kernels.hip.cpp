@@ -5498,10 +5498,8 @@ __launch_bounds__(256) __global__
   // two nibble blocks are two, Q8_0's two byte blocks are four.
   constexpr int kChunks = kQ8 ? 2 * BK : BK;
 
-  // Separate projections stage codes and affine parameters in LDS, with
-  // nearby rows permuted across the bank groups. Paired waves keep them in
-  // registers: each half owns the same rows' first or second K16 fragment.
-  // Both paths share the activation plane,
+  // Projections stage codes and scales in LDS, with nearby rows permuted
+  // across bank groups. The shared activation plane is
   // [kb][16-element quarter][token][16 B] so a fragment read is 256
   // contiguous bytes; the epilogue reuses it all.
   // Q5_1 rows stage their blocks as stored: a row's BK blocks are 16-byte
@@ -5578,8 +5576,6 @@ __launch_bounds__(256) __global__
   // (scale, bias) pair is derived from the raw header word only when the
   // stage is committed, so nothing waits on the loads before the compute.
   uint4 f_codes[kWaveRowTiles];
-  // Paired gate/up tiles reuse the full quantized block over four stages.
-  // Keep its remaining codes in registers alongside the cached header.
   uint4 f_codes_hi[kWaveRowTiles];  ///< Q8_0: the block's second 16 codes
   uint4 f_qh[kWaveRowTiles][2];     ///< Q5_K: the superblock's high bits
   std::uint32_t f_high[kWaveRowTiles];
@@ -5721,8 +5717,8 @@ __launch_bounds__(256) __global__
     }
   };
 
-  // Keep this stage's codes and affine/high-bit parameters live while the
-  // next fetch can replace its quantization header and code-cache group.
+  // Keep this stage's codes and scales in LDS before the next fetch
+  // replaces the register-held quantization header.
   const auto commit_stage = [&]() {
     if constexpr (kQ5) {
 #pragma unroll
@@ -7817,10 +7813,6 @@ bool RoutedF16Gemm(const void* w, WeightType type, const __half* x,
       return LaunchRoutedF16<48>(w, type, x, tiles, n_tiles, pad_bounds,
                                  rows_in, rows_out, swiglu_gate, out, out_half,
                                  m, k, stream);
-    case 64:
-      return iq && LaunchRoutedF16<64>(w, type, x, tiles, n_tiles, pad_bounds,
-                                       rows_in, rows_out, swiglu_gate, out,
-                                       out_half, m, k, stream);
     case 128: {
       if (iq)
         return LaunchRoutedF16<128>(w, type, x, tiles, n_tiles, pad_bounds,

@@ -1446,12 +1446,12 @@ int main() {
     ok = Ok(Run(q::WeightType::kIQ4_XS, 300, 10, 64, 640, 2560, 0x140023U)) &&
          ok;
     ok = Ok(Run(q::WeightType::kIQ4_NL, 3000, 1, 64, 2560, 640, 0x140020U,
-                64)) &&
+                128)) &&
          ok;
     for (auto type : {q::WeightType::kIQ4_XS, q::WeightType::kIQ4_NL}) {
       for (std::uint32_t n : {1U, 8U, 9U, 32U, 33U})
         ok = Ok(Run(type, n, 2, 8, 129, 512, 0x140000U + n, 16)) && ok;
-      for (std::uint32_t width : {64U, 128U})
+      for (std::uint32_t width : {48U, 128U})
         ok = Ok(Run(type, 97, 2, 8, 129, 512, 0x146464U, width)) && ok;
     }
     // ISTA's mixed gate/up and down formats use the same Q4 machinery.
@@ -1460,10 +1460,10 @@ int main() {
       if (type != q::WeightType::kQ2_0)
         ok = Ok(Run(type, 300, 10, 64, 640, 2560, 0x117000U)) && ok;
       else
-        ok = Ok(Run(type, 3000, 1, 64, 2560, 640, 0x117042U, 64)) && ok;
+        ok = Ok(Run(type, 3000, 1, 64, 2560, 640, 0x117042U, 128)) && ok;
       for (std::uint32_t n : {1U, 8U, 9U, 32U, 33U})
         ok = Ok(Run(type, n, 2, 8, 129, 512, 0x117000U + n, 16)) && ok;
-      for (std::uint32_t width : {64U, 128U})
+      for (std::uint32_t width : {48U, 128U})
         ok = Ok(Run(type, 97, 2, 8, 129, 512, 0x117064U, width)) && ok;
     }
     return ok ? 0 : 1;
