@@ -5474,7 +5474,8 @@ __launch_bounds__(256) __global__
                              const float* __restrict__ swiglu_gate,
                              float* __restrict__ out,
                              __half* __restrict__ out_half, std::size_t m,
-                             std::size_t k, const void* __restrict__ w_up) {
+                             std::size_t k,
+                             const void* __restrict__ w_up = nullptr) {
   static_assert(BM == 128 || BM == 256, "eight waves, 16-row tiles");
   static_assert(!kPair || BM == 128);
   static_assert(BN % 16 == 0 && BN / 16 <= 8);
@@ -5688,26 +5689,15 @@ __launch_bounds__(256) __global__
         const auto* blk =
             reinterpret_cast<const uint4*>(f_ptr[u]) + (block * kBlockChunks);
         // The K sweep enters a new superblock every eight Q8-sized blocks.
-        if (kPair ? code_group == 0 : kb0 % 8 == 0) {
+        if (kb0 % 8 == 0) {
           f_header[u] = blk[0];
-          if constexpr (kPair) {
-#pragma unroll
-            for (int group = 0; group < 4; ++group)
-              code_cache[u][group] = blk[kCodeChunk + group * 2 + f_c];
-          }
           if constexpr (kQ5K) {
             f_qh[u][0] = blk[1];
             f_qh[u][1] = blk[2];
           }
         }
-        const int sb32 = (kPair ? code_group * 2 : kb0 % 8) + f_c;
-        if constexpr (kPair) {
-          // Each unrolled stage supplies a fixed index; no cache selector
-          // or addressable private array remains in the compiled loop.
-          f_codes[u] = code_cache[u][code_group];
-        } else {
-          f_codes[u] = blk[kCodeChunk + (sb32 / 2) * 2 + f_c];
-        }
+        const int sb32 = kb0 % 8 + f_c;
+        f_codes[u] = blk[kCodeChunk + (sb32 / 2) * 2 + f_c];
         f_sb32[u] = sb32;
         if constexpr (kQ5K) {
           // Bit sb32 of the 32 high-bit bytes, packed as the Q5_1 word.
@@ -5745,12 +5735,11 @@ __launch_bounds__(256) __global__
     for (int u = 0; u < (kQ5 ? 0 : kWaveRowTiles); ++u) {
       const int row = (tid >> 1) + (u * 128);
       std::uint32_t scale_bias = 0;
-      else if constexpr (kQ8) {
+      if constexpr (kQ8) {
         s_codes[swizzle(row, 2 * f_c)] = f_codes[u];
         s_codes[swizzle(row, (2 * f_c) + 1)] = f_codes_hi[u];
         scale_bias = f_live[u] ? f_dm[u] : 0U;  // half2 (d, 0)
-      }
-      else {
+      } else {
         s_codes[swizzle(row, f_c)] = f_codes[u];
       }
       if constexpr (kQ5K || kIq2) {
@@ -7826,6 +7815,13 @@ bool RoutedF16Gemm(const void* w, WeightType type, const __half* x,
                                  rows_in, rows_out, swiglu_gate, out, out_half,
                                  m, k, stream);
     case 128: {
+      if (type == WeightType::kIQ4_XS || type == WeightType::kIQ4_NL ||
+          type == WeightType::kIQ2_S || type == WeightType::kIQ3_XXS ||
+          type == WeightType::kIQ3_S || type == WeightType::kQ2_0)
+        return LaunchRoutedF16<128>(w, type, x, tiles, n_tiles, pad_bounds,
+                                    rows_in, rows_out, swiglu_gate, out,
+                                    out_half, m, k, stream);
+
       if (out_half == nullptr || swiglu_gate != nullptr)
         return false;
       const dim3 grid(static_cast<unsigned int>((m + 127) / 128), n_tiles);
@@ -7855,6 +7851,7 @@ bool RoutedGatedF16Gemm(const void* gate, const void* up, WeightType type,
   if (m == 0 || k == 0 || k % 256 != 0 || n_tiles == 0 || out == nullptr) {
     return false;
   }
+  constexpr int BN = 128;
   const dim3 grid(static_cast<unsigned int>((m + 63) / 64), n_tiles);
   if (type == WeightType::kQ4_K || type == WeightType::kQ5_K) {
     const auto kernel =
