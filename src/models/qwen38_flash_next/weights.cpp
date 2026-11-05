@@ -1,10 +1,9 @@
 #include "src/models/qwen38_flash_next/weights.hpp"
 
+#include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <initializer_list>
 #include <string>
 #include <utility>
-
-#include "src/core/quant/ggml_dequant.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 namespace {
@@ -278,8 +277,9 @@ std::optional<ModelWeights> ModelWeights::Bind(const core::GgufReader& reader,
     if (rows < c.ple_rows) {
       b.Fail("per_layer_token_embd.weight is missing or too short");
     } else {
-      w.ple_table = b.Get("per_layer_token_embd.weight", c.ple_head_dim, rows,
-                          1, {GgmlType::kIQ4_NL, GgmlType::kBF16});
+      w.ple_table =
+          b.Get("per_layer_token_embd.weight", c.ple_head_dim, rows, 1,
+                {GgmlType::kIQ4_NL, GgmlType::kQ8_0, GgmlType::kBF16});
     }
   }
   w.layers.reserve(c.num_layers);

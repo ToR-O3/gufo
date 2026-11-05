@@ -6,14 +6,14 @@
 #include <algorithm>
 #include <chrono>
 #include <cstring>
+#include <gufo/ext/gguf_reader.hpp>
+#include <gufo/ext/sha256.hpp>
 #include <iostream>
 #include <span>
 #include <stdexcept>
 #include <system_error>
 #include <vector>
 
-#include "src/core/crypto/sha256.hpp"
-#include "src/core/platform/fs.hpp"
 #include "src/models/qwen38_flash_next/float_weights.hpp"
 #include "src/models/qwen38_flash_next/weights.hpp"
 

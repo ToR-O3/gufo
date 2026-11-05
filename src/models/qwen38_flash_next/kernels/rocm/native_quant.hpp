@@ -4,8 +4,7 @@
 #include <hip/hip_runtime.h>
 
 #include <cstddef>
-
-#include "src/core/gguf_reader.hpp"
+#include <gufo/ext/gguf_reader.hpp>
 
 namespace gufo::models::qwen38_flash_next::rocm {
 // Native dense formats used by the OrcaRouter and ISTA mixed GGUF files.

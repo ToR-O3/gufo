@@ -3,9 +3,8 @@
 #include <bit>
 #include <cmath>
 #include <cstring>
+#include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <stdexcept>
-
-#include "src/core/quant/ggml_dequant.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 std::uint16_t FloatToHalf(float value) {

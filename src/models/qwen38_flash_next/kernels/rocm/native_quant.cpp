@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 
-#include "src/models/qwen/hip/ops/gemm.hpp"
-#include "src/models/qwen/hip/ops/prefill_fp16.hpp"
+#include "src/families/qwen/kernels/ops/gemm.hpp"
+#include "src/families/qwen/kernels/ops/prefill_fp16.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
 void NativeIq4Dense(const void* weights, core::GgmlType type,
