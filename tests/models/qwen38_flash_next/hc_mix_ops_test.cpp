@@ -548,6 +548,8 @@ void CheckFusedDecodeMixer(std::uint32_t tokens, bool with_inject) {
 
 int main() {
   try {
+    for (const auto tokens : {1U, 8U, 9U, 33U, 2049U})
+      CheckF32HalfOutput(tokens);
     for (std::uint32_t n = 1; n <= 8; ++n) {
       CheckFusedDecodeMixer(n, true);
     }
