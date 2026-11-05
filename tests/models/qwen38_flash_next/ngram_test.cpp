@@ -83,7 +83,7 @@ PleMetadata SidecarMetadata() {
 }
 
 // Tiny file-backed GGUFs exercise the production sidecar binding without
-// loading a model. The trunk table is IQ4_NL; the replacement is BF16.
+// loading a model. An IQ4_NL trunk accepts BF16 and Q8_0 sidecars.
 void WritePle(const std::filesystem::path& path, const PleMetadata& fields,
               std::uint64_t rows = 4,
               gufo::core::GgmlType type = gufo::core::GgmlType::kBF16) {
@@ -133,6 +133,12 @@ void WritePle(const std::filesystem::path& path, const PleMetadata& fields,
     for (std::uint64_t row = 0; row < rows; ++row)
       for (std::uint32_t col = 0; col < 32; ++col)
         pod(static_cast<std::uint16_t>(0x3f80 + row * 0x80));
+  } else if (type == gufo::core::GgmlType::kQ8_0) {
+    for (std::uint64_t row = 0; row < rows; ++row) {
+      pod(std::uint16_t{0x3c00});
+      for (std::uint32_t col = 0; col < 32; ++col)
+        pod(static_cast<std::int8_t>(1U << row));
+    }
   } else {
     const auto row_bytes = type == gufo::core::GgmlType::kIQ4_NL ? 18 : 128;
     bytes.resize(bytes.size() + rows * row_bytes);
@@ -149,27 +155,35 @@ void TestSidecar() {
   const auto sidecar_path = temp.path() / "qwen4exp.ple.gguf";
   const auto metadata = SidecarMetadata();
   WritePle(trunk_path, metadata, 4, gufo::core::GgmlType::kIQ4_NL);
-  WritePle(sidecar_path, metadata);
   std::string error;
   auto trunk = gufo::core::GgufReader::OpenFile(trunk_path, &error);
-  auto sidecar = gufo::core::GgufReader::OpenFile(sidecar_path, &error);
-  Check(trunk && sidecar, "open PLE GGUF fixtures");
-  if (!trunk || !sidecar)
+  Check(trunk != nullptr, "open trunk PLE fixture");
+  if (!trunk)
     return;
-  auto table = q::NgramTable::Open(*sidecar, *trunk, &error);
-  Check(table != nullptr, error.c_str());
-  sidecar.reset();
-  if (table) {
-    std::array<std::uint32_t, 3> ids{2, 0, 2};
-    std::array<float, 96> output{};
-    Check(table->RowBytes() == 64 && table->Rows() == 4,
-          "sidecar selects BF16 storage instead of the trunk's IQ4_NL");
-    Check(table->Read(ids, output), "read sidecar after its mapping is closed");
-    for (std::size_t i = 0; i < output.size(); ++i)
-      Check(output[i] == (i / 32 == 1 ? 1.0F : 4.0F),
-            "sidecar row values and duplicate gathers");
+  for (const auto type :
+       {gufo::core::GgmlType::kBF16, gufo::core::GgmlType::kQ8_0}) {
+    WritePle(sidecar_path, metadata, 4, type);
+    auto sidecar = gufo::core::GgufReader::OpenFile(sidecar_path, &error);
+    Check(sidecar != nullptr, "open PLE sidecar fixture");
+    if (!sidecar)
+      continue;
+    auto table = q::NgramTable::Open(*sidecar, *trunk, &error);
+    Check(table != nullptr, error.c_str());
+    sidecar.reset();
+    if (table) {
+      std::array<std::uint32_t, 3> ids{2, 0, 2};
+      std::array<float, 96> output{};
+      const std::size_t row_bytes =
+          type == gufo::core::GgmlType::kBF16 ? 64 : 34;
+      Check(table->RowBytes() == row_bytes && table->Rows() == 4,
+            "sidecar selects its storage instead of the trunk's IQ4_NL");
+      Check(table->Read(ids, output),
+            "read sidecar after its mapping is closed");
+      for (std::size_t i = 0; i < output.size(); ++i)
+        Check(output[i] == (i / 32 == 1 ? 1.0F : 4.0F),
+              "sidecar row values and duplicate gathers");
+    }
   }
-  table.reset();
   const auto reject = [&](const PleMetadata& fields, std::uint64_t rows = 4,
                           gufo::core::GgmlType type =
                               gufo::core::GgmlType::kBF16) {
