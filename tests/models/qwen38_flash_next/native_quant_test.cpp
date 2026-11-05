@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "src/core/quant/ggml_dequant.hpp"
+#include "src/models/qwen38_flash_next/cpu_ops.hpp"
 
 using gufo::core::GgmlType;
 namespace {
@@ -65,13 +66,24 @@ int main() {
       std::vector<float> expected(cols * rows * experts), actual(cols);
       Read(input, packed.data(), packed.size());
       Read(input, expected.data(), expected.size() * sizeof(float));
+      const gufo::models::qwen38_flash_next::TensorRef tensor{
+          .data = packed.data(),
+          .type = f.type,
+          .cols = cols,
+          .rows = rows,
+          .experts = experts};
+      std::vector<float> model_row(cols);
       for (std::size_t row = 0; row < rows * experts; ++row) {
+        gufo::models::qwen38_flash_next::cpu::DequantizeRow(
+            tensor, row / rows, row % rows, model_row.data());
         f.decode(packed.data() + row * QuantizedRowBytes(f.type, cols),
                  actual.data(), cols);
         for (std::size_t col = 0; col < cols; ++col) {
           Require(std::isfinite(actual[col]) &&
                       actual[col] == expected[row * cols + col],
                   "independent scalar decoder mismatch");
+          Require(model_row[col] == expected[row * cols + col],
+                  "independent model row decoder mismatch");
           ++checked;
         }
       }
