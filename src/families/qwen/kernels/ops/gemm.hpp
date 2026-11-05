@@ -192,19 +192,19 @@ void LaunchBatchedQuantGEMMBf16(core::GgmlType type, const void* w,
                                 std::size_t m, std::size_t k,
                                 hipStream_t stream = nullptr);
 
-/// Directly computes Y[B, M] = X_fp32[B, K] * W_quant[M, K]^T using the same
-/// quant-block dot product and FP32 activation precision as decode. Intended
-/// for short verification batches where exact target-path numerics matter.
-/// Groups of up to sixteen rows share weight loads while preserving the
-/// isolated production GEMV arithmetic order.
-// Wide batches of small native Flash-Next projections retain the existing
-// eight-row FP32 dot and launch independent groups in the grid, as the
-// Flash-Next small floating projections do. Other shapes use the normal path.
+/// Wide batches of small native Flash-Next projections retain the existing
+/// eight-row FP32 dot and launch independent groups in the grid, as the
+/// Flash-Next small floating projections do. Other shapes use the normal path.
 void LaunchGroupedQuantGEMMFp32(core::GgmlType type, const void* weights,
                                 const float* input, float* output,
                                 std::size_t batch, std::size_t outputs,
                                 std::size_t cols, hipStream_t stream);
 
+/// Directly computes Y[B, M] = X_fp32[B, K] * W_quant[M, K]^T using the same
+/// quant-block dot product and FP32 activation precision as decode. Intended
+/// for short verification batches where exact target-path numerics matter.
+/// Groups of up to sixteen rows share weight loads while preserving the
+/// isolated production GEMV arithmetic order.
 void LaunchBatchedQuantGEMMFp32(core::GgmlType type, const void* w,
                                 const float* fp32_x, float* y,
                                 std::size_t batch, std::size_t m, std::size_t k,
