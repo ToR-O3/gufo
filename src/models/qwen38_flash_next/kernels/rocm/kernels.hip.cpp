@@ -7805,6 +7805,9 @@ bool RoutedF16Gemm(const void* w, WeightType type, const __half* x,
       (out_half == nullptr) == (out == nullptr)) {
     return false;
   }
+  const bool iq = type == WeightType::kIQ4_XS || type == WeightType::kIQ4_NL ||
+                  type == WeightType::kIQ2_S || type == WeightType::kIQ3_XXS ||
+                  type == WeightType::kIQ3_S || type == WeightType::kQ2_0;
   switch (tile_rows) {
     case 16:
       return LaunchRoutedF16<16>(w, type, x, tiles, n_tiles, pad_bounds,
@@ -7814,10 +7817,12 @@ bool RoutedF16Gemm(const void* w, WeightType type, const __half* x,
       return LaunchRoutedF16<48>(w, type, x, tiles, n_tiles, pad_bounds,
                                  rows_in, rows_out, swiglu_gate, out, out_half,
                                  m, k, stream);
+    case 64:
+      return iq && LaunchRoutedF16<64>(w, type, x, tiles, n_tiles, pad_bounds,
+                                       rows_in, rows_out, swiglu_gate, out,
+                                       out_half, m, k, stream);
     case 128: {
-      if (type == WeightType::kIQ4_XS || type == WeightType::kIQ4_NL ||
-          type == WeightType::kIQ2_S || type == WeightType::kIQ3_XXS ||
-          type == WeightType::kIQ3_S || type == WeightType::kQ2_0)
+      if (iq)
         return LaunchRoutedF16<128>(w, type, x, tiles, n_tiles, pad_bounds,
                                     rows_in, rows_out, swiglu_gate, out,
                                     out_half, m, k, stream);
