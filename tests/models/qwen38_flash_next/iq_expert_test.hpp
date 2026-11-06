@@ -12,6 +12,9 @@ inline int NativeExpertProjection(int type, const void* weights,
   using Projection = decltype(&qfn_mmq_iq3_s_moe_raw);
   Projection project = nullptr;
   switch (static_cast<core::GgmlType>(type)) {
+    case core::GgmlType::kQ5_0:
+      project = qfn_mmq_q5_0_moe_raw;
+      break;
     case core::GgmlType::kIQ2_S:
       project = qfn_mmq_iq2_s_moe_raw;
       break;

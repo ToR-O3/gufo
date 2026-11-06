@@ -25,10 +25,44 @@ struct Format {
   GgmlType type;
   Decoder decode;
 };
+
+void Q5_0Rows() {
+  constexpr std::size_t cols = 64, rows = 3, experts = 2;
+  std::array<std::uint8_t, cols / 32 * 22 * rows * experts> packed{};
+  std::array<float, cols * rows * experts> expected{};
+  for (std::size_t b = 0; b < expected.size() / 32; ++b) {
+    auto* block = packed.data() + b * 22;
+    block[1] = b % 2 ? 0xb0 : 0x30;  // FP16 -/+ 0.125.
+    const float d = b % 2 ? -0.125F : 0.125F;
+    for (std::size_t j = 0; j < 32; ++j) {
+      const unsigned code = (j + b * 7) % 32;
+      block[2 + j / 8] |= ((code >> 4) & 1) << (j % 8);
+      block[6 + j % 16] |= (code & 15) << (4 * (j / 16));
+      expected[b * 32 + j] = d * (int(code) - 16);
+    }
+  }
+  const gufo::models::qwen38_flash_next::TensorRef tensor{
+      .data = packed.data(),
+      .type = GgmlType::kQ5_0,
+      .cols = cols,
+      .rows = rows,
+      .experts = experts};
+  Require(tensor.RowBytes() == 44, "Q5_0 row stride");
+  std::array<float, cols> actual{};
+  for (std::size_t e = 0; e < experts; ++e)
+    for (std::size_t r = 0; r < rows; ++r) {
+      gufo::models::qwen38_flash_next::cpu::DequantizeRow(tensor, e, r,
+                                                          actual.data());
+      for (std::size_t c = 0; c < cols; ++c)
+        Require(actual[c] == expected[(e * rows + r) * cols + c],
+                "Q5_0 independent model row decoder mismatch");
+    }
+}
 }  // namespace
 int main() {
   using namespace gufo::quant;
   try {
+    Q5_0Rows();
     const auto path = std::filesystem::path(__FILE__).parent_path() /
                       "fixtures/native_quant.bin";
     std::ifstream input(path, std::ios::binary);

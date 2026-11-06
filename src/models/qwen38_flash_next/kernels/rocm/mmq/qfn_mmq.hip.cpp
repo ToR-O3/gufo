@@ -359,7 +359,7 @@ static int moe_vector_projection(int weight_type, const void* W,
   constexpr const char* tag = "qfn_mmq_moe_vec";
   const auto type = static_cast<ggml_type>(weight_type);
   if (type != GGML_TYPE_Q4_K && type != GGML_TYPE_Q5_K &&
-      type != GGML_TYPE_Q5_1 && type != GGML_TYPE_Q8_0 &&
+      type != GGML_TYPE_Q5_0 && type != GGML_TYPE_Q5_1 && type != GGML_TYPE_Q8_0 &&
       type != GGML_TYPE_IQ2_S && type != GGML_TYPE_IQ3_XXS &&
       type != GGML_TYPE_IQ3_S && type != GGML_TYPE_IQ4_XS &&
       type != GGML_TYPE_IQ4_NL && type != GGML_TYPE_Q2_0) {
@@ -600,6 +600,15 @@ extern "C" int qfn_mmq_q4_K_moe_raw(
                                             nullptr, nullptr);
 }
 
+extern "C" int qfn_mmq_q5_0_moe_raw(
+        const void * W, const float * X, const int32_t * ids, float * out,
+        int M, int K, int n_tokens, int n_experts, int n_expert_used,
+        hipStream_t stream) {
+    return qfn_mmq_moe_impl<GGML_TYPE_Q5_0>("qfn_mmq_q5_0_moe_raw", W, X, ids, out, M, K,
+                                            n_tokens, n_experts, n_expert_used, stream,
+                                            nullptr, nullptr);
+}
+
 extern "C" int qfn_mmq_q5_1_moe_raw(
         const void * W, const float * X, const int32_t * ids, float * out,
         int M, int K, int n_tokens, int n_experts, int n_expert_used,
@@ -784,6 +793,8 @@ template void mul_mat_q_case<GGML_TYPE_IQ4_XS>(
 template void mul_mat_q_case<GGML_TYPE_Q8_0>(
     ggml_backend_hip_context&, const mmq_args&, hipStream_t);
 template void mul_mat_q_case<GGML_TYPE_Q4_K>(
+    ggml_backend_hip_context&, const mmq_args&, hipStream_t);
+template void mul_mat_q_case<GGML_TYPE_Q5_0>(
     ggml_backend_hip_context&, const mmq_args&, hipStream_t);
 template void mul_mat_q_case<GGML_TYPE_Q5_1>(
     ggml_backend_hip_context&, const mmq_args&, hipStream_t);

@@ -22,6 +22,7 @@ void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,
     case core::GgmlType::kF16:
     case core::GgmlType::kBF16:
     case core::GgmlType::kQ8_0:
+    case core::GgmlType::kQ5_0:
     case core::GgmlType::kQ5_1:
     case core::GgmlType::kQ2_0:
     case core::GgmlType::kIQ2_S:

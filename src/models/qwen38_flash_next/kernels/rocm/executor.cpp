@@ -2156,6 +2156,9 @@ bool Executor::Experts(const DeviceTensor& w, const float* x,
       case GgmlType::kQ5_K:
         rc = qfn_mmq_q5_K_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
         break;
+      case GgmlType::kQ5_0:
+        rc = qfn_mmq_q5_0_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
+        break;
       case GgmlType::kQ5_1:
         rc = qfn_mmq_q5_1_moe_raw(w.data, x, ids, out, M, K, T, E, U, stream_);
         break;

@@ -31,7 +31,7 @@ int qfn_mmq_q4_K_moe_pair_unique(const void* W_a, const void* W_b,
                                  int n_tokens, int n_experts, int n_expert_used,
                                  hipStream_t stream);
 
-// Routed vector projection for Q4_K/Q5_K/Q5_1/Q8_0 and
+// Routed vector projection for Q4_K/Q5_K/Q5_0/Q5_1/Q8_0 and
 // IQ2_S/IQ3_XXS/IQ3_S/IQ4_NL/IQ4_XS/Q2_0.
 // Optional paired weights use the same shape, routing and quantized input;
 // both outputs are
@@ -106,6 +106,11 @@ int qfn_mmq_iq4_xs_moe_raw(
     hipStream_t stream);
 
 int qfn_mmq_q4_K_moe_raw(
+    const void * W, const float * X_f32, const int32_t * ids, float * out,
+    int M, int K, int n_tokens, int n_experts, int n_expert_used,
+    hipStream_t stream);
+
+int qfn_mmq_q5_0_moe_raw(
     const void * W, const float * X_f32, const int32_t * ids, float * out,
     int M, int K, int n_tokens, int n_experts, int n_expert_used,
     hipStream_t stream);

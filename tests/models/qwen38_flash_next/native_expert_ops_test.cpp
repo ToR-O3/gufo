@@ -61,12 +61,14 @@ void FractionalDots() {
   }
 }
 void Case(int type, int cols, int rows, const std::vector<std::uint8_t>& packed,
-          const std::vector<float>& reference) {
-  constexpr int experts = 512, tokens = 33, used = 2;
+          const std::vector<float>& reference, bool paired = false,
+          int used = 2) {
+  constexpr int experts = 512, tokens = 33;
   const auto stride = packed.size() / 2;
   // Match DeviceModel's tensor-level zero tail, including K640 IQ4_NL.
   Device w(experts * stride + 4096), x(tokens * cols * 4),
-      ids(tokens * used * 4), y(tokens * used * rows * 4);
+      ids(tokens * used * 4), y(tokens * used * rows * 4),
+      y_b(paired ? tokens * used * rows * 4 : 4);
   Hip(hipMemset(w.p, 0, experts * stride + 4096));
   Hip(hipMemcpy(w.p, packed.data(), stride, hipMemcpyHostToDevice));
   Hip(hipMemcpy(w.As<std::uint8_t>() + 511 * stride, packed.data() + stride,
@@ -91,11 +93,19 @@ void Case(int type, int cols, int rows, const std::vector<std::uint8_t>& packed,
                            y.As<float>(), rows, cols, n, experts, used, nullptr)
                      : qfn_mmq_moe_vec(type, w.p, x.As<float>(),
                                        ids.As<std::int32_t>(), y.As<float>(),
-                                       rows, cols, n, experts, used, nullptr);
+                                       rows, cols, n, experts, used, nullptr,
+                                       paired ? w.p : nullptr,
+                                       paired ? y_b.As<float>() : nullptr);
       Require(rc == 0, "native expert dispatch failed");
       std::vector<float> actual(n * used * rows);
       Hip(hipMemcpy(actual.data(), y.p, actual.size() * 4,
                     hipMemcpyDeviceToHost));
+      if (paired && !tiled) {
+        std::vector<float> actual_b(actual.size());
+        Hip(hipMemcpy(actual_b.data(), y_b.p, actual_b.size() * 4,
+                      hipMemcpyDeviceToHost));
+        Require(actual_b == actual, "paired expert projection mismatch");
+      }
       double worst = 0;
       for (int s = 0; s < n * used; ++s)
         for (int row = 0; row < rows; ++row) {
@@ -118,14 +128,39 @@ void Case(int type, int cols, int rows, const std::vector<std::uint8_t>& packed,
           worst = std::max(worst, error);
         }
       std::cout << "type=" << type << " K=" << cols << " M=" << rows
-                << " experts=512 n=" << n << " tiled=" << tiled
-                << " max_abs=" << worst << '\n';
+                << " experts=512 used=" << used << " n=" << n
+                << " tiled=" << tiled << " max_abs=" << worst << '\n';
     }
+}
+
+void Q5_0Dots() {
+  // Encode every five-bit code directly; the reference does not call a
+  // production decoder. Include both signs of the FP16 block scale.
+  for (const auto [cols, rows] :
+       {std::array<int, 2>{640, 7}, {2560, 7}, {640, 2560}, {2560, 640}}) {
+    constexpr int experts = 2;
+    std::vector<std::uint8_t> packed(experts * rows * (cols / 32) * 22, 0);
+    std::vector<float> reference(experts * rows * cols);
+    for (std::size_t b = 0; b < reference.size() / 32; ++b) {
+      auto* block = packed.data() + b * 22;
+      block[1] = b % 2 ? 0xb0 : 0x30;  // FP16 -/+ 0.125.
+      const float d = b % 2 ? -0.125F : 0.125F;
+      for (unsigned j = 0; j < 32; ++j) {
+        const unsigned code = (j * 13 + b * 7) % 32;
+        block[2 + j / 8] |= ((code >> 4) & 1) << (j % 8);
+        block[6 + j % 16] |= (code & 15) << (4 * (j / 16));
+        reference[b * 32 + j] = d * (int(code) - 16);
+      }
+    }
+    Case(static_cast<int>(gufo::core::GgmlType::kQ5_0), cols, rows, packed,
+         reference, true, cols == 640 && rows == 2560 ? 1 : 2);
+  }
 }
 }  // namespace
 int main() {
   try {
     Require(qfn_mmq_init(0) == 0, "MMQ init");
+    Q5_0Dots();
     FractionalDots();
     std::ifstream in(std::filesystem::path(__FILE__).parent_path() /
                          "fixtures/native_quant.bin",
