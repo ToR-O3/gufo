@@ -108,6 +108,53 @@ void WriteBinaryFile(const std::filesystem::path& path,
   Expect(out.good(), "Write GGUF test shard");
 }
 
+void TestMetadataOnlyShard() {
+  const auto temp_dir =
+      std::filesystem::temp_directory_path() /
+      ("gufo-gguf-metadata-" + std::to_string(static_cast<long>(getpid())));
+  std::filesystem::create_directories(temp_dir);
+  const auto first_path = temp_dir / "model-00001-of-00002.gguf";
+  const auto second_path = temp_dir / "model-00002-of-00002.gguf";
+  GgufBuilder first;
+  first.AddMetadataString("general.architecture", "qwen35");
+  first.AddMetadataUint32("split.no", 0);
+  first.AddMetadataUint32("split.count", 2);
+  first.AddMetadataInt32("split.tensors.count", 1);
+  first.AddMetadataString("general.name", "metadata-only");
+  auto header = first.Build(0);
+  // The final metadata string ends in a nonzero byte; remove only padding.
+  while (header.back() == 0)
+    header.pop_back();
+  Expect(header.size() % 32 != 0, "metadata fixture ends before alignment");
+  std::string error;
+  auto memory =
+      gufo::core::GgufReader::OpenMemory(header.data(), header.size(), &error);
+  Expect(memory && memory->GetTensorCount() == 0,
+         "unpadded metadata-only GGUF opens: " + error);
+  error.clear();
+  Expect(!gufo::core::GgufReader::OpenMemory(header.data(), header.size() - 1,
+                                             &error),
+         "truncated metadata still rejected");
+  GgufBuilder second;
+  second.AddMetadataUint32("split.no", 1);
+  second.AddMetadataUint32("split.count", 2);
+  second.AddMetadataInt32("split.tensors.count", 1);
+  second.AddTensor("output_norm.weight", {4}, gufo::core::GgmlType::kF32, 0);
+  WriteBinaryFile(first_path, header);
+  WriteBinaryFile(second_path, second.Build(16));
+  for (const auto& path : {first_path, second_path}) {
+    error.clear();
+    auto reader = gufo::core::GgufReader::OpenFile(path, &error);
+    Expect(reader && reader->GetTensorCount() == 1,
+           "metadata-only split opens from either shard: " + error);
+    Expect(reader->FindTensor("output_norm.weight") != nullptr,
+           "payload shard tensor found");
+    Expect(reader->GetMetadataString("general.name") == "metadata-only",
+           "metadata-only shard supplies metadata");
+  }
+  std::filesystem::remove_all(temp_dir);
+}
+
 void TestSplitGgufDiscovery() {
   const auto temp_dir =
       std::filesystem::temp_directory_path() /
@@ -447,6 +494,7 @@ int main() {
   TestNarrowIntegerArrays();
   std::cout << "Running GgufReader unit tests...\n";
   TestBasicGgufParsing();
+  TestMetadataOnlyShard();
   TestSplitGgufDiscovery();
   TestQuantizationLabel();
   TestMalformedGgufRejection();
