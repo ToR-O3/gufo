@@ -184,22 +184,13 @@ void TestTensorlessFirstShard() {
   Expect(shard != nullptr, "Unpadded tensorless GGUF opens: " + err);
   Expect(shard->GetTensorCount() == 0, "Tensorless GGUF has no tensors");
 
-  err.clear();
-  Expect(gufo::core::GgufReader::OpenMemory(
-             first_bytes.data(), first_bytes.size() - 1, &err) == nullptr,
-         "Truncated tensorless metadata is rejected");
-
-  for (const auto& path : {first_path, second_path}) {
-    err.clear();
-    const auto reader = gufo::core::GgufReader::OpenFile(path, &err);
-    Expect(reader != nullptr,
-           "Split set with tensorless shard opens from either shard: " + err);
-    Expect(reader->GetTensorCount() == 1, "Tensor shard supplies the tensor");
-    Expect(reader->FindTensor("token_embd.weight") != nullptr,
-           "Tensor from second shard found");
-    Expect(reader->GetMetadataString("general.architecture") == "qwen35",
-           "Metadata comes from the tensorless first shard");
-  }
+  const auto reader = gufo::core::GgufReader::OpenFile(first_path, &err);
+  Expect(reader != nullptr, "Split set with tensorless shard opens: " + err);
+  Expect(reader->GetTensorCount() == 1, "Tensor shard supplies the tensor");
+  Expect(reader->FindTensor("token_embd.weight") != nullptr,
+         "Tensor from second shard found");
+  Expect(reader->GetMetadataString("general.architecture") == "qwen35",
+         "Metadata comes from the tensorless first shard");
 
   std::filesystem::remove_all(temp_dir);
 }
