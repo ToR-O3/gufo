@@ -21,7 +21,8 @@
 namespace gufo::models::qwen38_flash_next::rocm {
 
 // Separate from the existing raw WeightUpload pool. Source GGUF mappings
-// remain untouched: ReadAt -> bounded source -> one F32 row -> pinned output.
+// remain untouched. Decode F32 directly into pinned output; F16 conversion
+// uses one temporary F32 row to retain the explicit rounding checks.
 // Each synchronous HIP copy completes before the pinned output is reused.
 class FloatUpload {
 public:
@@ -60,7 +61,8 @@ public:
             hipSuccess)
           throw std::runtime_error("floating weight pinned allocation failed");
       }
-      values_.resize(t.cols);
+      if (destination_type == core::GgmlType::kF16)
+        values_.resize(t.cols);
       scratch_high_water =
           std::max(scratch_high_water, source_.capacity() + kBufferBytes +
                                            values_.capacity() * sizeof(float));
@@ -94,11 +96,13 @@ public:
               input_bytes);
         }
         for (std::size_t row = 0; row < count; ++row) {
-          DecodeFloatRow(t.type, source_.data() + row * src_row, values_);
+          const auto* input = source_.data() + row * src_row;
           auto* output = pinned_ + row * dst_row;
           if (destination_type == core::GgmlType::kF32) {
-            std::memcpy(output, values_.data(), dst_row);
+            DecodeFloatRow(t.type, input,
+                           {reinterpret_cast<float*>(output), t.cols});
           } else {
+            DecodeFloatRow(t.type, input, values_);
             for (std::size_t i = 0; i < t.cols; ++i) {
               const auto h = FloatToHalf(values_[i]);
               std::memcpy(output + i * 2, &h, 2);
