@@ -62,23 +62,6 @@ T* Alloc(std::vector<void*>& allocations, std::size_t count,
   return static_cast<T*>(p);
 }
 
-WeightType SmallType(GgmlType type) {
-  switch (type) {
-    case GgmlType::kBF16:
-      return WeightType::kBF16;
-    case GgmlType::kF16:
-      return WeightType::kF16;
-    case GgmlType::kQ8_0:
-      return WeightType::kQ8_0;
-    case GgmlType::kIQ4_XS:
-      return WeightType::kIQ4_XS;
-    case GgmlType::kF32:
-      return WeightType::kF32;
-    default:
-      throw std::logic_error("unsupported Flash-Next matrix format");
-  }
-}
-
 // The tier's tiled kernels compute whole column tiles; below this width the
 // matrix-vector kernels read each weight once per row and win outright.
 constexpr std::uint32_t kVecBatch = 8;

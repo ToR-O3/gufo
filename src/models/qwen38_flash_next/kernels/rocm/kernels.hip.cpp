@@ -5,6 +5,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <hipcub/block/block_radix_sort.hpp>
 #include <stdexcept>
 #include <type_traits>
@@ -5408,20 +5409,25 @@ constexpr std::uint32_t kHalfMagic = 0x64646464U;  // 1024.0 high bytes
 
 /// block_q5_K: the Q4_K header, 32 high-bit bytes (bit s of byte j is the
 /// fifth bit of element j of K block s), then the Q4_K nibble layout.
-constexpr std::size_t kQ5KBlockBytes = 176;
+constexpr std::size_t kQ5KBlockBytes = sizeof(quant::block_q5_K);
 
 template<WeightType kType>
 __device__ __forceinline__ std::size_t RoutedF16RowBytes(std::size_t k) {
-  return kType == WeightType::kQ4_K      ? (k / 256) * sizeof(Q4KBlock)
-         : kType == WeightType::kQ5_K    ? (k / 256) * kQ5KBlockBytes
-         : kType == WeightType::kIQ4_XS  ? (k / 256) * 136
-         : kType == WeightType::kIQ4_NL  ? (k / 32) * 18
-         : kType == WeightType::kIQ2_S   ? (k / 256) * 82
-         : kType == WeightType::kIQ3_XXS ? (k / 256) * 98
-         : kType == WeightType::kIQ3_S   ? (k / 256) * 110
-         : kType == WeightType::kQ2_0    ? (k / 64) * 18
-         : kType == WeightType::kQ5_1    ? (k / 32) * sizeof(Q5_1Block)
-                                         : (k / 32) * sizeof(Q8_0Block);
+  constexpr auto elements =
+      quant::QuantizedBlockElements(static_cast<core::GgmlType>(kType));
+  static_assert(elements != 0);
+  constexpr auto bytes =
+      kType == WeightType::kQ4_K      ? sizeof(quant::block_q4_K)
+      : kType == WeightType::kQ5_K    ? sizeof(quant::block_q5_K)
+      : kType == WeightType::kIQ4_XS  ? sizeof(quant::block_iq4_xs)
+      : kType == WeightType::kIQ4_NL  ? sizeof(quant::block_iq4_nl)
+      : kType == WeightType::kIQ2_S   ? sizeof(quant::block_iq2_s)
+      : kType == WeightType::kIQ3_XXS ? sizeof(quant::block_iq3_xxs)
+      : kType == WeightType::kIQ3_S   ? sizeof(quant::block_iq3_s)
+      : kType == WeightType::kQ2_0    ? sizeof(quant::block_q2_0)
+      : kType == WeightType::kQ5_1    ? sizeof(Q5_1Block)
+                                      : sizeof(quant::block_q8_0);
+  return (k / elements) * bytes;
 }
 
 /// Bit `s` of each of the four bytes of `w`, packed into bits 0-3.

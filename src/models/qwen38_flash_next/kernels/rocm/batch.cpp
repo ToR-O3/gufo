@@ -40,23 +40,6 @@ bool AnyActive(std::span<const Item> items) {
   return active;
 }
 
-WeightType EmbeddingType(core::GgmlType type) {
-  switch (type) {
-    case core::GgmlType::kBF16:
-      return WeightType::kBF16;
-    case core::GgmlType::kF16:
-      return WeightType::kF16;
-    case core::GgmlType::kQ8_0:
-      return WeightType::kQ8_0;
-    case core::GgmlType::kIQ4_XS:
-      return WeightType::kIQ4_XS;
-    case core::GgmlType::kF32:
-      return WeightType::kF32;
-    default:
-      throw std::logic_error("unsupported Flash-Next embedding format");
-  }
-}
-
 }  // namespace
 
 Executor::Scratch Executor::RowScratch(const Scratch& b,
@@ -265,9 +248,8 @@ bool Executor::MtpForwardBatch(std::span<const MtpBatchItem> items,
                               hipMemcpyHostToDevice, stream_),
                error))
       return false;
-    EmbedTokens(model_->token_embd().data,
-                EmbeddingType(model_->token_embd().type), base.tokens,
-                base.mtp_embd, rows, c.hidden_size, 1, stream_);
+    EmbedTokens(model_->token_embd().data, SmallType(model_->token_embd().type),
+                base.tokens, base.mtp_embd, rows, c.hidden_size, 1, stream_);
     RmsNormRows(base.mtp_embd, l.nextn_enorm.f32(), base.mtp_embd, rows,
                 c.hidden_size, 1, c.rms_eps, stream_);
     for (std::size_t i = 0; i < items.size(); ++i) {
@@ -704,8 +686,7 @@ bool Executor::DenseBatch(const DeviceTensor& w, const float* x, float* out,
     return true;
   }
   if (w.type != core::GgmlType::kQ8_0) {
-    SmallGemm(w.data, EmbeddingType(w.type), x, out, rows, w.rows, w.cols,
-              stream_);
+    SmallGemm(w.data, SmallType(w.type), x, out, rows, w.rows, w.cols, stream_);
     return true;
   }
   if (!QuantizeBatch(x, rows, w.cols, error))
@@ -1052,9 +1033,9 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                error)) {
       return false;
     }
-    EmbedTokens(model_->token_embd().data,
-                EmbeddingType(model_->token_embd().type), base.tokens, base.res,
-                rows, c.hidden_size, c.hc_count, stream_);
+    EmbedTokens(model_->token_embd().data, SmallType(model_->token_embd().type),
+                base.tokens, base.res, rows, c.hidden_size, c.hc_count,
+                stream_);
     for (std::size_t i = 0; i < items.size(); ++i) {
       items[i].session->vision_input_.Inject(
           base.res + std::size_t{offsets[i]} * c.HcDim(),

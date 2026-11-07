@@ -5,8 +5,29 @@
 
 #include <cstddef>
 #include <gufo/ext/gguf_reader.hpp>
+#include <stdexcept>
+
+#include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
+// Shared type mapping for small projections and embedding lookups.
+inline WeightType SmallType(core::GgmlType type) {
+  switch (type) {
+    case core::GgmlType::kBF16:
+      return WeightType::kBF16;
+    case core::GgmlType::kF16:
+      return WeightType::kF16;
+    case core::GgmlType::kQ8_0:
+      return WeightType::kQ8_0;
+    case core::GgmlType::kIQ4_XS:
+      return WeightType::kIQ4_XS;
+    case core::GgmlType::kF32:
+      return WeightType::kF32;
+    default:
+      throw std::logic_error("unsupported Flash-Next matrix format");
+  }
+}
+
 // Packed formats supported by the shared quantized dense launchers.
 constexpr bool IsNativeQuantDense(core::GgmlType type) noexcept {
   return type == core::GgmlType::kIQ4_XS || type == core::GgmlType::kIQ4_NL ||
