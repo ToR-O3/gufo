@@ -4,6 +4,7 @@
 
 | Experiment | Outcome |
 | --- | --- |
+| Group the existing FP32 Q6_K projection at M=512, K=2560 | Retained. A grid dimension replaces repeated eight-row launches without changing the dot product or its rounding. Distinct inputs at 9, 129, 257, 2034, 2049 and 2057 rows match the previous launcher byte for byte; independent CPU checks pass. All logits at 159 mixed-text positions remain identical. In four matched pp2048/tg128 MTP cells, outputs and token counts match and no request phase regresses under the existing 5%/10 ms rule. The affected d16K repetitive prefill falls from 3278 to 2347 ms, below the 2541 ms pre-refactoring control. This is a focused comparison, not a full model sweep. |
 | Reuse the common Qwen fused Q6_K/IQ4_XS gate/up and SwiGLU kernel at M=640, K=2560 | Rejected. For 1, 8, 9, 33, 257 and 512 input rows, the existing separate projections took 0.042–0.160 ms versus 0.174–0.214 ms for the fused candidate. Q6_K differed at the final F16 boundary at every tested width; IQ4_XS differed from 33 rows onward. Keep the separate projections and their established rounding. These are operator timings, not complete inference rates. |
 | Extend the specialized 128-row down kernel to Q5_0 | Rejected. A split comparison differed by one F16 rounding step. The existing generic routed kernel at 16/48/128 rows passed the independent packed-weight checks and split comparison; no tolerance was relaxed. Full-model qualification is recorded separately. |
 

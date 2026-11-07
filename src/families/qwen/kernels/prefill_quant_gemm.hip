@@ -1712,9 +1712,17 @@ void LaunchGroupedQuantGEMMFp32(core::GgmlType type, const void* w,
   const bool iq4 =
       type == core::GgmlType::kIQ4_XS && m <= 512 && (k == 2560 || k == 10240);
   const bool q5 = type == core::GgmlType::kQ5_K && m == 512 && k == 2560;
-  if (batch > 8 && (iq4 || q5)) {
+  const bool q6 = type == core::GgmlType::kQ6_K && m == 512 && k == 2560;
+  if (batch > 8 && (iq4 || q5 || q6)) {
     const auto groups = static_cast<unsigned>(batch / 8);
-    if (iq4 && m == 320 && k == 10240) {
+    if (q6) {
+      // Keep the existing eight-row Q6_K dot products and two output rows
+      // per wave. A grid dimension replaces repeated host launches.
+      SmallBatchKQuantExactFp32GEMMKernel<16, 8, 2, core::GgmlType::kQ6_K, 1,
+                                          12, 1, false, 8, 32, 32, false,
+                                          false, false, true>
+          <<<dim3((m + 31) / 32, groups), 512, 0, stream>>>(w, x, y, m, k);
+    } else if (iq4 && m == 320 && k == 10240) {
       // HC down reuses each staged input across four output rows. Finish one
       // token's dots at a time to bound live registers; the existing compact
       // staging preserves every FP32 product and reduction order.

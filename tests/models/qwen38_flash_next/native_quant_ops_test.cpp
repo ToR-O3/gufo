@@ -44,7 +44,8 @@ float Half(float x) {
   return __half2float(__float2half(x));
 }
 void Case(GgmlType type, std::size_t k, std::size_t m) {
-  constexpr std::size_t rows = 257;
+  const bool grouped_q6 = type == GgmlType::kQ6_K && k == 2560 && m == 512;
+  const std::size_t rows = grouped_q6 ? 2057 : 257;
   const auto block = gufo::quant::QuantizedBlockElements(type);
   const auto block_bytes = gufo::quant::QuantizedRowBytes(type, block);
   const auto stride = gufo::quant::QuantizedRowBytes(type, k);
@@ -66,7 +67,7 @@ void Case(GgmlType type, std::size_t k, std::size_t m) {
                       .type = type,
                       .cols = k,
                       .rows = m,
-                      .name = "native-iq4-fixture"};
+                      .name = "native-quant-fixture"};
   for (std::size_t i = 0; i < m; ++i)
     q::cpu::DequantizeRow(tensor, 0, i, weights.data() + i * k);
   // Identical, unsaturated rows reveal batch-dependent dot products.
@@ -127,6 +128,28 @@ void Case(GgmlType type, std::size_t k, std::size_t m) {
       std::cout << gufo::core::ToString(type) << " k=" << k << " m=" << m
                 << " n=" << n << " prefill=" << prefill << " rel_rms=" << rms
                 << '\n';
+    }
+  }
+  if (grouped_q6) {
+    // Distinct rows expose a wrong group stride; compare with the unchanged
+    // per-group launcher at full groups and the real prefill tail shapes.
+    for (auto& value : x)
+      value = (int(Next(rng) % 20001) - 10000) * 0.000073F;
+    Check(hipMemcpy(dx, x.data(), x.size() * sizeof(float),
+                    hipMemcpyHostToDevice));
+    std::vector<float> separate(got.size());
+    for (std::size_t n : {9U, 129U, 257U, 2034U, 2049U, 2057U}) {
+      r::NativeQuantDense(dw, type, static_cast<float*>(dx), half,
+                          static_cast<float*>(dy), n, m, k, false, nullptr);
+      Check(hipMemcpy(separate.data(), dy, n * m * sizeof(float),
+                      hipMemcpyDeviceToHost));
+      r::NativeQuantDense(dw, type, static_cast<float*>(dx), half,
+                          static_cast<float*>(dy), n, m, k, true, nullptr);
+      Check(hipMemcpy(got.data(), dy, n * m * sizeof(float),
+                      hipMemcpyDeviceToHost));
+      if (std::memcmp(separate.data(), got.data(), n * m * sizeof(float)) != 0)
+        throw std::runtime_error(
+            "grouped Q6_K projection changed row arithmetic");
     }
   }
   if (type == GgmlType::kIQ4_XS) {
@@ -278,6 +301,7 @@ int main() {
     Case(GgmlType::kQ4_K, 2560, 1057);
     Case(GgmlType::kQ4_K, 6144, 2560);
     Case(GgmlType::kQ6_K, 2560, 1057);
+    Case(GgmlType::kQ6_K, 2560, 512);
     Case(GgmlType::kQ6_K, 6144, 2560);
     std::cout << "PASS native quantized dense / embedding, exact allocation "
                  "boundaries\n";
