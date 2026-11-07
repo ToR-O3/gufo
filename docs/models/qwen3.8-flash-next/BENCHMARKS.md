@@ -6,6 +6,38 @@ Gufo `fec4759d` (October 18, 2026); llama.cpp `b11069` AR and `6fcaa16f` MTP
 (September 22–23). Positive gain favors Gufo.
 [Quality and measurement details](QUALITY.md#benchmark-method) · [Model identities](artifacts/model-identities.json)
 
+## Native quantized projection controls, November 8, 2026
+
+These controls use mixed IQ4_XS weights and a shared Q8_0 MTP sidecar,
+with the built-in PLE. They do not update the historical Q4 checkpoint or
+reference-engine tables. Each cell is one warmed HTTP observation with an
+approximately 2,048-token suffix and 128 generated tokens.
+
+Grouping the Q6_K key/value projections reuses the previous eight-row kernel
+and its FP32 reduction order. Comparing immediately before and after this
+change gives identical generated text and token counts in all four cells.
+
+| Workload | Cached depth | Previous prefill (ms) | Grouped prefill (ms) | Previous decode (ms) | Grouped decode (ms) |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Prose | 0 | 2,923.2 | 2,108.4 | 7,177.2 | 7,321.5 |
+| Prose | 16,384 | 1,974.0 | 1,975.2 | 3,680.4 | 3,795.6 |
+| Repetition | 0 | 1,903.9 | 1,868.0 | 1,501.3 | 1,548.1 |
+| Repetition | 16,384 | 3,278.0 | 2,347.4 | 4,446.8 | 4,437.3 |
+
+No request phase exceeds both the unchanged 5% and 10 ms regression margins.
+These focused observations are not a three-repetition performance study.
+The earlier compact expert-down change also retains identical text, token
+counts and draft acceptance in four matched controls, with no phase flags.
+
+Across the complete quantized-path refactoring, prefill is faster than the
+original baseline in these four cells. Prose generation changes after the
+Q5_0 F16 path: decode time rises from 6,036.6 to 7,321.5 ms at depth zero,
+and from 3,482.1 to 3,795.6 ms at depth 16,384, with different output text and
+draft work. These observations remain visible; they are not matched-output
+kernel timings or evidence that all generation became faster. Repetitive
+output stays identical and decode time remains within the original margins.
+See [the numerical scope](QUALITY.md#native-quantized-paths-november-8-2026).
+
 ## PR #877 controls, November 4, 2026
 
 Pinned main `1c75887b` versus runtime candidate `e6b2a4c1`, Nix production

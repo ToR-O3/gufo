@@ -1,5 +1,48 @@
 # Qwen3.8 Flash-Next quality
 
+## Native quantized paths (November 8, 2026)
+
+The Q5_0 routed F16 path is checked against independently decoded packed
+weights, MMQ and an FP64 dot product. Generic 16/48/128-token tiles retain
+split-pass rounding. The specialized 128-token candidate failed an exact F16
+comparison and was rejected without relaxing the contract.
+
+Input reuse and the grouped Q6_K projection preserve the candidate's numerical
+results: all 159 fixed-history logit rows are byte-identical before and after
+each change. Q6_K additionally matches the previous FP32 launcher exactly for
+distinct rows at widths 9, 129, 257, 2034, 2049 and 2057. Independent CPU checks
+and the existing allocation-boundary checks pass.
+
+A separate CPU FP32 oracle evaluates the actual mixed weights, including IQ4_XS, IQ3_XXS and
+Q5_0, over English, Japanese, prose, code and JSON. Using the unchanged
+reference scorer, the 159-position comparison is:
+
+| Metric | Before routed Q5_0 F16 | Candidate |
+| --- | ---: | ---: |
+| Mean KL lower bound (top 256 plus tail) | 0.0136270 | 0.0113673 |
+| Maximum KL lower bound | 0.2149023 | 0.1215895 |
+| Top-1 agreement | 147/159 | 143/159 |
+| Mean next-token NLL (158 positions) | 2.3192346 | 2.3292876 |
+
+The paired mean KL change is -0.0022597 (95% bootstrap interval
+[-0.0049904, 0.0003327]); NLL changes by +0.0100530
+([-0.0188430, 0.0389105]). Both intervals include zero, while top-1 agreement
+falls. This small sample does not establish an overall quality improvement or
+qualify other weight sets and architectures. The new prefill arithmetic can
+change generated prose and MTP acceptance; those trajectories are recorded
+separately from exact-output timing controls.
+
+
+Cache and long-context functional assertions pass in built-in PLE AR/MTP
+and external Q8_0 PLE MTP. Final AR and external-PLE runs each cover all
+11 selected suites, including cancellation and restarted disk reuse. A
+focused final MTP replay reaches the long JSON stop case with identical
+output, token counts and draft acceptance: decode is 192.82 versus 194.23 ms,
+with no repeat of the earlier slowdown. The strict comparison still records
+changed cancellation continuations and inconclusive phase timings; it is not
+a complete timing pass. Those results are retained separately from functional
+success and the matched projection controls.
+
 ## Raw-completion follow-up, November 4, 2026
 
 GitHub exposed a case missing from the first qualification: a raw completion
