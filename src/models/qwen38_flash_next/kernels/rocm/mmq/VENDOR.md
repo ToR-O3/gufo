@@ -6,8 +6,10 @@ The upstream source directory is `ggml/src/ggml-cuda`; Gufo builds these
 sources with HIP for AMD Strix Halo (`gfx1151`).
 
 `qfn_mmq.h` is the public adapter. It supplies Q8_0 dense projections and
-Q4_K, Q5_K, Q5_1, Q8_0, IQ2_S, IQ3_XXS, IQ3_S, IQ4_XS, IQ4_NL and Q2_0
-routed expert projections, including the paired Q4_K gate/up path.
+Q4_K, Q5_K, Q5_0, Q5_1, Q8_0, IQ2_S, IQ3_XXS, IQ3_S, IQ4_XS, IQ4_NL
+and Q2_0 routed expert projections. Paired matrix gate/up projections share
+input preparation for Q4_K, Q5_K, Q8_0, IQ2_S, IQ3_XXS, IQ3_S and IQ4_XS;
+other formats retain their vector fallback.
 `qfn_ggml_stubs.*` supplies the minimal context and scratch pool without the
 ggml graph runtime. Gufo owns scheduling and HIP graphs.
 
@@ -49,13 +51,14 @@ The adapter retains the actual format-specific row and expert strides.
 IQ4_NL tiled loads sweep 256 values even for a partial final K tile. Their
 activation padding is zero, and the weight allocation must have at least
 126 readable zero bytes after the whole tensor. `DeviceModel` supplies a
-4096-byte zero tail. At the ISTA IQ3_S down-projection width K=640, each row is
+4096-byte zero tail. At the down-projection width K=640, each row is
 20 blocks (360 bytes); the last tile reads 72 additional bytes. Rows and
 experts are not padded or expanded.
 
-`native_expert_ops_test.cpp` checks the six low-bit vector/prefill paths
+`native_expert_ops_test.cpp` checks the six IQ/Q2_0 vector/prefill paths
 against values generated directly by the pinned upstream scalar decoders at
-K=2560/640. It covers 512 physical expert strides, the last expert, inactive
+K=2560/640. Q5_0 additionally uses directly encoded five-bit codes and an
+independent signed-scale reference, including the full down-projection shape. It covers 512 physical expert strides, the last expert, inactive
 slots, ragged batches and the exact fractional-dot goldens above. Exact dyadic
 activations make Q8 input quantization lossless; FP64 reference dots use the
 ordinary FP32 forward-error bound without hiding activation error.
