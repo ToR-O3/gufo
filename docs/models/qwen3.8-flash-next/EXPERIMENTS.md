@@ -1,5 +1,12 @@
 # Qwen3.8 Flash-Next experiments
 
+## Native quantized projection review (November 8, 2026)
+
+| Experiment | Outcome |
+| --- | --- |
+| Reuse the common Qwen fused Q6_K/IQ4_XS gate/up and SwiGLU kernel at M=640, K=2560 | Rejected. For 1, 8, 9, 33, 257 and 512 input rows, the existing separate projections took 0.042–0.160 ms versus 0.174–0.214 ms for the fused candidate. Q6_K differed at the final F16 boundary at every tested width; IQ4_XS differed from 33 rows onward. Keep the separate projections and their established rounding. These are operator timings, not complete inference rates. |
+| Extend the specialized 128-row down kernel to Q5_0 | Rejected. A split comparison differed by one F16 rounding step. The existing generic routed kernel at 16/48/128 rows passed the independent packed-weight checks and split comparison; no tolerance was relaxed. Full-model qualification is recorded separately. |
+
 ## Raw completion fallback (November 4, 2026)
 
 Retained: capture the aligned prompt tail in-pass before retaining the exact
