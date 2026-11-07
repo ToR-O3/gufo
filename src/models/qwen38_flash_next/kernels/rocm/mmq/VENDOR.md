@@ -48,6 +48,11 @@ The newly enabled formats preserve nonfinite results rather than using the
 legacy Q4/Q5/Q8 vector result sanitization.
 
 The adapter retains the actual format-specific row and expert strides.
+Q5_0, IQ4_NL and Q2_0 down views at K=640 reuse the existing expert-ordered
+Q8_1 quantizer and four-output-row vector launch for 2–640 slot rows.
+Larger fallback batches retain their unsorted two-row route. The established
+Q5_1 four/eight-row and Q8_0 four-row dispatch rules are unchanged.
+
 IQ4_NL tiled loads sweep 256 values even for a partial final K tile. Their
 activation padding is zero, and the weight allocation must have at least
 126 readable zero bytes after the whole tensor. `DeviceModel` supplies a

@@ -21,6 +21,15 @@ constexpr __host__ __device__ int mmvq_moe_max_batch(ggml_type type) {
     return type == GGML_TYPE_Q4_K || type == GGML_TYPE_Q5_K ? 4 : 8;
 }
 
+// Down-view formats whose vector kernels can scatter expert-ordered rows.
+constexpr bool mmvq_moe_ordered_down(ggml_type type, int slots) {
+  // Preserve established Q5_1/Q8 dispatch. Bound the quadratic rank scan
+  // for newly enabled formats; wider fallback batches keep their old path.
+  return type == GGML_TYPE_Q5_1 || type == GGML_TYPE_Q8_0 ||
+         (slots <= 640 && (type == GGML_TYPE_Q5_0 ||
+                          type == GGML_TYPE_IQ4_NL || type == GGML_TYPE_Q2_0));
+}
+
 void mul_mat_vec_q8_dispatch(const void* weights, const void* gate,
                             const block_q8_1* input, float* output,
                             int k, int rows, int tokens, int input_stride,

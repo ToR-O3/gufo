@@ -154,6 +154,9 @@ void Q5_0Dots() {
     }
     Case(static_cast<int>(gufo::core::GgmlType::kQ5_0), cols, rows, packed,
          reference, true, cols == 640 && rows == 2560 ? 1 : 2);
+    if (cols == 640)
+      Case(static_cast<int>(gufo::core::GgmlType::kQ5_0), cols, rows, packed,
+           reference, false, 1);
   }
 }
 }  // namespace
@@ -182,6 +185,11 @@ int main() {
       Read(in, ref.data(), ref.size() * 4);
       if (i < 6)
         Case(type, cols, rows, packed, ref);
+      if (type == static_cast<unsigned>(gufo::core::GgmlType::kIQ4_NL) ||
+          type == static_cast<unsigned>(gufo::core::GgmlType::kQ2_0))
+        // Down-view inputs are independent per slot. Three fixture rows
+        // also exercise the partial tail of a four-row wave.
+        Case(type, cols, rows, packed, ref, false, 1);
     }
     std::cout << "PASS independent native expert vector/prefill dots and "
                  "fractional goldens\n";

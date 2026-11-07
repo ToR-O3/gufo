@@ -413,7 +413,7 @@ static int moe_vector_projection(int weight_type, const void* W,
   // slots that share an expert read its weights in the same block.
   const bool by_expert =
       !gated && !W_b && !X_q8 &&
-      (type == GGML_TYPE_Q5_1 || type == GGML_TYPE_Q8_0) && K == 640 &&
+      mmvq_moe_ordered_down(type, n_tokens) && K == 640 &&
       n_expert_used == 1 && n_tokens > 1;
   const size_t group_bytes =
       by_expert ? 2 * size_t(n_tokens) * sizeof(int32_t)
