@@ -1026,10 +1026,17 @@ void CheckVectorGrouping(bool down = false) {
   CheckHip(hipFree(di), "grouping IDs free");
 }
 
-void CheckPairedMmq() {
+void CheckPairedMmq(q::WeightType type) {
   constexpr int experts = 8, rows = 64, cols = 512, tokens = 65, used = 3;
-  const auto a = MakeQ4K(experts, rows, cols, 11);
-  const auto b = MakeQ4K(experts, rows, cols, 23);
+  const auto make = [&](std::uint32_t seed) {
+    return type == q::WeightType::kQ4_K   ? MakeQ4K(experts, rows, cols, seed)
+           : type == q::WeightType::kQ5_K ? MakeQ5K(experts, rows, cols, seed)
+           : type == q::WeightType::kQ8_0 ? MakeQ8_0(experts, rows, cols, seed)
+           : type == q::WeightType::kIQ4_XS
+               ? MakeIQ4(type, experts, rows, cols, seed)
+               : MakePackedQuant(type, experts, rows, cols, seed);
+  };
+  const auto a = make(11), b = make(23);
   std::vector<float> x(tokens * cols);
   std::uint32_t seed = 37;
   for (auto& v : x)
@@ -1047,12 +1054,20 @@ void CheckPairedMmq() {
   auto* rb = Upload(zeros);
   auto* pa = Upload(zeros);
   auto* pb = Upload(zeros);
-  if (qfn_mmq_q4_K_moe_raw(wa, dx, di, ra, rows, cols, tokens, experts, used,
-                           nullptr) ||
-      qfn_mmq_q4_K_moe_raw(wb, dx, di, rb, rows, cols, tokens, experts, used,
-                           nullptr) ||
-      qfn_mmq_q4_K_moe_pair_unique(wa, wb, dx, di, pa, pb, rows, cols, tokens,
-                                   experts, used, nullptr)) {
+  const auto separate = [&](const void* weights, float* out) {
+    const auto raw = type == q::WeightType::kQ4_K      ? qfn_mmq_q4_K_moe_raw
+                     : type == q::WeightType::kQ5_K    ? qfn_mmq_q5_K_moe_raw
+                     : type == q::WeightType::kQ8_0    ? qfn_mmq_q8_0_moe_raw
+                     : type == q::WeightType::kIQ2_S   ? qfn_mmq_iq2_s_moe_raw
+                     : type == q::WeightType::kIQ3_XXS ? qfn_mmq_iq3_xxs_moe_raw
+                     : type == q::WeightType::kIQ3_S   ? qfn_mmq_iq3_s_moe_raw
+                                                       : qfn_mmq_iq4_xs_moe_raw;
+    return raw(weights, dx, di, out, rows, cols, tokens, experts, used,
+               nullptr);
+  };
+  if (separate(wa, ra) || separate(wb, rb) ||
+      qfn_mmq_moe_pair(static_cast<int>(type), wa, wb, dx, di, pa, pb, rows,
+                       cols, tokens, experts, used, nullptr)) {
     throw std::runtime_error("paired MMQ launch failed");
   }
   const bool equal = Download(ra, zeros.size()) == Download(pa, zeros.size()) &&
@@ -1427,10 +1442,19 @@ bool CheckQ5_0() {
 
 int main(int argc, char** argv) {
   try {
+    if (argc == 2 && std::string_view(argv[1]) == "--mmq-pair-only") {
+      for (auto type :
+           {q::WeightType::kQ4_K, q::WeightType::kQ5_K, q::WeightType::kQ8_0,
+            q::WeightType::kIQ2_S, q::WeightType::kIQ3_XXS,
+            q::WeightType::kIQ3_S, q::WeightType::kIQ4_XS})
+        CheckPairedMmq(type);
+      return 0;
+    }
     if (argc == 2 && std::string_view(argv[1]) == "--q5-0-only")
       return CheckQ5_0() ? 0 : 1;
     if (argc != 1)
-      throw std::runtime_error("usage: routed_wmma_ops_test [--q5-0-only]");
+      throw std::runtime_error(
+          "usage: routed_wmma_ops_test [--q5-0-only | --mmq-pair-only]");
     if (!CheckQ5_0())
       throw std::runtime_error("Q5_0 routed expert check failed");
     CheckGatedDecodeShape();
@@ -1443,7 +1467,11 @@ int main(int argc, char** argv) {
     ReportVectorAccuracy();
     CheckVectorGrouping();
     CheckVectorGrouping(true);
-    CheckPairedMmq();
+    for (auto type :
+         {q::WeightType::kQ4_K, q::WeightType::kQ5_K, q::WeightType::kQ8_0,
+          q::WeightType::kIQ2_S, q::WeightType::kIQ3_XXS, q::WeightType::kIQ3_S,
+          q::WeightType::kIQ4_XS})
+      CheckPairedMmq(type);
     bool ok = true;
     // Gate/up view: 64 experts, top-10, 640 x 2560 Q4_K.
     ok = Ok(Run(q::WeightType::kQ4_K, 300, 10, 64, 640, 2560, 0x1234ABCDU)) &&

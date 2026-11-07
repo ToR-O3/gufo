@@ -2216,14 +2216,18 @@ bool Executor::GatedExperts(const DeviceTensor& a, const DeviceTensor& b,
       AssignError(error_msg, "expert vector pair GEMM failed");
       return false;
     }
-  } else if (same_shape && a.type == GgmlType::kQ4_K) {
-    // The wide Q4_K path shares its gather and tiled quantization as well.
+  } else if (same_shape &&
+             (a.type == GgmlType::kQ4_K || a.type == GgmlType::kQ5_K ||
+              a.type == GgmlType::kQ8_0 || a.type == GgmlType::kIQ2_S ||
+              a.type == GgmlType::kIQ3_XXS || a.type == GgmlType::kIQ3_S ||
+              a.type == GgmlType::kIQ4_XS)) {
+    // Remaining MMQ pairs share the same gather and tiled quantization.
     RoutedHints(a, n_tokens);
-    if (qfn_mmq_q4_K_moe_pair_unique(
-            a.data, b.data, x, ids, out, s_.up_e, static_cast<int>(a.rows),
-            static_cast<int>(a.cols), static_cast<int>(n_tokens),
-            static_cast<int>(a.experts), static_cast<int>(n_used),
-            stream_) != 0) {
+    if (qfn_mmq_moe_pair(static_cast<int>(a.type), a.data, b.data, x, ids, out,
+                         s_.up_e, static_cast<int>(a.rows),
+                         static_cast<int>(a.cols), static_cast<int>(n_tokens),
+                         static_cast<int>(a.experts), static_cast<int>(n_used),
+                         stream_) != 0) {
       AssignError(error_msg, "expert pair GEMM failed");
       return false;
     }

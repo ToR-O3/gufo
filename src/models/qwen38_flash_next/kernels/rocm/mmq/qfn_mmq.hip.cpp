@@ -627,14 +627,25 @@ extern "C" int qfn_mmq_q5_K_moe_raw(
                                             nullptr, nullptr);
 }
 
-extern "C" int qfn_mmq_q4_K_moe_pair_unique(
-    const void * W_a, const void * W_b, const float * X, const int32_t * ids,
-    float * out_a, float * out_b, int M, int K, int n_tokens, int n_experts,
-    int n_expert_used, hipStream_t stream) {
+extern "C" int qfn_mmq_moe_pair(
+    int weight_type, const void * W_a, const void * W_b, const float * X,
+    const int32_t * ids, float * out_a, float * out_b, int M, int K,
+    int n_tokens, int n_experts, int n_expert_used, hipStream_t stream) {
     if (!W_b || !out_b) return -1;
-    return qfn_mmq_moe_impl<GGML_TYPE_Q4_K>("qfn_mmq_q4_K_moe_pair_unique",
-        W_a, X, ids, out_a, M, K, n_tokens, n_experts, n_expert_used, stream,
-        W_b, out_b);
+    const auto launch = [&]<ggml_type type>() {
+        return qfn_mmq_moe_impl<type>("qfn_mmq_moe_pair", W_a, X, ids, out_a,
+            M, K, n_tokens, n_experts, n_expert_used, stream, W_b, out_b);
+    };
+    switch (static_cast<ggml_type>(weight_type)) {
+        case GGML_TYPE_Q4_K: return launch.template operator()<GGML_TYPE_Q4_K>();
+        case GGML_TYPE_Q5_K: return launch.template operator()<GGML_TYPE_Q5_K>();
+        case GGML_TYPE_Q8_0: return launch.template operator()<GGML_TYPE_Q8_0>();
+        case GGML_TYPE_IQ2_S: return launch.template operator()<GGML_TYPE_IQ2_S>();
+        case GGML_TYPE_IQ3_XXS: return launch.template operator()<GGML_TYPE_IQ3_XXS>();
+        case GGML_TYPE_IQ3_S: return launch.template operator()<GGML_TYPE_IQ3_S>();
+        case GGML_TYPE_IQ4_XS: return launch.template operator()<GGML_TYPE_IQ4_XS>();
+        default: return -1;
+    }
 }
 
 extern "C" size_t qfn_mmq_q8_1_bytes(int N, int K) {
