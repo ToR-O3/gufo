@@ -4,6 +4,7 @@
 #include <hip/hip_runtime.h>
 
 #include <cstddef>
+#include <gufo/ext/experimental/ggml_dequant.hpp>
 #include <gufo/ext/gguf_reader.hpp>
 #include <stdexcept>
 
@@ -34,16 +35,24 @@ constexpr bool IsNativeQuantDense(core::GgmlType type) noexcept {
          type == core::GgmlType::kQ4_K || type == core::GgmlType::kQ5_K ||
          type == core::GgmlType::kQ6_K;
 }
-// Packed weights remain unchanged. Decode/verification uses FP32 activations
-// with width-independent arithmetic. Prefill projections with <=512 outputs
-// retain FP32 activations and row dots. Larger prefill projections round
-// activations and decoded weights to F16 in the existing WMMA kernel,
-// accumulating in FP32. Scratch holds exactly rows * cols half values; callers
-// bound rows to its capacity.
+// The matrix route retains FP32 reductions for small output projections.
+// Its F16 kernels require complete encoded weight blocks. The caller owns
+// the phase policy and bounds the activation rows to its staging capacity.
+constexpr bool NativeQuantDenseF16Route(core::GgmlType type,
+                                        std::size_t outputs,
+                                        std::size_t cols) noexcept {
+  const auto block = quant::QuantizedBlockElements(type);
+  return IsNativeQuantDense(type) && outputs > 512 && cols != 0 && block != 0 &&
+         cols % block == 0;
+}
+// Packed weights remain unchanged. Vector mode retains FP32 activations;
+// matrix mode uses F16 weights/activations only for the qualified route above.
+// Other matrix projections use the grouped FP32 row-dot path. Scratch holds
+// rows * cols half values; callers bound rows to its capacity.
 void NativeQuantDense(const void* weights, core::GgmlType type,
                       const float* input, void* half_scratch, float* output,
                       std::size_t rows, std::size_t outputs, std::size_t cols,
-                      bool prefill, hipStream_t stream);
+                      bool matrix_rows, hipStream_t stream);
 // Wide prefill over the same cached F16 activation rows as the Q4/Q8 paths.
 // No weight storage or conversion is allocated by this launcher.
 void NativeQuantDenseF16(const void* weights, core::GgmlType type,

@@ -1921,17 +1921,17 @@ bool Executor::GatedDense(const DeviceTensor& up, const DeviceTensor& gate,
 }
 
 void Executor::PrepareHalfInput(const float* x, std::uint32_t rows,
-                                std::uint32_t cols) const {
+                                std::uint32_t cols, bool bf16) const {
   if (half_src_ == x && half_rows_ == rows && half_cols_ == cols &&
-      !half_bf16_) {
+      half_bf16_ == bf16) {
     return;
   }
-  NarrowActivations(x, s_.x_half, false, static_cast<std::size_t>(rows) * cols,
+  NarrowActivations(x, s_.x_half, bf16, static_cast<std::size_t>(rows) * cols,
                     stream_);
   half_src_ = x;
   half_rows_ = rows;
   half_cols_ = cols;
-  half_bf16_ = false;
+  half_bf16_ = bf16;
 }
 
 bool Executor::DenseF16Route(const DeviceTensor& w,
@@ -1949,7 +1949,8 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
       const auto rows = std::min(piece, n_tokens - first);
       const float* src = x + std::size_t{first} * w.cols;
       float* dst = out + std::size_t{first} * w.rows;
-      if (prefill_phase && w.rows > 512) {
+      if (MatrixRows(n_tokens) &&
+          NativeQuantDenseF16Route(w.type, w.rows, w.cols)) {
         // Reuse the Q4/Q8 preparation and its cache of narrowed rows.
         PrepareHalfInput(src, rows, w.cols);
         NativeQuantDenseF16(w.data, w.type, s_.x_half, dst, rows, w.rows,
@@ -2028,15 +2029,7 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
   }
   const bool bf16 = w.type == GgmlType::kBF16;
   const hipDataType type = bf16 ? HIP_R_16BF : HIP_R_16F;
-  if (!(half_src_ == x && half_rows_ == n_tokens && half_cols_ == w.cols &&
-        half_bf16_ == bf16)) {
-    NarrowActivations(x, s_.x_half, bf16, static_cast<std::size_t>(n) * k,
-                      stream_);
-    half_src_ = x;
-    half_rows_ = n_tokens;
-    half_cols_ = w.cols;
-    half_bf16_ = bf16;
-  }
+  PrepareHalfInput(x, n_tokens, w.cols, bf16);
   return blaslt_->Gemm(w.data, s_.x_half, out, type, m, n, k, error_msg);
 }
 
@@ -2470,7 +2463,7 @@ bool Executor::HcMix(const DeviceMixer& m, const float* res, bool normed,
   const bool vectorized =
       xn_half_ ||
       (MatrixRows(n_tokens) && c.hc_count == 4 && c.hidden_size % 4 == 0);
-  // Orca's small IQ4 inject projection uses only FP32 and leaves x_half
+  // The small IQ4 inject projection uses only FP32 and leaves x_half
   // untouched. Keep all other mixers on their existing output routes.
   const bool iq4_half_output =
       prefill_phase && !xn_half_ && extras && vectorized && c.hc_count == 4 &&
@@ -2811,22 +2804,25 @@ bool Executor::LinearAttention(const DeviceLayer& l, Session::LinearState& s,
   const bool tiled = MatrixRows(n_tokens) &&
                      l.ssm_out.type == GgmlType::kQ8_0 &&
                      n_tokens <= options_.max_batch;
-  // IQ4 prefill already consumes F16 activations. Reuse the GDN epilogue's
-  // direct F16 output instead of storing F32 rows and narrowing them again.
-  const bool iq4_half_output =
+  // Native quant prefill already consumes contiguous F16 activations.
+  // Reuse the GDN epilogue without the intermediate F32 store/conversion.
+  const bool native_half_output =
       prefill_phase && !speculative && project_output &&
-      l.ssm_out.type == GgmlType::kIQ4_XS && n_tokens <= options_.max_batch &&
-      l.ssm_out.rows == 2560 && l.ssm_out.cols == 6144;
+      NativeQuantDenseF16Route(l.ssm_out.type, l.ssm_out.rows,
+                               l.ssm_out.cols) &&
+      n_tokens <= options_.max_batch && l.ssm_out.rows == 2560 &&
+      l.ssm_out.cols == 6144;
   const bool half_output =
-      iq4_half_output ||
+      native_half_output ||
       (tiled && l.ssm_out.rows == 2560 && l.ssm_out.cols == 6144);
   auto* out_half =
       half_output ? reinterpret_cast<__half*>(s_.gdn_out) : nullptr;
   // Shift successive rows off the 12 KiB pitch while retaining every half.
   // The existing F32 scratch has room for these slightly padded F16 rows.
   const std::uint32_t half_stride =
-      half_output && !iq4_half_output && n_tokens >= 1024 ? l.ssm_out.cols + 32
-                                                          : 0;
+      half_output && !native_half_output && n_tokens >= 1024
+          ? l.ssm_out.cols + 32
+          : 0;
   // A decode batch's output projection reads the epilogue's Q8_1 rows.
   const std::uint32_t value_dim = c.SsmValueDim();
   const bool out_q8_1 = project_output && !tiled && !MatrixRows(n_tokens) &&
@@ -2852,7 +2848,7 @@ bool Executor::LinearAttention(const DeviceLayer& l, Session::LinearState& s,
     return true;
   }
   if (half_output) {
-    if (iq4_half_output) {
+    if (native_half_output) {
       NativeQuantDenseF16(l.ssm_out.data, l.ssm_out.type, out_half, out,
                           n_tokens, l.ssm_out.rows, l.ssm_out.cols, stream_);
       return true;
@@ -3758,17 +3754,36 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
                              : 0U;
     const auto finish = [&](std::uint32_t rows) {
       defer_residual_ = WmmaExperts(l, rows);
-      // The wide FFN reads the mix only through its F16 rows (router, routed
-      // experts) and tiled Q8 rows (shared expert).
-      const bool no_f32 = prefill_phase && defer_residual_ &&
-                          rows <= options_.max_batch &&
-                          l.router.type == GgmlType::kF16 &&
-                          l.shexp_gate.type == GgmlType::kQ8_0 &&
-                          l.shexp_up.type == GgmlType::kQ8_0;
+      const bool half_consumers =
+          prefill_phase && defer_residual_ && rows <= options_.max_batch &&
+          l.router.type == GgmlType::kF16 && l.router.cols == c.hidden_size;
+      // GatedDense must leave the routed input in x_half intact. These
+      // down routes use the private shared-expert staging buffer; other
+      // formats may overwrite x_half and need the F32 mix for rebuilding it.
+      const bool shared_preserves_half =
+          l.shexp_down.cols == l.shexp_up.rows &&
+          (DenseF16Route(l.shexp_down, rows) ||
+           (l.shexp_down.type == GgmlType::kIQ4_NL &&
+            NativeQuantDenseF16Route(l.shexp_down.type, l.shexp_down.rows,
+                                     l.shexp_down.cols)));
+      const bool shared_half =
+          half_consumers && shared_preserves_half &&
+          NativeQuantDenseF16Route(l.shexp_gate.type, l.shexp_gate.rows,
+                                   l.shexp_gate.cols) &&
+          NativeQuantDenseF16Route(l.shexp_up.type, l.shexp_up.rows,
+                                   l.shexp_up.cols) &&
+          l.shexp_gate.cols == c.hidden_size &&
+          l.shexp_up.cols == c.hidden_size;
+      // Router, routed experts and native shared projections consume the
+      // same F16 rows. Q8 shared projections still need the tiled Q8 copy.
+      const bool no_f32 =
+          half_consumers && shared_preserves_half &&
+          (shared_half || (l.shexp_gate.type == GgmlType::kQ8_0 &&
+                           l.shexp_up.type == GgmlType::kQ8_0));
       Combine(s_.res, l.hc_ffn.norm.f32(), rows, InjectWeights(l.hc_ffn),
               &l.hc_ffn);
       if (!HcMix(l.hc_ffn, s_.res, true, s_.mixed, s_.inject, rows, error_msg,
-                 false, no_f32) ||
+                 shared_half, no_f32) ||
           !Moe(l, s_.mixed, s_.block_out, rows, error_msg))
         return false;
       // The next layer's mixer follows in this pass (without a PLE step:
