@@ -28,7 +28,7 @@ MTP=/path/to/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
 
 To use a higher-precision PLE table with the same quantized trunk, pass
 `--ple-model /path/to/standalone-ple.gguf` to `gufo serve llm`. The sidecar must
-contain `per_layer_token_embd.weight` in BF16 or IQ4_NL with the same shape and
+contain `per_layer_token_embd.weight` in BF16, Q8_0 or IQ4_NL with the same shape and
 PLE metadata as the trunk, including hash multipliers, head offsets/vocabularies
 and special token IDs. Use a sidecar from the same base model; matching metadata
 alone does not prove that independently trained embedding weights are compatible.
