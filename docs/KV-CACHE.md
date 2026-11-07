@@ -310,6 +310,14 @@ The cache reserves the full payload before enabling this capture. Disk,
 image, intermediate and learned-prefix checkpoints still stop prefill at
 their boundary.
 
+**A checkpoint never splits an indivisible input.** A model whose prompt
+context declares spans through `TextPromptContext::PrefillStop`, such as image
+rows that must share one forward, never has a prefill step, planned checkpoint,
+stable snapshot or shared-prefix boundary end inside one, and never restores a
+checkpoint inside one. Such a position moves to the span's first row, and a step
+that starts at a span takes it whole even beyond its token budget. Contexts that
+declare no spans change no position.
+
 **The reused frontier must be frozen before prefill.** Prefill mutates the
 leased state in place, so a frontier another request might branch from has to
 be captured first.
@@ -322,6 +330,17 @@ A same-session rewind allocates backing blocks for only the rows it would
 overwrite and copies them once for checkpoints sharing those rows. Appending
 allocates no K/V backing blocks. Restore keeps the still-live prefix without
 a K/V upload.
+
+A model with a sliding attention window declares that attention as a
+window-rows component (`ComponentKind::kWindowRows` with `window_rows`) instead
+of private state. A checkpoint at row n keeps only the chunks from the one
+containing row n - `window_rows` to n and shares them with neighbouring
+checkpoints. Restore loads just those chunks, and the disk manifest records the
+window size (format version 3, written only when a window component is
+present; version 2 manifests remain readable). Retention counts the window as
+a fixed cost per checkpoint, like private state, and frees a chunk once no
+checkpoint's window reaches it.
+
 Reset leaves append-only rows intact; the first write that would overwrite
 them preserves pending checkpoints. Session destruction preserves remaining
 rows before releasing device buffers. Byte readers assemble a complete

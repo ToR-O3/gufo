@@ -35,6 +35,7 @@
 #include "src/models/qwen/hip/dflash.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 #include "src/models/qwen/hip/qwen_speculative_verifier.hpp"
+#include "src/models/qwen/probe.hpp"
 
 namespace gufo::models::qwen {
 namespace {
@@ -609,21 +610,15 @@ public:
         execution_policy_(hip::QwenExecutionPolicy::Production()) {
     if (!artifact_fingerprint.empty()) {
       const bool speculative = dflash_model_ != nullptr;
-      persistence_ = TextRunnerPersistenceDescriptor{
-          .compatibility_identity = QwenCompatibilityIdentity(
-              artifact_fingerprint, draft_artifact_fingerprint, max_context_,
-              execution_policy_, speculative, speculative_options_,
-              dflash_policy_),
-          .payload_version = kQwenComponentPayloadVersion,
-      };
-      component_identity_ = persistence_->compatibility_identity;
+      component_identity_ = QwenCompatibilityIdentity(
+          artifact_fingerprint, draft_artifact_fingerprint, max_context_,
+          execution_policy_, speculative, speculative_options_, dflash_policy_);
     } else {
       component_identity_ =
           QwenProcessIdentity(model_.get(), dflash_model_.get(), max_context_);
     }
   }
 
-  [[nodiscard]] bool UsesComponentCache() const override { return true; }
   [[nodiscard]] std::unique_ptr<ComponentCacheResources>
   CreateComponentCacheResources(cache::ResourceLedger& ledger,
                                 std::size_t ram) const override {
@@ -692,8 +687,6 @@ public:
             TextRunnerCapabilities{
                 .supports_vision = model_->VisionEncoder() != nullptr,
                 .incremental_prefill = true,
-                .snapshot = true,
-                .fork = true,
                 .final_token_advance_required = !speculative_enabled,
                 .incremental_text_is_exact = true,
                 .multi_token_decode = speculative_enabled,
@@ -705,8 +698,7 @@ public:
                 .partial_prefill_retention = true,
                 .prefill_rollback = true,
             },
-        .persistence = persistence_,
-        .sampling_preset = sampling::TextPreset(model_->GetConfig()),
+        .sampling_defaults = QwenSamplingDefaults(model_->GetConfig()),
     };
   }
 
@@ -845,11 +837,6 @@ public:
   [[nodiscard]] std::string Decode(
       std::span<const TextRunnerToken> tokens) const override {
     return model_->GetTokenizer().Decode(tokens);
-  }
-
-  [[nodiscard]] std::unique_ptr<TextRunnerState> CreateState() const override {
-    throw std::logic_error(
-        "Qwen execution slots are owned by the component cache");
   }
 
   void PreparePrefixReuse(
@@ -1085,7 +1072,6 @@ private:
   /// Rows a lookup copy of a request decoding alone may verify (DFlash).
   std::uint32_t copy_rows_{static_cast<std::uint32_t>(
       hip::QwenGpuExecutor::kMaxWideVerificationRows)};
-  std::optional<TextRunnerPersistenceDescriptor> persistence_;
   cache::Identity component_identity_;
 };
 
@@ -1138,6 +1124,13 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenTextRunner(
   if (!model) {
     if (error)
       *error = "Failed to create GPU model: " + load_error;
+    return nullptr;
+  }
+  try {
+    models::qwen::vision::PrepareForServing(model->VisionEncoder());
+  } catch (const std::exception& e) {
+    if (error)
+      *error = e.what();
     return nullptr;
   }
   std::uint32_t max_context = options.max_context;

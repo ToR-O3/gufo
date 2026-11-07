@@ -141,17 +141,20 @@ public:
   };
 
   using InitialOutputState = gufo::ext::InitialOutputState;
+  using ReasoningMarkup = gufo::ext::ReasoningMarkup;
 
   struct SamplingDefaults {
     /// Zero means generate until EOS or the remaining context is exhausted.
     std::size_t max_tokens{0};
     sampling::SamplingConfig sampling;
-    sampling::TextModelPreset model{sampling::TextModelPreset::kUnspecified};
+    /// Provider defaults; unset leaves unsupplied controls at `sampling`.
+    std::optional<sampling::TextSamplingDefaults> provider;
     sampling::SamplingOverrides supplied{sampling::SamplingOverrides::All()};
 
     [[nodiscard]] sampling::SamplingConfig Resolve(
         std::optional<bool> thinking) const {
-      return sampling::ResolveTextSampling(model, thinking, sampling, supplied);
+      return sampling::ResolveTextSampling(provider, thinking, sampling,
+                                           supplied);
     }
   };
 
@@ -245,6 +248,22 @@ public:
     [[nodiscard]] virtual std::optional<sampling::JsonConstraint::ToolFormat>
     ToolFormat() const {
       return std::nullopt;
+    }
+    /// Tool dialect identity the response parsers select markers, closers
+    /// and the call parser by; stable for this admitted request. The default
+    /// is the built-in identity of ToolFormat(), and none keeps the legacy
+    /// detection. An identity that is neither built in nor registered
+    /// recognizes no calls.
+    [[nodiscard]] virtual std::optional<std::string> ToolDialectId() const {
+      const auto format = ToolFormat();
+      if (!format)
+        return std::nullopt;
+      return std::string(ext::BuiltinToolDialectId(*format));
+    }
+    /// Reasoning delimiters the response parsers use for this admitted
+    /// request. Backends without this metadata retain `<think>`/`</think>`.
+    [[nodiscard]] virtual ReasoningMarkup ReasoningDelimiters() const {
+      return {"<think>", "</think>"};
     }
   };
 
