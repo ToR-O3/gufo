@@ -5930,7 +5930,8 @@ __launch_bounds__(256) __global__
 
 #pragma unroll
       for (int j = 0; j < kTokTiles; ++j) {
-        if constexpr (kPair || ((kQ5 || kQ8 || kIq || kLowIq) && BN >= 48)) {
+        if constexpr (kPair ||
+                      ((kQ5 || kQ5Zero || kQ8 || kIq || kLowIq) && BN >= 48)) {
           // Keep one token tile's LDS fragments live at a time. Hoisting
           // all eight tiles spills registers and defeats the wider tile's
           // reuse of each weight decode. This is a compiler barrier only.
@@ -5938,7 +5939,8 @@ __launch_bounds__(256) __global__
         }
         // A short expert bucket has no output in the remaining token
         // tiles, so omit their WMMA work.
-        if constexpr ((kPair || ((kQ5 || kQ8 || kIq || kLowIq) && BN >= 48)) &&
+        if constexpr ((kPair || ((kQ5 || kQ5Zero || kQ8 || kIq || kLowIq) &&
+                                 BN >= 48)) &&
                       kTokTiles > 1) {
           if (j >= live_tok_tiles)
             continue;
