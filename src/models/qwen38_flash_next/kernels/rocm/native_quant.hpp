@@ -7,8 +7,8 @@
 #include <gufo/ext/gguf_reader.hpp>
 
 namespace gufo::models::qwen38_flash_next::rocm {
-// Native dense formats used by the OrcaRouter and ISTA mixed GGUF files.
-constexpr bool IsNativeIq4Dense(core::GgmlType type) noexcept {
+// Packed formats supported by the shared quantized dense launchers.
+constexpr bool IsNativeQuantDense(core::GgmlType type) noexcept {
   return type == core::GgmlType::kIQ4_XS || type == core::GgmlType::kIQ4_NL ||
          type == core::GgmlType::kQ4_K || type == core::GgmlType::kQ5_K ||
          type == core::GgmlType::kQ6_K;
@@ -19,15 +19,15 @@ constexpr bool IsNativeIq4Dense(core::GgmlType type) noexcept {
 // activations and decoded weights to F16 in the existing WMMA kernel,
 // accumulating in FP32. Scratch holds exactly rows * cols half values; callers
 // bound rows to its capacity.
-void NativeIq4Dense(const void* weights, core::GgmlType type,
-                    const float* input, void* half_scratch, float* output,
-                    std::size_t rows, std::size_t outputs, std::size_t cols,
-                    bool prefill, hipStream_t stream);
+void NativeQuantDense(const void* weights, core::GgmlType type,
+                      const float* input, void* half_scratch, float* output,
+                      std::size_t rows, std::size_t outputs, std::size_t cols,
+                      bool prefill, hipStream_t stream);
 // Wide prefill over the same cached F16 activation rows as the Q4/Q8 paths.
 // No weight storage or conversion is allocated by this launcher.
-void NativeIq4DenseF16(const void* weights, core::GgmlType type,
-                       const void* input, float* output, std::size_t rows,
-                       std::size_t outputs, std::size_t cols,
-                       hipStream_t stream);
+void NativeQuantDenseF16(const void* weights, core::GgmlType type,
+                         const void* input, float* output, std::size_t rows,
+                         std::size_t outputs, std::size_t cols,
+                         hipStream_t stream);
 }  // namespace gufo::models::qwen38_flash_next::rocm
 #endif

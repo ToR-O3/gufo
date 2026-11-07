@@ -1960,7 +1960,7 @@ bool Executor::DenseF16Route(const DeviceTensor& w,
 
 bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
                      std::uint32_t n_tokens, std::string* error_msg) const {
-  if (IsNativeIq4Dense(w.type)) {
+  if (IsNativeQuantDense(w.type)) {
     const auto piece = options_.max_batch;
     for (std::uint32_t first = 0; first < n_tokens; first += piece) {
       const auto rows = std::min(piece, n_tokens - first);
@@ -1969,11 +1969,11 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
       if (prefill_phase && w.rows > 512) {
         // Reuse the Q4/Q8 preparation and its cache of narrowed rows.
         PrepareHalfInput(src, rows, w.cols);
-        NativeIq4DenseF16(w.data, w.type, s_.x_half, dst, rows, w.rows, w.cols,
-                          stream_);
+        NativeQuantDenseF16(w.data, w.type, s_.x_half, dst, rows, w.rows,
+                            w.cols, stream_);
       } else {
-        NativeIq4Dense(w.data, w.type, src, s_.x_half, dst, rows, w.rows,
-                       w.cols, MatrixRows(n_tokens), stream_);
+        NativeQuantDense(w.data, w.type, src, s_.x_half, dst, rows, w.rows,
+                         w.cols, MatrixRows(n_tokens), stream_);
         half_src_ = nullptr;
       }
     }
@@ -2866,8 +2866,8 @@ bool Executor::LinearAttention(const DeviceLayer& l, Session::LinearState& s,
   }
   if (half_output) {
     if (iq4_half_output) {
-      NativeIq4DenseF16(l.ssm_out.data, l.ssm_out.type, out_half, out, n_tokens,
-                        l.ssm_out.rows, l.ssm_out.cols, stream_);
+      NativeQuantDenseF16(l.ssm_out.data, l.ssm_out.type, out_half, out,
+                          n_tokens, l.ssm_out.rows, l.ssm_out.cols, stream_);
       return true;
     }
     if (!DenseF16Gemm(l.ssm_out.data, out_half, out, n_tokens, l.ssm_out.rows,
@@ -3163,9 +3163,9 @@ bool Executor::Moe(const DeviceLayer& l, const float* x, float* out,
     if (shexp_half_ready_) {
       shexp_half_ready_ = false;
       if (l.shexp_down.type == GgmlType::kIQ4_NL) {
-        NativeIq4DenseF16(l.shexp_down.data, l.shexp_down.type, s_.shexp_half,
-                          s_.shexp_out, n_tokens, l.shexp_down.rows,
-                          l.shexp_down.cols, stream_);
+        NativeQuantDenseF16(l.shexp_down.data, l.shexp_down.type, s_.shexp_half,
+                            s_.shexp_out, n_tokens, l.shexp_down.rows,
+                            l.shexp_down.cols, stream_);
       } else if (!DenseF16Gemm(l.shexp_down.data, s_.shexp_half, s_.shexp_out,
                                n_tokens, l.shexp_down.rows, l.shexp_down.cols,
                                stream_)) {

@@ -116,7 +116,7 @@ struct Uploader {
     d.rows = static_cast<std::uint32_t>(t.rows);
     d.experts = static_cast<std::uint32_t>(t.experts);
     if (type == core::GgmlType::kBF16 || type == core::GgmlType::kF16 ||
-        (t.experts == 1 && IsNativeIq4Dense(type))) {
+        (t.experts == 1 && IsNativeQuantDense(type))) {
       max_half_cols = std::max<std::size_t>(max_half_cols, t.cols);
     }
     if (type == core::GgmlType::kQ8_0 && t.experts == 1) {

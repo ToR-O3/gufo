@@ -698,9 +698,9 @@ bool Executor::DenseBatch(const DeviceTensor& w, const float* x, float* out,
                           std::uint32_t rows, std::string* error) const {
   if (rows <= kDecodeRows)
     return Dense(w, x, out, rows, error);
-  if (IsNativeIq4Dense(w.type)) {
-    NativeIq4Dense(w.data, w.type, x, nullptr, out, rows, w.rows, w.cols, false,
-                   stream_);
+  if (IsNativeQuantDense(w.type)) {
+    NativeQuantDense(w.data, w.type, x, nullptr, out, rows, w.rows, w.cols,
+                     false, stream_);
     return true;
   }
   if (w.type != core::GgmlType::kQ8_0) {

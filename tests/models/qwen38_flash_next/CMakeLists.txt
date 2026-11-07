@@ -56,9 +56,9 @@ if (ENGINE_ENABLE_HIP)
       float_upload native_expert_ops swiglu_half iq_expert_ops)
     add_qwen38_flash_next_test(${name} qwen38_flash_next_test_hip "hip;gpu;gfx1151")
   endforeach()
-  add_qwen38_flash_next_test(native_iq4_ops gufo_qwen38_flash_next_reference "hip;gpu;gfx1151;quant")
-  add_dependencies(qwen38_flash_next_native_iq4_ops_test gufo_qwen38_flash_next_hip)
-  target_link_libraries(qwen38_flash_next_native_iq4_ops_test PRIVATE qwen38_flash_next_test_hip)
+  add_qwen38_flash_next_test(native_quant_ops gufo_qwen38_flash_next_reference "hip;gpu;gfx1151;quant")
+  add_dependencies(qwen38_flash_next_native_quant_ops_test gufo_qwen38_flash_next_hip)
+  target_link_libraries(qwen38_flash_next_native_quant_ops_test PRIVATE qwen38_flash_next_test_hip)
   # The rope phase and RMS checks compare against the scalar CPU oracle.
   target_link_libraries(qwen38_flash_next_attention_ops_test PRIVATE
     gufo_qwen38_flash_next_reference)

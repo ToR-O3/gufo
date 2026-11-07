@@ -83,13 +83,13 @@ void Case(GgmlType type, std::size_t k, std::size_t m) {
   Check(hipMemcpy(dx, x.data(), x.size() * 4, hipMemcpyHostToDevice));
   std::vector<float> single(m);
   for (bool prefill : {false, true}) {
-    r::NativeIq4Dense(dw, type, static_cast<float*>(dx), half,
-                      static_cast<float*>(dy), 1, m, k, prefill, nullptr);
+    r::NativeQuantDense(dw, type, static_cast<float*>(dx), half,
+                        static_cast<float*>(dy), 1, m, k, prefill, nullptr);
     Check(hipMemcpy(single.data(), dy, m * 4, hipMemcpyDeviceToHost));
     const bool half_math = prefill && m > 512;
     for (std::size_t n : {1U, 2U, 7U, 8U, 9U, 32U, 33U, 129U, 256U, 257U}) {
-      r::NativeIq4Dense(dw, type, static_cast<float*>(dx), half,
-                        static_cast<float*>(dy), n, m, k, prefill, nullptr);
+      r::NativeQuantDense(dw, type, static_cast<float*>(dx), half,
+                          static_cast<float*>(dy), n, m, k, prefill, nullptr);
       Check(hipMemcpy(got.data(), dy, n * m * 4, hipMemcpyDeviceToHost));
       double sq = 0, ref_sq = 0;
       for (std::size_t j = 0; j < m; ++j) {
@@ -201,10 +201,11 @@ void SharedExpertHalfCase(std::size_t rows) {
   Check(hipMemcpy(du, up.data(), up.size() * sizeof(float),
                   hipMemcpyHostToDevice));
   r::Swiglu(old_gate, du, gate.size(), nullptr);
-  r::NativeIq4Dense(dw, type, old_gate, old_half, old_out, rows, m, k, true,
-                    nullptr);
+  r::NativeQuantDense(dw, type, old_gate, old_half, old_out, rows, m, k, true,
+                      nullptr);
   r::SwigluHalf(dg, du, direct_half, gate.size(), true, nullptr);
-  r::NativeIq4DenseF16(dw, type, direct_half, direct_out, rows, m, k, nullptr);
+  r::NativeQuantDenseF16(dw, type, direct_half, direct_out, rows, m, k,
+                         nullptr);
   std::vector<std::uint16_t> ref_half(gate.size()), got_half(gate.size());
   std::vector<float> ref(rows * m), got(rows * m);
   Check(hipMemcpy(ref_half.data(), old_half, ref_half.size() * 2,
@@ -278,8 +279,8 @@ int main() {
     Case(GgmlType::kQ4_K, 6144, 2560);
     Case(GgmlType::kQ6_K, 2560, 1057);
     Case(GgmlType::kQ6_K, 6144, 2560);
-    std::cout
-        << "PASS native IQ4 dense / embedding, exact allocation boundaries\n";
+    std::cout << "PASS native quantized dense / embedding, exact allocation "
+                 "boundaries\n";
   } catch (const std::exception& e) {
     std::cerr << e.what() << '\n';
     return 1;
