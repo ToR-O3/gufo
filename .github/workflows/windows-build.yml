@@ -148,17 +148,43 @@ jobs:
             "$($Matches[1])=$($Matches[2])" >> $env:GITHUB_ENV
           }
 
-      - name: Install Ninja and ccache
+      - name: Install Ninja
         run: |
           # Keep retries bounded and preserve failure when downloads stay unavailable.
           $PSNativeCommandUseErrorActionPreference = $false
           for ($attempt = 1; $attempt -le 3; $attempt++) {
-            choco install ninja ccache -y --no-progress
+            choco install ninja -y --no-progress
             if ($LASTEXITCODE -eq 0) { break }
-            if ($attempt -eq 3) { throw "cannot install ninja and ccache after $attempt attempts (exit $LASTEXITCODE)" }
+            if ($attempt -eq 3) { throw "cannot install ninja after $attempt attempts (exit $LASTEXITCODE)" }
             Write-Warning "dependency installation attempt $attempt failed; retrying"
             Start-Sleep -Seconds (10 * $attempt)
           }
+
+      - name: Install ccache
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CCACHE_VERSION: '4.14.2'
+          CCACHE_SHA256: 6993ce645e53192cec592ee23186200b574ac4c59097ecde8d9cfd681b47ae84
+        run: |
+          # Use the release API; the browser download endpoint can return persistent 504s.
+          $PSNativeCommandUseErrorActionPreference = $false
+          $archive = "ccache-$env:CCACHE_VERSION-windows-x86_64.zip"
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            gh release download "v$env:CCACHE_VERSION" --repo ccache/ccache `
+              --pattern $archive --dir "$env:RUNNER_TEMP" --clobber
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -eq 3) { throw "cannot download ccache after $attempt attempts (exit $LASTEXITCODE)" }
+            Write-Warning "ccache download attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
+          $zip = Join-Path $env:RUNNER_TEMP $archive
+          if ((Get-FileHash $zip -Algorithm SHA256).Hash -ne $env:CCACHE_SHA256) {
+            throw 'ccache archive checksum mismatch'
+          }
+          Expand-Archive -Path $zip -DestinationPath "$env:RUNNER_TEMP\ccache-tools" -Force
+          $bin = "$env:RUNNER_TEMP\ccache-tools\ccache-$env:CCACHE_VERSION-windows-x86_64"
+          if (-not (Test-Path "$bin\ccache.exe")) { throw 'ccache executable is missing' }
+          $bin >> $env:GITHUB_PATH
 
       # CMakeLists.txt compiles C, CXX and (with clang-cl) HIP through ccache
       # when it is on PATH. The SDK is unpacked fresh each run, so the
