@@ -165,9 +165,9 @@ int main() {
     Require(qfn_mmq_init(0) == 0, "MMQ init");
     Q5_0Dots();
     FractionalDots();
-    std::ifstream in(std::filesystem::path(__FILE__).parent_path() /
-                         "fixtures/native_quant.bin",
-                     std::ios::binary);
+    std::ifstream in(
+        std::filesystem::path(GUFO_QUANT_FIXTURES) / "native_quant.bin",
+        std::ios::binary);
     std::array<char, 8> magic{};
     Read(in, magic.data(), 8);
     Require(std::string_view(magic.data(), 8) == "GGMLQU01", "fixture magic");

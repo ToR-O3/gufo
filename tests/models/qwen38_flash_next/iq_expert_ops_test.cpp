@@ -115,9 +115,9 @@ void Case(int type, int cols, int rows, const std::vector<std::uint8_t>& packed,
 int main() {
   try {
     Require(qfn_mmq_init(0) == 0, "MMQ init");
-    std::ifstream in(std::filesystem::path(__FILE__).parent_path() /
-                         "fixtures/iq_expert.bin",
-                     std::ios::binary);
+    std::ifstream in(
+        std::filesystem::path(GUFO_QUANT_FIXTURES) / "iq_expert.bin",
+        std::ios::binary);
     std::array<char, 8> magic{};
     Read(in, magic.data(), 8);
     Require(std::string_view(magic.data(), 8) == "GGMLQU01", "fixture magic");

@@ -63,8 +63,8 @@ int main() {
   using namespace gufo::quant;
   try {
     Q5_0Rows();
-    const auto path = std::filesystem::path(__FILE__).parent_path() /
-                      "fixtures/native_quant.bin";
+    const auto path =
+        std::filesystem::path(GUFO_QUANT_FIXTURES) / "native_quant.bin";
     std::ifstream input(path, std::ios::binary);
     Require(bool(input), "missing independent quantization fixture");
     std::array<char, 8> magic{};
