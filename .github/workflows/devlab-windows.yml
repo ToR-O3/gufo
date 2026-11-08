@@ -45,8 +45,15 @@ jobs:
         run: |
           git clone --quiet https://github.com/microsoft/vcpkg.git C:\vcpkg-gufo
           if ($LASTEXITCODE -ne 0) { throw 'cannot clone vcpkg' }
-          & C:\vcpkg-gufo\bootstrap-vcpkg.bat -disableMetrics
-          if ($LASTEXITCODE -ne 0) { throw 'cannot bootstrap vcpkg' }
+          # GitHub release downloads can transiently return HTTP 5xx.
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            & C:\vcpkg-gufo\bootstrap-vcpkg.bat -disableMetrics
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -eq 3) { throw "cannot bootstrap vcpkg after $attempt attempts (exit $LASTEXITCODE)" }
+            Write-Warning "vcpkg bootstrap attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
           $manifest = Get-Content vcpkg.json -Raw | ConvertFrom-Json
           $deps = "$env:RUNNER_TEMP\extension-deps"
           New-Item -ItemType Directory -Force $deps | Out-Null

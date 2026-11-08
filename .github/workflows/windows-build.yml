@@ -150,8 +150,15 @@ jobs:
 
       - name: Install Ninja and ccache
         run: |
-          choco install ninja ccache -y --no-progress
-          if ($LASTEXITCODE -ne 0) { throw 'cannot install ninja and ccache' }
+          # Keep retries bounded and preserve failure when downloads stay unavailable.
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            choco install ninja ccache -y --no-progress
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -eq 3) { throw "cannot install ninja and ccache after $attempt attempts (exit $LASTEXITCODE)" }
+            Write-Warning "dependency installation attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
 
       # CMakeLists.txt compiles C, CXX and (with clang-cl) HIP through ccache
       # when it is on PATH. The SDK is unpacked fresh each run, so the
@@ -188,8 +195,15 @@ jobs:
         run: |
           git clone --quiet https://github.com/microsoft/vcpkg.git C:\vcpkg-gufo
           if ($LASTEXITCODE -ne 0) { throw 'cannot clone vcpkg' }
-          & C:\vcpkg-gufo\bootstrap-vcpkg.bat -disableMetrics
-          if ($LASTEXITCODE -ne 0) { throw 'cannot bootstrap vcpkg' }
+          # GitHub release downloads can transiently return HTTP 5xx.
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            & C:\vcpkg-gufo\bootstrap-vcpkg.bat -disableMetrics
+            if ($LASTEXITCODE -eq 0) { break }
+            if ($attempt -eq 3) { throw "cannot bootstrap vcpkg after $attempt attempts (exit $LASTEXITCODE)" }
+            Write-Warning "vcpkg bootstrap attempt $attempt failed; retrying"
+            Start-Sleep -Seconds (10 * $attempt)
+          }
           New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\vcpkg-archives" | Out-Null
           "VCPKG_ROOT=C:\vcpkg-gufo" >> $env:GITHUB_ENV
           "VCPKG_DEFAULT_BINARY_CACHE=$env:RUNNER_TEMP\vcpkg-archives" >> $env:GITHUB_ENV
