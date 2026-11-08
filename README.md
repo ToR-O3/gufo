@@ -1,5 +1,18 @@
 # Gufo: The ***Open Source*** Strix Halo AI engine 
 
+> **About this fork**
+>
+> This community fork of [Gufo](https://github.com/gufo-org/gufo) adds support for these **Qwen3.8 Flash-Next** GGUF variants:
+>
+> - [Unsloth](https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/tree/main/UD-IQ4_XS) — **UD-IQ4_XS (Dynamic 3.1)**
+> - [ISTA-DASLab GSQ-RCO](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) — **IQ3_S**
+> - [OrcaRouter Uncensored](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) — **IQ4_XS**
+>
+> It also includes targeted optimizations for quantized inference, including prefill and reuse of intermediate results.\
+> Recent end-to-end validation focuses on Unsloth v3.1 IQ4_XS; validation coverage varies for the other variants.
+>
+> Build this fork from source to use these additions. The upstream container images and benchmark figures referenced below describe upstream Gufo.
+
 <p align="center">
   <img src="assets/gufo-logo.jpg" alt="Gufo logo" width="180">
 </p>
