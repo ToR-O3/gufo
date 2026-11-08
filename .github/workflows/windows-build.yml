@@ -233,6 +233,22 @@ jobs:
           New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\vcpkg-archives" | Out-Null
           "VCPKG_ROOT=C:\vcpkg-gufo" >> $env:GITHUB_ENV
           "VCPKG_DEFAULT_BINARY_CACHE=$env:RUNNER_TEMP\vcpkg-archives" >> $env:GITHUB_ENV
+          # Keep vcpkg's pinned SHA-512 checks and normal fallback, while bypassing
+          # GitHub's archive redirect endpoint when it returns persistent 504s.
+          $assetScript = "$env:RUNNER_TEMP\vcpkg-github-archive.ps1"
+          @'
+          param([string]$Url, [string]$Destination)
+          $ErrorActionPreference = 'Stop'
+          if ($Url -notmatch '^https://github\.com/([^/]+/[^/]+)/archive/([^?#]+)\.(tar\.gz|zip)$') {
+            exit 1
+          }
+          $download = "https://codeload.github.com/$($Matches[1])/$($Matches[3])/$($Matches[2])"
+          & "$env:SystemRoot\System32\curl.exe" --fail --location --retry 2 --max-time 180 `
+            $download --output $Destination
+          exit $LASTEXITCODE
+          '@ | Set-Content -Encoding utf8 $assetScript
+          $pwsh = (Get-Command pwsh).Source
+          "X_VCPKG_ASSET_SOURCES=x-script,`"$pwsh`" -NoProfile -File `"$assetScript`" {url} {dst}" >> $env:GITHUB_ENV
 
       # Visual Studio's LLVM OpenMP DLL is under debug_nonredist and cannot
       # be shipped. Build the upstream runtime with the ABI filename imported
