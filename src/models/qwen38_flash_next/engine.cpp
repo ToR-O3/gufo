@@ -10,6 +10,7 @@
 #include <optional>
 #include <type_traits>
 
+#include "src/families/qwen/dflash/dflash.hpp"
 #include "src/families/qwen/draft_vocab/draft_vocab.hpp"
 #include "src/models/qwen38_flash_next/continuation_hooks.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/device_model.hpp"
@@ -88,6 +89,13 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       options.max_draft_tokens > kMaxMtpDraftTokens) {
     AssignError(error_msg,
                 "Flash-Next MTP supports at most seven draft tokens");
+    return nullptr;
+  }
+  if (!options.dflash_model_path.empty() &&
+      (!options.mtp_model_path.empty() || options.max_draft_tokens > 7)) {
+    AssignError(
+        error_msg,
+        "Flash-Next DFlash2 requires one drafter and at most seven proposals");
     return nullptr;
   }
   m->options_ = options;
@@ -183,10 +191,36 @@ std::shared_ptr<Model> Model::Load(const std::string& model_path,
       m->draft_subset_ = true;
     }
   }
+  if (!options.dflash_model_path.empty()) {
+    auto draft =
+        core::GgufReader::OpenFile(options.dflash_model_path, error_msg);
+    if (!draft)
+      return nullptr;
+    const auto tensor = [](const rocm::DeviceTensor& t) {
+      return QwenTensorRef{t.data, t.type, std::size_t{t.rows} * t.cols};
+    };
+    m->dflash_model_ = hip::QwenDFlashGpuModel::Create(
+        std::move(draft),
+        {m->tokenizer_, tensor(m->device_->token_embd()),
+         tensor(m->device_->output()), c.hidden_size, c.vocab_size,
+         c.num_layers},
+        error_msg);
+    if (!m->dflash_model_)
+      return nullptr;
+    if (options.max_context > m->dflash_model_->GetConfig().context_length ||
+        c.rope_scaling.Enabled()) {
+      AssignError(error_msg,
+                  "Flash-Next DFlash2 requires a context within the draft's "
+                  "native limit");
+      return nullptr;
+    }
+  }
   rocm::Executor::Options exec;
+  if (m->dflash_model_)
+    exec.dflash_layers = m->dflash_model_->GetDFlashConfig().target_layer_ids;
   exec.max_batch = m->PrefillThroughCapacity();
   exec.max_logit_rows =
-      m->mtp_weights_
+      (m->mtp_weights_ || m->dflash_model_)
           ? static_cast<std::uint32_t>(std::min<std::uint64_t>(
                 exec.max_batch, std::uint64_t{options.max_draft_tokens} + 1))
           : 1;
@@ -207,7 +241,10 @@ std::unique_ptr<Session> Model::CreateSession(core::SessionMode mode,
     AssignError(error_msg, "session context is outside the model limits");
     return nullptr;
   }
-  auto native = executor_->CreateSession(mode, max_context, error_msg);
+  const bool dflash = HasDFlash() && mode == core::SessionMode::kSpeculative;
+  auto native = executor_->CreateSession(
+      dflash ? core::SessionMode::kAutoregressive : mode, max_context,
+      error_msg);
   if (!native) {
     return nullptr;
   }
@@ -222,8 +259,19 @@ std::unique_ptr<Session> Model::CreateSession(core::SessionMode mode,
       return nullptr;
     }
   }
-  return std::unique_ptr<Session>(
+  auto result = std::unique_ptr<Session>(
       new Session(shared_from_this(), std::move(native)));
+  if (dflash) {
+    result->dflash_ = hip::QwenDFlashGpuDraftBackend::Create(
+        dflash_model_,
+        {.max_context = max_context,
+         .max_draft_tokens = options_.max_draft_tokens,
+         .policy = options_.dflash_policy},
+        error_msg);
+    if (!result->dflash_)
+      return nullptr;
+  }
+  return result;
 }
 
 std::vector<std::int32_t> Model::Tokenize(std::string_view text) const {
@@ -256,10 +304,14 @@ std::uint32_t Model::VocabSize() const noexcept {
 }
 
 std::uint32_t Model::PrefillCapacity() const noexcept {
-  return std::min(kPrefillChunkTokens, options_.max_context);
+  return std::min(HasDFlash() ? dflash_model_->GetDFlashConfig().sliding_window
+                              : kPrefillChunkTokens,
+                  options_.max_context);
 }
 
 std::uint32_t Model::PrefillThroughCapacity() const noexcept {
+  if (HasDFlash())
+    return PrefillCapacity();
   return std::min(kPrefillChunkTokens + kPrefillTailTokens,
                   options_.max_context);
 }
@@ -293,7 +345,23 @@ const Config& Model::config() const noexcept {
 }
 
 std::size_t Model::ResidentBytes() const noexcept {
-  return device_->resident_bytes() + (vision_ ? vision_->ResidentBytes() : 0);
+  return device_->resident_bytes() + (vision_ ? vision_->ResidentBytes() : 0) +
+         (HasDFlash() ? dflash_model_->GetPackedWeightBytes() : 0);
+}
+
+std::size_t Model::DFlashStateBytes(std::uint32_t context) const {
+  return HasDFlash() ? hip::QwenDFlashGpuExecutor::EstimateMemoryUsage(
+                           *dflash_model_, context)
+                           .TotalBytes()
+                     : 0;
+}
+
+std::size_t Model::DFlashCacheBytes(std::uint32_t context) const {
+  return HasDFlash()
+             ? sizeof(std::uint64_t) +
+                   hip::QwenDFlashGpuDraftBackend::CommittedSnapshotCapacity(
+                       *dflash_model_, context)
+             : 0;
 }
 
 std::size_t Model::SessionBytes(core::SessionMode mode,
@@ -303,11 +371,13 @@ std::size_t Model::SessionBytes(core::SessionMode mode,
                                         3 * sizeof(std::int32_t)) +
                     64
               : 0;
-  return executor_->SessionBytes(mode, context,
-                                 mode == core::SessionMode::kSpeculative
-                                     ? executor_->max_speculative() - 1
-                                     : 0) +
-         vision;
+  const bool dflash = HasDFlash() && mode == core::SessionMode::kSpeculative;
+  return executor_->SessionBytes(
+             dflash ? core::SessionMode::kAutoregressive : mode, context,
+             mode == core::SessionMode::kSpeculative
+                 ? executor_->max_speculative() - 1
+                 : 0) +
+         vision + (dflash ? DFlashStateBytes(context) : 0);
 }
 
 std::size_t Model::DeferredScratchBytes() const {
@@ -319,7 +389,8 @@ void Model::LimitCopyRows(std::uint32_t rows) noexcept {
 }
 
 std::size_t Session::AllocatedBytes() const noexcept {
-  return session_->AllocatedBytes();
+  return session_->AllocatedBytes() +
+         (dflash_ ? dflash_->GetMemoryUsage().TotalBytes() : 0);
 }
 
 NgramTotals Session::NgramRowTotals() const noexcept {
@@ -367,6 +438,8 @@ void Session::ResetDraftPolicy() {
   if (continuation_hooks_)
     continuation_hooks_->BeforeExecution();
   draft_length_.Reset();
+  if (dflash_)
+    dflash_->BeginRequest();
   // A fully reused prompt can start decoding without SyncImpl. It still
   // starts a new request: do not inherit a copy cursor or widen its first step.
   lookup_.BeginRequest();
@@ -390,6 +463,8 @@ void Session::ResetImpl(bool reuse_mtp) {
     continuation_hooks_->BeforeReset();
   valid_ = false;
   session_->Reset(reuse_mtp);
+  if (dflash_)
+    dflash_->Reset();
   tokens_.clear();
   ForgetDraftVocab();
   lookup_.Clear();
@@ -440,11 +515,15 @@ std::uint64_t Session::SnapshotBytes() const {
   return SessionSnapshotHostBytes(static_cast<std::uint32_t>(tokens_.size()),
                                   model_->VocabSize(),
                                   ImageIdentity(tokens_.size()).size()) +
-         model_->executor_->SnapshotBytes(*session_, KeptHiddenRows());
+         model_->executor_->SnapshotBytes(*session_, KeptHiddenRows()) +
+         (dflash_ && !tokens_.empty()
+              ? hip::QwenDFlashGpuDraftBackend::CommittedSnapshotCapacity(
+                    *model_->dflash_model_, Position())
+              : 0);
 }
 
 std::uint64_t Session::PrefillCheckpointBytes(std::uint32_t position) const {
-  if (!session_->VisionLayout().images.empty())
+  if (dflash_ || !session_->VisionLayout().images.empty())
     return 0;
   return SessionSnapshotHostBytes(position, model_->VocabSize(), 0) +
          model_->executor_->PrefillCheckpointBytes(*session_, position);
@@ -473,8 +552,18 @@ std::unique_ptr<SessionSnapshot> Session::SaveSnapshotImpl(
       model_->executor_->SnapshotBytes(state, hidden_rows);
   const std::uint64_t host_bytes = SessionSnapshotHostBytes(
       token_count, model_->VocabSize(), identity.size());
+  std::unique_ptr<speculative::IDraftBackendSnapshot> draft_snapshot;
+  std::size_t draft_bytes = 0;
+  if (dflash_) {
+    if (dflash_->GetInjectedContextLength() != token_count) {
+      AssignError(error_msg, "DFlash2 snapshot needs a synced draft frontier");
+      return nullptr;
+    }
+    draft_snapshot = dflash_->Snapshot();
+    draft_bytes = draft_snapshot->PersistentPayloadBytes();
+  }
   std::unique_ptr<SessionSnapshot> snapshot(
-      new SessionSnapshot(host_bytes + executor_bytes));
+      new SessionSnapshot(host_bytes + executor_bytes + draft_bytes));
   std::uint8_t* out = snapshot->data_.get();
   const SessionSnapshotHeader header{
       .magic = kSessionSnapshotMagic,
@@ -507,6 +596,9 @@ std::unique_ptr<SessionSnapshot> Session::SaveSnapshotImpl(
           snapshot->data_)) {
     return nullptr;
   }
+  if (draft_snapshot)
+    (void)draft_snapshot->SerializePersistent(
+        std::span(out + executor_bytes, draft_bytes));
   return snapshot;
 }
 
@@ -547,14 +639,16 @@ bool Session::RestoreSnapshotImpl(std::span<const std::uint8_t> payload,
     AssignError(error_msg, "session snapshot format is not supported");
     return false;
   }
+  const auto host_bytes = SessionSnapshotHostBytes(
+      header.token_count, header.vocab_size, header.image_identity_bytes);
   if (header.vocab_size != model_->VocabSize() || header.token_count == 0 ||
       header.policy_concurrency != model_->DecodeConcurrency() ||
       header.token_count > ContextSize() ||
       (header.image_identity_bytes != 0 && header.image_identity_bytes != 32) ||
-      payload.size() != SessionSnapshotHostBytes(header.token_count,
-                                                 header.vocab_size,
-                                                 header.image_identity_bytes) +
-                            header.executor_bytes) {
+      host_bytes > payload.size() ||
+      header.executor_bytes > payload.size() - host_bytes ||
+      (dflash_ == nullptr) !=
+          (payload.size() - host_bytes == header.executor_bytes)) {
     AssignError(error_msg, "session snapshot does not fit this session");
     return false;
   }
@@ -613,6 +707,19 @@ bool Session::RestoreSnapshotImpl(std::span<const std::uint8_t> payload,
     Reset();
     AssignError(error_msg, "session snapshot positions are inconsistent");
     return false;
+  }
+  if (dflash_) {
+    try {
+      dflash_->RestorePersistentSnapshot(
+          payload.subspan(host_bytes + header.executor_bytes));
+      if (dflash_->GetInjectedContextLength() != info.position)
+        throw std::invalid_argument(
+            "DFlash2 snapshot positions are inconsistent");
+    } catch (const std::exception& e) {
+      Reset();
+      AssignError(error_msg, e.what());
+      return false;
+    }
   }
   tokens_ = std::move(tokens);
   ForgetDraftVocab();
@@ -789,7 +896,7 @@ bool Session::Feed(std::span<const std::int32_t> tokens, std::string* error_msg,
       // first boundary and capture the live session there instead:
       // split-pass rows are the same as in-pass rows.
       if (last_boundary > next_boundary &&
-          !exec.ReservePrefillCheckpoint(*session_)) {
+          (dflash_ || !exec.ReservePrefillCheckpoint(*session_))) {
         n = boundaries[next_boundary] - tokens_.size();
         last_boundary = next_boundary + 1;
         live = true;
@@ -841,6 +948,8 @@ bool Session::Feed(std::span<const std::int32_t> tokens, std::string* error_msg,
                       views, next)) {
       return false;
     }
+    if (!CommitDFlash(static_cast<std::uint32_t>(tokens_.size()), n, error_msg))
+      return false;
     const auto kept = !views.empty() && views.back()->tokens < n
                           ? n - views.back()->tokens
                           : n;
@@ -1012,6 +1121,7 @@ bool Session::Evaluate(std::int32_t token, std::string* error_msg) {
 }
 
 struct Session::PendingDecode {
+  bool dflash{false};
   std::vector<std::int32_t> chain;
   std::vector<MtpProposal> proposals;
   std::uint32_t base{0};
@@ -1176,6 +1286,11 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   }
   if (anchor_logprobs)
     result->logprobs.push_back(std::move(*anchor_logprobs));
+  if (dflash_ && width > 1) {
+    pending->base = static_cast<std::uint32_t>(tokens_.size());
+    return PrepareDFlash(*pending, sampler, anchor,
+                         static_cast<std::uint32_t>(width - 1));
+  }
   if (!MtpEnabled() || width < 2) {
     if (MtpEnabled() && !defer_head &&
         !DraftCatchUp(anchor, false, error_msg)) {
@@ -1295,6 +1410,85 @@ bool Session::PrepareDecode(const DecodeRequest& request,
   return true;
 }
 
+bool Session::CommitDFlash(std::uint32_t position, std::uint32_t count,
+                           std::string* error_msg) {
+  if (dflash_ &&
+      !dflash_->AppendDeviceContext(model_->executor_->DFlashFeatures(count),
+                                    position, count)) {
+    AssignError(error_msg,
+                "Flash-Next DFlash2 could not commit target features");
+    return false;
+  }
+  return true;
+}
+
+bool Session::PrepareDFlash(PendingDecode& pending,
+                            sampling::SamplerState& sampler,
+                            std::int32_t anchor, std::uint32_t max_drafts) {
+  const bool sampled = sampler.config().uses_random_sampling();
+  auto draft_rng =
+      sampled ? sampling::NextRandom(sampler.mutable_rng_state()) : 0;
+  speculative::DraftProposal draft;
+  auto draft_sampler = sampler.WithoutConstraint();
+  draft_sampler.Accept(static_cast<sampling::TokenId>(anchor));
+  const auto subset_before = dflash_->DraftSubsetBlocks();
+  {
+    tokens_.push_back(anchor);
+    struct RemoveAnchor {
+      std::vector<std::int32_t>& tokens;
+      ~RemoveAnchor() { tokens.pop_back(); }
+    } remove{tokens_};
+    draft = dflash_->ProposeForRequest({
+        .backend = dflash_.get(),
+        .tokens = {reinterpret_cast<const sampling::TokenId*>(tokens_.data()),
+                   tokens_.size()},
+        .position = pending.base,
+        .max_tokens = max_drafts,
+        .temperature = sampled ? sampler.config().temperature : 0.0F,
+        .rng_state = sampled ? &draft_rng : nullptr,
+        .sampler = &draft_sampler,
+    });
+  }
+  pending.chain = {anchor};
+  pending.chain.insert(pending.chain.end(), draft.tokens.begin(),
+                       draft.tokens.end());
+  if (draft.tokens.empty())
+    return true;
+  pending.dflash = true;
+  pending.lookup = draft.from_lookup ? draft.tokens.size() : 0;
+  pending.draft_subset = dflash_->DraftSubsetBlocks() != subset_before;
+  pending.speculative = true;
+  pending.sampled = sampled;
+  pending.gpu_greedy = sampler.config().temperature == 0.0F;
+  pending.gpu_verification =
+      pending.gpu_greedy || rocm::Executor::CanCompactMtpVerification(sampler);
+  if (!pending.gpu_verification)
+    verify_logits_.resize(pending.chain.size() * model_->VocabSize());
+  if (sampled) {
+    const auto count = draft.candidates_per_token;
+    if (count == 0 || count > kMtpCandidates ||
+        draft.candidate_ids.size() != draft.tokens.size() * count ||
+        draft.candidate_probabilities.size() != draft.candidate_ids.size())
+      throw std::logic_error("invalid DFlash2 proposal rows");
+    for (std::size_t i = 0; i < draft.tokens.size(); ++i) {
+      MtpProposal row;
+      row.token = draft.tokens[i];
+      for (std::size_t j = 0; j < count; ++j) {
+        const auto q = draft.candidate_probabilities[i * count + j];
+        if (q == 0)
+          continue;
+        const auto id = draft.candidate_ids[i * count + j];
+        row.ids[row.size] = id;
+        row.probabilities[row.size++] = q;
+        if (id == row.token)
+          row.probability += q;
+      }
+      pending.proposals.push_back(row);
+    }
+  }
+  return true;
+}
+
 bool Session::FinishDecode(const DecodeRequest& request,
                            const PendingDecode& pending,
                            std::string* error_msg) {
@@ -1314,6 +1508,8 @@ bool Session::FinishDecode(const DecodeRequest& request,
     return request.stop_at_eos && model_->IsStopToken(token);
   };
   if (!pending.speculative) {
+    if (!CommitDFlash(base, 1, error_msg))
+      return false;
     draft_length_.ObserveArToken();
     hidden_base_ = base;
     tokens_.push_back(anchor);
@@ -1392,13 +1588,19 @@ bool Session::FinishDecode(const DecodeRequest& request,
       if (gpu_verification && !cpu_rows && sampler.NeedsConstraintMask() &&
           !download_remaining(keep - 1))
         return false;
-      const auto verified =
-          gpu_verification && !cpu_rows
-              ? VerifyMtpProposal(candidates[keep - 1], vocab,
-                                  proposals[keep - 1], sampler)
-              : VerifyMtpProposal(std::span<const float>(verify_logits_)
-                                      .subspan((keep - 1) * vocab, vocab),
-                                  proposals[keep - 1], sampler);
+      // DFlash2 exports GPU softmax probabilities. Allow the same rounding
+      // tolerance as the shared DFlash2 verifier.
+      const auto verified = VerifyMtpTarget(
+          vocab, proposals[keep - 1], sampler,
+          [&] {
+            return gpu_verification && !cpu_rows
+                       ? sampler.DistributionFromCandidates(
+                             candidates[keep - 1])
+                       : sampler.Distribution(
+                             std::span<const float>(verify_logits_)
+                                 .subspan((keep - 1) * vocab, vocab));
+          },
+          pending.dflash ? 1e-5 : 0.0);
       const auto token = static_cast<std::int32_t>(verified.token);
       const bool accepted = verified.accepted;
       if (is_stop(token)) {
@@ -1459,6 +1661,20 @@ bool Session::FinishDecode(const DecodeRequest& request,
   stats_.drafted += k - 1;
   stats_.accepted += keep - 1;
   stats_.small_head_cycles += pending.draft_subset;
+  if (pending.dflash) {
+    stats_.lookup += pending.lookup;
+    stats_.lookup_accepted += pending.lookup ? keep - 1 : 0;
+    const auto accepted = std::span<const sampling::TokenId>(
+        reinterpret_cast<const sampling::TokenId*>(chain.data()) + 1, keep - 1);
+    dflash_->AcceptFeedback(
+        accepted, correction ? static_cast<sampling::TokenId>(*correction)
+                             : tokenization::kInvalidTokenId);
+    if (!CommitDFlash(base, keep, error_msg))
+      return false;
+    if (correction)
+      sampler.DeferSample(static_cast<sampling::TokenId>(*correction));
+    return true;
+  }
   // Copied proposals trail the MTP drafts. After a fully accepted MTP part,
   // the length controller also counts the accepted copied tokens as accepted
   // drafts: a copy that ended drafting early would otherwise make a perfect
@@ -1538,7 +1754,7 @@ bool Session::DecodeStep(std::size_t max_tokens,
     valid_ = true;
     return true;
   }
-  if (pending.lookup != 0)
+  if (!pending.dflash && pending.lookup != 0)
     model_->batch_policy_.SkipCycle();
   float* logits = !pending.speculative       ? logits_.data()
                   : pending.gpu_verification ? nullptr
@@ -1630,7 +1846,23 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
   }
   std::string shared_error;
   try {
-    if (!active.empty()) {
+    if (model && model->HasDFlash()) {
+      for (const auto& r : active) {
+        try {
+          if constexpr (std::is_same_v<Request, DecodeRequest>)
+            r.outcome->completed =
+                r.session->DecodeStep(r.max_tokens, *r.sampler, r.result,
+                                      &r.outcome->error, r.stop_at_eos);
+          else
+            r.outcome->completed =
+                r.session->Evaluate(r.token, &r.outcome->error);
+        } catch (const std::exception& e) {
+          r.outcome->error = e.what();
+        }
+        if (!r.outcome->completed && r.outcome->error.empty())
+          r.outcome->error = "Flash-Next DFlash2 batch request failed";
+      }
+    } else if (!active.empty()) {
       if constexpr (std::is_same_v<Request, DecodeRequest>)
         (void)DecodeBatchImpl(active, &shared_error);
       else

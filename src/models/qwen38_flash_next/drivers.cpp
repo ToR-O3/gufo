@@ -183,9 +183,10 @@ std::shared_ptr<models::qwen38_flash_next::Model> LoadFlashNextModel(
     std::chrono::steady_clock::time_point load_start) {
   std::string error;
   if (opt.force_cpu ||
-      (!opt.speculative_backend.empty() && opt.speculative_backend != "mtp") ||
+      (!opt.speculative_backend.empty() && opt.speculative_backend != "mtp" &&
+       opt.speculative_backend != "dflash2") ||
       (opt.speculative_backend == "mtp" && opt.min_draft_tokens != 1)) {
-    std::cerr << "Flash-Next requires ROCm and supports MTP with "
+    std::cerr << "Flash-Next requires ROCm and supports MTP or DFlash2 with "
                  "--min-draft-tokens 1\n";
     return nullptr;
   }
@@ -200,7 +201,10 @@ std::shared_ptr<models::qwen38_flash_next::Model> LoadFlashNextModel(
        .mtp_model_path =
            opt.speculative_backend == "mtp" ? opt.mtp_model_path : "",
        .max_draft_tokens = opt.draft_tokens,
-       .vision_model_path = opt.vision_model_path},
+       .vision_model_path = opt.vision_model_path,
+       .dflash_model_path =
+           opt.speculative_backend == "dflash2" ? opt.dflash_model_path : "",
+       .dflash_policy = speculative::ParseDFlashDraftPolicy(opt.draft_policy)},
       &error);
   PrintModelLoadTime(load_start, model != nullptr);
   if (!model)
@@ -291,9 +295,11 @@ int RunQwen38FlashNextBenchmarkImpl(
   }
   const std::size_t required_context = FlashNextBenchContext(options);
   const bool mtp = options.speculative_backend == "mtp";
-  if (!options.speculative_backend.empty() && !mtp) {
-    std::cerr << "Error: Qwen3.8-Flash-Next supports only --speculative mtp "
-                 "or off\n";
+  const bool dflash = options.speculative_backend == "dflash2";
+  if (!options.speculative_backend.empty() && !mtp && !dflash) {
+    std::cerr
+        << "Error: Qwen3.8-Flash-Next supports --speculative mtp, dflash2 "
+           "or off\n";
     return 1;
   }
   if (mtp && options.mtp_model_path.empty()) {
@@ -305,7 +311,7 @@ int RunQwen38FlashNextBenchmarkImpl(
                  "benchmark for concurrent requests\n";
     return 1;
   }
-  if (mtp && options.min_draft_tokens != 1) {
+  if ((mtp || dflash) && options.min_draft_tokens != 1) {
     std::cerr << "Error: Flash-Next MTP requires --min-draft-tokens 1\n";
     return 1;
   }
@@ -334,6 +340,9 @@ int RunQwen38FlashNextBenchmarkImpl(
           .mtp_model_path = mtp ? options.mtp_model_path : "",
           .max_draft_tokens = std::max<std::uint32_t>(1, options.draft_tokens),
           .rope_scaling = rope_scaling,
+          .dflash_model_path = dflash ? options.dflash_model_path : "",
+          .dflash_policy =
+              speculative::ParseDFlashDraftPolicy(options.draft_policy),
       },
       &error);
   if (model == nullptr) {

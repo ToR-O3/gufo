@@ -8,8 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "src/families/qwen/config/tensor_ref.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
-#include "src/models/qwen/state.hpp"
 
 namespace gufo::speculative {
 
@@ -42,7 +42,17 @@ struct QwenDFlashConfig {
 
 /// DFlash-2 transformer weights plus the layer-local dynamic convolutions.
 struct QwenDFlashLayerWeights {
-  models::QwenLayerWeights transformer;
+  models::QwenTensorRef attn_norm;
+  models::QwenTensorRef attn_q;
+  models::QwenTensorRef attn_k;
+  models::QwenTensorRef attn_v;
+  models::QwenTensorRef attn_output;
+  models::QwenTensorRef attn_q_norm;
+  models::QwenTensorRef attn_k_norm;
+  models::QwenTensorRef ffn_norm;
+  models::QwenTensorRef ffn_gate;
+  models::QwenTensorRef ffn_up;
+  models::QwenTensorRef ffn_down;
 
   /// [hidden_size, conv_kernel_size, 2]
   models::QwenTensorRef attention_conv_base;

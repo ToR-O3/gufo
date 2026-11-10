@@ -21,7 +21,6 @@ gufo_extension_target(
     modules/unembed.cpp
     generator.cpp
     mtp_reference.cpp
-    dflash_weights.cpp
     probe.cpp
     continuation_identity.cpp
     extension.cpp
@@ -29,6 +28,7 @@ gufo_extension_target(
     gufo_ext_runtime
     gufo_core
     gufo_qwen_config
+    gufo_qwen_dflash
     gufo_qwen_control_tokens
     gufo_qwen_hip_common
     gufo_qwen_text
@@ -59,10 +59,6 @@ gufo_extension_target(
     hip/mtp/model.cpp
     hip/mtp/executor.cpp
     hip/mtp/backend.cpp
-    hip/dflash/model.cpp
-    hip/dflash/executor.cpp
-    hip/dflash/batch.cpp
-    hip/dflash/backend.cpp
     runner.cpp
     drivers.cpp
     provider.cpp

@@ -215,6 +215,35 @@ void CheckCompactProposals() {
   }
 }
 
+void CheckDFlashProposalMass() {
+  const std::array<float, 3> logits{0.1F, 0.2F, 0.3F};
+  qfn::MtpProposal proposal;
+  proposal.ids = {0, 1, 2};
+  proposal.probabilities = {0.1F, 0.2F, 0.7F};
+  proposal.size = 3;
+  proposal.token = 2;
+  proposal.probability = proposal.probabilities[2];
+  sampling::SamplerState sampler({.temperature = 1.0F, .seed = 42});
+  const auto verify = [&](double tolerance) {
+    return qfn::VerifyMtpTarget(
+        logits.size(), proposal, sampler,
+        [&] { return sampler.Distribution(logits); }, tolerance);
+  };
+  const auto rejected = [&](double tolerance) {
+    try {
+      (void)verify(tolerance);
+      return false;
+    } catch (const std::invalid_argument&) {
+      return true;
+    }
+  };
+  Require(rejected(0.0), "MTP accepted inexact proposal masses");
+  Require(verify(1e-5).token < logits.size(),
+          "DFlash2 rejected a rounded softmax");
+  proposal.probabilities[0] = 0.01F;
+  Require(rejected(1e-5), "DFlash2 accepted malformed proposal masses");
+}
+
 void CheckCalibratedCosts() {
   qfn::MtpLengthController single(7, 1), concurrent(7, 8);
   auto state = single.State();
@@ -492,6 +521,7 @@ int main() {
     CheckSampledSubsetCosts();
     CheckBatchProfitability();
     CheckCompactProposals();
+    CheckDFlashProposalMass();
     CheckSampledOutputFrequencies();
     CheckPointMassFrequencies();
     const std::array<float, 5> logits{0.3F, -0.2F, 1.1F, 0.7F, -1.0F};

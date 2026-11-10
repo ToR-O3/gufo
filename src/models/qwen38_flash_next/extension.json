@@ -21,13 +21,15 @@
         "flash-next-q4"
       ],
       "speculative": [
-        "mtp"
+        "mtp",
+        "dflash2"
       ],
       "target": "gufo_qwen38_flash_next_hip",
       "entry": "qwen38_flash_next_provider_register",
       "serving": {
         "draft_options": {
-          "mtp": "--mtp-model"
+          "mtp": "--mtp-model",
+          "dflash2": "--dflash-model"
         }
       }
     }
@@ -45,6 +47,19 @@
         "flash-next-q4"
       ],
       "help": "MTP draft model path for speculative decoding"
+    },
+    {
+      "name": "--dflash-model",
+      "type": "path",
+      "commands": [
+        "serve",
+        "bench",
+        "prompt"
+      ],
+      "providers": [
+        "flash-next-q4"
+      ],
+      "help": "DFlash2 draft model path for speculative decoding"
     },
     {
       "name": "--ple-model",

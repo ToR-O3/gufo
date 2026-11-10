@@ -1,5 +1,5 @@
-#ifndef GUFO_MODELS_QWEN_HIP_MTP_DETAIL_ALLOCATION_HPP_
-#define GUFO_MODELS_QWEN_HIP_MTP_DETAIL_ALLOCATION_HPP_
+#ifndef GUFO_FAMILIES_QWEN_HIP_COMMON_DEVICE_ALLOCATION_HPP_
+#define GUFO_FAMILIES_QWEN_HIP_COMMON_DEVICE_ALLOCATION_HPP_
 
 #include <cstddef>
 #include <stdexcept>
@@ -16,7 +16,7 @@ namespace gufo::hip::detail {
   void* pointer = nullptr;
   const auto error = gufo::hip::AllocateDevice(&pointer, bytes);
   if (error != hipSuccess) {
-    throw std::runtime_error(std::string("MTP allocation failed: ") +
+    throw std::runtime_error(std::string("Device allocation failed: ") +
                              hipGetErrorString(error));
   }
   return pointer;
@@ -25,4 +25,4 @@ namespace gufo::hip::detail {
 }  // namespace gufo::hip::detail
 #endif  // defined(ENGINE_ENABLE_HIP)
 
-#endif  // GUFO_MODELS_QWEN_HIP_MTP_DETAIL_ALLOCATION_HPP_
+#endif  // GUFO_FAMILIES_QWEN_HIP_COMMON_DEVICE_ALLOCATION_HPP_

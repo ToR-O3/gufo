@@ -658,6 +658,11 @@ void MoeEpilogueVec4F16(const __half* expert_out, const float* weights,
                         std::uint32_t dim, hipStream_t stream);
 
 /// dst[t] = *row < 0 ? alt[t] : base[*row + t] (rows of `width` floats).
+void DFlashMeanStreams(const float* source, float* destination,
+                       std::uint32_t rows, std::uint32_t hidden,
+                       std::uint32_t streams, std::size_t stride,
+                       hipStream_t stream);
+
 void MtpHidden(const float* base, const float* alt, const std::int32_t* row,
                float* dst, std::uint32_t n_tokens, std::uint32_t width,
                hipStream_t stream);

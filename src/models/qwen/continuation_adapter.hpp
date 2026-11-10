@@ -5,8 +5,8 @@
 #include <gufo/ext/adapter.hpp>
 #include <gufo/ext/transfer_pool.hpp>
 
+#include "src/families/qwen/dflash/dflash.hpp"
 #include "src/models/qwen/continuation_layout.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 
 namespace gufo::models::qwen {

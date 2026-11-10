@@ -78,7 +78,8 @@ template<typename Target>
 inline MtpVerification VerifyMtpTarget(std::size_t vocab,
                                        const MtpProposal& proposal,
                                        sampling::SamplerState& sampler,
-                                       Target&& distribution) {
+                                       Target&& distribution,
+                                       double mass_tolerance = 0.0) {
   if (proposal.size == 0 || proposal.size > kMtpCandidates ||
       proposal.token >= vocab || !std::isfinite(proposal.probability) ||
       proposal.probability <= 0 || proposal.probability > 1)
@@ -93,7 +94,8 @@ inline MtpVerification VerifyMtpTarget(std::size_t vocab,
     if (proposal.ids[i] == proposal.token)
       selected += proposal.probabilities[i];
   }
-  if (total != 1 || selected != proposal.probability)
+  if (std::abs(total - 1.0) > mass_tolerance ||
+      selected != proposal.probability)
     throw std::invalid_argument("MTP proposal masses do not match the draw");
   const auto target = distribution();
   if (sampler.Uniform() * proposal.probability <

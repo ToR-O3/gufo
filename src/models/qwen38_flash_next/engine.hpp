@@ -14,6 +14,7 @@
 #include <string_view>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash_policy.hpp"
 #include "src/families/qwen/draft_vocab/draft_vocab.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/families/qwen/vision/encoder.hpp"
@@ -25,6 +26,11 @@
 namespace gufo::core {
 class GgufReader;
 }
+
+namespace gufo::hip {
+class QwenDFlashGpuModel;
+class QwenDFlashGpuDraftBackend;
+}  // namespace gufo::hip
 
 namespace gufo::models::qwen38_flash_next {
 
@@ -59,6 +65,9 @@ struct ModelOptions {
   /// artifact's own setting, which is always off: no GGUF metadata key sets
   /// it today.
   std::optional<RopeScaling> rope_scaling{};
+  std::string dflash_model_path{};
+  speculative::DFlashDraftPolicy dflash_policy{
+      speculative::DFlashDraftPolicy::kAdaptive};
 };
 
 class Session;
@@ -92,6 +101,12 @@ public:
     return options_.max_context;
   }
   [[nodiscard]] bool HasMtp() const noexcept;
+  [[nodiscard]] bool HasDFlash() const noexcept { return bool(dflash_model_); }
+  [[nodiscard]] speculative::DFlashDraftPolicy DFlashPolicy() const noexcept {
+    return options_.dflash_policy;
+  }
+  [[nodiscard]] std::size_t DFlashStateBytes(std::uint32_t context) const;
+  [[nodiscard]] std::size_t DFlashCacheBytes(std::uint32_t context) const;
   /// Bound external PLE artifact, or null when using the embedded table.
   [[nodiscard]] const core::GgufReader* PleReader() const noexcept {
     return ple_reader_.get();
@@ -130,10 +145,11 @@ private:
   std::shared_ptr<core::GgufReader> ple_reader_;
   std::unique_ptr<ModelWeights> weights_;
   std::unique_ptr<MtpWeights> mtp_weights_;
-  std::unique_ptr<tokenization::QwenTokenizer> tokenizer_;
+  std::shared_ptr<const tokenization::QwenTokenizer> tokenizer_;
   std::unique_ptr<NgramTable> ngram_;
   std::unique_ptr<rocm::DeviceModel> device_;
   std::unique_ptr<rocm::Executor> executor_;
+  std::shared_ptr<const hip::QwenDFlashGpuModel> dflash_model_;
   std::shared_ptr<qwen::vision::Encoder> vision_;
   MtpBatchController batch_policy_;
   /// MTP drafts may use the small head (draft_vocab.hpp).
@@ -354,11 +370,16 @@ private:
   /// Appends copies within the prepared budget, stopping at EOG when enabled.
   bool AppendLookup(PendingDecode& pending, bool stop_at_eos,
                     std::size_t minimum = 1, bool require_resume = false);
+  bool PrepareDFlash(PendingDecode&, sampling::SamplerState&,
+                     std::int32_t anchor, std::uint32_t max_drafts);
+  bool CommitDFlash(std::uint32_t position, std::uint32_t count,
+                    std::string* error_msg);
   bool FinishDecode(const DecodeRequest& request, const PendingDecode& pending,
                     std::string* error_msg);
 
   std::shared_ptr<Model> model_;
   std::unique_ptr<rocm::Session> session_;
+  std::unique_ptr<hip::QwenDFlashGpuDraftBackend> dflash_;
   std::vector<std::int32_t> tokens_;
   std::vector<float> logits_;
   std::int32_t draft_token_{0};

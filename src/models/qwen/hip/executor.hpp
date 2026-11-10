@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "src/families/qwen/hip_common/continuation_hooks.hpp"
+#include "src/families/qwen/hip_common/memory_usage.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/models/qwen/forward.hpp"
 #include "src/models/qwen/generator.hpp"
@@ -74,15 +75,6 @@ struct QwenGpuWeightRegion {
   // hipMalloc allocation uploaded from the shard, and host_copy stays null.
   // Mapped registration is the fallback when the heap is too small.
   bool owns_device_allocation{false};
-};
-
-struct QwenGpuMemoryUsage {
-  std::size_t request_state_bytes{0};
-  std::size_t temporary_scratch_bytes{0};
-
-  [[nodiscard]] std::size_t TotalBytes() const noexcept {
-    return request_state_bytes + temporary_scratch_bytes;
-  }
 };
 
 /// Immutable GPU-visible Qwen model resources shared by executor sessions.

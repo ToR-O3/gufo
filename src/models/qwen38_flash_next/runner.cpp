@@ -248,6 +248,18 @@ public:
           model_.get(), max_context_, use_mtp_, max_draft_tokens_,
           model_->DecodeConcurrency());
     }
+    if (model_->HasDFlash()) {
+      if (!artifact_fingerprint.empty() && !IsSha256Hex(mtp_fingerprint))
+        throw std::invalid_argument(
+            "Flash-Next DFlash2 requires a draft fingerprint");
+      const auto draft_identity =
+          "draft_backend=qfn-dflash2-v1\ndraft_artifact=" + mtp_fingerprint +
+          "\ndraft_tokens=" + std::to_string(max_draft_tokens_) +
+          "\ndraft_policy=" +
+          std::to_string(static_cast<unsigned>(model_->DFlashPolicy())) + "\n";
+      component_identity_.insert(component_identity_.end(),
+                                 draft_identity.begin(), draft_identity.end());
+    }
   }
 
   [[nodiscard]] std::unique_ptr<ComponentCacheResources>
@@ -257,8 +269,9 @@ public:
     return hip::CreateHipComponentCacheResources(
         std::make_unique<models::qwen38_flash_next::ContinuationAdapter>(
             model_,
-            use_mtp_ ? core::SessionMode::kSpeculative
-                     : core::SessionMode::kAutoregressive,
+            (use_mtp_ || model_->HasDFlash())
+                ? core::SessionMode::kSpeculative
+                : core::SessionMode::kAutoregressive,
             max_context_, component_identity_),
         ledger, HipComponentCacheHooks());
   }
@@ -285,11 +298,11 @@ public:
                 .incremental_prefill = true,
                 .final_token_advance_required = false,
                 .incremental_text_is_exact = true,
-                .multi_token_decode = use_mtp_,
+                .multi_token_decode = use_mtp_ || model_->HasDFlash(),
                 .batched_multi_token_decode = use_mtp_,
                 .batched_multi_token_decode_max_width = use_mtp_ ? 8u : 0u,
                 .prefix_reuse = true,
-                .in_pass_checkpoint = true,
+                .in_pass_checkpoint = !model_->HasDFlash(),
                 .partial_prefill_retention = true,
                 // Sparse prefill tiles group four queries from each pass
                 // start: one selection block (compress ratio).
@@ -314,10 +327,11 @@ public:
     return {
         .resident_weights_bytes = model_->ResidentBytes(),
         .state_capacity_bytes = capacity,
-        .per_request_state_bytes = model_->SessionBytes(
-            use_mtp_ ? gufo::core::SessionMode::kSpeculative
-                     : gufo::core::SessionMode::kAutoregressive,
-            max_context_),
+        .per_request_state_bytes =
+            model_->SessionBytes((use_mtp_ || model_->HasDFlash())
+                                     ? gufo::core::SessionMode::kSpeculative
+                                     : gufo::core::SessionMode::kAutoregressive,
+                                 max_context_),
         // Runtime scratch is shared and already allocated at model load;
         // reserve its remaining lazy buffers once from aggregate capacity.
         .temporary_scratch_bytes = 0,
@@ -330,6 +344,8 @@ public:
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override {
     std::vector<TextExecutionPlan> plans{
         {.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
+    if (model_->HasDFlash())
+      return plans;
     for (std::size_t width = 2; width <= 8; ++width) {
       plans.push_back(
           {.kind = TextExecutionPlanKind::kBatched, .physical_width = width});
@@ -587,12 +603,12 @@ public:
   [[nodiscard]] TextDecodeStep DecodeStep(
       TextRunnerState& state, std::size_t max_tokens,
       sampling::SamplerState& sampler) const override {
-    if (!use_mtp_ || max_tokens == 1) {
+    if ((!use_mtp_ && !model_->HasDFlash()) || max_tokens == 1) {
       return TextModelRunner::DecodeStep(state, max_tokens, sampler);
     }
     if (max_tokens == 0) {
       throw std::invalid_argument(
-          "Qwen3.8-Flash-Next MTP decode budget must be at least one token");
+          "Qwen3.8-Flash-Next draft decode budget must be at least one token");
     }
     auto& qfn = RequireQwenFlashNextState(state);
     if (qfn.position() >= max_context_) {
@@ -607,7 +623,7 @@ public:
     // remaining request budget so its policy can recognize a short tail.
     if (!qfn.session().DecodeStep(max_tokens, working_sampler, &decoded, &error,
                                   qfn.stop_at_eos())) {
-      throw std::runtime_error("Qwen3.8-Flash-Next MTP decode failed: " +
+      throw std::runtime_error("Qwen3.8-Flash-Next draft decode failed: " +
                                error);
     }
     // The pool accepts the returned tokens once. Publish the RNG and residual
@@ -812,17 +828,19 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
   }
   const bool use_mtp =
       options.speculative.backend == ext::TextSpeculativeBackend::kMtp;
+  const bool use_dflash =
+      options.speculative.backend == ext::TextSpeculativeBackend::kDFlash;
   if (options.speculative.backend != ext::TextSpeculativeBackend::kDisabled &&
-      !use_mtp) {
+      !use_mtp && !use_dflash) {
     if (error)
       *error =
-          "Qwen3.8-Flash-Next HTTP models support only MTP speculative "
-          "decoding";
+          "Qwen3.8-Flash-Next supports MTP and DFlash2 speculative decoding";
     return nullptr;
   }
-  if (use_mtp && options.speculative.draft_model_path.empty()) {
+  if ((use_mtp || use_dflash) && options.speculative.draft_model_path.empty()) {
     if (error)
-      *error = "Qwen3.8-Flash-Next MTP HTTP decoding requires --mtp-model";
+      *error = use_dflash ? "Flash-Next DFlash2 requires --dflash-model"
+                          : "Flash-Next MTP requires --mtp-model";
     return nullptr;
   }
   std::string load_error;
@@ -832,11 +850,19 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
           .max_context = max_context,
           .mtp_model_path =
               use_mtp ? options.speculative.draft_model_path : std::string{},
+          .max_draft_tokens = use_dflash ? options.speculative.max_draft_tokens
+                                         : kMaxMtpDraftTokens,
           .vision_model_path = options.vision_model_path,
           .ple_model_path = options.ple_model_path,
           .decode_concurrency =
               DecodeConcurrencyForSessions(options.session_count),
           .rope_scaling = rope_scaling,
+          .dflash_model_path =
+              use_dflash ? options.speculative.draft_model_path : std::string{},
+          .dflash_policy = options.speculative.dflash_policy ==
+                                   ext::TextDFlashDraftPolicy::kFixed
+                               ? speculative::DFlashDraftPolicy::kFixed
+                               : speculative::DFlashDraftPolicy::kAdaptive,
       },
       &load_error);
   if (!model) {
@@ -882,14 +908,14 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
   }
   std::string draft_fingerprint =
       options.disk_cache.draft_model_artifact_fingerprint;
-  if (!options.disk_cache.directory.empty() && use_mtp &&
+  if (!options.disk_cache.directory.empty() && (use_mtp || use_dflash) &&
       draft_fingerprint.empty()) {
     std::string mtp_error;
     auto mtp_reader = core::GgufReader::OpenFile(
         options.speculative.draft_model_path, &mtp_error);
     if (!mtp_reader) {
       if (error)
-        *error = "Failed to open MTP model: " + mtp_error;
+        *error = "Failed to open draft model: " + mtp_error;
       return nullptr;
     }
     try {
@@ -897,7 +923,7 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     } catch (const std::exception& e) {
       if (error)
         *error =
-            std::string("MTP disk cache fingerprinting failed: ") + e.what();
+            std::string("Draft disk cache fingerprinting failed: ") + e.what();
       return nullptr;
     }
   }

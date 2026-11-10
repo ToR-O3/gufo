@@ -4,7 +4,7 @@
 #include <string>
 
 #include "gufo/ext/text.hpp"
-#include "src/models/qwen/dflash_policy.hpp"
+#include "src/families/qwen/dflash/dflash_policy.hpp"
 
 namespace gufo::hip {
 class QwenGpuModel;

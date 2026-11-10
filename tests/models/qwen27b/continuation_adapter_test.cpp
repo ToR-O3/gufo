@@ -12,6 +12,7 @@
 
 #include "src/cache/slot.hpp"
 #include "src/core/gguf_reader.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 
 namespace cache = gufo::cache;
 namespace hip = gufo::hip;
@@ -698,8 +699,8 @@ void CheckDraftComponents(std::shared_ptr<const hip::QwenGpuModel> model,
   auto reader = gufo::core::GgufReader::OpenFile(draft_path, &error);
   Require(bool(reader), error.c_str());
   auto draft_model = hip::QwenDFlashGpuModel::Create(
-      std::shared_ptr<const gufo::core::GgufReader>(std::move(reader)), model,
-      &error);
+      std::shared_ptr<const gufo::core::GgufReader>(std::move(reader)),
+      hip::MakeDFlashTarget(model), &error);
   Require(bool(draft_model), error.c_str());
   qwen::ContinuationAdapter adapter(
       model, 256, {'d', 'r', 'a', 'f', 't'},

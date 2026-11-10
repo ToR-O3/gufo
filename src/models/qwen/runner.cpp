@@ -32,7 +32,7 @@
 #include "src/families/qwen/vision/prompt.hpp"
 #include "src/models/qwen/continuation_adapter.hpp"
 #include "src/models/qwen/continuation_identity.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 #include "src/models/qwen/hip/qwen_speculative_verifier.hpp"
 #include "src/models/qwen/probe.hpp"
@@ -1201,8 +1201,8 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenTextRunner(
         return nullptr;
       }
     }
-    dflash_model = hip::QwenDFlashGpuModel::Create(std::move(dflash_reader),
-                                                   model, &dflash_error);
+    dflash_model = hip::QwenDFlashGpuModel::Create(
+        std::move(dflash_reader), hip::MakeDFlashTarget(model), &dflash_error);
     if (!dflash_model) {
       if (error)
         *error = "Failed to create DFlash model: " + dflash_error;

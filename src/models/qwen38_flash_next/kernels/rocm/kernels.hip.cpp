@@ -9407,6 +9407,35 @@ void MoeEpilogueVec4F16(const __half* expert_out, const float* weights,
                      dim);
 }
 
+namespace {
+__global__ void DFlashMeanStreamsKernel(const float* source, float* destination,
+                                        std::size_t size, std::uint32_t hidden,
+                                        std::uint32_t streams,
+                                        std::size_t stride) {
+  const std::size_t index = blockIdx.x * blockDim.x + threadIdx.x;
+  if (index >= size)
+    return;
+  const std::size_t row = index / hidden;
+  const std::size_t column = index % hidden;
+  float sum = 0;
+  for (std::uint32_t stream = 0; stream < streams; ++stream)
+    sum += source[(row * streams + stream) * hidden + column];
+  destination[row * stride + column] = sum / streams;
+}
+}  // namespace
+
+void DFlashMeanStreams(const float* source, float* destination,
+                       std::uint32_t rows, std::uint32_t hidden,
+                       std::uint32_t streams, std::size_t stride,
+                       hipStream_t stream) {
+  constexpr std::uint32_t threads = 256;
+  const std::size_t size = std::size_t{rows} * hidden;
+  hipLaunchKernelGGL(DFlashMeanStreamsKernel,
+                     dim3((size + threads - 1) / threads), dim3(threads), 0,
+                     stream, source, destination, size, hidden, streams,
+                     stride);
+}
+
 void MtpHidden(const float* base, const float* alt, const std::int32_t* row,
                float* dst, std::uint32_t n_tokens, std::uint32_t width,
                hipStream_t stream) {
