@@ -273,8 +273,11 @@ public:
     /// Largest session context. Zero selects the native context; values
     /// above it require YaRN (Config::MaxContextLength()).
     std::uint32_t max_context{0};
+    std::vector<std::uint32_t> dflash_layers;
   };
 
+  [[nodiscard]] std::span<const float> DFlashFeatures(
+      std::uint32_t count) const;
   ~Executor();
   [[nodiscard]] hipStream_t stream() const noexcept { return stream_; }
   Executor(const Executor&) = delete;
@@ -668,6 +671,7 @@ private:
   const DeviceModel* model_{nullptr};
   NgramTable* ngram_{nullptr};
   Options options_;
+  float* dflash_features_{};
   [[nodiscard]] std::shared_ptr<SnapshotAllocator> GetSnapshotAllocator() const;
   mutable std::once_flag snapshot_allocator_once_;
   mutable std::shared_ptr<SnapshotAllocator> snapshot_allocator_;

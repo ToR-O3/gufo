@@ -1243,7 +1243,16 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
   e->wide_mixer_ = c.hc_count == 4 && c.hidden_size % 32 == 0 &&
                    !model.layers().empty() &&
                    model.layers()[0].hc_ffn.down.type == GgmlType::kQ8_0;
-  if (model.has_mtp()) {
+  if (!options.dflash_layers.empty()) {
+    e->dflash_features_ =
+        Alloc<float>(a,
+                     std::size_t{options.max_batch} * c.hidden_size *
+                         options.dflash_layers.size(),
+                     error_msg);
+    if (e->dflash_features_ == nullptr)
+      return nullptr;
+  }
+  if (model.has_mtp() || e->dflash_features_ != nullptr) {
     // The trunk's kept rows are session-owned. Its transient residual and
     // mixer buffers are free while MTP constructs its input. The split
     // projections consume h/embd before the first mixer rewrites xn/mixed.
@@ -3483,6 +3492,13 @@ bool Executor::Run(Session& session, std::uint64_t key, bool graph,
          Check(hipStreamSynchronize(stream_), "forward", error_msg);
 }
 
+std::span<const float> Executor::DFlashFeatures(std::uint32_t count) const {
+  if (!dflash_features_ || count > options_.max_batch)
+    return {};
+  return {dflash_features_, std::size_t{count} * config().hidden_size *
+                                options_.dflash_layers.size()};
+}
+
 bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
                        std::uint32_t n_logits, float* logits, ForwardMode mode,
                        std::string* error_msg,
@@ -3715,6 +3731,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // The last target layer's query outputs have no later cache consumer.
     // Preserve all K/V/indexer rows and the final query's original tile.
     const bool last_attention = WidePrefill(n) && !session.mtp_enabled_ &&
+                                dflash_features_ == nullptr &&
                                 il + 1 == c.num_layers && n_logits == 1 &&
                                 checkpoints.empty();
     if (l.linear) {
@@ -3749,6 +3766,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // Keep aligned tiles and at least 96 rows to retain the wide arithmetic.
     const auto needed = std::max(96U, n_logits);
     const auto skipped = prefill_phase && !session.mtp_enabled_ &&
+                                 dflash_features_ == nullptr &&
                                  il + 1 == c.num_layers && n > needed
                              ? (n - needed) / 128 * 128
                              : 0U;
@@ -3832,6 +3850,14 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       return false;
     }
     normed = next_norm != nullptr;
+    const auto tap = std::ranges::find(options_.dflash_layers, il);
+    if (tap != options_.dflash_layers.end()) {
+      const auto index =
+          static_cast<std::size_t>(tap - options_.dflash_layers.begin());
+      DFlashMeanStreams(s_.res, dflash_features_ + index * c.hidden_size, n,
+                        c.hidden_size, c.hc_count,
+                        options_.dflash_layers.size() * c.hidden_size, stream_);
+    }
   }
   if (end_layer < c.num_layers) {
     return true;

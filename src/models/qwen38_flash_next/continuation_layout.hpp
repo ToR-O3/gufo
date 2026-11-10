@@ -30,6 +30,7 @@ enum class ContinuationPart {
   kDraftRawKeys,
   kDraftResidual,
   kKeptHidden,
+  kDFlashState,
 };
 
 struct ContinuationComponent {
@@ -51,7 +52,7 @@ using ContinuationBackingClass = cache::BackingClass;
 class ContinuationLayout {
 public:
   ContinuationLayout(const Config&, bool mtp, std::uint32_t context,
-                     std::uint32_t kept_rows);
+                     std::uint32_t kept_rows, std::size_t dflash_bytes = 0);
   [[nodiscard]] std::span<const ContinuationComponent> Components() const {
     return components_;
   }

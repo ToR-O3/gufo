@@ -87,6 +87,7 @@ gufo_extension_target(
     gufo_cache_hip
     gufo_qwen_vision
     gufo_qwen_draft_vocab
+    gufo_qwen_dflash
     gufo_qwen38_flash_next_mmq
     gufo_compare
     hip::host

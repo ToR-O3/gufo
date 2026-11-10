@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash.hpp"
 #include "src/models/qwen38_flash_next/continuation_hooks.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
 
@@ -147,6 +148,7 @@ public:
     GuardAll();
   }
   void AfterReset() override {
+    dflash_payload.clear();
     // Native Reset queues zero fills. Settle them before exposing an empty
     // slot to captures on independent streams.
     Check(hipStreamSynchronize(adapter.model_->executor_->stream()));
@@ -200,6 +202,9 @@ public:
   std::vector<cache::ComponentPosition> expected;
   std::vector<Coverage> coverage;
   std::array<std::byte, kContinuationMetadataBytes> metadata{};
+  std::vector<std::uint8_t> dflash_payload;
+  std::uint64_t dflash_epoch{};
+  std::uint32_t dflash_position{};
 };
 
 struct ContinuationAdapter::Region {
@@ -218,14 +223,19 @@ ContinuationAdapter::ContinuationAdapter(std::shared_ptr<Model> model,
     : model_(std::move(model)),
       mode_(mode),
       context_(context),
-      layout_(model_ ? model_->config() : Config{},
-              mode == core::SessionMode::kSpeculative, context,
-              model_ ? model_->executor_->max_speculative() : 0),
+      layout_(
+          model_ ? model_->config() : Config{},
+          mode == core::SessionMode::kSpeculative && model_ && model_->HasMtp(),
+          context, model_ ? model_->executor_->max_speculative() : 0,
+          model_ && mode == core::SessionMode::kSpeculative
+              ? model_->DFlashCacheBytes(context)
+              : 0),
       identity_(std::move(identity)) {
   if ((mode != core::SessionMode::kAutoregressive &&
        mode != core::SessionMode::kSpeculative) ||
       identity_.empty() || context > model_->MaxContext() ||
-      (mode == core::SessionMode::kSpeculative && !model_->HasMtp()))
+      (mode == core::SessionMode::kSpeculative && !model_->HasMtp() &&
+       !model_->HasDFlash()))
     throw std::invalid_argument("invalid Flash-Next adapter configuration");
   const auto put = [&](std::uint32_t value) {
     for (unsigned i = 0; i < 4; ++i)
@@ -434,6 +444,9 @@ void ContinuationAdapter::BeginRestore(
   state.expected = std::move(ordered);
   state.coverage = std::move(coverage);
   state.metadata.fill(std::byte{});
+  state.dflash_payload.clear();
+  if (state.session->dflash_)
+    state.dflash_payload.resize(model_->DFlashCacheBytes(context_));
   state.restoring = true;
   state.session->valid_ = false;
   // The restore rewrites the tokens in place, not through RestoreSnapshot.
@@ -491,6 +504,9 @@ ContinuationAdapter::Region ContinuationAdapter::PrivateRegion(
       break;
     case ContinuationPart::kMetadata:
       add(state.metadata.data(), bytes, true);
+      break;
+    case ContinuationPart::kDFlashState:
+      add(state.dflash_payload.data(), state.dflash_payload.size(), true);
       break;
     case ContinuationPart::kConvolution:
       add(native.linear_[component.layer].conv_state, bytes);
@@ -592,6 +608,28 @@ cache::Completion ContinuationAdapter::CapturePrivatePiece(
       std::ranges::copy(identity, metadata.image.begin());
     }
     std::memcpy(host_metadata.data(), &metadata, sizeof(metadata));
+  }
+  if (component.part == ContinuationPart::kDFlashState) {
+    auto& native = state.CaptureState();
+    auto& draft = *state.session->dflash_;
+    if (state.checkpoint ||
+        draft.GetInjectedContextLength() != native.position_)
+      throw std::logic_error(
+          "DFlash2 cache frontier does not match the target");
+    if (state.dflash_payload.empty() ||
+        state.dflash_epoch != native.MutationEpoch() ||
+        state.dflash_position != native.position_) {
+      const auto snapshot = draft.Snapshot();
+      const std::uint64_t length = snapshot->PersistentPayloadBytes();
+      if (length > total - sizeof(length))
+        throw std::logic_error("DFlash2 cache payload exceeds its component");
+      state.dflash_payload.resize(sizeof(length) + length);
+      std::memcpy(state.dflash_payload.data(), &length, sizeof(length));
+      (void)snapshot->SerializePersistent(
+          std::span(state.dflash_payload).subspan(sizeof(length)));
+      state.dflash_epoch = native.MutationEpoch();
+      state.dflash_position = native.position_;
+    }
   }
   auto region = PrivateRegion(state, component, false);
   if (component.part == ContinuationPart::kMetadata)
@@ -881,6 +919,19 @@ bool ContinuationAdapter::Validate(
       session.image_prompt_.reset();
     }
     Check(hipStreamSynchronize(model_->executor_->stream()));
+    if (session.dflash_) {
+      std::uint64_t length{};
+      if (state.dflash_payload.size() < sizeof(length))
+        return refuse();
+      std::memcpy(&length, state.dflash_payload.data(), sizeof(length));
+      if (length == 0 || length > state.dflash_payload.size() - sizeof(length))
+        return refuse();
+      session.dflash_->RestorePersistentSnapshot(
+          std::span(state.dflash_payload).subspan(sizeof(length), length));
+      if (session.dflash_->GetInjectedContextLength() != metadata.target)
+        return refuse();
+      state.dflash_payload.clear();
+    }
   } catch (...) {
     return refuse();
   }

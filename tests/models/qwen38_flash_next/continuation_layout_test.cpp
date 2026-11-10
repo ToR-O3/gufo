@@ -103,6 +103,25 @@ void Check(bool mtp) {
   Require(layout.PrivateBytes() - no_ple_layout.PrivateBytes() == 368640,
           "PLE history inventory is incorrect");
 }
+void CheckDFlash() {
+  const auto c = ProductionGeometry();
+  constexpr std::size_t draft_bytes = 4096;
+  const qfn::ContinuationLayout ar(c, false, 4096, 8);
+  const qfn::ContinuationLayout dflash(c, false, 4096, 8, draft_bytes);
+  const auto& component = dflash.Components().back();
+  Require(dflash.Components().size() == ar.Components().size() + 1 &&
+              component.part == qfn::ContinuationPart::kDFlashState &&
+              component.descriptor.kind == cache::ComponentKind::kPrivateState,
+          "DFlash2 must add one private state component");
+  Require(dflash.PrivateBytes() == ar.PrivateBytes() + draft_bytes,
+          "DFlash2 state must count toward the cache budget");
+  const auto positions = dflash.Positions(3072, 0, 768, 0);
+  Require(positions.back().id == component.descriptor.id &&
+              positions.back().valid_rows == 3072,
+          "DFlash2 state must track the target frontier");
+  Require(dflash.RowBytes(3072, 0, 768, 0) == ar.RowBytes(3072, 0, 768, 0),
+          "DFlash2 must not create MTP append rows");
+}
 void CheckExtendedContext(bool mtp) {
   const auto native = ProductionGeometry();
   Reject([&] {
@@ -189,6 +208,7 @@ int main() {
   try {
     Check(false);
     Check(true);
+    CheckDFlash();
     for (const auto mtp : {false, true}) {
       CheckExtendedContext(mtp);
       CheckBacking(mtp, 32768, 2, 8ULL << 30, 32, 2 * 32768);

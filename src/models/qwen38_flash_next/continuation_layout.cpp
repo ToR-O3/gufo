@@ -21,7 +21,8 @@ bool IsPool(ContinuationPart part) {
 
 ContinuationLayout::ContinuationLayout(const Config& c, bool mtp,
                                        std::uint32_t context,
-                                       std::uint32_t kept_rows)
+                                       std::uint32_t kept_rows,
+                                       std::size_t dflash_bytes)
     : context_(context), ratio_(c.compress_ratio), mtp_(mtp) {
   if (!context || context > c.MaxContextLength() || !ratio_ ||
       !c.full_attention_interval || !c.num_layers || !c.AttentionKvDim() ||
@@ -83,6 +84,8 @@ ContinuationLayout::ContinuationLayout(const Config& c, bool mtp,
     add(ContinuationPart::kKeptHidden, 0,
         std::size_t{kept_rows} * c.HcDim() * sizeof(float));
   }
+  if (dflash_bytes)
+    add(ContinuationPart::kDFlashState, 0, dflash_bytes);
 }
 
 std::vector<cache::ComponentPosition> ContinuationLayout::Positions(
