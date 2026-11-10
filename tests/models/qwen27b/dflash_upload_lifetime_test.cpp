@@ -15,7 +15,7 @@
 
 #include "src/core/gguf_reader.hpp"
 #include "src/core/hip/host_allocations.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 
 namespace {
@@ -83,7 +83,8 @@ int main(int argc, const char* const* argv) {
     auto target = gufo::hip::QwenGpuModel::CreateFromGguf(reader, &error);
     Check(target != nullptr, error.c_str());
     auto backend = gufo::hip::QwenDFlashGpuDraftBackend::CreateFromGguf(
-        draft_path, target, {.max_context = 32}, &error);
+        draft_path, gufo::hip::MakeDFlashTarget(target), {.max_context = 32},
+        &error);
     Check(backend != nullptr, error.c_str());
     const std::vector<gufo::tokenization::TokenId> tokens{1, 2, 3, 4};
     const auto width = target->GetConfig().hidden_size *

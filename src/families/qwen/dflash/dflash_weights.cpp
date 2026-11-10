@@ -1,4 +1,4 @@
-#include "src/models/qwen/dflash_weights.hpp"
+#include "src/families/qwen/dflash/dflash_weights.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -360,37 +360,35 @@ std::optional<QwenDFlashWeights> QwenDFlashWeights::LoadFromGguf(
   for (std::uint32_t i = 0; i < df_cfg.num_layers; ++i) {
     const std::string layer_prefix = "blk." + std::to_string(i) + ".";
     auto& layer = weights.layers[i];
-    auto& transformer = layer.transformer;
-    transformer.is_full_attention = true;
 
     if (!BindRequiredTensor(reader, layer_prefix + "attn_norm.weight", hidden,
-                            false, transformer.attn_norm, error_msg) ||
+                            false, layer.attn_norm, error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_q.weight",
-                            attention * hidden, true, transformer.attn_q,
+                            attention * hidden, true, layer.attn_q,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_k.weight", kv * hidden,
-                            true, transformer.attn_k, error_msg) ||
+                            true, layer.attn_k, error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_v.weight", kv * hidden,
-                            true, transformer.attn_v, error_msg) ||
+                            true, layer.attn_v, error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_output.weight",
-                            hidden * attention, true, transformer.attn_output,
+                            hidden * attention, true, layer.attn_output,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_q_norm.weight",
-                            config.head_dim, false, transformer.attn_q_norm,
+                            config.head_dim, false, layer.attn_q_norm,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_k_norm.weight",
-                            config.head_dim, false, transformer.attn_k_norm,
+                            config.head_dim, false, layer.attn_k_norm,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "ffn_norm.weight", hidden,
-                            false, transformer.ffn_norm, error_msg) ||
+                            false, layer.ffn_norm, error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "ffn_gate.weight",
-                            intermediate * hidden, true, transformer.ffn_gate,
+                            intermediate * hidden, true, layer.ffn_gate,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "ffn_up.weight",
-                            intermediate * hidden, true, transformer.ffn_up,
+                            intermediate * hidden, true, layer.ffn_up,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "ffn_down.weight",
-                            hidden * intermediate, true, transformer.ffn_down,
+                            hidden * intermediate, true, layer.ffn_down,
                             error_msg) ||
         !BindRequiredTensor(reader, layer_prefix + "attn_conv_base",
                             hidden * df_cfg.conv_kernel_size * 2U, false,

@@ -31,7 +31,7 @@
 #include "src/families/qwen/vision/encoder.hpp"
 #include "src/families/qwen/vision/prompt.hpp"
 #include "src/models/qwen/generator.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 #include "src/models/qwen/hip/mtp.hpp"
 #include "src/models/qwen/hip/qwen_speculative_verifier.hpp"
@@ -254,7 +254,8 @@ std::unique_ptr<speculative::SpeculativeVerifier> CreateQwenVerifier(
         .policy = speculative::ParseDFlashDraftPolicy(opt.draft_policy),
     };
     draft_backend = hip::QwenDFlashGpuDraftBackend::CreateFromGguf(
-        dflash_path, executor.GetSharedModel(), cfg, &err);
+        dflash_path, hip::MakeDFlashTarget(executor.GetSharedModel()), cfg,
+        &err);
     if (draft_backend == nullptr) {
       throw std::runtime_error("Failed to initialize DFlash backend: " + err);
     }
@@ -427,7 +428,8 @@ int RunQwenBenchmarkImpl(
         .policy = speculative::ParseDFlashDraftPolicy(opt.draft_policy),
     };
     auto draft = hip::QwenDFlashGpuDraftBackend::CreateFromGguf(
-        opt.dflash_model_path, gpu_exec->GetSharedModel(), draft_config, &err);
+        opt.dflash_model_path,
+        hip::MakeDFlashTarget(gpu_exec->GetSharedModel()), draft_config, &err);
     if (!draft) {
       throw std::runtime_error("DFlash2 initialization failed: " + err);
     }

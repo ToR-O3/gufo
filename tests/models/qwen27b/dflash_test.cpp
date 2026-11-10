@@ -1,5 +1,3 @@
-#include "src/models/qwen/hip/dflash.hpp"
-
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -22,8 +20,9 @@
 #include "src/core/gguf_reader.hpp"
 #include "src/core/json.hpp"
 #include "src/core/speculative/speculative_verifier.hpp"
+#include "src/families/qwen/dflash/dflash_weights.hpp"
 #include "src/families/qwen/text/chat_template.hpp"
-#include "src/models/qwen/dflash_weights.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 #include "src/models/qwen/hip/qwen_speculative_verifier.hpp"
 
@@ -1073,7 +1072,7 @@ int main(int argc, const char* const* argv) {
     Expect(target_model != nullptr, error);
 
     auto dflash_model = gufo::hip::QwenDFlashGpuModel::Create(
-        dflash_reader, target_model, &error);
+        dflash_reader, gufo::hip::MakeDFlashTarget(target_model), &error);
     Expect(dflash_model != nullptr, error);
 
     if (argc == 5 && std::string_view(argv[3]) == "--trace") {

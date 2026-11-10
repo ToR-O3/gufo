@@ -11,10 +11,10 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
 #include "src/families/qwen/kernels/ops.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -215,7 +215,7 @@ void QwenDFlashGpuExecutor::InjectTargetContextBatch(
   }
   for (std::size_t layer_index = 0; layer_index < weights.layers.size();
        ++layer_index) {
-    const auto& layer = weights.layers[layer_index].transformer;
+    const auto& layer = weights.layers[layer_index];
     coordinator.RunInjectGemm(layer.attn_k, coordinator.d_block_normed_,
                               coordinator.d_k_block_, rows, kv_size,
                               hidden_size);
@@ -405,7 +405,7 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
   for (std::size_t layer_index = 0; layer_index < draft.num_layers;
        ++layer_index) {
     const auto& block = weights.layers[layer_index];
-    const auto& layer = block.transformer;
+    const auto& layer = block;
     const auto stage = [&](std::string_view name, const float* source,
                            std::size_t width) {
       if (tracing)

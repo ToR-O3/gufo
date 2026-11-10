@@ -11,7 +11,7 @@
 #include "src/core/gguf_identity.hpp"
 #include "src/core/image.hpp"
 #include "src/core/speculative/speculative_verifier.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/models/qwen/hip/dflash_target.hpp"
 #include "src/models/qwen/hip/executor.hpp"
 #include "src/models/qwen/runner.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
@@ -412,7 +412,7 @@ int main(int argc, char** argv) {
               core::GgufReader::OpenFile(mode.draft_model_path, &err));
           Require(draft_reader != nullptr, err);
           dflash_model = hip::QwenDFlashGpuModel::Create(
-              std::move(draft_reader), qwen, &err);
+              std::move(draft_reader), hip::MakeDFlashTarget(qwen), &err);
           Require(dflash_model != nullptr, err);
           spec_opts.max_draft_tokens = mode.max_draft_tokens;
           spec_opts.min_draft_tokens = mode.min_draft_tokens;

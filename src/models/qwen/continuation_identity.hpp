@@ -4,8 +4,8 @@
 #include <string_view>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash_policy.hpp"
 #include "src/families/qwen/hip_common/execution_policy.hpp"
-#include "src/models/qwen/dflash_policy.hpp"
 
 namespace gufo::speculative {
 struct SpeculativeOptions;

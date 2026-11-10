@@ -8,9 +8,9 @@
 #include <vector>
 
 #include "src/families/qwen/hip_common/attention_policy.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/ops.hpp"
 #include "src/models/qwen/hip/mtp.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {

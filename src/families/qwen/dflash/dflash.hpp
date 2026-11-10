@@ -14,14 +14,21 @@
 #include <string_view>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash_policy.hpp"
+#include "src/families/qwen/dflash/dflash_weights.hpp"
 #include "src/families/qwen/draft_vocab/draft_vocab.hpp"
+#include "src/families/qwen/hip_common/continuation_hooks.hpp"
+#include "src/families/qwen/hip_common/memory_usage.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
-#include "src/models/qwen/dflash_policy.hpp"
-#include "src/models/qwen/dflash_weights.hpp"
-#include "src/models/qwen/hip/executor.hpp"
 
 #if defined(ENGINE_ENABLE_HIP)
+#include <hip/hip_bfloat16.h>
 #include <hip/hip_runtime.h>
+#include <hipblas/hipblas.h>
+
+namespace gufo::models::qwen {
+class ContinuationAdapter;
+}
 
 namespace gufo::hip {
 
@@ -34,6 +41,7 @@ struct DFlashSampling;
 using DFlashTrace =
     std::function<void(std::string_view, std::span<const float>)>;
 
+class HipblasLtGemm;
 class QwenDFlashGpuExecutor;
 
 struct QwenDFlashContextRequest {
@@ -58,6 +66,7 @@ struct QwenDFlashBlockRequest {
 
 class QwenDFlashGpuSnapshot final {
 public:
+  static constexpr std::size_t kPersistentHeaderBytes = 64;
   ~QwenDFlashGpuSnapshot();
 
   QwenDFlashGpuSnapshot(const QwenDFlashGpuSnapshot&) = delete;
@@ -91,6 +100,16 @@ private:
   friend class QwenDFlashGpuExecutor;
 };
 
+/// The target owns these device tensors for the draft model's lifetime.
+struct DFlashTarget {
+  std::shared_ptr<const tokenization::QwenTokenizer> tokenizer;
+  models::QwenTensorRef embedding;
+  models::QwenTensorRef output;
+  std::uint32_t hidden_size{};
+  std::uint32_t vocab_size{};
+  std::uint32_t num_layers{};
+};
+
 /// Immutable GPU-visible DFlash / DFlash-2 model weights and topology.
 class QwenDFlashGpuModel final {
 public:
@@ -103,8 +122,7 @@ public:
 
   [[nodiscard]] static std::shared_ptr<const QwenDFlashGpuModel> Create(
       std::shared_ptr<const core::GgufReader> dflash_reader,
-      std::shared_ptr<const QwenGpuModel> target_model,
-      std::string* error_msg = nullptr);
+      DFlashTarget target, std::string* error_msg = nullptr);
 
   [[nodiscard]] const speculative::QwenDFlashWeights& GetWeights()
       const noexcept {
@@ -119,7 +137,7 @@ public:
   }
   [[nodiscard]] const tokenization::QwenTokenizer& GetTokenizer()
       const noexcept {
-    return target_model_->GetTokenizer();
+    return *tokenizer_;
   }
   [[nodiscard]] std::size_t GetPackedWeightBytes() const noexcept {
     return packed_weight_bytes_;
@@ -142,13 +160,13 @@ public:
 
 private:
   QwenDFlashGpuModel(std::shared_ptr<const core::GgufReader> dflash_reader,
-                     std::shared_ptr<const QwenGpuModel> target_model,
+                     DFlashTarget target,
                      speculative::QwenDFlashWeights weights,
                      std::vector<void*> allocations,
                      std::size_t packed_weight_bytes);
 
   std::shared_ptr<const core::GgufReader> dflash_reader_;
-  std::shared_ptr<const QwenGpuModel> target_model_;
+  std::shared_ptr<const tokenization::QwenTokenizer> tokenizer_;
   speculative::QwenDFlashWeights weights_;
   std::vector<void*> allocations_;
   std::size_t packed_weight_bytes_{0};
@@ -178,6 +196,9 @@ public:
   bool InjectTargetContext(std::span<const float> target_features,
                            std::uint32_t position, std::uint32_t num_tokens,
                            const DFlashTrace& trace = {});
+
+  bool InjectDeviceContext(std::span<const float> features,
+                           std::uint32_t position, std::uint32_t count);
 
   /// Projects committed features together and writes each private cache at
   /// its original absolute positions. Reuses the coordinator's scalar scratch.
@@ -241,10 +262,13 @@ private:
   }
   models::qwen::ContinuationHooks* continuation_hooks_{};
 
+  bool InjectContext(std::span<const float>, std::uint32_t, std::uint32_t,
+                     const DFlashTrace&, hipMemcpyKind);
   bool InjectTargetContextChunk(std::span<const float> target_features,
                                 std::uint32_t position,
                                 std::uint32_t num_tokens,
-                                const DFlashTrace& trace);
+                                const DFlashTrace& trace,
+                                hipMemcpyKind copy_kind);
   void Allocate();
   void Free() noexcept;
   [[nodiscard]] static std::size_t BatchScratchBytes(
@@ -330,8 +354,7 @@ public:
       QwenDFlashGpuDraftConfig config = {}, std::string* error_msg = nullptr);
 
   [[nodiscard]] static std::unique_ptr<QwenDFlashGpuDraftBackend>
-  CreateFromGguf(std::string_view dflash_model_path,
-                 std::shared_ptr<const QwenGpuModel> target_model,
+  CreateFromGguf(std::string_view dflash_model_path, DFlashTarget target,
                  QwenDFlashGpuDraftConfig config = {},
                  std::string* error_msg = nullptr);
 
@@ -394,6 +417,13 @@ public:
         continuation_hooks_->WriteFailed();
     }
   }
+  [[nodiscard]] static std::size_t CommittedSnapshotCapacity(
+      const QwenDFlashGpuModel&, std::uint32_t context);
+
+  /// Commit already verified features from the target's GPU workspace.
+  bool AppendDeviceContext(std::span<const float> features,
+                           std::uint32_t position, std::uint32_t count);
+
   /// The most recent verification has not yet injected these target rows.
   /// Discard them when the target returns to its saved verification frontier.
   void DiscardPendingTargetContext(std::uint32_t position);

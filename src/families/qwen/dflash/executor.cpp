@@ -14,12 +14,12 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash.hpp"
+#include "src/families/qwen/dflash/dflash_weights.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
 #include "src/families/qwen/kernels/ops.hpp"
 #include "src/families/qwen/kernels/verify_gemm_27b.hpp"
-#include "src/models/qwen/dflash_weights.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -27,7 +27,8 @@ namespace {
 constexpr std::array<std::uint8_t, 8> kDFlashGpuPersistentMagic = {
     'G', 'D', 'F', 'G', 'P', 'U', '0', '1'};
 constexpr std::uint32_t kDFlashGpuPersistentVersion = 2;
-constexpr std::size_t kDFlashGpuPersistentHeaderBytes = 64;
+constexpr auto kDFlashGpuPersistentHeaderBytes =
+    QwenDFlashGpuSnapshot::kPersistentHeaderBytes;
 
 template<typename T>
   requires(std::is_unsigned_v<T>)
@@ -431,16 +432,16 @@ void QwenDFlashGpuExecutor::PrewarmBlockGemms() {
        ++block_count) {
     prewarm(layer.attention_conv_projection, d_block_normed_,
             d_dynamic_coefficients_, block_count, dynamic_size, hidden_size);
-    prewarm(layer.transformer.attn_q, d_conv_hidden_, d_q_, block_count, q_dim,
+    prewarm(layer.attn_q, d_conv_hidden_, d_q_, block_count, q_dim,
             hidden_size);
-    prewarm(layer.transformer.attn_k, d_conv_hidden_, d_k_block_, block_count,
-            kv_dim, hidden_size);
-    prewarm(layer.transformer.attn_output, d_attn_out_, d_fused_features_,
-            block_count, hidden_size, q_dim);
-    prewarm(layer.transformer.ffn_gate, d_conv_hidden_, d_ffn_gate_,
-            block_count, intermediate_size, hidden_size);
-    prewarm(layer.transformer.ffn_down, d_ffn_gate_, d_ffn_down_, block_count,
-            hidden_size, intermediate_size);
+    prewarm(layer.attn_k, d_conv_hidden_, d_k_block_, block_count, kv_dim,
+            hidden_size);
+    prewarm(layer.attn_output, d_attn_out_, d_fused_features_, block_count,
+            hidden_size, q_dim);
+    prewarm(layer.ffn_gate, d_conv_hidden_, d_ffn_gate_, block_count,
+            intermediate_size, hidden_size);
+    prewarm(layer.ffn_down, d_ffn_gate_, d_ffn_down_, block_count, hidden_size,
+            intermediate_size);
   }
 
   for (std::size_t draft_count = 1; draft_count < df_cfg.block_size;
@@ -867,6 +868,20 @@ void QwenDFlashGpuExecutor::Reset() noexcept {
 bool QwenDFlashGpuExecutor::InjectTargetContext(
     std::span<const float> target_features, std::uint32_t position,
     std::uint32_t num_tokens, const DFlashTrace& trace) {
+  return InjectContext(target_features, position, num_tokens, trace,
+                       hipMemcpyHostToDevice);
+}
+
+bool QwenDFlashGpuExecutor::InjectDeviceContext(std::span<const float> features,
+                                                std::uint32_t position,
+                                                std::uint32_t count) {
+  return InjectContext(features, position, count, {}, hipMemcpyDeviceToDevice);
+}
+
+bool QwenDFlashGpuExecutor::InjectContext(
+    std::span<const float> target_features, std::uint32_t position,
+    std::uint32_t num_tokens, const DFlashTrace& trace,
+    hipMemcpyKind copy_kind) {
   CheckContinuation();
   const std::size_t width = GetTargetFeaturesSize();
   if (position != injected_context_len_ || position > max_context_ ||
@@ -886,7 +901,7 @@ bool QwenDFlashGpuExecutor::InjectTargetContext(
     if (!InjectTargetContextChunk(
             target_features.subspan(static_cast<std::size_t>(offset) * width,
                                     static_cast<std::size_t>(count) * width),
-            position + offset, count, trace)) {
+            position + offset, count, trace, copy_kind)) {
       return false;
     }
     offset += count;
@@ -896,7 +911,8 @@ bool QwenDFlashGpuExecutor::InjectTargetContext(
 
 bool QwenDFlashGpuExecutor::InjectTargetContextChunk(
     std::span<const float> target_features, std::uint32_t position,
-    std::uint32_t num_tokens, const DFlashTrace& trace) {
+    std::uint32_t num_tokens, const DFlashTrace& trace,
+    hipMemcpyKind copy_kind) {
   const auto& weights = model_->GetWeights();
   const auto& cfg = model_->GetConfig();
   const std::size_t hidden_size = cfg.hidden_size;
@@ -911,9 +927,8 @@ bool QwenDFlashGpuExecutor::InjectTargetContextChunk(
 
   // Upload target features
   const std::size_t bytes = target_features.size() * sizeof(float);
-  const auto cpy_err =
-      hipMemcpyAsync(d_target_features_, target_features.data(), bytes,
-                     hipMemcpyHostToDevice, stream_);
+  const auto cpy_err = hipMemcpyAsync(
+      d_target_features_, target_features.data(), bytes, copy_kind, stream_);
   if (cpy_err != hipSuccess) {
     return false;
   }
@@ -939,7 +954,7 @@ bool QwenDFlashGpuExecutor::InjectTargetContextChunk(
 
   // Project and store K / V for each draft layer
   for (std::size_t i = 0; i < weights.layers.size(); ++i) {
-    const auto& layer = weights.layers[i].transformer;
+    const auto& layer = weights.layers[i];
     if (layer.attn_k.data != nullptr && layer.attn_v.data != nullptr) {
       RunInjectGemm(layer.attn_k, d_block_normed_, d_k_block_, num_tokens,
                     kv_dim, hidden_size);
@@ -1107,7 +1122,7 @@ std::vector<tokenization::TokenId> QwenDFlashGpuExecutor::ForwardBlock(
   // Five DFlash-2 decoder blocks.
   for (std::size_t i = 0; i < df_cfg.num_layers; ++i) {
     const auto& dflash_layer = weights.layers[i];
-    const auto& layer = dflash_layer.transformer;
+    const auto& layer = dflash_layer;
     const auto emit = [&](std::string_view stage, const float* data,
                           std::size_t width) {
       if (trace)

@@ -12,9 +12,9 @@
 #include <utility>
 #include <vector>
 
+#include "src/families/qwen/dflash/dflash.hpp"
+#include "src/families/qwen/hip_common/device_allocation.hpp"
 #include "src/families/qwen/kernels/dflash_kernels.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
-#include "src/models/qwen/hip/mtp/detail/allocation.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -244,32 +244,31 @@ void PackDFlashWeights(speculative::QwenDFlashWeights& weights,
   // Draft Transformer Layers
   for (std::size_t i = 0; i < weights.layers.size(); ++i) {
     auto& layer = weights.layers[i];
-    auto& transformer = layer.transformer;
-    transformer.attn_norm =
-        CopyVectorF32(transformer.attn_norm, hidden, allocations, packed_bytes);
-    transformer.attn_q = PackBlockMatrix(transformer.attn_q, attention, hidden,
-                                         allocations, packed_bytes);
+    layer.attn_norm =
+        CopyVectorF32(layer.attn_norm, hidden, allocations, packed_bytes);
+    layer.attn_q = PackBlockMatrix(layer.attn_q, attention, hidden, allocations,
+                                   packed_bytes);
     // Prompt target-feature injection projects a full context through K/V
     // with the dense batched GEMM path, so these two matrices retain BF16
     // storage even when the draft artifact is Q8_0.
-    transformer.attn_k = PackMatrixBf16(transformer.attn_k, kv, hidden,
+    layer.attn_k =
+        PackMatrixBf16(layer.attn_k, kv, hidden, allocations, packed_bytes);
+    layer.attn_v =
+        PackMatrixBf16(layer.attn_v, kv, hidden, allocations, packed_bytes);
+    layer.attn_output = PackBlockMatrix(layer.attn_output, hidden, attention,
                                         allocations, packed_bytes);
-    transformer.attn_v = PackMatrixBf16(transformer.attn_v, kv, hidden,
-                                        allocations, packed_bytes);
-    transformer.attn_output = PackBlockMatrix(
-        transformer.attn_output, hidden, attention, allocations, packed_bytes);
-    transformer.attn_q_norm = CopyVectorF32(
-        transformer.attn_q_norm, cfg.head_dim, allocations, packed_bytes);
-    transformer.attn_k_norm = CopyVectorF32(
-        transformer.attn_k_norm, cfg.head_dim, allocations, packed_bytes);
-    transformer.ffn_norm =
-        CopyVectorF32(transformer.ffn_norm, hidden, allocations, packed_bytes);
-    transformer.ffn_gate = PackBlockMatrix(transformer.ffn_gate, intermediate,
-                                           hidden, allocations, packed_bytes);
-    transformer.ffn_up = PackBlockMatrix(transformer.ffn_up, intermediate,
-                                         hidden, allocations, packed_bytes);
-    transformer.ffn_down = PackBlockMatrix(
-        transformer.ffn_down, hidden, intermediate, allocations, packed_bytes);
+    layer.attn_q_norm = CopyVectorF32(layer.attn_q_norm, cfg.head_dim,
+                                      allocations, packed_bytes);
+    layer.attn_k_norm = CopyVectorF32(layer.attn_k_norm, cfg.head_dim,
+                                      allocations, packed_bytes);
+    layer.ffn_norm =
+        CopyVectorF32(layer.ffn_norm, hidden, allocations, packed_bytes);
+    layer.ffn_gate = PackBlockMatrix(layer.ffn_gate, intermediate, hidden,
+                                     allocations, packed_bytes);
+    layer.ffn_up = PackBlockMatrix(layer.ffn_up, intermediate, hidden,
+                                   allocations, packed_bytes);
+    layer.ffn_down = PackBlockMatrix(layer.ffn_down, hidden, intermediate,
+                                     allocations, packed_bytes);
 
     const std::size_t groups = hidden / df_cfg.conv_group_size;
     const std::size_t dynamic_size = 2U * df_cfg.conv_kernel_size * groups;
@@ -291,12 +290,11 @@ void PackDFlashWeights(speculative::QwenDFlashWeights& weights,
 }  // namespace
 
 QwenDFlashGpuModel::QwenDFlashGpuModel(
-    std::shared_ptr<const core::GgufReader> dflash_reader,
-    std::shared_ptr<const QwenGpuModel> target_model,
+    std::shared_ptr<const core::GgufReader> dflash_reader, DFlashTarget target,
     speculative::QwenDFlashWeights weights, std::vector<void*> allocations,
     std::size_t packed_weight_bytes)
     : dflash_reader_(std::move(dflash_reader)),
-      target_model_(std::move(target_model)),
+      tokenizer_(std::move(target.tokenizer)),
       weights_(std::move(weights)),
       allocations_(std::move(allocations)),
       packed_weight_bytes_(packed_weight_bytes) {
@@ -338,9 +336,9 @@ QwenDFlashGpuModel::~QwenDFlashGpuModel() {
 }
 
 std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
-    std::shared_ptr<const core::GgufReader> dflash_reader,
-    std::shared_ptr<const QwenGpuModel> target_model, std::string* error_msg) {
-  if (dflash_reader == nullptr || target_model == nullptr) {
+    std::shared_ptr<const core::GgufReader> dflash_reader, DFlashTarget target,
+    std::string* error_msg) {
+  if (dflash_reader == nullptr || target.tokenizer == nullptr) {
     if (error_msg != nullptr) {
       *error_msg = "DFlash reader and target GPU model are required";
     }
@@ -353,10 +351,9 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
     return nullptr;
   }
 
-  const auto& target_config = target_model->GetConfig();
   const auto& draft_config = raw_weights->config;
-  if (target_config.hidden_size != draft_config.hidden_size ||
-      target_config.vocab_size != draft_config.vocab_size) {
+  if (target.hidden_size != draft_config.hidden_size ||
+      target.vocab_size != draft_config.vocab_size) {
     if (error_msg != nullptr) {
       *error_msg =
           "DFlash-2 target hidden/vocabulary dimensions do not match the "
@@ -365,8 +362,7 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
     return nullptr;
   }
   if (raw_weights->dflash_config.target_layer_ids.empty() ||
-      raw_weights->dflash_config.target_layer_ids.back() >=
-          target_config.num_layers) {
+      raw_weights->dflash_config.target_layer_ids.back() >= target.num_layers) {
     if (error_msg != nullptr) {
       *error_msg =
           "DFlash-2 target layer taps exceed the target model layer count";
@@ -386,8 +382,8 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
 
     // Unconditionally bind GPU device pointers from the target model for tied
     // weights
-    weights.token_embedding = target_model->GetWeights().token_embd;
-    weights.output = target_model->GetWeights().output;
+    weights.token_embedding = target.embedding;
+    weights.output = target.output;
     if (weights.output.type == core::GgmlType::kBF16 &&
         weights.output.num_elements %
                 quant::QuantizedBlockElements(core::GgmlType::kQ8_0) ==
@@ -397,7 +393,7 @@ std::shared_ptr<const QwenDFlashGpuModel> QwenDFlashGpuModel::Create(
     }
 
     return std::shared_ptr<const QwenDFlashGpuModel>(new QwenDFlashGpuModel(
-        std::move(dflash_reader), std::move(target_model), std::move(weights),
+        std::move(dflash_reader), std::move(target), std::move(weights),
         std::move(allocations), packed_bytes));
   } catch (const std::exception& ex) {
     for (void* ptr : allocations) {

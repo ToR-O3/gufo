@@ -44,9 +44,7 @@
     {
       "id": "dflash2",
       "paths": [
-        "src/models/qwen/hip/dflash/**",
-        "src/models/qwen/hip/dflash.hpp",
-        "src/models/qwen/dflash_*",
+        "src/families/qwen/dflash/**",
         "src/families/qwen/kernels/dflash_kernels.*"
       ],
       "priority": 20,

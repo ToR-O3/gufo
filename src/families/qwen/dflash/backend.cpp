@@ -16,7 +16,7 @@
 #include <vector>
 
 #include "src/families/qwen/control_tokens/control_tokens.hpp"
-#include "src/models/qwen/hip/dflash.hpp"
+#include "src/families/qwen/dflash/dflash.hpp"
 
 namespace gufo::hip {
 namespace {
@@ -229,11 +229,11 @@ std::unique_ptr<QwenDFlashGpuDraftBackend> QwenDFlashGpuDraftBackend::Create(
 }
 
 std::unique_ptr<QwenDFlashGpuDraftBackend>
-QwenDFlashGpuDraftBackend::CreateFromGguf(
-    std::string_view dflash_model_path,
-    std::shared_ptr<const QwenGpuModel> target_model,
-    QwenDFlashGpuDraftConfig config, std::string* error_msg) {
-  if (dflash_model_path.empty() || target_model == nullptr) {
+QwenDFlashGpuDraftBackend::CreateFromGguf(std::string_view dflash_model_path,
+                                          DFlashTarget target,
+                                          QwenDFlashGpuDraftConfig config,
+                                          std::string* error_msg) {
+  if (dflash_model_path.empty() || target.tokenizer == nullptr) {
     if (error_msg != nullptr) {
       *error_msg = "DFlash GGUF path and target GPU model are required";
     }
@@ -245,8 +245,8 @@ QwenDFlashGpuDraftBackend::CreateFromGguf(
     return nullptr;
   }
   std::shared_ptr<const core::GgufReader> reader(std::move(reader_owner));
-  auto model = QwenDFlashGpuModel::Create(std::move(reader),
-                                          std::move(target_model), error_msg);
+  auto model = QwenDFlashGpuModel::Create(std::move(reader), std::move(target),
+                                          error_msg);
   if (model == nullptr) {
     return nullptr;
   }
@@ -636,6 +636,25 @@ void QwenDFlashGpuDraftBackend::InjectPendingFeatures(
         "DFlash committed target feature injection failed");
   }
   pending_target_features_.clear();
+}
+
+std::size_t QwenDFlashGpuDraftBackend::CommittedSnapshotCapacity(
+    const QwenDFlashGpuModel& model, std::uint32_t context) {
+  return QwenDFlashGpuExecutor::EstimateMemoryUsage(model, context)
+             .request_state_bytes +
+         kDFlashDraftPersistentHeaderBytes +
+         QwenDFlashGpuSnapshot::kPersistentHeaderBytes;
+}
+
+bool QwenDFlashGpuDraftBackend::AppendDeviceContext(
+    std::span<const float> features, std::uint32_t position,
+    std::uint32_t count) {
+  CheckContinuation();
+  if (proposal_active_ || !pending_target_features_.empty() || count == 0 ||
+      !executor_->InjectDeviceContext(features, position, count))
+    return false;
+  primed_ = true;
+  return true;
 }
 
 bool QwenDFlashGpuDraftBackend::AppendTargetContext(
