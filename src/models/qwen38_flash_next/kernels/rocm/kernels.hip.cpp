@@ -1804,11 +1804,18 @@ __global__ void GdnKernel(const float* conv_out, const float* qn,
   }
 }
 
+template<bool CopyHistory>
 __global__ void RestoreGdnStateKernel(float* state, RollbackRows snapshots,
                                       std::uint32_t keep, std::uint32_t k_heads,
-                                      std::uint32_t v_heads) {
+                                      std::uint32_t v_heads, float* history,
+                                      const float* history_snapshot,
+                                      std::size_t history_count) {
   constexpr std::uint32_t d = kGdnDim;
   const std::size_t i = std::size_t{blockIdx.x} * blockDim.x + threadIdx.x;
+  if constexpr (CopyHistory) {
+    if (i < history_count)
+      history[i] = history_snapshot[i];
+  }
   if (i >= std::size_t{v_heads} * d * d)
     return;
   const auto h = i / (d * d);
@@ -8922,10 +8929,18 @@ void PleInject(float* res, const float* gated, const float* conv,
 
 void RestoreGdnState(float* state, RollbackRows snapshots, std::uint32_t keep,
                      std::uint32_t k_heads, std::uint32_t v_heads,
-                     hipStream_t stream) {
+                     hipStream_t stream, float* history,
+                     const float* history_snapshot, std::size_t history_count) {
   const auto count = std::size_t{v_heads} * kGdnDim * kGdnDim;
-  RestoreGdnStateKernel<<<(count + 255) / 256, 256, 0, stream>>>(
-      state, snapshots, keep, k_heads, v_heads);
+  if (history_count != 0) {
+    RestoreGdnStateKernel<true>
+        <<<(std::max(count, history_count) + 255) / 256, 256, 0, stream>>>(
+            state, snapshots, keep, k_heads, v_heads, history, history_snapshot,
+            history_count);
+  } else {
+    RestoreGdnStateKernel<false><<<(count + 255) / 256, 256, 0, stream>>>(
+        state, snapshots, keep, k_heads, v_heads, nullptr, nullptr, 0);
+  }
 }
 
 void HistoryPrefix(const float* in, std::uint32_t stride, const float* history,

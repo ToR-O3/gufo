@@ -266,7 +266,8 @@ std::unique_ptr<Session> Model::CreateSession(core::SessionMode mode,
         dflash_model_,
         {.max_context = max_context,
          .max_draft_tokens = options_.max_draft_tokens,
-         .policy = options_.dflash_policy},
+         .policy = options_.dflash_policy,
+         .greedy_confidence_cutoff = 0.7F},
         error_msg);
     if (!result->dflash_)
       return nullptr;

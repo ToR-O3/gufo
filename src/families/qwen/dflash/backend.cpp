@@ -724,11 +724,19 @@ speculative::DraftProposal QwenDFlashGpuDraftBackend::ProposeImpl(
   }
   // This request decodes alone: speculative::DraftSubsetAllowed holds.
   const bool draft_subset = UseDraftSubset(prompt_tokens, current_pos, true);
+  const bool prune =
+      temperature == 0.0F && config_.greedy_confidence_cutoff > 0.0F;
+  std::vector<float> confidence;
   proposed_tokens_ = executor_->ForwardBlock(
       prompt_tokens.back(), current_pos, count, temperature, sample_uniforms,
-      nullptr, temperature > 0.0F ? &proposal.candidate_ids : nullptr,
+      prune ? &confidence : nullptr,
+      temperature > 0.0F ? &proposal.candidate_ids : nullptr,
       temperature > 0.0F ? &proposal.candidate_probabilities : nullptr, {},
-      sampler, draft_subset);
+      sampler, draft_subset, prune);
+  if (prune) {
+    proposed_tokens_.resize(speculative::DFlashConfidencePrefix(
+        confidence, proposed_tokens_.size(), config_.greedy_confidence_cutoff));
+  }
 
   proposal.tokens = proposed_tokens_;
   proposal_active_ = !proposal.tokens.empty();
