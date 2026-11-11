@@ -2,6 +2,8 @@
 
 > **About this fork**
 >
+> This fork focuses on optimizing Gufo inference on Windows through the Windows Subsystem for Linux (WSL).
+>
 > This community fork of [Gufo](https://github.com/gufo-org/gufo) adds support for these **Qwen3.8 Flash-Next** GGUF variants:
 >
 > - [Unsloth](https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF/tree/main/UD-IQ4_XS) — **UD-IQ4_XS (Dynamic 3.1)**
