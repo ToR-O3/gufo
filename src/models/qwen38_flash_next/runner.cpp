@@ -892,7 +892,7 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
           .max_draft_tokens = use_dflash ? options.speculative.max_draft_tokens
                                          : kMaxMtpDraftTokens,
           .vision_model_path = options.vision_model_path,
-          .ple_model_path = ple_model ? *ple_model : std::string{},
+          .ple_model_path = ple_model ? *ple_model : options.ple_model_path,
           .decode_concurrency =
               DecodeConcurrencyForSessions(options.session_count),
           .rope_scaling = rope_scaling,

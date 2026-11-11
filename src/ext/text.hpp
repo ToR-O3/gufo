@@ -710,6 +710,8 @@ struct TextRunnerOptions {
   TextDiskCacheConfig disk_cache{};
   TextRunnerRamCacheOptions ram_cache{};
   bool enable_yarn{false};
+  /// Legacy external PLE path for direct callers of the Flash-Next provider.
+  std::string ple_model_path{};
   /// Explicit command-line values of the options the selected provider
   /// declares for this command (see `ext::FindOption`). An option that was not
   /// given is absent and keeps the provider's default.
