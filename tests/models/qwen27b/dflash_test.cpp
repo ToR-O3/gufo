@@ -36,6 +36,24 @@ void Expect(bool condition, std::string_view message) {
   }
 }
 
+void TestConfidencePrefix() {
+  using gufo::speculative::DFlashConfidencePrefix;
+  const std::array<float, 4> scores{0.9F, 0.9F, 0.8F, 1.0F};
+  Expect(DFlashConfidencePrefix(scores, scores.size(), 0.7F) == 2,
+         "the first low cumulative score ends the verified prefix");
+  Expect(DFlashConfidencePrefix(scores, scores.size(), 1.0F) == 1,
+         "a low first score still leaves one candidate to verify");
+  Expect(
+      DFlashConfidencePrefix(scores, 0, 0.7F) == 0 &&
+          DFlashConfidencePrefix(scores, 3, 0.7F) == 3 &&
+          DFlashConfidencePrefix(scores, scores.size(), 0.0F) == scores.size(),
+      "empty, incomplete and disabled confidence preserve the proposal");
+  const std::array<float, 3> invalid{0.9F, 0.1F, -1.0F};
+  Expect(
+      DFlashConfidencePrefix(invalid, invalid.size(), 0.7F) == invalid.size(),
+      "a malformed confidence block is verified in full");
+}
+
 void TestLengthController() {
   using gufo::speculative::DFlashDraftPolicy;
   using gufo::speculative::DFlashLengthController;
@@ -1046,6 +1064,7 @@ void TestHistoryLookup(
 int main(int argc, const char* const* argv) {
   try {
     TestLengthController();
+    TestConfidencePrefix();
     const char* base_path =
         argc > 1 ? argv[1] : std::getenv("GUFO_QWEN27B_MODEL");
     const char* draft_path =

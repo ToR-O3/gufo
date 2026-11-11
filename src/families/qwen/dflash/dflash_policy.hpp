@@ -29,6 +29,25 @@ enum class DFlashDraftPolicy : std::uint32_t { kFixed, kAdaptive };
   return policy == DFlashDraftPolicy::kFixed ? "fixed" : "adaptive";
 }
 
+// Trust the longest prefix whose joint confidence reaches the threshold.
+// Invalid selector output leaves the whole block available for verification.
+[[nodiscard]] inline std::size_t DFlashConfidencePrefix(
+    std::span<const float> confidence, std::size_t count, float threshold) {
+  if (count < 2 || confidence.size() != count || !std::isfinite(threshold) ||
+      threshold <= 0.0F || threshold > 1.0F ||
+      std::ranges::any_of(confidence, [](float p) {
+        return !std::isfinite(p) || p < 0.0F || p > 1.0F;
+      }))
+    return count;
+  float survival = 1.0F;
+  for (std::size_t i = 0; i < count; ++i) {
+    survival *= confidence[i];
+    if (survival < threshold)
+      return std::max(std::size_t{1}, i);
+  }
+  return count;
+}
+
 // Select the whole block before drawing any proposals. Sampled decisions use
 // private acceptance history and position, preserving RNG consumption on
 // replay. Greedy cohorts use their measured wider-verification cost.

@@ -215,7 +215,7 @@ public:
       std::vector<float>* out_candidate_probabilities = nullptr,
       const DFlashTrace& trace = {},
       const sampling::SamplerState* sampler = nullptr,
-      bool draft_subset = false);
+      bool draft_subset = false, bool greedy_score_confidence = false);
 
   /// Clears the draft table from slot `first`: the slots score -inf.
   void ClearDraftRows(std::uint32_t first);
@@ -337,6 +337,9 @@ struct QwenDFlashGpuDraftConfig {
   /// Verification rows (anchor included) a prompt-lookup copy of a request
   /// decoding alone may grow to; at most max_draft_tokens + 1 disables it.
   std::uint32_t max_copy_rows{0};
+  /// Minimum cumulative selector confidence for a greedy neural draft.
+  /// Zero keeps every proposal; sampled and history-copy proposals bypass it.
+  float greedy_confidence_cutoff{0.0F};
 };
 
 /// Adapts the GPU DFlash executor to the repository's IDraftBackend speculative

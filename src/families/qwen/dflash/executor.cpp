@@ -1054,7 +1054,8 @@ std::vector<tokenization::TokenId> QwenDFlashGpuExecutor::ForwardBlock(
     std::span<const float> sample_uniforms, std::vector<float>* out_confidences,
     std::vector<tokenization::TokenId>* out_candidate_ids,
     std::vector<float>* out_candidate_probabilities, const DFlashTrace& trace,
-    const sampling::SamplerState* sampler, bool draft_subset) {
+    const sampling::SamplerState* sampler, bool draft_subset,
+    bool greedy_score_confidence) {
   CheckContinuation();
   const auto& weights = model_->GetWeights();
   const auto& cfg = model_->GetConfig();
@@ -1277,7 +1278,8 @@ std::vector<tokenization::TokenId> QwenDFlashGpuExecutor::ForwardBlock(
       draft_count, temperature, PrepareDraftSampling(sampler, stream_),
       draft_subset ? kernels::DFlashSelectorVocab{prefix, d_draft_logits_,
                                                   d_draft_ids_, kDraftRows}
-                   : kernels::DFlashSelectorVocab{}}};
+                   : kernels::DFlashSelectorVocab{},
+      greedy_score_confidence}};
   kernels::LaunchDFlashSelectorBatch(
       d_logits_, d_selector_hidden_, weights.selector_predecessor.data,
       weights.selector_successor.data, d_out_token_, d_confidences_,

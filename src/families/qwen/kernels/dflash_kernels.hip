@@ -585,7 +585,7 @@ __device__ __forceinline__ void FinalizeSelector(
     // Earlier iterations of this kernel write this history. Reload it for
     // each conditional q; cached read-only loads break sampled replay.
     const volatile uint32_t* previous_tokens = nullptr,
-    uint32_t previous_count = 0) {
+    uint32_t previous_count = 0, bool greedy_score_confidence = false) {
   __shared__ float shared_scores[kSelectorThreads * kMaxSelectorTopK];
   __shared__ uint32_t shared_ids[kSelectorThreads * kMaxSelectorTopK];
   __shared__ float
@@ -755,7 +755,16 @@ __device__ __forceinline__ void FinalizeSelector(
         candidate_probabilities[index] = index == best_index ? 1.0F : 0.0F;
     }
     if (output_confidence != nullptr) {
-      *output_confidence = 1.0F;
+      // The greedy proposal remains a point mass. The optional score is
+      // the selected path's unit-temperature softmax on the same lattice.
+      float confidence = 1.0F;
+      if (greedy_score_confidence && isfinite(best_score)) {
+        float denominator = 0.0F;
+        for (uint32_t index = 0; index < selector_top_k; ++index)
+          denominator += expf(path_scores[index] - best_score);
+        confidence = 1.0F / denominator;
+      }
+      *output_confidence = confidence;
     }
   }
 }
@@ -809,7 +818,8 @@ __global__ void dflash_selector_finalize_batch_kernel(
         candidate_probabilities != nullptr ? candidate_probabilities + candidate
                                            : nullptr,
         partial_count, selector_rank, selector_top_k, sequence.sampling,
-        tokens + batch.token_offsets[blockIdx.x] + 1U, step);
+        tokens + batch.token_offsets[blockIdx.x] + 1U, step,
+        sequence.greedy_score_confidence);
     // Thread zero publishes the predecessor for this sequence's next step.
     // Other sequences own separate token, probability and partial buffers.
     if (threadIdx.x == 0U)

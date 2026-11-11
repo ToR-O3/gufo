@@ -101,6 +101,7 @@ struct DFlashSelectorSequence {
   float temperature;
   DFlashSampling sampling;
   DFlashSelectorVocab vocab{};
+  bool greedy_score_confidence{false};
 };
 
 // Proposal rows are contiguous by sequence. Each token sequence includes its
