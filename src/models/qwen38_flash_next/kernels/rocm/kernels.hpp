@@ -34,7 +34,9 @@ constexpr std::size_t GdnRollbackRowFloats(std::uint32_t row,
 }
 void RestoreGdnState(float* state, RollbackRows snapshots, std::uint32_t keep,
                      std::uint32_t k_heads, std::uint32_t v_heads,
-                     hipStream_t stream);
+                     hipStream_t stream, float* history = nullptr,
+                     const float* history_snapshot = nullptr,
+                     std::size_t history_count = 0);
 
 /// GGUF type ids the runtime accepts for the small-matrix and lookup paths.
 enum class WeightType : std::uint32_t {

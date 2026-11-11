@@ -3974,6 +3974,9 @@ bool Executor::Rollback(Session& session, std::uint32_t keep,
     const WideSegment* rows =
         !whole && segment != 0 ? &wide_segments_[segment - 1] : nullptr;
     const std::size_t slot = local - 1;
+    // DFlash2's short verification can restore the convolution history in
+    // the GDN replay launch, avoiding a separate device copy for each layer.
+    const bool fuse_history = n <= kSegment && !options_.dflash_layers.empty();
     for (std::size_t il = 0; il < session.linear_.size(); ++il) {
       auto& l = session.linear_[il];
       if (l.state == nullptr) {
@@ -3994,12 +3997,16 @@ bool Executor::Rollback(Session& session, std::uint32_t keep,
       const auto& state_rows = rows ? rows->state[il] : l.state_snapshots;
       const auto& conv_rows = rows ? rows->conv[il] : l.conv_snapshots;
       RestoreGdnState(l.state, state_rows, local, c.ssm_num_k_heads,
-                      c.ssm_num_v_heads, stream_);
+                      c.ssm_num_v_heads, stream_,
+                      fuse_history ? l.conv_state : nullptr,
+                      fuse_history ? conv_rows.rows[slot] : nullptr,
+                      fuse_history ? conv_elems : 0);
       if (!Check(hipGetLastError(), "state rollback", error_msg) ||
-          !Check(hipMemcpyAsync(l.conv_state, conv_rows.rows[slot],
-                                conv_elems * sizeof(float),
-                                hipMemcpyDeviceToDevice, stream_),
-                 "conv rollback", error_msg)) {
+          (!fuse_history &&
+           !Check(hipMemcpyAsync(l.conv_state, conv_rows.rows[slot],
+                                 conv_elems * sizeof(float),
+                                 hipMemcpyDeviceToDevice, stream_),
+                  "conv rollback", error_msg))) {
         return false;
       }
     }

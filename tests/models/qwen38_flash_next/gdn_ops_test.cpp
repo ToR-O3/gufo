@@ -567,6 +567,26 @@ int RunCase(std::uint32_t kTokens, bool extreme_gates = false) {
                         kConvState * sizeof(float))) {
           throw std::runtime_error("GDN rollback prefix changed state");
         }
+
+        Upload(&current_state, state);
+        HipBuffer<float> fused_conv(kConvState + kGuard);
+        Upload(&fused_conv, std::vector<float>(kConvState + kGuard, kSentinel));
+        q::RestoreGdnState(current_state.get(), replay, keep, kKHeads, kVHeads,
+                           nullptr, fused_conv.get(),
+                           conv_snaps.get() + (saved - keep) * kConvState,
+                           kConvState);
+        const auto fused_state = Download(&current_state, kStateCount);
+        const auto fused_history = Download(&fused_conv, kConvState + kGuard);
+        if (std::memcmp(expected_state.data(), fused_state.data(),
+                        kStateCount * sizeof(float)) ||
+            std::memcmp(expected_conv.data(), fused_history.data(),
+                        kConvState * sizeof(float)) ||
+            !std::all_of(fused_history.begin() + kConvState,
+                         fused_history.end(),
+                         [=](float value) { return value == kSentinel; })) {
+          throw std::runtime_error(
+              "fused GDN rollback changed state or history");
+        }
       }
 
       // The PLE convolution has a dilated history and the same prefix contract.
