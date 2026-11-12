@@ -145,8 +145,16 @@ bool Executor::HcMixBatch(const DeviceMixer& m, const float* res, bool normed,
   half_src_ = nullptr;
   // Keep each row's scalar epilogue/reduction independently of the total
   // row count, including prompt replay and concatenated decode batches.
+  // Decode-sized projections can consume the epilogue's exact Q8_1 rows.
+  // Wider batches retain their existing tiled/padded quantization route.
+  const bool q8 = rows <= kDecodeRows && c.hidden_size % 32 == 0 &&
+                  qfn_mmq_q8_1_bytes(1, static_cast<int>(c.hidden_size)) ==
+                      c.hidden_size / 32 * 36;
   HcMixEpilogue(s_.xn, s_.hc_gate, fused_inject ? m.inject.f32() : nullptr,
-                mixed, inject, rows, c.hidden_size, c.hc_count, stream_);
+                mixed, inject, rows, c.hidden_size, c.hc_count, stream_,
+                q8 ? s_.mixed_q8_1 : nullptr);
+  if (q8)
+    mixed_q8_ready_ = {mixed, s_.mixed_q8_1, rows, c.hidden_size};
   inject_parts_ = fused_inject ? HcInjectParts(c.hidden_size) : 1;
   if (inject != nullptr && !m.inject.empty() && !fused_inject) {
     if (!DenseBatch(m.inject, s_.xn, inject, rows, error))
@@ -756,7 +764,8 @@ bool Executor::GatedDenseBatch(const DeviceTensor& up, const DeviceTensor& gate,
 }
 
 bool Executor::MoeBatch(const DeviceLayer& l, const float* x, float* out,
-                        std::uint32_t rows, std::string* error) const {
+                        std::uint32_t rows, std::string* error,
+                        bool group_iq) const {
   if (rows <= kDecodeRows)
     return Moe(l, x, out, rows, error);
   const auto& c = config();
@@ -788,11 +797,27 @@ bool Executor::MoeBatch(const DeviceLayer& l, const float* x, float* out,
                 c.num_experts_used, c.hidden_size, stream_);
     return true;
   }
+  const auto type = l.ffn_gate_exps.type;
+  const bool grouped_iq =
+      group_iq && c.num_experts_used <= 32 && l.ffn_up_exps.type == type &&
+      (type == core::GgmlType::kIQ2_S || type == core::GgmlType::kIQ3_XXS ||
+       type == core::GgmlType::kIQ4_XS);
+  if (grouped_iq) {
+    if (qfn_mmq_moe_vec(static_cast<int>(type), l.ffn_gate_exps.data, x,
+                        base.ids, base.gate_e, c.expert_ff, c.hidden_size, rows,
+                        c.num_experts, c.num_experts_used, stream_,
+                        l.ffn_up_exps.data, base.up_e, true) != 0) {
+      return Fail(error, "batched IQ gate/up projection failed");
+    }
+    Swiglu(base.gate_e, base.up_e,
+           std::size_t{rows} * c.num_experts_used * c.expert_ff, stream_);
+  }
   for (std::uint32_t r = 0; r < rows; r += kDecodeRows) {
     UseScratch(RowScratch(base, r));
-    const bool ok = MoeExperts(l, x + std::size_t{r} * c.hidden_size,
-                               out + std::size_t{r} * c.hidden_size,
-                               std::min(kDecodeRows, rows - r), error);
+    const bool ok =
+        MoeExperts(l, x + std::size_t{r} * c.hidden_size,
+                   out + std::size_t{r} * c.hidden_size,
+                   std::min(kDecodeRows, rows - r), error, grouped_iq);
     UseScratch(base);
     if (!ok)
       return false;
@@ -1227,11 +1252,25 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                       error)) {
         return false;
       }
-      CombineBatch(base.res, l.hc_ffn.norm.f32(), rows);
-      if (!HcMixBatch(l.hc_ffn, base.res, true, base.mixed, base.inject, rows,
-                      error))
-        return false;
-      if (!MoeBatch(l, base.mixed, base.block_out, rows, error))
+      // This immediate combine/mix pair has no intervening residual reader.
+      // Reuse the scalar route's existing exact fused decode implementation;
+      // wider rows and deferred/other-format states keep the batched path.
+      if (rows != 0 && FusedMixer(l.hc_ffn, rows) &&
+          pending_combine_.mixer == nullptr && !res_deferred_ &&
+          !defer_residual_ && !moe_pending_) {
+        DropReadyQ8();
+        Combine(base.res, l.hc_ffn.norm.f32(), rows, nullptr, &l.hc_ffn);
+        if (!HcMix(l.hc_ffn, base.res, true, base.mixed, base.inject, rows,
+                   error))
+          return false;
+      } else {
+        CombineBatch(base.res, l.hc_ffn.norm.f32(), rows);
+        if (!HcMixBatch(l.hc_ffn, base.res, true, base.mixed, base.inject, rows,
+                        error))
+          return false;
+      }
+      if (!MoeBatch(l, base.mixed, base.block_out, rows, error,
+                    items.size() > 1))
         return false;
       const float* next_norm =
           il + 1 < c.num_layers

@@ -184,10 +184,14 @@ std::shared_ptr<models::qwen38_flash_next::Model> LoadFlashNextModel(
   std::string error;
   if (opt.force_cpu ||
       (!opt.speculative_backend.empty() && opt.speculative_backend != "mtp" &&
-       opt.speculative_backend != "dflash2") ||
-      (opt.speculative_backend == "mtp" && opt.min_draft_tokens != 1)) {
-    std::cerr << "Flash-Next requires ROCm and supports MTP or DFlash2 with "
-                 "--min-draft-tokens 1\n";
+       opt.speculative_backend != "dflash2")) {
+    std::cerr << "Error: Qwen3.8-Flash-Next requires ROCm and supports "
+                 "--speculative mtp, dflash2 or off\n";
+    return nullptr;
+  }
+  if (opt.speculative_backend == "mtp" && opt.min_draft_tokens != 1) {
+    std::cerr << "Error: Flash-Next MTP requires a minimum draft length of 1 "
+                 "token\n";
     return nullptr;
   }
   if (opt.use_chat_template &&
@@ -312,7 +316,8 @@ int RunQwen38FlashNextBenchmarkImpl(
     return 1;
   }
   if ((mtp || dflash) && options.min_draft_tokens != 1) {
-    std::cerr << "Error: Flash-Next MTP requires --min-draft-tokens 1\n";
+    std::cerr << "Error: Flash-Next speculative decoding requires a minimum "
+                 "draft length of 1 token\n";
     return 1;
   }
   if (required_context > std::numeric_limits<std::uint32_t>::max()) {

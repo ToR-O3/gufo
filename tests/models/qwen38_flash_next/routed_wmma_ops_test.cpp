@@ -1081,6 +1081,88 @@ void CheckPairedMmq(q::WeightType type) {
     throw std::runtime_error("paired MMQ differs from separate projections");
 }
 
+void CheckGroupedIqPair() {
+  constexpr int cols = 2560, rows = 65, experts = 16, used = 3;
+  constexpr int max_tokens = 64, chunk = 8;
+  constexpr std::size_t guard = 16;
+  constexpr float poison = -1234567.0F;
+  const std::size_t stride = used * rows;
+  const std::vector<float> dirty(max_tokens * stride + 2 * guard, poison);
+  std::vector<float> x(max_tokens * cols);
+  std::uint32_t seed = 99;
+  for (auto& value : x)
+    value = Uniform(&seed, 0.05F);
+  std::vector<std::int32_t> ids(max_tokens * used);
+  for (int t = 0; t < max_tokens; ++t) {
+    ids[t * used] = 0;  // Keep reusing one expert across all eight-row groups.
+    ids[t * used + 1] = t % (experts - 1) + 1;
+    ids[t * used + 2] = t % 2 == 0 ? 0 : -1;
+  }
+  auto* dx = Upload(x);
+  auto* di = Upload(ids);
+  auto* ref_gate = Upload(dirty);
+  auto* ref_up = Upload(dirty);
+  auto* gate = Upload(dirty);
+  auto* up = Upload(dirty);
+  const auto compare = [&](const float* ref, const float* result,
+                           q::WeightType type, int tokens, const char* stage) {
+    const auto expected = Download(ref, dirty.size());
+    const auto actual = Download(result, dirty.size());
+    for (std::size_t i = 0; i < dirty.size(); ++i) {
+      const bool active = i >= guard && i < guard + tokens * stride;
+      if (std::memcmp(&expected[i], &actual[i], sizeof(float)) != 0 ||
+          (active && (!std::isfinite(actual[i]) || actual[i] == poison)) ||
+          (!active && actual[i] != poison)) {
+        throw std::runtime_error(std::string(TypeName(type)) + " " + stage +
+                                 " differs at width " + std::to_string(tokens) +
+                                 ", index " + std::to_string(i));
+      }
+    }
+  };
+  for (const auto type : {q::WeightType::kIQ2_S, q::WeightType::kIQ3_XXS,
+                          q::WeightType::kIQ4_XS}) {
+    const auto make = [&](std::uint32_t weight_seed) {
+      return type == q::WeightType::kIQ4_XS
+                 ? MakeIQ4(type, experts, rows, cols, weight_seed)
+                 : MakePackedQuant(type, experts, rows, cols, weight_seed);
+    };
+    auto* wa = Upload(make(101).packed);
+    auto* wb = Upload(make(202).packed);
+    for (int tokens : {9, 16, 33, max_tokens}) {
+      for (float* buffer : {ref_gate, ref_up, gate, up})
+        CheckHip(hipMemcpy(buffer, dirty.data(), dirty.size() * sizeof(float),
+                           hipMemcpyHostToDevice),
+                 "poison grouped IQ output");
+      for (int first = 0; first < tokens; first += chunk) {
+        const std::size_t offset = guard + first * stride;
+        if (qfn_mmq_moe_vec(static_cast<int>(type), wa, dx + first * cols,
+                            di + first * used, ref_gate + offset, rows, cols,
+                            std::min(chunk, tokens - first), experts, used,
+                            nullptr, wb, ref_up + offset) != 0)
+          throw std::runtime_error("chunked IQ gate/up launch failed");
+      }
+      if (qfn_mmq_moe_vec(static_cast<int>(type), wa, dx, di, gate + guard,
+                          rows, cols, tokens, experts, used, nullptr, wb,
+                          up + guard, true) != 0)
+        throw std::runtime_error("grouped IQ gate/up launch failed");
+      compare(ref_gate, gate, type, tokens, "gate");
+      compare(ref_up, up, type, tokens, "up");
+      q::Swiglu(ref_gate + guard, ref_up + guard, tokens * stride, nullptr);
+      q::Swiglu(gate + guard, up + guard, tokens * stride, nullptr);
+      compare(ref_gate, gate, type, tokens, "SwiGLU");
+    }
+    std::cout << TypeName(type)
+              << " gate/up and SwiGLU equal the eight-row route at 9, 16, 33 "
+                 "and 64 tokens\n";
+    CheckHip(hipFree(wa), "grouped IQ gate free");
+    CheckHip(hipFree(wb), "grouped IQ up free");
+  }
+  for (void* buffer : {static_cast<void*>(dx), static_cast<void*>(di),
+                       static_cast<void*>(ref_gate), static_cast<void*>(ref_up),
+                       static_cast<void*>(gate), static_cast<void*>(up)})
+    CheckHip(hipFree(buffer), "grouped IQ fixture free");
+}
+
 /// Decode-shaped gated experts (640 x 2560, top-10 of 32): a multi-token
 /// launch must equal one launch per token bit for bit, with and without
 /// caller-quantized rows, because a batched decode cycle and an isolated
@@ -1452,12 +1534,18 @@ int main(int argc, char** argv) {
     }
     if (argc == 2 && std::string_view(argv[1]) == "--q5-0-only")
       return CheckQ5_0() ? 0 : 1;
+    if (argc == 2 && std::string_view(argv[1]) == "--iq-gate-batch-only") {
+      CheckGroupedIqPair();
+      return 0;
+    }
     if (argc != 1)
       throw std::runtime_error(
-          "usage: routed_wmma_ops_test [--q5-0-only | --mmq-pair-only]");
+          "usage: routed_wmma_ops_test [--q5-0-only | --mmq-pair-only | "
+          "--iq-gate-batch-only]");
     if (!CheckQ5_0())
       throw std::runtime_error("Q5_0 routed expert check failed");
     CheckGatedDecodeShape();
+    CheckGroupedIqPair();
     bool routes = true;
     for (const auto gate : {q::WeightType::kQ4_K, q::WeightType::kQ5_K})
       for (const auto down : {q::WeightType::kQ5_1, q::WeightType::kQ8_0})
