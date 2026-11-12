@@ -46,7 +46,7 @@ are still required.
 | MTP | `--speculative mtp --mtp-model PATH` | The MTP head proposes up to seven tokens; the model checks them in one pass and keeps the ones it agrees with. |
 | DFlash2 | `--speculative dflash2 --dflash-model PATH` | A compatible Flash-Next DFlash2 draft model proposes tokens, and the target verifies them. |
 
-MTP adapts how many tokens it proposes; `--draft-tokens` caps the number. When
+MTP adapts how many tokens it proposes, up to seven. When
 proposals keep failing, a request falls back to AR for a while.
 
 MTP also proposes copies of earlier text from the same conversation, which
