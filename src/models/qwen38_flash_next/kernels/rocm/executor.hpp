@@ -737,6 +737,7 @@ private:
   /// whole shared expert takes (issue #1107). Create measures both layouts
   /// (CalibrateDecodeOverlap). Wide and prefill passes always overlap.
   bool decode_overlap_{false};
+  bool use_graphs_{true};
   /// True only while Run records a graph. Overlapped launches check capture
   /// membership at the fork; eager/replay tests separately check the results.
   /// False on replay, which executes no host dispatch or membership queries.

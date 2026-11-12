@@ -11,6 +11,7 @@
 #include <cstring>
 #include <gufo/ext/experimental/managed_alloc.hpp>
 #include <gufo/ext/experimental/snapshot_transfer.hpp>
+#include <gufo/ext/platform/os_info.hpp>
 #include <gufo/ext/platform/pages.hpp>
 #include <limits>
 #include <memory>
@@ -976,6 +977,13 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
   e->model_ = &model;
   e->ngram_ = ngram;
   e->options_ = options;
+  const auto host = gufo::platform::QueryHostIdentity();
+  const bool wsl = host && host->sysname == "Linux" &&
+                   (host->release.find("microsoft") != std::string::npos ||
+                    host->release.find("Microsoft") != std::string::npos);
+  // On WSL, replaying a graph can delay later eager batch submissions.
+  // Keep the native capture path and use the same eager dispatch on WSL.
+  e->use_graphs_ = !wsl;
   e->options_.max_batch = std::max<std::uint32_t>(1, options.max_batch);
   e->options_.max_logit_rows = std::clamp<std::uint32_t>(
       options.max_logit_rows, 1, e->options_.max_batch);
@@ -3543,7 +3551,7 @@ bool Executor::Run(Session& session, std::uint64_t key, bool graph,
                    bool synchronize) const {
   // A batch shape runs eagerly once before it is captured: the first pass
   // grows the GEMM tier's arena, which capture forbids.
-  if (graph && session.warmed_.contains(key)) {
+  if (use_graphs_ && graph && session.warmed_.contains(key)) {
     hipGraphExec_t exec = nullptr;
     bool enqueued = false;
     if (const auto it = session.graphs_.find(key);
