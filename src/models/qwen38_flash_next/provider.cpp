@@ -39,6 +39,14 @@ void qwen38_flash_next_provider_register(gufo::ext::Registry& registry) {
       .chat_driver = &gufo::models::qwen38_flash_next::RunFlashNextChat,
       .sampling_defaults =
           &gufo::models::qwen38_flash_next::FlashNextSamplingDefaults,
+      .speculative_defaults = {{.backend = "mtp",
+                                .max_draft_tokens = 7,
+                                .min_draft_tokens = 1},
+                               {.backend = "dflash2",
+                                .max_draft_tokens = 7,
+                                .min_draft_tokens = 1,
+                                .draft_policy = "adaptive",
+                                .draft_policies = {"fixed", "adaptive"}}},
   });
 #endif
 }

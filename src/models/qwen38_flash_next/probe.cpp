@@ -1,14 +1,53 @@
 #include "src/models/qwen38_flash_next/probe.hpp"
 
+#include <algorithm>
+#include <charconv>
 #include <filesystem>
 #include <string>
+
+#include "src/models/qwen38_flash_next/weights.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 
 bool ProbeFlashNextGguf(const core::GgufReader& reader) {
   const auto architecture =
       reader.GetMetadataString("general.architecture").value_or("");
-  return architecture == "qwen4exp";
+  if (architecture != "qwen4exp") {
+    return false;
+  }
+  const auto block_count = reader.GetMetadataUint32("qwen4exp.block_count");
+  const auto nextn_layers =
+      reader.GetMetadataUint32("qwen4exp.nextn_predict_layers").value_or(0);
+  if (!block_count || nextn_layers >= *block_count) {
+    return false;
+  }
+  const auto trunk_layers = *block_count - nextn_layers;
+  // Check only canonical weights bound by ModelWeights::Bind. Appended MTP
+  // layers and unrelated tensors are not loaded as part of the trunk.
+  for (const auto& tensor : reader.GetTensors()) {
+    auto name = tensor.name;
+    if (!name.starts_with("blk.")) {
+      continue;
+    }
+    name.remove_prefix(4);
+    std::uint32_t layer = 0;
+    const auto [end, error] =
+        std::from_chars(name.data(), name.data() + name.size(), layer);
+    if (error != std::errc{} || layer >= trunk_layers ||
+        (name.starts_with('0') && end != name.data() + 1)) {
+      continue;
+    }
+    name.remove_prefix(end - name.data());
+    if (name != ".ffn_gate_exps.weight" && name != ".ffn_up_exps.weight" &&
+        name != ".ffn_down_exps.weight") {
+      continue;
+    }
+    if (std::find(kRoutedExpertFormats.begin(), kRoutedExpertFormats.end(),
+                  tensor.type) == kRoutedExpertFormats.end()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 std::optional<sampling::TextSamplingDefaults> FlashNextSamplingDefaults() {

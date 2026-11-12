@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <gufo/ext/gguf_reader.hpp>
+#include <initializer_list>
 #include <optional>
 #include <span>
 #include <string>
@@ -13,6 +14,13 @@
 #include "src/models/qwen38_flash_next/config.hpp"
 
 namespace gufo::models::qwen38_flash_next {
+
+/// Storage formats accepted by the routed-expert binder and provider probe.
+inline constexpr std::initializer_list<core::GgmlType> kRoutedExpertFormats = {
+    core::GgmlType::kQ4_K,   core::GgmlType::kQ5_K,    core::GgmlType::kQ6_K,
+    core::GgmlType::kQ5_0,   core::GgmlType::kQ5_1,    core::GgmlType::kQ8_0,
+    core::GgmlType::kIQ2_S,  core::GgmlType::kIQ3_XXS, core::GgmlType::kIQ3_S,
+    core::GgmlType::kIQ4_XS, core::GgmlType::kIQ4_NL,  core::GgmlType::kQ2_0};
 
 /// Optional host destinations for independent predictor qualification.
 /// Every populated span contains the final complete row of its stage.
