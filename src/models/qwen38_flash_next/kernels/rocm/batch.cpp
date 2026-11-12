@@ -764,7 +764,8 @@ bool Executor::GatedDenseBatch(const DeviceTensor& up, const DeviceTensor& gate,
 }
 
 bool Executor::MoeBatch(const DeviceLayer& l, const float* x, float* out,
-                        std::uint32_t rows, std::string* error) const {
+                        std::uint32_t rows, std::string* error,
+                        bool group_iq) const {
   if (rows <= kDecodeRows)
     return Moe(l, x, out, rows, error);
   const auto& c = config();
@@ -796,11 +797,27 @@ bool Executor::MoeBatch(const DeviceLayer& l, const float* x, float* out,
                 c.num_experts_used, c.hidden_size, stream_);
     return true;
   }
+  const auto type = l.ffn_gate_exps.type;
+  const bool grouped_iq =
+      group_iq && c.num_experts_used <= 32 && l.ffn_up_exps.type == type &&
+      (type == core::GgmlType::kIQ2_S || type == core::GgmlType::kIQ3_XXS ||
+       type == core::GgmlType::kIQ4_XS);
+  if (grouped_iq) {
+    if (qfn_mmq_moe_vec(static_cast<int>(type), l.ffn_gate_exps.data, x,
+                        base.ids, base.gate_e, c.expert_ff, c.hidden_size, rows,
+                        c.num_experts, c.num_experts_used, stream_,
+                        l.ffn_up_exps.data, base.up_e, true) != 0) {
+      return Fail(error, "batched IQ gate/up projection failed");
+    }
+    Swiglu(base.gate_e, base.up_e,
+           std::size_t{rows} * c.num_experts_used * c.expert_ff, stream_);
+  }
   for (std::uint32_t r = 0; r < rows; r += kDecodeRows) {
     UseScratch(RowScratch(base, r));
-    const bool ok = MoeExperts(l, x + std::size_t{r} * c.hidden_size,
-                               out + std::size_t{r} * c.hidden_size,
-                               std::min(kDecodeRows, rows - r), error);
+    const bool ok =
+        MoeExperts(l, x + std::size_t{r} * c.hidden_size,
+                   out + std::size_t{r} * c.hidden_size,
+                   std::min(kDecodeRows, rows - r), error, grouped_iq);
     UseScratch(base);
     if (!ok)
       return false;
@@ -1252,7 +1269,8 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                         error))
           return false;
       }
-      if (!MoeBatch(l, base.mixed, base.block_out, rows, error))
+      if (!MoeBatch(l, base.mixed, base.block_out, rows, error,
+                    items.size() > 1))
         return false;
       const float* next_norm =
           il + 1 < c.num_layers

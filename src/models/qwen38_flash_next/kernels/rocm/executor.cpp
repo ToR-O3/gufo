@@ -3367,8 +3367,8 @@ bool Executor::WmmaExperts(const DeviceLayer& l, std::uint32_t n_tokens) const {
 }
 
 bool Executor::MoeExperts(const DeviceLayer& l, const float* x, float* out,
-                          std::uint32_t n_tokens,
-                          std::string* error_msg) const {
+                          std::uint32_t n_tokens, std::string* error_msg,
+                          bool gate_ready) const {
   const Config& c = config();
   const std::uint32_t used = c.num_experts_used;
   const std::uint32_t slots = n_tokens * used;
@@ -3378,7 +3378,7 @@ bool Executor::MoeExperts(const DeviceLayer& l, const float* x, float* out,
   // Tiled batches take the WMMA route: assignments compacted by expert
   // into 16-row padded buckets, token rows narrowed to F16 once, then the
   // F16 matrix-core GEMM per (expert, row tile).
-  const bool wmma_experts = WmmaExperts(l, n_tokens);
+  const bool wmma_experts = !gate_ready && WmmaExperts(l, n_tokens);
   if (wmma_experts) {
     RoutedCompact(s_.ids, s_.expert_counts, s_.routed_bounds, s_.routed_cursors,
                   s_.rows_token, s_.rows_slot, n_tokens, used, c.num_experts,
@@ -3429,8 +3429,8 @@ bool Executor::MoeExperts(const DeviceLayer& l, const float* x, float* out,
       return false;
     }
   } else {
-    if (!GatedExperts(l.ffn_gate_exps, l.ffn_up_exps, x, s_.ids, s_.gate_e,
-                      n_tokens, used, error_msg)) {
+    if (!gate_ready && !GatedExperts(l.ffn_gate_exps, l.ffn_up_exps, x, s_.ids,
+                                     s_.gate_e, n_tokens, used, error_msg)) {
       return false;
     }
     // The down projection sees one (token, slot) row per expert id.

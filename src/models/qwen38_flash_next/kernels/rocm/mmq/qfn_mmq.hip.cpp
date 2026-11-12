@@ -355,7 +355,8 @@ static int moe_vector_projection(int weight_type, const void* W,
                                  int n_experts, int n_expert_used,
                                  hipStream_t stream, const void* W_b,
                                  float* out_b, bool gated,
-                                 const void* X_q8 = nullptr) {
+                                 const void* X_q8 = nullptr,
+                                 bool group_pair = false) {
   constexpr const char* tag = "qfn_mmq_moe_vec";
   const auto type = static_cast<ggml_type>(weight_type);
   if (type != GGML_TYPE_Q4_K && type != GGML_TYPE_Q5_K &&
@@ -385,6 +386,14 @@ static int moe_vector_projection(int weight_type, const void* W,
   if (n_expert_used > n_experts) {
     fprintf(stderr, "%s: n_expert_used=%d > n_experts=%d\n", tag, n_expert_used,
             n_experts);
+    return -1;
+  }
+  if (group_pair &&
+      (!W_b || n_tokens <= MMVQ_MAX_BATCH_SIZE ||
+       n_tokens > MMVQ_MAX_ROUTED_BATCH || n_expert_used > 32 ||
+       (type != GGML_TYPE_IQ2_S && type != GGML_TYPE_IQ3_XXS &&
+        type != GGML_TYPE_IQ4_XS))) {
+    fprintf(stderr, "%s: unsupported grouped IQ pair\n", tag);
     return -1;
   }
   const int max_gated_rows = type == GGML_TYPE_Q4_K
@@ -417,7 +426,7 @@ static int moe_vector_projection(int weight_type, const void* W,
       n_expert_used == 1 && n_tokens > 1;
   const size_t group_bytes =
       by_expert ? 2 * size_t(n_tokens) * sizeof(int32_t)
-      : gated && n_tokens > 1
+      : ((gated && n_tokens > 1) || group_pair)
           ? (n_tokens > MMVQ_MAX_BATCH_SIZE
                  ? sizeof(int32_t) +
                        size_t(n_tokens) * n_expert_used * sizeof(MoeBatchGroup)
@@ -465,6 +474,19 @@ static int moe_vector_projection(int weight_type, const void* W,
   int32_t* groups = reinterpret_cast<int32_t*>(src1_q8_1_ptr + input_bytes);
 
   const int input_stride = ne10_padded / QK8_1;
+  if (group_pair) {
+    if (hipMemsetAsync(groups, 0, sizeof(int32_t), stream) != hipSuccess)
+      return -2;
+    err = mul_mat_vec_moe_iq_pair(W, W_b, type, input, ids, groups, out_f32,
+                                 out_b, K, M, n_tokens, n_expert_used,
+                                 input_stride, stream);
+    if (err != hipSuccess) {
+      fprintf(stderr, "%s: grouped IQ pair launch failed: %s\n", tag,
+              hipGetErrorString(err));
+      return -3;
+    }
+    return 0;
+  }
   if (gated) {
     if (n_tokens > MMVQ_MAX_BATCH_SIZE &&
         hipMemsetAsync(groups, 0, sizeof(int32_t), stream) != hipSuccess)
@@ -505,10 +527,10 @@ extern "C" int qfn_mmq_moe_vec(int weight_type, const void* W,
                                float* out_f32, int M, int K, int n_tokens,
                                int n_experts, int n_expert_used,
                                hipStream_t stream, const void* W_b,
-                               float* out_b) {
+                               float* out_b, bool group_pair) {
   return moe_vector_projection(weight_type, W, X_f32, ids, out_f32, M, K,
                                n_tokens, n_experts, n_expert_used, stream, W_b,
-                               out_b, false);
+                               out_b, false, nullptr, group_pair);
 }
 
 extern "C" int qfn_mmq_moe_gated_vec(int weight_type, const void* gate,

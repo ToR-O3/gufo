@@ -627,6 +627,107 @@ static __global__ void group_moe_batch(const int32_t* ids, int32_t* storage,
 }
 
 
+// Each group visits the same packed expert rows for all its inputs. Gate and
+// up use independent waves and leave the existing SwiGLU to the caller.
+template<ggml_type type>
+__launch_bounds__(64) static __global__ void mul_mat_vec_moe_iq_pair_kernel(
+    const void* __restrict__ gate, const void* __restrict__ up,
+    const block_q8_1* __restrict__ input,
+    const int32_t* __restrict__ storage, float* __restrict__ gate_out,
+    float* __restrict__ up_out, int k, int rows, int experts_used,
+    int input_stride) {
+  constexpr int qk = ggml_hip_type_traits<type>::qk;
+  constexpr int qi = ggml_hip_type_traits<type>::qi;
+  constexpr int vdr = get_vdr_mmvq(type);
+  constexpr int blocks_per_iter = vdr * 32 / qi;
+  constexpr auto dot = get_vec_dot_q_hip(type);
+  constexpr int columns = MMVQ_MAX_BATCH_SIZE;
+  const int lane = threadIdx.x % 32;
+  const bool is_up = threadIdx.x >= 32;
+  const void* weights = is_up ? up : gate;
+  float* output = is_up ? up_out : gate_out;
+  const int row0 = blockIdx.x * 2;
+  const int blocks_per_row = k / qk;
+  const auto* groups = reinterpret_cast<const MoeBatchGroup*>(storage + 1);
+  for (int entry = blockIdx.y; entry < storage[0]; entry += gridDim.y) {
+    const auto& group = groups[entry];
+    if (group.expert < 0) {
+      if (lane < 2 && row0 + lane < rows)
+        output[group.anchor * rows + row0 + lane] = 0.0F;
+      continue;
+    }
+    const int expert_row = group.expert * rows;
+    const int weight_blocks[2] = {
+        (expert_row + row0) * blocks_per_row,
+        (expert_row + min(row0 + 1, rows - 1)) * blocks_per_row,
+    };
+    float sum[columns][2] = {};
+    for (int kb = lane / (qi / vdr); kb < blocks_per_row; kb += blocks_per_iter) {
+      const int kqs = vdr * (lane % (qi / vdr));
+#pragma unroll
+      for (int t = 0; t < columns; ++t) {
+        // A nonempty group always has a first input.
+        if (t != 0 && group.slots[t] == 0)
+          continue;
+        const auto* x = input + group.token[t] * input_stride + kb * (qk / QK8_1);
+#pragma unroll
+        for (int r = 0; r < 2; ++r)
+          sum[t][r] += dot(weights, x, weight_blocks[r] + kb, kqs);
+      }
+    }
+#pragma unroll
+    for (int t = 0; t < columns; ++t) {
+      uint32_t slots = group.slots[t];
+      if (slots == 0)
+        continue;
+#pragma unroll
+      for (int r = 0; r < 2; ++r)
+        sum[t][r] = warp_reduce_sum<32>(sum[t][r]);
+      if (lane < 2 && row0 + lane < rows) {
+        while (slots) {
+          const int slot = __ffs(static_cast<int>(slots)) - 1;
+          output[(group.token[t] * experts_used + slot) * rows + row0 + lane] =
+              sum[t][lane];
+          slots &= slots - 1;
+        }
+      }
+    }
+  }
+}
+
+hipError_t mul_mat_vec_moe_iq_pair(const void* gate, const void* up, ggml_type type,
+                                  const block_q8_1* input, const int32_t* ids,
+                                  int32_t* groups, float* gate_out, float* up_out,
+                                  int k, int rows, int tokens, int experts_used,
+                                  int input_stride, hipStream_t stream) {
+  group_moe_batch<<<(tokens * experts_used + 127) / 128, 128, 0, stream>>>(
+      ids, groups, tokens, experts_used);
+  const auto status = hipGetLastError();
+  if (status != hipSuccess)
+    return status;
+  const dim3 grid((rows + 1) / 2, 32);
+  switch (type) {
+    case GGML_TYPE_IQ2_S:
+      mul_mat_vec_moe_iq_pair_kernel<GGML_TYPE_IQ2_S><<<grid, 64, 0, stream>>>(
+          gate, up, input, groups, gate_out, up_out, k, rows, experts_used,
+          input_stride);
+      break;
+    case GGML_TYPE_IQ3_XXS:
+      mul_mat_vec_moe_iq_pair_kernel<GGML_TYPE_IQ3_XXS><<<grid, 64, 0, stream>>>(
+          gate, up, input, groups, gate_out, up_out, k, rows, experts_used,
+          input_stride);
+      break;
+    case GGML_TYPE_IQ4_XS:
+      mul_mat_vec_moe_iq_pair_kernel<GGML_TYPE_IQ4_XS><<<grid, 64, 0, stream>>>(
+          gate, up, input, groups, gate_out, up_out, k, rows, experts_used,
+          input_stride);
+      break;
+    default:
+      return hipErrorInvalidValue;
+  }
+  return hipGetLastError();
+}
+
 template<ggml_type type, int tokens = 2>
 static void launch_moe_grouped(const void* gate, const void* up,
                                const block_q8_1* input, const int32_t* groups,

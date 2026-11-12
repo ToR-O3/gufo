@@ -650,10 +650,13 @@ private:
   /// following combine absorbs (see Moe).
   bool WmmaExperts(const DeviceLayer& l, std::uint32_t n_tokens) const;
   /// Runs routed experts after the router and shared expert are ready.
+  /// gate_ready means gate_e already holds the activated gate/up rows.
   bool MoeExperts(const DeviceLayer& l, const float* x, float* out,
-                  std::uint32_t n_tokens, std::string* error_msg) const;
+                  std::uint32_t n_tokens, std::string* error_msg,
+                  bool gate_ready = false) const;
   bool MoeBatch(const DeviceLayer& l, const float* x, float* out,
-                std::uint32_t rows, std::string* error) const;
+                std::uint32_t rows, std::string* error,
+                bool group_iq = false) const;
   /// Whether a draft of `session` requesting the small head gets it.
   bool UseDraftSubset(const Session& session, bool requested) const noexcept {
     return requested && !model_->draft_output().empty() &&
