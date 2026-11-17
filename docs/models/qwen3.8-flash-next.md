@@ -53,6 +53,12 @@ object in a response reports copies as `lookup_n` and `lookup_n_accepted`.
 With greedy decoding, MTP produces exactly the AR output. With sampling, both
 modes follow the same distribution, but the same seed gives different text.
 
+For Q8_0 and Q6_K output heads, MTP builds a Q4_K copy of the draft vocabulary
+prefix at load time. Verification and per-request extra vocabulary rows keep
+the original output weights. The copy adds 135 MiB for 98,304 rows of width
+2,560, shared across sessions. Q6_K performance and runtime qualification are
+pending; the Q8_0 benchmark results do not establish a Q6_K speedup.
+
 ## Thinking
 
 Thinking is on by default, with `xhigh` effort, and earlier reasoning is kept

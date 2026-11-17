@@ -1,5 +1,21 @@
 # Qwen3.8 Flash-Next quality
 
+## Q6_K draft head extension, November 18, 2026
+
+Implementation only; GPU, model and performance checks are pending. The
+Q6_K path reuses the shared Q6_K decoder and the Q8_0 path's Q4_K reference
+quantizer. It retains the original head for target verification and extra
+vocabulary rows, without allocating a full dequantized intermediate.
+
+Added coverage (not yet executed): `mtp_ops` compares Q6_K-derived bytes with
+the independent CPU decoder and host Q4_K reference, checks reconstruction,
+source preservation and finite batch-invariant projections, and covers partial
+launch blocks. `dense_dispatch` requires a separate Q4_K prefix from a Q6_K
+head while preserving target bytes and metadata. Existing Q8_0 checks remain.
+Before adoption, run these checks and affected real-model MTP replay,
+mixed-head batches, sampling and continuation checks, then matched benchmarks.
+The Q8_0 evidence below does not qualify this Q6_K extension.
+
 ## Q4_K draft head, November 13, 2026
 
 Main `6858788b` against the candidate on the same host and toolchain; the

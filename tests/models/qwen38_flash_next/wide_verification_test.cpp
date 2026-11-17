@@ -38,6 +38,39 @@ struct DeviceModelTestAccess {
   DeviceModel& model;
   std::uint64_t state;
 
+  static void CheckQ6DraftVocab(DeviceModel& model) {
+    DeviceModelTestAccess weights{model, 0xD6AF};
+    const auto rows = model.output().rows;
+    const auto cols = model.output().cols;
+    std::vector<std::uint8_t> packed(std::size_t{rows} * (cols / 256) * 210);
+    for (std::size_t b = 0; b < packed.size() / 210; ++b) {
+      auto* block = packed.data() + b * 210;
+      for (int i = 0; i < 208; ++i)
+        block[i] = static_cast<std::uint8_t>(weights.Next());
+      PutHalf(block + 208, 0.0001F);
+    }
+    model.output_ = weights.Make(GgmlType::kQ6_K, rows, cols, packed, 1);
+    model.output_bytes_ = packed.size();
+    const auto target = model.output();
+    std::string error;
+    if (!model.SetDraftVocab(2048, {8000, 8001}, &error))
+      throw std::runtime_error("Q6_K draft vocabulary: " + error);
+    if (model.output().type != GgmlType::kQ6_K ||
+        model.output().data != target.data ||
+        model.output_row_bytes() != std::size_t{cols / 256} * 210 ||
+        model.draft_output().type != GgmlType::kQ4_K ||
+        model.draft_output().data == target.data ||
+        model.draft_output().rows != 2048 ||
+        model.draft_specials().size() != 2 ||
+        model.draft_specials()[0] != 8000 || model.draft_specials()[1] != 8001)
+      throw std::runtime_error("Q6_K draft prefix or target metadata changed");
+    std::vector<std::uint8_t> actual(packed.size());
+    if (hipMemcpy(actual.data(), target.data, actual.size(),
+                  hipMemcpyDeviceToHost) != hipSuccess ||
+        actual != packed)
+      throw std::runtime_error("Q6_K draft vocabulary changed target weights");
+  }
+
   std::uint64_t Next() {
     // splitmix64
     std::uint64_t z = (state += 0x9E3779B97F4A7C15ULL);
@@ -770,6 +803,8 @@ int main(int argc, char** argv) {
     if (!exec)
       Throw("executor", error);
     if (dense_only) {
+      rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
+      rocm::DeviceModelTestAccess::CheckQ6DraftVocab(*model);
       rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
       return 0;
     }

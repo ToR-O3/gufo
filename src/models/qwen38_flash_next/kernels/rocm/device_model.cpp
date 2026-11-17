@@ -515,8 +515,10 @@ bool DeviceModel::SetDraftVocab(std::uint32_t prefix_rows,
   }
   draft_output_ = output_;
   draft_output_.rows = prefix_rows;
-  if (output_.type == core::GgmlType::kQ8_0 && output_.cols % 256 == 0) {
-    // Drafts read a Q4_K copy of the Q8_0 prefix: the head is the larger
+  if ((output_.type == core::GgmlType::kQ8_0 ||
+       output_.type == core::GgmlType::kQ6_K) &&
+      output_.cols % 256 == 0) {
+    // Drafts read a Q4_K copy of the output prefix: the head is the larger
     // part of each draft step's weight traffic, and its proposals are
     // verified, so this changes acceptance only. Each row of the copy is
     // the same at any batch width.
@@ -527,7 +529,10 @@ bool DeviceModel::SetDraftVocab(std::uint32_t prefix_rows,
       return fail("device allocation failed for the Q4_K draft head");
     allocations_.push_back(q4k);
     bytes_ += bytes + kTailMargin;
-    QuantizeQ8_0ToQ4K(output_.data, q4k, prefix_rows, output_.cols, nullptr);
+    if (output_.type == core::GgmlType::kQ6_K)
+      QuantizeQ6_KToQ4K(output_.data, q4k, prefix_rows, output_.cols, nullptr);
+    else
+      QuantizeQ8_0ToQ4K(output_.data, q4k, prefix_rows, output_.cols, nullptr);
     if (hipMemsetAsync(static_cast<std::uint8_t*>(q4k) + bytes, 0, kTailMargin,
                        nullptr) != hipSuccess ||
         hipStreamSynchronize(nullptr) != hipSuccess)

@@ -728,6 +728,11 @@ void VerificationCandidates(const float* logits, GreedyPenaltyRows penalties,
 void QuantizeQ8_0ToQ4K(const void* q8, void* q4k, std::size_t rows,
                        std::uint32_t cols, hipStream_t stream);
 
+/// The same Q4_K reference arithmetic on Q6_K rows, using the shared Q6_K
+/// decoder without an intermediate weight allocation or quantization.
+void QuantizeQ6_KToQ4K(const void* q6, void* q4k, std::size_t rows,
+                       std::uint32_t cols, hipStream_t stream);
+
 /// Draft logits of empty table slots (table[i] < 0) become -infinity.
 void MaskDraftLogits(float* logits, const std::int32_t* table, std::uint32_t n,
                      hipStream_t stream);

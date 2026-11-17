@@ -14,6 +14,7 @@
 #include <vector>
 
 #include "qfn_mmq.h"
+#include "src/core/quant/ggml_dequant.hpp"
 #include "src/core/sampling.hpp"
 #include "src/families/qwen/kernels/ops/token.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
@@ -413,9 +414,8 @@ void CheckRemapDraftIds() {
 
 }  // namespace
 
-// ggml quantize_row_q4_K_ref on dequantized Q8_0 values, in plain IEEE
-// single precision (no contraction): the order QuantizeQ8_0ToQ4K keeps on
-// the device.
+// ggml quantize_row_q4_K_ref on dequantized values, in plain IEEE single
+// precision (no contraction), independently of the device quantizer.
 int HostNearest(float value) {
   return static_cast<int>(std::nearbyint(value));
 }
@@ -535,51 +535,92 @@ void HostQ4K(const float* x, std::uint8_t* out) {
                      (codes[64 * (byte / 32) + 32 + byte % 32] << 4);
 }
 // The draft head's Q4_K copy: device bytes equal the host reference, rows
-// are close to their Q8_0 values, and a row's projection is the same at
+// are close to their source values, and a row's projection is the same at
 // every batch width.
-void CheckQ4KDraftHead() {
-  constexpr std::uint32_t kRows = 96, kCols = 2560, kBlocks = kCols / 32;
-  std::vector<std::uint8_t> q8(std::size_t{kRows} * kBlocks * 34);
+void CheckQ4KDraftHead(bool q6, std::uint32_t kRows = 96,
+                       std::uint32_t kCols = 2560) {
+  const std::uint32_t kBlocks = kCols / 32;
+  std::vector<std::uint8_t> source(q6 ? std::size_t{kRows} * (kCols / 256) * 210
+                                      : std::size_t{kRows} * kBlocks * 34);
   std::vector<float> values(std::size_t{kRows} * kCols);
   std::uint32_t state = 0x1234567U;
   const auto next = [&] {
     state = state * 1664525U + 1013904223U;
     return state >> 8;
   };
-  for (std::size_t b = 0; b < std::size_t{kRows} * kBlocks; ++b) {
-    // Mixed scales, so some sub-blocks round to a zero 6-bit scale; a few
-    // constant, positive-only, negative-only and zero blocks.
-    const float scale = (b % 7 == 3 ? 1.0e-5F : 1.0e-3F) *
-                        static_cast<float>(1 + next() % 1000);
-    const auto d = static_cast<_Float16>(scale);
-    std::memcpy(&q8[b * 34], &d, 2);
-    for (int i = 0; i < 32; ++i) {
-      int code = static_cast<int>(next() % 255) - 127;
-      if (b % 29 == 5)
-        code = 17;
-      else if (b % 31 == 7)
-        code = std::abs(code);
-      else if (b % 37 == 11)
-        code = -std::abs(code);
-      else if (b % 41 == 13)
-        code = 0;
-      q8[b * 34 + 2 + i] =
-          static_cast<std::uint8_t>(static_cast<std::int8_t>(code));
-      values[b * 32 + i] = static_cast<float>(static_cast<std::int8_t>(code)) *
-                           static_cast<float>(d);
+  if (q6) {
+    for (std::size_t b = 0; b < source.size() / 210; ++b) {
+      gufo::quant::block_q6_K block{};
+      for (auto& v : block.ql)
+        v = static_cast<std::uint8_t>(next());
+      for (auto& v : block.qh)
+        v = static_cast<std::uint8_t>(next());
+      for (auto& v : block.scales)
+        v = static_cast<std::int8_t>(static_cast<int>(next() % 256) - 128);
+      // Cover both 128-value halves, signed scales, constant and zero
+      // blocks, and values small enough to round Q4_K sub-scales to zero.
+      if (b % 7 == 1) {
+        std::fill_n(block.ql, 128, 0x55);
+        std::fill_n(block.qh, 64, 0xAA);
+        std::fill_n(block.scales, 16, b % 2 ? 3 : -3);
+      }
+      const auto d = static_cast<_Float16>(
+          b % 11 == 2 ? 0.0F
+                      : (b % 5 == 3 ? 1.0e-5F : 1.0e-3F) *
+                            static_cast<float>(1 + next() % 1000) *
+                            (b % 3 == 0 ? -1.0F : 1.0F));
+      std::memcpy(&block.d, &d, 2);
+      std::memcpy(source.data() + b * 210, &block, 210);
+      gufo::quant::DequantizeQ6_K(&block, values.data() + b * 256, 256);
+    }
+  } else {
+    for (std::size_t b = 0; b < std::size_t{kRows} * kBlocks; ++b) {
+      // Mixed scales, so some sub-blocks round to a zero 6-bit scale; a few
+      // constant, positive-only, negative-only and zero blocks.
+      const float scale = (b % 7 == 3 ? 1.0e-5F : 1.0e-3F) *
+                          static_cast<float>(1 + next() % 1000);
+      const auto d = static_cast<_Float16>(scale);
+      std::memcpy(&source[b * 34], &d, 2);
+      for (int i = 0; i < 32; ++i) {
+        int code = static_cast<int>(next() % 255) - 127;
+        if (b % 29 == 5)
+          code = 17;
+        else if (b % 31 == 7)
+          code = std::abs(code);
+        else if (b % 37 == 11)
+          code = -std::abs(code);
+        else if (b % 41 == 13)
+          code = 0;
+        source[b * 34 + 2 + i] =
+            static_cast<std::uint8_t>(static_cast<std::int8_t>(code));
+        values[b * 32 + i] =
+            static_cast<float>(static_cast<std::int8_t>(code)) *
+            static_cast<float>(d);
+      }
     }
   }
   const std::size_t bytes = std::size_t{kRows} * (kCols / 256) * 144;
-  auto device_q8 = Allocate<std::uint8_t>(q8.size());
+  auto device_source = Allocate<std::uint8_t>(source.size());
   auto device_q4 = Allocate<std::uint8_t>(bytes);
-  CheckHip(
-      hipMemcpy(device_q8.get(), q8.data(), q8.size(), hipMemcpyHostToDevice),
-      "Q8_0 rows");
-  q::QuantizeQ8_0ToQ4K(device_q8.get(), device_q4.get(), kRows, kCols, nullptr);
+  CheckHip(hipMemcpy(device_source.get(), source.data(), source.size(),
+                     hipMemcpyHostToDevice),
+           "source rows");
+  if (q6)
+    q::QuantizeQ6_KToQ4K(device_source.get(), device_q4.get(), kRows, kCols,
+                         nullptr);
+  else
+    q::QuantizeQ8_0ToQ4K(device_source.get(), device_q4.get(), kRows, kCols,
+                         nullptr);
   std::vector<std::uint8_t> actual(bytes);
   CheckHip(
       hipMemcpy(actual.data(), device_q4.get(), bytes, hipMemcpyDeviceToHost),
       "Q4_K rows");
+  std::vector<std::uint8_t> unchanged(source.size());
+  CheckHip(hipMemcpy(unchanged.data(), device_source.get(), source.size(),
+                     hipMemcpyDeviceToHost),
+           "source rows after quantization");
+  if (unchanged != source)
+    throw std::runtime_error("draft quantization changed the target head");
   std::vector<std::uint8_t> expected(bytes);
   for (std::size_t sb = 0; sb < bytes / 144; ++sb)
     HostQ4K(values.data() + sb * 256, expected.data() + sb * 144);
@@ -596,7 +637,7 @@ void CheckQ4KDraftHead() {
         "Q4_K superblock " + std::to_string(sb) +
         " differs from the reference (device/host):" + detail.substr(0, 400));
   }
-  // Reconstruction error relative to the Q8_0 values.
+  // Reconstruction error relative to the source values.
   double error = 0, norm = 0;
   for (std::size_t sb = 0; sb < bytes / 144; ++sb) {
     const std::uint8_t* block = actual.data() + sb * 144;
@@ -652,7 +693,11 @@ void CheckQ4KDraftHead() {
   CheckHip(hipMemcpy(rows.data(), single.get(), rows.size() * sizeof(float),
                      hipMemcpyDeviceToHost),
            "single-row draft logits");
-  if (std::memcmp(batched.data(), rows.data(), rows.size() * sizeof(float)))
+  if (!std::all_of(batched.begin(), batched.end(),
+                   [](float v) { return std::isfinite(v); }) ||
+      !std::all_of(rows.begin(), rows.end(),
+                   [](float v) { return std::isfinite(v); }) ||
+      std::memcmp(batched.data(), rows.data(), rows.size() * sizeof(float)))
     throw std::runtime_error("Q4_K draft logits depend on the batch width");
   std::cout << "Q4_K draft head: reference bytes, reconstruction and "
                "batch-width invariance passed\n";
@@ -660,7 +705,10 @@ void CheckQ4KDraftHead() {
 
 int main() {
   try {
-    CheckQ4KDraftHead();
+    CheckQ4KDraftHead(false);
+    CheckQ4KDraftHead(true);
+    for (const auto rows : {1U, 3U, 33U})
+      CheckQ4KDraftHead(true, rows, 256);
     CheckRemapDraftIds();
     CheckPenaltyArgmax(257);
     CheckPenaltyArgmax(248320);

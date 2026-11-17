@@ -7,7 +7,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
+#include <type_traits>
 
+#include "src/families/qwen/hip_common/quant_ops.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 
 #pragma clang fp contract(off)
@@ -17,19 +19,9 @@ namespace {
 
 constexpr unsigned kThreads = 256;
 
-struct Q8_0Block {
-  __half d;
-  std::int8_t qs[32];
-};
-static_assert(sizeof(Q8_0Block) == 34, "block_q8_0 must be 34 bytes");
-
-struct Q4KBlock {
-  __half d;
-  __half dmin;
-  std::uint8_t scales[12];
-  std::uint8_t qs[128];
-};
-static_assert(sizeof(Q4KBlock) == 144, "block_q4_K must be 144 bytes");
+using gufo::hip::Q4KBlock;
+using gufo::hip::Q6KBlock;
+using gufo::hip::Q8_0Block;
 
 __device__ __forceinline__ int NearestInt(float value) {
   return static_cast<int>(__builtin_rintf(value));  // ggml: ties to even
@@ -104,11 +96,14 @@ __device__ float Qkx2Scale(const float (&x)[32], const float (&w)[32],
   return scale;
 }
 
-// ggml's quantize_row_q4_K_ref over Q8_0 rows. A thread owns one 32-value
-// sub-block (one Q8_0 block); a superblock's eight threads are consecutive.
-__global__ void QuantizeQ8_0ToQ4KKernel(const Q8_0Block* __restrict__ q8,
-                                        Q4KBlock* __restrict__ q4k,
-                                        std::size_t superblocks) {
+// ggml's quantize_row_q4_K_ref over Q8_0 or Q6_K rows. A thread owns one
+// 32-value sub-block; a superblock's eight threads are consecutive.
+template<typename Block>
+__global__ void QuantizeToQ4KKernel(const Block* __restrict__ source,
+                                    Q4KBlock* __restrict__ q4k,
+                                    std::size_t superblocks) {
+  static_assert(std::is_same_v<Block, Q8_0Block> ||
+                std::is_same_v<Block, Q6KBlock>);
   constexpr unsigned kPerBlock = kThreads / 8;
   __shared__ float scales_s[kPerBlock][8];
   __shared__ float mins_s[kPerBlock][8];
@@ -120,11 +115,14 @@ __global__ void QuantizeQ8_0ToQ4KKernel(const Q8_0Block* __restrict__ q8,
   const bool active = superblock < superblocks;
   float x[32];
   if (active) {
-    const Q8_0Block& b = q8[superblock * 8 + j];
-    const float d = __half2float(b.d);
     float sum_x2 = 0;
     for (int i = 0; i < 32; ++i) {
-      x[i] = static_cast<float>(b.qs[i]) * d;
+      if constexpr (std::is_same_v<Block, Q8_0Block>) {
+        const Q8_0Block& b = source[superblock * 8 + j];
+        x[i] = static_cast<float>(b.qs[i]) * __half2float(b.d);
+      } else {
+        x[i] = gufo::hip::Q6KValue(source[superblock], 32 * j + i);
+      }
       sum_x2 += x[i] * x[i];
     }
     const float av_x = __builtin_sqrtf(sum_x2 / 32);
@@ -206,17 +204,28 @@ __global__ void QuantizeQ8_0ToQ4KKernel(const Q8_0Block* __restrict__ q8,
   }
 }
 
+template<typename Block>
+void QuantizeToQ4K(const void* source, void* q4k, std::size_t rows,
+                   std::uint32_t cols, hipStream_t stream) {
+  const std::size_t superblocks = rows * (cols / 256);
+  constexpr std::size_t kPerBlock = kThreads / 8;
+  hipLaunchKernelGGL(
+      QuantizeToQ4KKernel<Block>,
+      dim3(static_cast<unsigned>((superblocks + kPerBlock - 1) / kPerBlock)),
+      dim3(kThreads), 0, stream, static_cast<const Block*>(source),
+      static_cast<Q4KBlock*>(q4k), superblocks);
+}
+
 }  // namespace
 
 void QuantizeQ8_0ToQ4K(const void* q8, void* q4k, std::size_t rows,
                        std::uint32_t cols, hipStream_t stream) {
-  const std::size_t superblocks = rows * (cols / 256);
-  constexpr std::size_t kPerBlock = kThreads / 8;
-  hipLaunchKernelGGL(
-      QuantizeQ8_0ToQ4KKernel,
-      dim3(static_cast<unsigned>((superblocks + kPerBlock - 1) / kPerBlock)),
-      dim3(kThreads), 0, stream, static_cast<const Q8_0Block*>(q8),
-      static_cast<Q4KBlock*>(q4k), superblocks);
+  QuantizeToQ4K<Q8_0Block>(q8, q4k, rows, cols, stream);
+}
+
+void QuantizeQ6_KToQ4K(const void* q6, void* q4k, std::size_t rows,
+                       std::uint32_t cols, hipStream_t stream) {
+  QuantizeToQ4K<Q6KBlock>(q6, q4k, rows, cols, stream);
 }
 
 }  // namespace gufo::models::qwen38_flash_next::rocm
