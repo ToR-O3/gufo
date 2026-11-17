@@ -8,13 +8,13 @@ type.
 ## Versions
 
 The API has its own version, `0.MINOR.REVISION`, separate from Gufo's. As of
-November 2026 it is in the 0.2 series; `gufo diagnose --section extensions`
+November 2026 it is in the 0.3 series; `gufo diagnose --section extensions`
 prints the exact version.
 
-- A **revision** only adds things. An extension built for 0.2.10 builds against
-  any later 0.2 revision.
+- A **revision** only adds things. An extension built for 0.3.10 builds against
+  any later 0.3 revision.
 - A **minor** bump may break extensions. The minor in your `api_version` must
-  equal the host's, so `">= 0.1.12"` doesn't build against 0.2.
+  equal the host's, so `">= 0.2.12"` doesn't build against 0.3.
 - Headers under `include/gufo/ext/experimental/` carry no promise; check them
   whenever you update.
 
