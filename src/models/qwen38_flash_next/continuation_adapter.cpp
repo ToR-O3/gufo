@@ -309,6 +309,9 @@ void ContinuationAdapter::PrefillThrough(
     throw std::runtime_error("component in-pass prefill failed: " + error);
 }
 std::optional<cache::CostEstimate> ContinuationAdapter::Cost() const {
+  // The measured MTP coefficients do not describe the DFlash backend.
+  if (model_->HasDFlash())
+    return std::nullopt;
   // Fixed least-squares fit of the retained gfx1151 depth sweep; see this
   // model's BENCHMARKS.md. Restore rates are shared measured hardware controls.
   return mode_ == core::SessionMode::kSpeculative
