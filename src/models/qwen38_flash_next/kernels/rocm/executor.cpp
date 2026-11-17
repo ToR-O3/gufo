@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <gufo/ext/experimental/managed_alloc.hpp>
 #include <gufo/ext/experimental/snapshot_transfer.hpp>
 #include <gufo/ext/platform/os_info.hpp>
@@ -69,6 +70,8 @@ T* Alloc(std::vector<void*>& allocations, std::size_t count,
 // The tier's tiled kernels compute whole column tiles; below this width the
 // matrix-vector kernels read each weight once per row and win outright.
 constexpr std::uint32_t kVecBatch = 8;
+/// Rows of one draft head projection: a batch drafts at most eight sessions.
+constexpr std::uint32_t kDraftHeadRows = 8;
 // Keep prompt arithmetic independent of chunk width. A scoped, per-thread
 // policy also lets the output head retain its existing logits-row arithmetic.
 thread_local bool prefill_phase = false;
@@ -1275,6 +1278,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     s.mtp_argmax = Alloc<ArgmaxCandidate>(a, kArgmaxParts, error_msg);
     // The draft token and its confidence (float bits), one host transfer.
     s.mtp_token = Alloc<std::int32_t>(a, 2, error_msg);
+    s.draft_head_ids = Alloc<std::int32_t>(a, kDraftHeadRows, error_msg);
     const auto candidate_ids = std::max<std::size_t>(
         MtpCandidateWorkspaceSize(c.vocab_size),
         e->options_.max_speculative * kArgmaxParts *
@@ -2025,6 +2029,20 @@ bool Executor::DenseF16Route(const DeviceTensor& w,
 
 bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
                      std::uint32_t n_tokens, std::string* error_msg) const {
+  if (w.type == GgmlType::kQ4_K && w.data == model_->draft_output().data &&
+      w.data != model_->output().data) {
+    // Only the requantized draft prefix uses the row-invariant MMVQ path.
+    // Ordinary Q4_K projections retain the native dense route below.
+    if (n_tokens > kDraftHeadRows || s_.draft_head_ids == nullptr ||
+        qfn_mmq_moe_vec(static_cast<int>(GgmlType::kQ4_K), w.data, x,
+                        s_.draft_head_ids, out, static_cast<int>(w.rows),
+                        static_cast<int>(w.cols), static_cast<int>(n_tokens), 1,
+                        1, stream_) != 0) {
+      AssignError(error_msg, "Q4_K draft head projection failed");
+      return false;
+    }
+    return true;
+  }
   if (IsNativeQuantDense(w.type)) {
     const auto piece = options_.max_batch;
     for (std::uint32_t first = 0; first < n_tokens; first += piece) {
