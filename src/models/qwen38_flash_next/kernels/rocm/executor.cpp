@@ -4034,12 +4034,14 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
                                  embeddings_ready, checkpoints)) {
       return false;
     }
-    // Both stacked SSM projections consume the same F16 input. Avoid writing
-    // unused F32/Q8 copies when the wide mixer can supply that input directly.
+    // Only omit the F32 and tiled-Q8 mix if every GDN projection reads F16.
     const bool half_only = WidePrefill(n) && n <= options_.max_batch &&
-                           l.linear && DenseF16Route(l.ssm_in, n) &&
-                           l.ssm_alpha_beta.type == GgmlType::kF16 &&
-                           l.ssm_alpha_beta.cols == l.ssm_in.cols;
+                           l.linear &&
+                           ((DenseF16Route(l.ssm_in, n) &&
+                             l.ssm_alpha_beta.type == GgmlType::kF16 &&
+                             l.ssm_alpha_beta.cols == l.ssm_in.cols) ||
+                            (c.hidden_size <= model_->max_half_cols() &&
+                             SplitGdnF16Input(l, c.hidden_size)));
     if (!HcMix(l.hc_attn, s_.res, normed, s_.mixed, s_.inject, n, error_msg,
                half_only)) {
       return false;

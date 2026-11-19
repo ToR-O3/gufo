@@ -13,6 +13,7 @@
 
 #include "qfn_mmq.h"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp"
 
 namespace q = gufo::models::qwen38_flash_next::rocm;
 namespace {
@@ -638,8 +639,44 @@ void CheckBatchedReadyQ8(std::uint32_t rows, bool inject, float scale) {
   exact(ref_q8, out_q8, q8_bytes, true);
 }
 
+// Packed Q6 inputs must never suppress the fallback for another projection
+// with an FP32 or differently sized input. This check needs no GPU allocation.
+void CheckSplitGdnInput() {
+  using gufo::core::GgmlType;
+  int storage = 0;
+  q::DeviceLayer layer;
+  layer.ssm_qkv = {&storage, GgmlType::kQ6_K, 2560, 10240};
+  layer.ssm_gate = {&storage, GgmlType::kQ6_K, 2560, 6144};
+  layer.ssm_alpha_beta = {&storage, GgmlType::kF16, 2560, 96};
+  if (!q::SplitGdnF16Input(layer, 2560))
+    throw std::runtime_error("matching Q6 GDN lost its F16 input");
+  const auto reject = [&](q::DeviceLayer altered) {
+    if (q::SplitGdnF16Input(altered, 2560))
+      throw std::runtime_error("GDN suppressed a required input");
+  };
+  auto bad = layer;
+  bad.ssm_gate.rows = 512;  // Native small-output GEMM consumes FP32.
+  reject(bad);
+  bad = layer;
+  bad.ssm_qkv.cols -= 256;
+  reject(bad);
+  bad = layer;
+  bad.ssm_gate.type = GgmlType::kQ8_0;
+  reject(bad);
+  bad = layer;
+  bad.ssm_alpha_beta.type = GgmlType::kBF16;
+  reject(bad);
+  bad = layer;
+  bad.ssm_alpha_beta.cols /= 2;
+  reject(bad);
+  bad = layer;
+  bad.ssm_in = layer.ssm_qkv;
+  reject(bad);
+}
+
 int main() {
   try {
+    CheckSplitGdnInput();
     for (const auto tokens : {1U, 8U, 9U, 33U, 2049U})
       CheckF32HalfOutput(tokens);
     for (std::uint32_t n = 1; n <= 8; ++n) {
