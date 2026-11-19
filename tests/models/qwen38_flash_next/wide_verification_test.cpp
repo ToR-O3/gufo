@@ -372,6 +372,63 @@ struct ExecutorTestAccess {
     }
     std::cout << "mixed BF16 and Q8 HC transitions pass at 9 and 96 rows\n";
   }
+  static void CheckIqReadyInput(Executor& exec, DeviceModel& model) {
+    constexpr unsigned n = 2, k = 512, m = 3;
+    DeviceModelTestAccess weights{model, 0xA813};
+    const auto input = weights.F32(n, k, 0.02F, 0.01F);
+    const auto zero = weights.F32(n, k, 0.0F, 0.0F);
+    auto& s = exec.s_;
+    if (hipMemsetAsync(s.ids, 0, n * sizeof(std::int32_t), exec.stream_) !=
+            hipSuccess ||
+        qfn_mmq_quantize_q8_1(input.f32(), s.mixed_q8_1, n, k, exec.stream_))
+      throw std::runtime_error("IQ ready fixture initialization");
+
+    const auto run = [&](const DeviceTensor& gate, const DeviceTensor& up,
+                         const float* x) {
+      std::string error;
+      std::array<float, n * m> result;
+      if (!exec.GatedExperts(gate, up, x, s.ids, s.gate_e, n, 1, &error) ||
+          hipMemcpyAsync(result.data(), s.gate_e, sizeof(result),
+                         hipMemcpyDeviceToHost, exec.stream_) != hipSuccess ||
+          hipStreamSynchronize(exec.stream_) != hipSuccess)
+        throw std::runtime_error("IQ ready projection: " + error);
+      return result;
+    };
+    for (auto [type, block] :
+         {std::pair{GgmlType::kIQ2_S, 82U}, std::pair{GgmlType::kIQ3_XXS, 98U},
+          std::pair{GgmlType::kIQ4_XS, 136U}}) {
+      const auto make = [&](float scale) {
+        std::vector<std::uint8_t> packed(m * (k / 256) * block, 0);
+        for (unsigned i = 0; i < packed.size(); i += block)
+          DeviceModelTestAccess::PutHalf(packed.data() + i, scale);
+        return weights.Make(type, m, k, std::move(packed), 1);
+      };
+      const auto gate = make(0.001F), up = make(0.0005F);
+      exec.DropReadyQ8();
+      const auto reference = run(gate, up, input.f32());
+      const auto fallback = run(gate, up, zero.f32());
+      if (!std::ranges::all_of(reference,
+                               [](float x) { return std::isfinite(x); }) ||
+          reference == fallback)
+        throw std::runtime_error(
+            "IQ ready fixture did not distinguish its inputs");
+      // Poison the fallback with zeros. A hit must read the dedicated Q8
+      // buffer; missing, stale or differently shaped records must read F32.
+      for (unsigned key = 0; key < 5; ++key) {
+        exec.mixed_q8_ready_ = {key == 1 ? input.f32() : zero.f32(),
+                                s.mixed_q8_1, key == 2 ? n - 1 : n,
+                                key == 3 ? k + 512 : k};
+        if (key == 4)
+          exec.DropReadyQ8();
+        const auto actual = run(gate, up, zero.f32());
+        const auto& expected = key == 0 ? reference : fallback;
+        if (std::memcmp(actual.data(), expected.data(), sizeof(actual)) != 0)
+          throw std::runtime_error("IQ ready buffer hit/miss result changed");
+      }
+    }
+    exec.DropReadyQ8();
+  }
+
   static void CheckDenseDispatch(Executor& exec, DeviceModel& model) {
     DeviceModelTestAccess weights{model, 0xD35E};
     constexpr std::uint32_t kRows = 129;
@@ -898,6 +955,7 @@ int main(int argc, char** argv) {
     if (hc_only)
       return 0;
     if (dense_only) {
+      rocm::ExecutorTestAccess::CheckIqReadyInput(*exec, *model);
       rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
       rocm::DeviceModelTestAccess::CheckQ6DraftVocab(*model);
       rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);

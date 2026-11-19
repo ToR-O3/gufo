@@ -2296,11 +2296,14 @@ bool Executor::GatedExperts(const DeviceTensor& a, const DeviceTensor& b,
     return true;
   }
   if (!ExpertMatrixRows(n_tokens) && same_shape) {
-    if (qfn_mmq_moe_vec(static_cast<int>(a.type), a.data, x, ids, out,
-                        static_cast<int>(a.rows), static_cast<int>(a.cols),
-                        static_cast<int>(n_tokens), static_cast<int>(a.experts),
-                        static_cast<int>(n_used), stream_, b.data,
-                        s_.up_e) != 0) {
+    const bool iq = a.type == GgmlType::kIQ2_S ||
+                    a.type == GgmlType::kIQ3_XXS || a.type == GgmlType::kIQ4_XS;
+    const void* ready = iq && !MatrixRows(n_tokens) && UnpaddedQ8(a.cols)
+                            ? ReadyQ8(x, n_tokens, a.cols)
+                            : nullptr;
+    if (qfn_mmq_moe_vec_pair(static_cast<int>(a.type), a.data, b.data, x, ready,
+                             ids, out, s_.up_e, a.rows, a.cols, n_tokens,
+                             a.experts, n_used, stream_) != 0) {
       AssignError(error_msg, "expert vector pair GEMM failed");
       return false;
     }
