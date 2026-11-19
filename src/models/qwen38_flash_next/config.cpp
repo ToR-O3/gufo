@@ -8,6 +8,17 @@
 #include <variant>
 
 namespace gufo::models::qwen38_flash_next {
+std::optional<std::vector<std::uint64_t>> ReadUnsignedArray(
+    const core::GgufMetadataValue& value) {
+  if (const auto* u = std::get_if<std::vector<std::uint64_t>>(&value.value))
+    return *u;
+  if (const auto* s = std::get_if<std::vector<std::int64_t>>(&value.value)) {
+    if (std::ranges::none_of(*s, [](auto v) { return v < 0; }))
+      return std::vector<std::uint64_t>(s->begin(), s->end());
+  }
+  return std::nullopt;
+}
+
 namespace {
 
 constexpr std::string_view kArchitecture = "qwen4exp";
@@ -47,27 +58,15 @@ struct Reader {
   std::vector<std::uint64_t> U64Array(std::string_view key,
                                       bool required = true) {
     const auto* meta = gguf.FindMetadata(key);
-    std::vector<std::uint64_t> out;
     if (meta == nullptr) {
       if (required)
         Fail("missing GGUF array " + std::string(key));
-      return out;
+      return {};
     }
-    if (const auto* u = std::get_if<std::vector<std::uint64_t>>(&meta->value)) {
-      out = *u;
-    } else if (const auto* s =
-                   std::get_if<std::vector<std::int64_t>>(&meta->value)) {
-      for (auto v : *s) {
-        if (v < 0) {
-          Fail("negative GGUF array value " + std::string(key));
-          return {};
-        }
-        out.push_back(static_cast<std::uint64_t>(v));
-      }
-    } else {
-      Fail("GGUF array must contain integers: " + std::string(key));
-    }
-    return out;
+    if (auto values = ReadUnsignedArray(*meta))
+      return std::move(*values);
+    Fail("GGUF array must contain nonnegative integers: " + std::string(key));
+    return {};
   }
 };
 

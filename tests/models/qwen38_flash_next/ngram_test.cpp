@@ -68,7 +68,8 @@ void Check(bool ok, const char* what) {
 }
 
 using PleValue =
-    std::variant<std::uint32_t, std::string, std::vector<std::uint64_t>>;
+    std::variant<std::uint32_t, std::int32_t, std::string,
+                 std::vector<std::uint64_t>, std::vector<std::int64_t>>;
 using PleMetadata = std::map<std::string, PleValue>;
 
 PleMetadata SidecarMetadata() {
@@ -110,15 +111,16 @@ void WritePle(const std::filesystem::path& path, const PleMetadata& fields,
     std::visit(
         [&](const auto& item) {
           using T = std::decay_t<decltype(item)>;
-          if constexpr (std::is_same_v<T, std::uint32_t>) {
-            pod(std::uint32_t{4});
+          if constexpr (std::is_integral_v<T>) {
+            pod(std::uint32_t{std::is_signed_v<T> ? 5U : 4U});
             pod(item);
           } else if constexpr (std::is_same_v<T, std::string>) {
             pod(std::uint32_t{8});
             text(item);
           } else {
             pod(std::uint32_t{9});
-            pod(std::uint32_t{10});
+            pod(std::uint32_t{std::is_signed_v<typename T::value_type> ? 11U
+                                                                       : 10U});
             pod(std::uint64_t{item.size()});
             for (const auto entry : item)
               pod(entry);
@@ -166,7 +168,10 @@ void TestSidecar() {
     return;
   for (const auto type :
        {gufo::core::GgmlType::kBF16, gufo::core::GgmlType::kQ8_0}) {
-    WritePle(sidecar_path, metadata, 4, type);
+    auto equivalent = metadata;
+    equivalent["qwen4exp.ple.layers"] = std::vector<std::int64_t>{1};
+    equivalent["qwen4exp.ple.ngram_size"] = std::int32_t{3};
+    WritePle(sidecar_path, equivalent, 4, type);
     auto sidecar = gufo::core::GgufReader::OpenFile(sidecar_path, &error);
     Check(sidecar != nullptr, "open PLE sidecar fixture");
     if (!sidecar)
@@ -209,12 +214,19 @@ void TestSidecar() {
           using T = std::decay_t<decltype(item)>;
           if constexpr (std::is_same_v<T, std::string>)
             item = "wrong";
-          else if constexpr (std::is_same_v<T, std::uint32_t>)
+          else if constexpr (std::is_integral_v<T>)
             ++item;
           else
             ++item.front();
         },
         wrong.at(key));
+    reject(wrong);
+  }
+  for (auto values : {std::vector<std::int64_t>{-1, 13, 17},
+                      std::vector<std::int64_t>{11, 17, 13},
+                      std::vector<std::int64_t>{11, 13}}) {
+    auto wrong = metadata;
+    wrong["qwen4exp.ple.layer_multipliers"] = std::move(values);
     reject(wrong);
   }
   reject(metadata, 5);

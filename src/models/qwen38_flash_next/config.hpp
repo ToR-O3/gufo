@@ -13,6 +13,10 @@
 
 namespace gufo::models::qwen38_flash_next {
 
+/// Read nonnegative GGUF integer arrays independently of their storage width.
+std::optional<std::vector<std::uint64_t>> ReadUnsignedArray(
+    const core::GgufMetadataValue& value);
+
 /// Architecture parameters of a `qwen4exp` GGUF artifact. Every value is read
 /// from the file; the fixed limits below only bound what this runtime was
 /// written and validated for (Qwen3.8-Flash-Next, 48 trunk layers).
