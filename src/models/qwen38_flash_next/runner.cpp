@@ -348,9 +348,9 @@ public:
                 .final_token_advance_required = false,
                 .incremental_text_is_exact = true,
                 .multi_token_decode = use_mtp_ || model_->HasDFlash(),
-                .batched_multi_token_decode = use_mtp_,
+                .batched_multi_token_decode = use_mtp_ || model_->HasDFlash(),
                 .batched_multi_token_decode_max_width =
-                    use_mtp_ ? kMaxBatchWidth : 0u,
+                    use_mtp_ ? kMaxBatchWidth : (model_->HasDFlash() ? 2u : 0u),
                 .prefix_reuse = true,
                 .in_pass_checkpoint = !model_->HasDFlash(),
                 .partial_prefill_retention = true,
@@ -402,8 +402,12 @@ public:
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override {
     std::vector<TextExecutionPlan> plans{
         {.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
-    if (model_->HasDFlash())
+    if (model_->HasDFlash()) {
+      if (model_->DecodeConcurrency() >= 2)
+        plans.push_back(
+            {.kind = TextExecutionPlanKind::kBatched, .physical_width = 2});
       return plans;
+    }
     for (std::size_t width = 2; width <= kMaxBatchWidth; ++width) {
       plans.push_back(
           {.kind = TextExecutionPlanKind::kBatched, .physical_width = width});
@@ -738,7 +742,8 @@ public:
 
   [[nodiscard]] std::vector<TextDecodeStep> DecodeBatch(
       std::span<const TextRunnerDecode> decodes) const override {
-    if (decodes.size() < 2 || !use_mtp_) {
+    if (decodes.size() < 2 ||
+        (!use_mtp_ && (!model_->HasDFlash() || decodes.size() != 2))) {
       return TextModelRunner::DecodeBatch(decodes);
     }
     const auto count = decodes.size();
@@ -766,8 +771,8 @@ public:
     std::vector<TextDecodeStep> steps(count);
     for (std::size_t i = 0; i < count; ++i) {
       if (!outcomes[i].completed) {
-        steps[i].failure = std::make_exception_ptr(
-            std::runtime_error("Flash-Next MTP failed: " + outcomes[i].error));
+        steps[i].failure = std::make_exception_ptr(std::runtime_error(
+            "Flash-Next speculative decode failed: " + outcomes[i].error));
         continue;
       }
       auto& state = RequireQwenFlashNextState(decodes[i].state.get());
@@ -776,10 +781,12 @@ public:
       auto& step = steps[i];
       ResolveStepTokens(state, results[i].stop, results[i].tokens, &step,
                         results[i]);
-      if (active_count > 1 && !results[i].tokens.empty()) {
+      const auto width =
+          model_->HasDFlash() ? outcomes[i].verification_width : active_count;
+      if (width > 1 && !results[i].tokens.empty()) {
         step.execution_plan = TextExecutionPlan{
             .kind = TextExecutionPlanKind::kBatched,
-            .physical_width = active_count,
+            .physical_width = width,
         };
       }
       const auto stats = state.session().Statistics();

@@ -382,7 +382,17 @@ std::size_t Model::SessionBytes(core::SessionMode mode,
 }
 
 std::size_t Model::DeferredScratchBytes() const {
-  return executor_->DeferredScratchBytes();
+  auto bytes = executor_->DeferredScratchBytes();
+  if (HasDFlash() && DecodeConcurrency() >= 2) {
+    const auto one = hip::QwenDFlashGpuExecutor::EstimateMemoryUsage(
+        *dflash_model_, MaxContext(), 1);
+    const auto two = hip::QwenDFlashGpuExecutor::EstimateMemoryUsage(
+        *dflash_model_, MaxContext(), 2);
+    // The model may coordinate a width-two cycle on either live executor.
+    bytes += DecodeConcurrency() *
+             (two.temporary_scratch_bytes - one.temporary_scratch_bytes);
+  }
+  return bytes;
 }
 
 void Model::LimitCopyRows(std::uint32_t rows) noexcept {
@@ -1133,6 +1143,7 @@ bool Session::Evaluate(std::int32_t token, std::string* error_msg) {
 }
 
 struct Session::PendingDecode {
+  std::uint32_t feature_offset{};
   bool dflash{false};
   std::vector<std::int32_t> chain;
   std::vector<MtpProposal> proposals;
@@ -1303,6 +1314,11 @@ bool Session::PrepareDecode(const DecodeRequest& request,
     result->logprobs.push_back(std::move(*anchor_logprobs));
   if (dflash_ && width > 1) {
     pending->base = static_cast<std::uint32_t>(tokens_.size());
+    if (defer_head) {
+      pending->chain = {anchor};
+      pending->width = width;
+      return true;
+    }
     return PrepareDFlash(*pending, sampler, anchor,
                          static_cast<std::uint32_t>(width - 1));
   }
@@ -1426,9 +1442,15 @@ bool Session::PrepareDecode(const DecodeRequest& request,
 }
 
 bool Session::CommitDFlash(std::uint32_t position, std::uint32_t count,
-                           std::string* error_msg) {
-  if (dflash_ &&
-      !dflash_->AppendDeviceContext(model_->executor_->DFlashFeatures(count),
+                           std::string* error_msg, std::uint32_t first) {
+  if (!dflash_)
+    return true;
+  const auto rows = model_->executor_->DFlashFeatures(first + count);
+  const auto stride =
+      std::size_t{model_->config().hidden_size} *
+      model_->dflash_model_->GetDFlashConfig().target_layer_ids.size();
+  if (rows.size() != (std::size_t{first} + count) * stride ||
+      !dflash_->AppendDeviceContext(rows.subspan(std::size_t{first} * stride),
                                     position, count)) {
     AssignError(error_msg,
                 "Flash-Next DFlash2 could not commit target features");
@@ -1464,6 +1486,16 @@ bool Session::PrepareDFlash(PendingDecode& pending,
         .sampler = &draft_sampler,
     });
   }
+  return ApplyDFlashProposal(pending, sampler, anchor, draft,
+                             dflash_->DraftSubsetBlocks() != subset_before);
+}
+
+bool Session::ApplyDFlashProposal(PendingDecode& pending,
+                                  sampling::SamplerState& sampler,
+                                  std::int32_t anchor,
+                                  const speculative::DraftProposal& draft,
+                                  bool subset) {
+  const bool sampled = sampler.config().uses_random_sampling();
   pending.chain = {anchor};
   pending.chain.insert(pending.chain.end(), draft.tokens.begin(),
                        draft.tokens.end());
@@ -1471,7 +1503,7 @@ bool Session::PrepareDFlash(PendingDecode& pending,
     return true;
   pending.dflash = true;
   pending.lookup = draft.from_lookup ? draft.tokens.size() : 0;
-  pending.draft_subset = dflash_->DraftSubsetBlocks() != subset_before;
+  pending.draft_subset = subset;
   pending.speculative = true;
   pending.sampled = sampled;
   pending.gpu_greedy = sampler.config().temperature == 0.0F;
@@ -1523,7 +1555,7 @@ bool Session::FinishDecode(const DecodeRequest& request,
     return request.stop_at_eos && model_->IsStopToken(token);
   };
   if (!pending.speculative) {
-    if (!CommitDFlash(base, 1, error_msg))
+    if (!CommitDFlash(base, 1, error_msg, pending.feature_offset))
       return false;
     draft_length_.ObserveArToken();
     hidden_base_ = base;
@@ -1684,7 +1716,7 @@ bool Session::FinishDecode(const DecodeRequest& request,
     dflash_->AcceptFeedback(
         accepted, correction ? static_cast<sampling::TokenId>(*correction)
                              : tokenization::kInvalidTokenId);
-    if (!CommitDFlash(base, keep, error_msg))
+    if (!CommitDFlash(base, keep, error_msg, pending.feature_offset))
       return false;
     if (correction)
       sampler.DeferSample(static_cast<sampling::TokenId>(*correction));
@@ -1862,8 +1894,15 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
   }
   std::string shared_error;
   try {
+    std::span<const Request> remaining = active;
+    if constexpr (std::is_same_v<Request, DecodeRequest>) {
+      if (model && model->HasDFlash() && CanDecodeDFlashPair(active)) {
+        (void)DecodeDFlashPair(active, &shared_error);
+        remaining = {};
+      }
+    }
     if (model && model->HasDFlash()) {
-      for (const auto& r : active) {
+      for (const auto& r : remaining) {
         try {
           if constexpr (std::is_same_v<Request, DecodeRequest>)
             r.outcome->completed =
@@ -1933,6 +1972,137 @@ bool Session::RunIsolatedBatch(std::span<const Request> requests,
       *r.outcome = std::move(outcome);
   }
   return success;
+}
+
+bool Session::CanDecodeDFlashPair(std::span<const DecodeRequest> requests) {
+  if (requests.size() != 2 ||
+      requests.front().session->model_->DecodeConcurrency() < 2)
+    return false;
+  std::size_t rows = 0;
+  for (const auto& r : requests) {
+    auto* s = r.session;
+    if (!s->dflash_ || r.max_tokens < 2 ||
+        s->ContextSize() - s->Position() < 2 ||
+        (r.sampler->config().uses_random_sampling() &&
+         r.sampler->config().seed < 0))
+      return false;
+    rows +=
+        std::min<std::size_t>({r.max_tokens, s->ContextSize() - s->Position(),
+                               s->model_->executor_->max_speculative()});
+    if (rows > s->model_->PrefillThroughCapacity())
+      return false;
+    // A terminal anchor keeps its scalar EOS path. The copy cannot consume
+    // a request RNG draw, deferred correction or grammar state.
+    if (r.stop_at_eos) {
+      auto trial = *r.sampler;
+      if (s->model_->IsStopToken(trial.Sample(s->logits_)))
+        return false;
+    }
+  }
+  return true;
+}
+
+bool Session::DecodeDFlashPair(std::span<const DecodeRequest> requests,
+                               std::string* error) {
+  auto& exec = *requests[0].session->model_->executor_;
+  std::array<PendingDecode, 2> pending{};
+  std::array<std::vector<sampling::TokenId>, 2> histories;
+  std::array<std::optional<sampling::SamplerState>, 2> drafts;
+  std::array<speculative::DraftProposalRequest, 2> queries{};
+  std::array<std::uint64_t, 2> subsets{};
+  std::array<sampling::SamplerState::DrawState, 2> before{};
+  for (std::size_t i = 0; i < 2; ++i)
+    before[i] = requests[i].sampler->SaveDrawState();
+  // Failure after proposal can mutate the draft while the target epoch is
+  // unchanged. Publish only completed peers. Other rows must resync before a
+  // retry.
+  struct Guard {
+    std::span<const DecodeRequest> rows;
+    const decltype(before)& draws;
+    ~Guard() {
+      for (std::size_t i = 0; i < 2; ++i) {
+        const auto& r = rows[i];
+        if (!r.outcome->completed) {
+          r.sampler->RestoreDrawState(draws[i]);
+        }
+      }
+    }
+  } guard{requests, before};
+  for (std::size_t i = 0; i < 2; ++i) {
+    const auto& r = requests[i];
+    auto& s = *r.session;
+    if (!s.session_->CheckCancellation(error))
+      return false;
+    if (!s.PrepareDecode(r, &pending[i], error, true) ||
+        pending[i].chain.size() != 1 || pending[i].width < 2)
+      return false;
+    const auto anchor = pending[i].chain.front();
+    histories[i].assign(s.tokens_.begin(), s.tokens_.end());
+    histories[i].push_back(static_cast<sampling::TokenId>(anchor));
+    const bool sampled = r.sampler->config().uses_random_sampling();
+    if (sampled)
+      pending[i].draft_rng =
+          sampling::NextRandom(r.sampler->mutable_rng_state());
+    drafts[i].emplace(r.sampler->WithoutConstraint());
+    drafts[i]->Accept(static_cast<sampling::TokenId>(anchor));
+    subsets[i] = s.dflash_->DraftSubsetBlocks();
+    queries[i] = {
+        .backend = s.dflash_.get(),
+        .tokens = histories[i],
+        .position = s.Position(),
+        .max_tokens = static_cast<std::uint32_t>(pending[i].width - 1),
+        .temperature = sampled ? r.sampler->config().temperature : 0.0F,
+        .rng_state = sampled ? &pending[i].draft_rng : nullptr,
+        .sampler = &*drafts[i]};
+  }
+  // After proposal starts even a failure before target verification may have
+  // mutated the draft state. Unfinished rows must resync before a retry.
+  for (const auto& r : requests) {
+    r.outcome->error = "DFlash2 proposal or verification failed";
+    r.session->valid_ = false;
+  }
+  const auto proposals = requests.front().session->dflash_->ProposeBatch(
+      queries, /*single_request_policy=*/true);
+  std::array<rocm::Executor::BatchItem, 2> items{};
+  std::uint32_t next = 0;
+  for (std::size_t i = 0; i < 2; ++i) {
+    auto& s = *requests[i].session;
+    auto& p = pending[i];
+    const auto& draft = proposals.at(i);
+    if (!s.ApplyDFlashProposal(p, *requests[i].sampler, p.chain.front(), draft,
+                               s.dflash_->DraftSubsetBlocks() != subsets[i]))
+      return false;
+    p.feature_offset = next;
+    next += static_cast<std::uint32_t>(p.chain.size());
+    items[i] = {s.session_.get(), p.chain, p.speculative};
+  }
+  if (!exec.ForwardBatch(items, error))
+    return false;
+  for (const auto& r : requests)
+    r.outcome->verification_width = items.size();
+  bool ok = true;
+  for (std::size_t i = 0; i < 2; ++i) {
+    auto& s = *requests[i].session;
+    auto& outcome = *requests[i].outcome;
+    if (s.session_->Cancelled()) {
+      outcome.error = "generation cancelled";
+      ok = false;
+      continue;
+    }
+    const auto& p = pending[i];
+    if (!exec.SelectBatchLogits(p.feature_offset, p.chain.size(),
+                                !p.speculative       ? s.logits_.data()
+                                : p.gpu_verification ? nullptr
+                                                     : s.verify_logits_.data(),
+                                &outcome.error) ||
+        !s.FinishDecode(requests[i], p, &outcome.error)) {
+      ok = false;
+      continue;
+    }
+    outcome.error.clear();
+    outcome.completed = s.valid_ = true;
+  }
+  return ok;
 }
 
 bool Session::DecodeBatch(std::span<const DecodeRequest> requests,

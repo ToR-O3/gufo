@@ -27,6 +27,10 @@ namespace gufo::core {
 class GgufReader;
 }
 
+namespace gufo::speculative {
+struct DraftProposal;
+}
+
 namespace gufo::hip {
 class QwenDFlashGpuModel;
 class QwenDFlashGpuDraftBackend;
@@ -225,6 +229,7 @@ public:
   struct BatchOutcome {
     bool completed{false};
     std::string error{};
+    std::size_t verification_width{1};
   };
   struct DecodeRequest {
     Session* session;
@@ -359,6 +364,9 @@ private:
   template<class Request>
   static bool RunIsolatedBatch(std::span<const Request> requests,
                                std::string* error_msg);
+  static bool CanDecodeDFlashPair(std::span<const DecodeRequest> requests);
+  static bool DecodeDFlashPair(std::span<const DecodeRequest> requests,
+                               std::string* error_msg);
   static bool DecodeBatchImpl(std::span<const DecodeRequest> requests,
                               std::string* error_msg);
   static bool EvaluateBatchImpl(std::span<const AdvanceRequest> requests,
@@ -376,8 +384,11 @@ private:
                     std::size_t minimum = 1, bool require_resume = false);
   bool PrepareDFlash(PendingDecode&, sampling::SamplerState&,
                      std::int32_t anchor, std::uint32_t max_drafts);
+  bool ApplyDFlashProposal(PendingDecode&, sampling::SamplerState&,
+                           std::int32_t anchor,
+                           const speculative::DraftProposal&, bool subset);
   bool CommitDFlash(std::uint32_t position, std::uint32_t count,
-                    std::string* error_msg);
+                    std::string* error_msg, std::uint32_t first = 0);
   bool FinishDecode(const DecodeRequest& request, const PendingDecode& pending,
                     std::string* error_msg);
 

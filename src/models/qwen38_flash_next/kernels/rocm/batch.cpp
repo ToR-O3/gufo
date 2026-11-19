@@ -1292,7 +1292,31 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                                       : layers[il + 1].hc_attn.norm.f32())
               : model_->hc_head().norm.f32();
       UseScratch(base);
+      const auto tap = std::ranges::find(options_.dflash_layers, il);
+      const auto sample_rows = [&](bool before_combine) {
+        if (tap == options_.dflash_layers.end())
+          return;
+        const auto lane =
+            static_cast<std::size_t>(tap - options_.dflash_layers.begin());
+        const auto stride = options_.dflash_layers.size() * c.hidden_size;
+        for (std::size_t i = 0; i < items.size(); ++i) {
+          const auto n = static_cast<std::uint32_t>(items[i].tokens.size());
+          // Scalar ForwardBody reads a tap before the next HcMix settles
+          // its parked FFN residual. Match the actual scalar row shape.
+          const bool parked = il + 1 < c.num_layers && next_norm != nullptr &&
+                              FusedMixer(layers[il + 1].hc_attn, n);
+          if (before_combine != parked)
+            continue;
+          const auto offset = std::size_t{offsets[i]};
+          DFlashMeanStreams(
+              base.res + offset * c.HcDim(),
+              dflash_features_ + offset * stride + lane * c.hidden_size, n,
+              c.hidden_size, c.hc_count, stride, stream_);
+        }
+      };
+      sample_rows(true);
       CombineBatch(base.res, next_norm, rows);
+      sample_rows(false);
       normed = next_norm != nullptr;
     }
     for (std::size_t i = 0; i < items.size(); ++i) {

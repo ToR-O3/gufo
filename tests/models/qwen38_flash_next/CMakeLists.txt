@@ -84,6 +84,13 @@ if (ENGINE_ENABLE_HIP)
   add_executable(qwen38_flash_next_session_test EXCLUDE_FROM_ALL session_test.cpp)
   target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_serving
     qwen38_flash_next_test_hip)
+  add_test(NAME qwen38_flash_next.dflash_pair
+    COMMAND qwen38_flash_next_session_test --dflash-pair 2)
+  set_tests_properties(qwen38_flash_next.dflash_pair PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151;external-model"
+    SKIP_RETURN_CODE 77
+    RUN_SERIAL TRUE
+    TIMEOUT 1800)
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE

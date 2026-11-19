@@ -311,6 +311,8 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
     offsets[index + 1] = offsets[index] + counts[index] + 1U;
   }
   std::vector<speculative::DraftProposal> proposals(requests.size());
+  // Keep DMA destinations alive until the completion guard has settled.
+  std::array<std::vector<float>, 8> confidence;
   // Keep the single-user path and uncommon topology handling unchanged.
   if (requests.size() == 1 || config.head_dim > 256 ||
       std::ranges::find(std::span(counts).first(requests.size()), 0U) !=
@@ -321,13 +323,18 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
       proposal.start_pos = request.position;
       proposal.candidates_per_token =
           request.temperature > 0.0F ? draft.selector_top_k : 0;
+      const bool prune = request.temperature == 0 && request.greedy_cutoff > 0;
+      std::vector<float> confidence;
       proposal.tokens = request.executor->ForwardBlock(
           request.anchor, request.position, request.draft_count,
-          request.temperature, request.uniforms, nullptr,
+          request.temperature, request.uniforms, prune ? &confidence : nullptr,
           request.temperature > 0.0F ? &proposal.candidate_ids : nullptr,
           request.temperature > 0.0F ? &proposal.candidate_probabilities
                                      : nullptr,
-          request.trace, request.sampler, request.draft_subset);
+          request.trace, request.sampler, request.draft_subset, prune);
+      if (prune)
+        proposal.tokens.resize(speculative::DFlashConfidencePrefix(
+            confidence, proposal.tokens.size(), request.greedy_cutoff));
     }
     return proposals;
   }
@@ -563,7 +570,8 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
                                                    kDraftRows,
                                            request.executor->d_draft_ids_,
                                            kDraftRows}
-            : kernels::DFlashSelectorVocab{}};
+            : kernels::DFlashSelectorVocab{},
+        request.temperature == 0 && request.greedy_cutoff > 0};
   }
   kernels::LaunchDFlashSelectorBatch(
       scratch.logits, scratch.selector, weights.selector_predecessor.data,
@@ -578,6 +586,13 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
     auto& proposal = proposals[index];
     proposal.start_pos = request.position;
     proposal.tokens.resize(counts[index]);
+    if (request.temperature == 0 && request.greedy_cutoff > 0) {
+      confidence[index].resize(counts[index]);
+      HIP_CHECK(hipMemcpyAsync(confidence[index].data(),
+                               scratch.confidences + offsets[index] - index,
+                               counts[index] * sizeof(float),
+                               hipMemcpyDeviceToHost, stream));
+    }
     HIP_CHECK(hipMemcpyAsync(proposal.tokens.data(),
                              scratch.tokens + offsets[index] + 1U,
                              counts[index] * sizeof(tokenization::TokenId),
@@ -600,6 +615,11 @@ QwenDFlashGpuExecutor::ForwardBlockBatch(
   }
   HIP_CHECK(hipStreamSynchronize(stream));
   completion.completed = true;
+  for (std::size_t i = 0; i < requests.size(); ++i)
+    if (!confidence[i].empty())
+      proposals[i].tokens.resize(speculative::DFlashConfidencePrefix(
+          confidence[i], proposals[i].tokens.size(),
+          requests[i].greedy_cutoff));
   return proposals;
 }
 

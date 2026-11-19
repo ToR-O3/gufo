@@ -2,6 +2,7 @@
 #include <array>
 #include <charconv>
 #include <cmath>
+#include <cstdlib>
 #include <cstring>
 #include <future>
 #include <iostream>
@@ -2086,7 +2087,155 @@ void CheckPreallocatedStateClaim(const std::shared_ptr<qfn::Model>& model) {
   }
 }
 
+int CheckDFlashPair(unsigned target_width) {
+  const char* target = std::getenv("QWEN38_FLASH_NEXT_MODEL");
+  const char* draft = std::getenv("QWEN38_FLASH_NEXT_DFLASH_MODEL");
+  if (!target || !*target || !draft || !*draft) {
+    std::cerr
+        << "Set QWEN38_FLASH_NEXT_MODEL and QWEN38_FLASH_NEXT_DFLASH_MODEL\n";
+    return 77;
+  }
+  std::string error;
+  qfn::ModelOptions model_options;
+  model_options.max_context = 256;
+  model_options.max_draft_tokens = 7;
+  model_options.decode_concurrency = 2;
+  model_options.dflash_model_path = draft;
+  model_options.dflash_policy = gufo::speculative::DFlashDraftPolicy::kFixed;
+  auto model = qfn::Model::Load(target, model_options, &error);
+  Require(model && model->HasDFlash(), error);
+  const std::array<std::string, 2> prompts{
+      "The three main causes of inflation are", "With open(path, encoding="};
+  const auto open = [&](const auto& ids) {
+    auto s = model->CreateSession(gufo::core::SessionMode::kSpeculative, 256,
+                                  &error);
+    Require(s && s->Sync(ids, &error), error);
+    return s;
+  };
+  for (const std::string_view mode : {"greedy", "seeded", "cancel"}) {
+    std::array<std::unique_ptr<qfn::Session>, 2> live, reference;
+    std::vector<sampling::SamplerState> samplers, controls;
+    for (unsigned i = 0; i < 2; ++i) {
+      const auto ids = model->Tokenize(prompts[i]);
+      live[i] = open(ids);
+      reference[i] = open(ids);
+      sampling::SamplingConfig config;
+      config.temperature = mode == "greedy" ? 0.0F : 0.65F;
+      config.top_k = 8;
+      config.seed = 41 + i;
+      std::vector<sampling::TokenId> history(ids.begin(), ids.end());
+      samplers.emplace_back(config, history);
+      controls.push_back(samplers.back());
+    }
+    const auto initial = samplers[0].SaveDrawState();
+    unsigned checks = 0;
+    if (mode == "cancel")
+      live[0]->SetCancellationCheck([&] { return ++checks >= 6; });
+    bool mixed = false, partial = false;
+    for (unsigned round = 0; round < 12; ++round) {
+      const unsigned first = mode == "cancel" && round > 0 ? 1U : 0U;
+      std::array<qfn::Session::DecodeRequest, 2> requests{};
+      std::array<qfn::Session::DecodeResult, 2> got, want;
+      std::array<qfn::Session::BatchOutcome, 2> outcomes{};
+      std::array<qfn::Session::SpeculativeStats, 2> before{};
+      for (unsigned i = first; i < 2; ++i) {
+        before[i] = live[i]->Statistics();
+        requests[i] = {live[i].get(), 8,     &samplers[i],
+                       &got[i],       false, &outcomes[i]};
+        if (!(mode == "cancel" && i == 0))
+          Require(
+              reference[i]->DecodeStep(8, controls[i], &want[i], &error, false),
+              error);
+      }
+      const bool ok =
+          qfn::Session::DecodeBatch(std::span(requests).subspan(first), &error);
+      Require(ok == !(mode == "cancel" && round == 0),
+              "unexpected paired completion: " + error);
+      for (unsigned i = first; i < 2; ++i) {
+        const auto draw = samplers[i].SaveDrawState();
+        if (mode == "cancel" && i == 0) {
+          Require(checks >= 6 && !outcomes[i].completed &&
+                      !live[i]->IsValid() && draw.rng == initial.rng &&
+                      draw.pending == initial.pending,
+                  "cancelled request published draws or state");
+          continue;
+        }
+        const auto expected = controls[i].SaveDrawState();
+        const auto a = live[i]->Statistics(), b = reference[i]->Statistics();
+        const auto n = a.drafted - before[i].drafted;
+        const auto accepted = a.accepted - before[i].accepted;
+        partial |= accepted > 0 && accepted < n;
+        Require(outcomes[i].completed && live[i]->IsValid() &&
+                    got[i].tokens == want[i].tokens &&
+                    got[i].stop == want[i].stop && a.drafted == b.drafted &&
+                    a.accepted == b.accepted &&
+                    a.small_head_cycles == b.small_head_cycles &&
+                    a.lookup == b.lookup &&
+                    a.lookup_accepted == b.lookup_accepted &&
+                    live[i]->Position() == reference[i]->Position() &&
+                    draw.rng == expected.rng &&
+                    draw.pending == expected.pending,
+                std::string(mode) + ": peer differs from isolated decoding");
+        RequireExact(live[i]->Logits(), reference[i]->Logits(),
+                     std::string(mode) + ": committed logits differ");
+      }
+      if (first == 0 && mode != "cancel")
+        mixed |= got[0].tokens.size() != got[1].tokens.size();
+    }
+    Require(partial && (mixed || mode == "cancel"),
+            std::string(mode) + ": partial acceptance not exercised");
+  }
+
+  namespace server = gufo::server;
+  server::TextSpeculativeConfig options;
+  options.backend = server::TextSpeculativeBackend::kDFlash;
+  options.max_draft_tokens = 7;
+  auto runner = qfn::CreateQwenFlashNextTextRunner(model, 256, options);
+  const auto caps = runner->Descriptor().capabilities;
+  Require(caps.multi_token_decode && caps.batched_multi_token_decode &&
+              caps.batched_multi_token_decode_max_width == 2,
+          "scheduler cannot reach DFlash2 multi-token decoding for a pair");
+  server::InferenceBackend backend;
+  Require(backend.load(runner, &error, 2), error);
+  sampling::SamplingConfig config;
+  config.temperature = 0.65F;
+  config.top_k = 8;
+  config.seed = 41;
+  std::array<server::InferenceBackend::Result, 2> refs;
+  for (unsigned i = 0; i < 2; ++i)
+    refs[i] = backend.complete(prompts[i], 48, config);
+  std::array<std::future<server::InferenceBackend::Result>, 2> pending;
+  std::latch ready(2);
+  for (unsigned i = 0; i < 2; ++i) {
+    pending[i] = std::async(std::launch::async, [&, i] {
+      ready.arrive_and_wait();
+      return backend.complete(prompts[i], 48, config);
+    });
+  }
+  for (unsigned i = 0; i < 2; ++i) {
+    const auto pair = pending[i].get();
+    Require(
+        pair.tokens == refs[i].tokens &&
+            pair.finish_reason == refs[i].finish_reason &&
+            pair.draft_rounds > 0 && pair.draft_tokens > 0 &&
+            pair.physical_execution_width == target_width,
+        "serving lost DFlash2 output or credited the wrong verification width");
+  }
+  return 0;
+}
+
 int main(int argc, char** argv) {
+  if (argc == 3 && std::string_view(argv[1]) == "--dflash-pair") {
+    try {
+      const std::string_view width = argv[2];
+      Require(width == "1" || width == "2",
+              "expected verification width 1 or 2");
+      return CheckDFlashPair(width == "2" ? 2 : 1);
+    } catch (const std::exception& e) {
+      std::cerr << e.what() << '\n';
+      return 1;
+    }
+  }
   const bool logprobs_only =
       argc == 6 && std::string_view(argv[5]) == "--logprobs-only";
   const bool lookup_only =
