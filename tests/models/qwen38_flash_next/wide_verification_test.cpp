@@ -26,6 +26,7 @@
 #include "src/core/platform/fs.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/device_model.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h"
 #include "src/models/qwen38_flash_next/ngram.hpp"
 #include "tests/support/temporary_directory.hpp"
@@ -289,6 +290,88 @@ struct DeviceModelTestAccess {
 
 // Test-only access: production has no switch for disabling graphs or overlap.
 struct ExecutorTestAccess {
+  static void CheckMixedHc(Executor& exec, DeviceModel& model,
+                           const DeviceMixer& bf16) {
+    DeviceModelTestAccess weights{model, 0xC011};
+    const auto& q8 = model.layers().front().hc_ffn;
+    const auto& c = exec.config();
+    auto& s = exec.s_;
+    const auto copy = [&](void* to, const void* from, std::size_t bytes) {
+      if (hipMemcpyAsync(to, from, bytes, hipMemcpyDeviceToDevice,
+                         exec.stream_) != hipSuccess)
+        throw std::runtime_error("mixed HC input copy failed");
+    };
+    std::string error;
+    for (const auto rows : {9U, 96U}) {
+      const auto input = weights.F32(rows, c.HcDim(), 0.1F, 0.2F);
+      const auto prior = weights.F32(rows, c.hidden_size, 0.1F, 0.2F);
+      const auto scales = weights.F32(rows, c.hc_count, 0.1F, 0.2F);
+      const auto n = std::size_t{rows} * c.hidden_size;
+      const auto used = c.num_experts_used;
+      const auto down =
+          weights.Half(GgmlType::kF16, rows * used, c.hidden_size, 0.1F);
+      const auto routing = weights.F32(rows, used, 0.02F, 0.1F);
+      const auto router = weights.F32(rows, c.num_experts + 1, 0.1F, 0.2F);
+      const DeviceMixer* mixers[] = {&bf16, &q8, &bf16};
+      for (const auto* mixer : mixers) {
+        std::vector<float> actual(n), expected(n);
+        for (bool reference : {false, true}) {
+          copy(s.hc_defer_w, scales.data, rows * c.hc_count * sizeof(float));
+          copy(s.inject, scales.data, rows * c.hc_count * sizeof(float));
+          copy(s.down_e, down.data, n * used * sizeof(__half));
+          copy(s.shexp_out, prior.data, n * sizeof(float));
+          copy(s.weights, routing.data, rows * used * sizeof(float));
+          copy(s.router, router.data,
+               rows * (c.num_experts + 1) * sizeof(float));
+          copy(s.res, input.data, n * c.hc_count * sizeof(float));
+          copy(s.block_out, prior.data, n * sizeof(float));
+          exec.inject_parts_ = 1;
+          if (reference) {
+            HcApplyDeferred(s.res, s.block_out, s.hc_defer_w, rows,
+                            c.hidden_size, exec.stream_);
+            // Preserve the existing Q8 normalization reduction order.
+            if (mixer == &q8) {
+              if (!HcCombineMoeF16(
+                      s.res, reinterpret_cast<const __half*>(s.down_e),
+                      s.weights, s.shexp_out, s.router + c.num_experts,
+                      c.num_experts + 1, used, s.inject, 1, mixer->norm.f32(),
+                      s.xn_half, s.xn_q8t, rows, c.hidden_size, c.hc_count,
+                      c.rms_eps, exec.stream_))
+                throw std::runtime_error("Q8 reference geometry rejected");
+            } else {
+              MoeEpilogueVec4F16(
+                  reinterpret_cast<const __half*>(s.down_e), s.weights,
+                  s.shexp_out, s.router + c.num_experts, c.num_experts + 1,
+                  s.block_out, rows, used, c.hidden_size, exec.stream_);
+              HcCombine(s.res, s.block_out, s.inject, 1, mixer->norm.f32(),
+                        s.xn, rows, c.hidden_size, c.hc_count, c.rms_eps,
+                        exec.stream_);
+            }
+            exec.xn_half_ = mixer == &q8;
+          } else {
+            exec.moe_pending_ = exec.res_deferred_ = true;
+            exec.Combine(s.res, mixer->norm.f32(), rows, nullptr, mixer);
+            if (exec.xn_half_ != (mixer == &q8))
+              throw std::runtime_error(
+                  "mixed HC used the wrong normalization format");
+          }
+          exec.half_src_ = nullptr;
+          if (!exec.HcMix(*mixer, s.res, true, s.mixed, nullptr, rows,
+                          &error) ||
+              hipStreamSynchronize(exec.stream_) != hipSuccess ||
+              hipMemcpy((reference ? expected : actual).data(), s.mixed,
+                        n * sizeof(float), hipMemcpyDeviceToHost) != hipSuccess)
+            throw std::runtime_error("mixed HC readback failed: " + error);
+        }
+        if (std::memcmp(actual.data(), expected.data(), n * sizeof(float)) != 0)
+          throw std::runtime_error(
+              "mixed HC differs from separate residual updates at " +
+              std::to_string(rows) + " rows, " +
+              (mixer == &q8 ? "Q8" : "BF16"));
+      }
+    }
+    std::cout << "mixed BF16 and Q8 HC transitions pass at 9 and 96 rows\n";
+  }
   static void CheckDenseDispatch(Executor& exec, DeviceModel& model) {
     DeviceModelTestAccess weights{model, 0xD35E};
     constexpr std::uint32_t kRows = 129;
@@ -754,7 +837,9 @@ int main(int argc, char** argv) {
       argc == 2 && std::string_view(argv[1]) == "--decode-graph-only";
   const bool dense_only =
       argc == 2 && std::string_view(argv[1]) == "--dense-dispatch-only";
-  if (argc != 1 && !graph_only && !dense_only)
+  const bool hc_only =
+      argc == 2 && std::string_view(argv[1]) == "--mixed-hc-only";
+  if (argc != 1 && !graph_only && !dense_only && !hc_only)
     return 2;
   try {
     auto config = SyntheticConfig();
@@ -794,14 +879,24 @@ int main(int argc, char** argv) {
       Throw("n-gram table", error);
     // A whole 2,030-token prompt in one pass needs the wide scratch. The
     // focused graph regression needs only short prompts around a small budget.
-    auto exec =
-        Executor::Create(*model, ngram.get(),
-                         {.max_batch = graph_only || dense_only ? 128U : 2048U,
-                          .max_logit_rows = 8,
-                          .max_speculative = 8},
-                         &error);
+    auto bf16 = model->layers().front().hc_ffn;
+    if (hc_only || argc == 1) {
+      rocm::DeviceModelTestAccess weights{*model, 0xBF16};
+      bf16.down = weights.Half(gufo::core::GgmlType::kBF16, config.hc_low_rank,
+                               config.HcDim(), 0.01F);
+    }
+    auto exec = Executor::Create(
+        *model, ngram.get(),
+        {.max_batch = graph_only || dense_only || hc_only ? 128U : 2048U,
+         .max_logit_rows = 8,
+         .max_speculative = 8},
+        &error);
     if (!exec)
       Throw("executor", error);
+    if (hc_only || argc == 1)
+      rocm::ExecutorTestAccess::CheckMixedHc(*exec, *model, bf16);
+    if (hc_only)
+      return 0;
     if (dense_only) {
       rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
       rocm::DeviceModelTestAccess::CheckQ6DraftVocab(*model);
