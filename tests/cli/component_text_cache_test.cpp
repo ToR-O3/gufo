@@ -639,17 +639,44 @@ void UnalignedPromptEndPublishesBeforeDroppingTheFrontier() {
 }
 // Raw completions have no separate stable chat boundary. Keep an aligned
 // near-end fallback as well as the exact prompt retry across slot reuse.
-void UnalignedRawPromptKeepsAnAlignedContinuation() {
+void UnalignedRawPromptKeepsAnAlignedContinuation(bool in_pass) {
+  class SplitOnly final : public Runner {
+  public:
+    std::unique_ptr<ComponentCacheResources> CreateComponentCacheResources(
+        cache::ResourceLedger& ledger, std::size_t) const override {
+      class Adapter final : public FakeAdapter {
+      public:
+        std::vector<cache::ComponentPosition> PrefillCheckpointPositions(
+            const cache::Slot&, cache::Rows) const override {
+          throw std::logic_error(
+              "split-only adapter cannot predict in-pass checkpoints");
+        }
+      };
+      auto owned = std::make_unique<Adapter>();
+      adapter = owned.get();
+      return server::testing::MakeFakeCacheResources(
+          ledger, std::move(owned),
+          {.private_blocks = private_blocks,
+           .row_backing_bytes = row_backing_bytes});
+    }
+  };
   std::vector<TextRunnerToken> prompt(41);
   std::iota(prompt.begin(), prompt.end(), 10);
-  auto runner = std::make_shared<Runner>();
+  std::shared_ptr<Runner> runner =
+      in_pass ? std::make_shared<Runner>() : std::make_shared<SplitOnly>();
   runner->alignment = 4;
-  runner->in_pass = true;
+  runner->in_pass = in_pass;
   TextRunnerPool pool(runner, 1);
   auto seed = pool.Acquire(prompt, sampling::SamplingConfig{});
-  (void)seed.Prefill(64);
-  assert((runner->pass_ends == std::vector<std::size_t>{41}));
-  assert((runner->in_pass_points == std::vector<std::size_t>{40}));
+  while (!seed.prefill_complete())
+    (void)seed.Prefill(64);
+  if (in_pass) {
+    assert((runner->pass_ends == std::vector<std::size_t>{41}));
+    assert((runner->in_pass_points == std::vector<std::size_t>{40}));
+  } else {
+    assert((runner->pass_ends == std::vector<std::size_t>{40, 41}));
+    assert(runner->in_pass_points.empty());
+  }
   const auto expected = Generate(seed);
   (void)seed.Commit();
   auto unrelated =
@@ -4189,7 +4216,8 @@ int main() {
   InPassCapturePreservesBoundaryAndLiveTail();
   AlignedPrefillKeepsAlignedBoundaries();
   UnalignedPromptEndPublishesBeforeDroppingTheFrontier();
-  UnalignedRawPromptKeepsAnAlignedContinuation();
+  UnalignedRawPromptKeepsAnAlignedContinuation(true);
+  UnalignedRawPromptKeepsAnAlignedContinuation(false);
   DisabledCacheDoesNotPrepareARawPromptCheckpoint();
   GridCheckpointsCaptureInPass();
   PromptTargetBeforeGridKeepsItsPurpose();

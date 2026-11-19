@@ -411,8 +411,14 @@ struct TextRunnerPool::Request::Impl {
       } else if (const auto aligned = Aligned(count);
                  aligned > prefill_offset && aligned < count &&
                  lease->TryReserveSnapshot(
-                     lease->CaptureBytes(aligned), aligned, retain_fallback,
-                     SnapshotPurpose::kContinuation,
+                     // A split pass captures the live state at its end. Its
+                     // adapter need not support predicting an in-pass capture.
+                     // CapturePromptSnapshot checks the exact bytes at that
+                     // end.
+                     runner->Descriptor().capabilities.in_pass_checkpoint
+                         ? lease->CaptureBytes(aligned)
+                         : lease->CaptureBytes(),
+                     aligned, retain_fallback, SnapshotPurpose::kContinuation,
                      std::span<const TextRunnerToken>(prompt).first(aligned))) {
         // A disabled cache (or a refused disk-only capture) must not prepare
         // checkpoint scratch or split a pass for a fallback it cannot keep.
