@@ -471,7 +471,8 @@ static int moe_vector_projection(int weight_type, const void* W,
   }
   const auto* input = reinterpret_cast<const block_q8_1*>(
       X_q8 ? X_q8 : static_cast<const void*>(src1_q8_1_ptr));
-  int32_t* groups = reinterpret_cast<int32_t*>(src1_q8_1_ptr + input_bytes);
+  int32_t* groups = group_bytes == 0 ? nullptr
+      : reinterpret_cast<int32_t*>(src1_q8_1_ptr + input_bytes);
 
   const int input_stride = ne10_padded / QK8_1;
   if (group_pair) {
@@ -531,6 +532,16 @@ extern "C" int qfn_mmq_moe_vec(int weight_type, const void* W,
   return moe_vector_projection(weight_type, W, X_f32, ids, out_f32, M, K,
                                n_tokens, n_experts, n_expert_used, stream, W_b,
                                out_b, false, nullptr, group_pair);
+}
+
+extern "C" int qfn_mmq_moe_vec_pair(int type, const void* gate, const void* up,
+                                    const float* x, const void* x_q8,
+                                    const int32_t* ids, float* gate_out,
+                                    float* up_out, int m, int k, int tokens,
+                                    int experts, int used, hipStream_t stream) {
+  if (!up || !up_out) return -1;
+  return moe_vector_projection(type, gate, x, ids, gate_out, m, k, tokens,
+                               experts, used, stream, up, up_out, false, x_q8);
 }
 
 extern "C" int qfn_mmq_moe_gated_vec(int weight_type, const void* gate,

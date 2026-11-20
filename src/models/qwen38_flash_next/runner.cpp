@@ -18,6 +18,7 @@
 #include "gufo/ext/component_cache_resources.hpp"
 #include "gufo/ext/experimental/admission_query.hpp"
 #include "gufo/ext/gguf_identity.hpp"
+#include "gufo/ext/host.hpp"
 #include "gufo/ext/host_budget.hpp"
 #include "src/families/qwen/control_tokens/control_tokens.hpp"
 #include "src/families/qwen/text/chat_template.hpp"
@@ -58,9 +59,14 @@ bool EndsTurn(const State& state, const Tokens& tokens, int token) {
   return state.stop_at_eos() && tokens.IsStopToken(token);
 }
 
+// Cache backing diagnostics (transfer resources, backing growth and limits)
+// go to the process log under the cache component, as before the extension
+// migration.
 [[nodiscard]] inline hip::ComponentCacheHooks HipComponentCacheHooks() {
-  return {[] { return ext::HostSnapshotCeilingBytes(); },
-          [](std::string_view) {}, [](std::string_view) {}};
+  return {
+      [] { return ext::HostSnapshotCeilingBytes(); },
+      [](std::string_view message) { server::Logger::Warn("cache", message); },
+      [](std::string_view message) { server::Logger::Info("cache", message); }};
 }
 
 struct QwenImageContext final : TextPromptContext {
@@ -291,6 +297,23 @@ public:
   [[nodiscard]] std::unique_ptr<ComponentCacheResources>
   CreateComponentCacheResources(cache::ResourceLedger& ledger,
                                 std::size_t ram) const override {
+    return CreateCacheResources(ledger, ram, {});
+  }
+  [[nodiscard]] std::unique_ptr<ComponentCacheResources>
+  CreateComponentCacheResourcesForSessions(
+      cache::ResourceLedger& ledger, std::size_t ram,
+      std::size_t sessions) const override {
+    return CreateCacheResources(ledger, ram,
+                                hip::PlanComponentTransfers(sessions));
+  }
+  [[nodiscard]] std::unique_ptr<ComponentCacheResources> CreateCacheResources(
+      cache::ResourceLedger& ledger, std::size_t ram,
+      std::optional<hip::ComponentTransferPlan> transfers) const {
+    auto hooks = HipComponentCacheHooks();
+    if (transfers) {
+      hooks.transfer_streams = transfers->native_streams;
+      hooks.transfer_leases = transfers->leases;
+    }
     (void)ram;
     return hip::CreateHipComponentCacheResources(
         std::make_unique<models::qwen38_flash_next::ContinuationAdapter>(
@@ -299,7 +322,7 @@ public:
                 ? core::SessionMode::kSpeculative
                 : core::SessionMode::kAutoregressive,
             max_context_, component_identity_),
-        ledger, HipComponentCacheHooks());
+        ledger, std::move(hooks));
   }
   [[nodiscard]] std::unique_ptr<TextRunnerState> BindComponentState(
       cache::Adapter& adapter, cache::Slot& slot) const override {
@@ -325,9 +348,9 @@ public:
                 .final_token_advance_required = false,
                 .incremental_text_is_exact = true,
                 .multi_token_decode = use_mtp_ || model_->HasDFlash(),
-                .batched_multi_token_decode = use_mtp_,
+                .batched_multi_token_decode = use_mtp_ || model_->HasDFlash(),
                 .batched_multi_token_decode_max_width =
-                    use_mtp_ ? kMaxBatchWidth : 0u,
+                    use_mtp_ ? kMaxBatchWidth : (model_->HasDFlash() ? 2u : 0u),
                 .prefix_reuse = true,
                 .in_pass_checkpoint = !model_->HasDFlash(),
                 .partial_prefill_retention = true,
@@ -379,8 +402,12 @@ public:
   [[nodiscard]] std::vector<TextExecutionPlan> SupportedPlans() const override {
     std::vector<TextExecutionPlan> plans{
         {.kind = TextExecutionPlanKind::kSerial, .physical_width = 1}};
-    if (model_->HasDFlash())
+    if (model_->HasDFlash()) {
+      if (model_->DecodeConcurrency() >= 2)
+        plans.push_back(
+            {.kind = TextExecutionPlanKind::kBatched, .physical_width = 2});
       return plans;
+    }
     for (std::size_t width = 2; width <= kMaxBatchWidth; ++width) {
       plans.push_back(
           {.kind = TextExecutionPlanKind::kBatched, .physical_width = width});
@@ -715,7 +742,8 @@ public:
 
   [[nodiscard]] std::vector<TextDecodeStep> DecodeBatch(
       std::span<const TextRunnerDecode> decodes) const override {
-    if (decodes.size() < 2 || !use_mtp_) {
+    if (decodes.size() < 2 ||
+        (!use_mtp_ && (!model_->HasDFlash() || decodes.size() != 2))) {
       return TextModelRunner::DecodeBatch(decodes);
     }
     const auto count = decodes.size();
@@ -743,8 +771,8 @@ public:
     std::vector<TextDecodeStep> steps(count);
     for (std::size_t i = 0; i < count; ++i) {
       if (!outcomes[i].completed) {
-        steps[i].failure = std::make_exception_ptr(
-            std::runtime_error("Flash-Next MTP failed: " + outcomes[i].error));
+        steps[i].failure = std::make_exception_ptr(std::runtime_error(
+            "Flash-Next speculative decode failed: " + outcomes[i].error));
         continue;
       }
       auto& state = RequireQwenFlashNextState(decodes[i].state.get());
@@ -753,10 +781,12 @@ public:
       auto& step = steps[i];
       ResolveStepTokens(state, results[i].stop, results[i].tokens, &step,
                         results[i]);
-      if (active_count > 1 && !results[i].tokens.empty()) {
+      const auto width =
+          model_->HasDFlash() ? outcomes[i].verification_width : active_count;
+      if (width > 1 && !results[i].tokens.empty()) {
         step.execution_plan = TextExecutionPlan{
             .kind = TextExecutionPlanKind::kBatched,
-            .physical_width = active_count,
+            .physical_width = width,
         };
       }
       const auto stats = state.session().Statistics();

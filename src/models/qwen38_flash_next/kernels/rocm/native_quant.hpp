@@ -8,6 +8,7 @@
 #include <gufo/ext/gguf_reader.hpp>
 #include <stdexcept>
 
+#include "src/models/qwen38_flash_next/kernels/rocm/device_model.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
 
 namespace gufo::models::qwen38_flash_next::rocm {
@@ -44,6 +45,17 @@ constexpr bool NativeQuantDenseF16Route(core::GgmlType type,
   const auto block = quant::QuantizedBlockElements(type);
   return IsNativeQuantDense(type) && outputs > 512 && cols != 0 && block != 0 &&
          cols % block == 0;
+}
+// All three consumers of an unstacked GDN mix must read the same F16 row.
+inline bool SplitGdnF16Input(const DeviceLayer& layer, std::size_t hidden) {
+  const auto q6_half = [hidden](const DeviceTensor& w) {
+    return !w.empty() && w.type == core::GgmlType::kQ6_K && w.cols == hidden &&
+           NativeQuantDenseF16Route(w.type, w.rows, w.cols);
+  };
+  const auto& ab = layer.ssm_alpha_beta;
+  return layer.ssm_in.empty() && !ab.empty() &&
+         ab.type == core::GgmlType::kF16 && ab.cols == hidden &&
+         q6_half(layer.ssm_qkv) && q6_half(layer.ssm_gate);
 }
 // Packed weights remain unchanged. Vector mode retains FP32 activations;
 // matrix mode uses F16 weights/activations only for the qualified route above.

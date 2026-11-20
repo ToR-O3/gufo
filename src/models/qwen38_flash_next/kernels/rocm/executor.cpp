@@ -9,6 +9,7 @@
 #include <cstddef>
 #include <cstdlib>
 #include <cstring>
+#include <exception>
 #include <gufo/ext/experimental/managed_alloc.hpp>
 #include <gufo/ext/experimental/snapshot_transfer.hpp>
 #include <gufo/ext/platform/os_info.hpp>
@@ -69,6 +70,8 @@ T* Alloc(std::vector<void*>& allocations, std::size_t count,
 // The tier's tiled kernels compute whole column tiles; below this width the
 // matrix-vector kernels read each weight once per row and win outright.
 constexpr std::uint32_t kVecBatch = 8;
+/// Rows of one draft head projection: a batch drafts at most eight sessions.
+constexpr std::uint32_t kDraftHeadRows = 8;
 // Keep prompt arithmetic independent of chunk width. A scoped, per-thread
 // policy also lets the output head retain its existing logits-row arithmetic.
 thread_local bool prefill_phase = false;
@@ -1249,12 +1252,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     e->tokens_host_ = static_cast<std::int32_t*>(tokens);
     e->logits_host_ = static_cast<float*>(logits);
   }
-  // The wide mixer route (F16 norm for the epilogue, tiled Q8 norm for the
-  // W8A8 down projection) needs the four-stream geometry, 32-wide blocks and
-  // a Q8_0 down projection.
-  e->wide_mixer_ = c.hc_count == 4 && c.hidden_size % 32 == 0 &&
-                   !model.layers().empty() &&
-                   model.layers()[0].hc_ffn.down.type == GgmlType::kQ8_0;
+  e->wide_mixer_geometry_ = c.hc_count == 4 && c.hidden_size % 32 == 0;
   if (!options.dflash_layers.empty()) {
     e->dflash_features_ =
         Alloc<float>(a,
@@ -1275,6 +1273,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     s.mtp_argmax = Alloc<ArgmaxCandidate>(a, kArgmaxParts, error_msg);
     // The draft token and its confidence (float bits), one host transfer.
     s.mtp_token = Alloc<std::int32_t>(a, 2, error_msg);
+    s.draft_head_ids = Alloc<std::int32_t>(a, kDraftHeadRows, error_msg);
     const auto candidate_ids = std::max<std::size_t>(
         MtpCandidateWorkspaceSize(c.vocab_size),
         e->options_.max_speculative * kArgmaxParts *
@@ -2025,6 +2024,20 @@ bool Executor::DenseF16Route(const DeviceTensor& w,
 
 bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
                      std::uint32_t n_tokens, std::string* error_msg) const {
+  if (w.type == GgmlType::kQ4_K && w.data == model_->draft_output().data &&
+      w.data != model_->output().data) {
+    // Only the requantized draft prefix uses the row-invariant MMVQ path.
+    // Ordinary Q4_K projections retain the native dense route below.
+    if (n_tokens > kDraftHeadRows || s_.draft_head_ids == nullptr ||
+        qfn_mmq_moe_vec(static_cast<int>(GgmlType::kQ4_K), w.data, x,
+                        s_.draft_head_ids, out, static_cast<int>(w.rows),
+                        static_cast<int>(w.cols), static_cast<int>(n_tokens), 1,
+                        1, stream_) != 0) {
+      AssignError(error_msg, "Q4_K draft head projection failed");
+      return false;
+    }
+    return true;
+  }
   if (IsNativeQuantDense(w.type)) {
     const auto piece = options_.max_batch;
     for (std::uint32_t first = 0; first < n_tokens; first += piece) {
@@ -2283,11 +2296,14 @@ bool Executor::GatedExperts(const DeviceTensor& a, const DeviceTensor& b,
     return true;
   }
   if (!ExpertMatrixRows(n_tokens) && same_shape) {
-    if (qfn_mmq_moe_vec(static_cast<int>(a.type), a.data, x, ids, out,
-                        static_cast<int>(a.rows), static_cast<int>(a.cols),
-                        static_cast<int>(n_tokens), static_cast<int>(a.experts),
-                        static_cast<int>(n_used), stream_, b.data,
-                        s_.up_e) != 0) {
+    const bool iq = a.type == GgmlType::kIQ2_S ||
+                    a.type == GgmlType::kIQ3_XXS || a.type == GgmlType::kIQ4_XS;
+    const void* ready = iq && !MatrixRows(n_tokens) && UnpaddedQ8(a.cols)
+                            ? ReadyQ8(x, n_tokens, a.cols)
+                            : nullptr;
+    if (qfn_mmq_moe_vec_pair(static_cast<int>(a.type), a.data, b.data, x, ready,
+                             ids, out, s_.up_e, a.rows, a.cols, n_tokens,
+                             a.experts, n_used, stream_) != 0) {
       AssignError(error_msg, "expert vector pair GEMM failed");
       return false;
     }
@@ -2339,14 +2355,20 @@ bool Executor::FusedMixer(const DeviceMixer& m, std::uint32_t n_tokens) const {
 }
 
 void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
-                       const float* inject_w, const DeviceMixer* next) const {
+                       const float* inject_w, const DeviceMixer* next,
+                       bool allow_fusion) const {
   const Config& c = config();
   inject_fused_ = nullptr;
   // Wide batches hand the next mixer an F16 norm for its epilogue and the
   // same norm quantized into the tiled Q8 layout for its W8A8 down
   // projection: half the bytes for the combine and the epilogue, and no
   // separate activation pass for the projection.
-  xn_half_ = wide_mixer_ && MatrixRows(n_tokens) && gamma != nullptr;
+  // A residual-only combine has no down projection. When producing a norm,
+  // match its representation to the actual consumer, including draft mixers.
+  const bool wide = wide_mixer_geometry_ && MatrixRows(n_tokens) &&
+                    (gamma == nullptr ||
+                     (next != nullptr && next->down.type == GgmlType::kQ8_0));
+  xn_half_ = wide && gamma != nullptr;
   xn_q8_ready_ = {};  // s_.xn is rewritten (or left stale) below
   // The next mixer's inject pass reads only the F16 norm written here.
   const float* fused_inject = xn_half_ && n_tokens >= 96 ? inject_w : nullptr;
@@ -2360,7 +2382,7 @@ void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
     moe_pending_ = false;
     const auto* down = reinterpret_cast<const __half*>(s_.down_e);
     const float* fused_w = deferred ? fused_inject : nullptr;
-    if (wide_mixer_ && MatrixRows(n_tokens) &&
+    if (wide && allow_fusion &&
         HcCombineMoeF16(
             res, down, s_.weights, s_.shexp_out, s_.router + c.num_experts,
             c.num_experts + 1, c.num_experts_used, s_.inject, inject_parts_,
@@ -2378,9 +2400,8 @@ void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
                        s_.router + c.num_experts, c.num_experts + 1,
                        s_.block_out, n_tokens, c.num_experts_used,
                        c.hidden_size, stream_);
-  }
-  if (deferred) {
-    // Only a fused MoE combine follows a deferring one; settle the update
+  } else if (deferred) {
+    // Settle the update
     // before anything else reads the residual.
     HcApplyDeferred(res, s_.block_out, s_.hc_defer_w, n_tokens, c.hidden_size,
                     stream_);
@@ -2389,7 +2410,9 @@ void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
     // The FFN combine that follows rereads this block output (42 MB at
     // 4,096 tokens) instead of this combine writing the residual and the
     // next reading it back (168 MB each).
-    const bool defer_now = defer && c.hc_count == 4;
+    // A separate inject projection renormalizes res and needs the update now.
+    const bool defer_now =
+        defer && (next->inject.empty() || next->inject.type == GgmlType::kF32);
     res_deferred_ =
         HcCombineF16(res, s_.block_out, s_.inject, inject_parts_, gamma,
                      s_.xn_half, s_.xn_q8t, n_tokens, c.hidden_size, c.hc_count,
@@ -2401,7 +2424,8 @@ void Executor::Combine(float* res, const float* gamma, std::uint32_t n_tokens,
   }
   // A decode batch's next mixer quantizes xn for its down projection: the
   // combine writes those rows as well, or joins that mixer's single launch.
-  if (next != nullptr && gamma != nullptr && FusedMixer(*next, n_tokens)) {
+  if (allow_fusion && next != nullptr && gamma != nullptr &&
+      FusedMixer(*next, n_tokens)) {
     pending_combine_ = {next,         res,        gamma,
                         s_.block_out, s_.inject,  inject_parts_,
                         s_.xn,        s_.xn_q8_1, n_tokens};
@@ -4010,12 +4034,14 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
                                  embeddings_ready, checkpoints)) {
       return false;
     }
-    // Both stacked SSM projections consume the same F16 input. Avoid writing
-    // unused F32/Q8 copies when the wide mixer can supply that input directly.
+    // Only omit the F32 and tiled-Q8 mix if every GDN projection reads F16.
     const bool half_only = WidePrefill(n) && n <= options_.max_batch &&
-                           l.linear && DenseF16Route(l.ssm_in, n) &&
-                           l.ssm_alpha_beta.type == GgmlType::kF16 &&
-                           l.ssm_alpha_beta.cols == l.ssm_in.cols;
+                           l.linear &&
+                           ((DenseF16Route(l.ssm_in, n) &&
+                             l.ssm_alpha_beta.type == GgmlType::kF16 &&
+                             l.ssm_alpha_beta.cols == l.ssm_in.cols) ||
+                            (c.hidden_size <= model_->max_half_cols() &&
+                             SplitGdnF16Input(l, c.hidden_size)));
     if (!HcMix(l.hc_attn, s_.res, normed, s_.mixed, s_.inject, n, error_msg,
                half_only)) {
       return false;
@@ -4099,7 +4125,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       // The next layer's mixer follows in this pass (without a PLE step:
       // next_norm is null before a PLE layer).
       Combine(s_.res, next_norm, rows, next_inject,
-              il + 1 < end_layer ? &layers[il + 1].hc_attn : nullptr);
+              next_norm != nullptr ? &layers[il + 1].hc_attn : nullptr,
+              next_norm == nullptr || il + 1 < end_layer);
       return true;
     };
     if (skipped != 0) {
@@ -5504,8 +5531,8 @@ bool Executor::MtpBody(Session& session, std::uint32_t n, std::uint32_t pos,
       return false;
   }
   // A trace reads the residual before the mixer.
-  Combine(s_.mtp_res, l.hc_ffn.norm.f32(), tail_rows, nullptr,
-          trace == nullptr ? &l.hc_ffn : nullptr);
+  Combine(s_.mtp_res, l.hc_ffn.norm.f32(), tail_rows, nullptr, &l.hc_ffn,
+          trace == nullptr);
   if (trace && !copy_trace(s_.mtp_res + tail_last, trace->attention))
     return false;
   if (!session.CheckCancellation(error_msg))
@@ -5529,7 +5556,8 @@ bool Executor::MtpBody(Session& session, std::uint32_t n, std::uint32_t pos,
   if (!Moe(l, s_.mixed, s_.block_out, tail_rows, error_msg, last_only)) {
     return false;
   }
-  Combine(s_.mtp_res, nullptr, tail_rows);
+  Combine(s_.mtp_res, nullptr, tail_rows, nullptr, nullptr,
+          trace == nullptr || trace->ffn_output.empty());
   if (trace &&
       !copy_trace(s_.block_out +
                       static_cast<std::size_t>(tail_rows - 1) * c.hidden_size,

@@ -13,23 +13,19 @@ multi-token prediction (MTP) head.
 | `mmproj-BF16.gguf` | Images |
 
 ```sh
-hf download unsloth/Qwen3.8-Flash-Next-GGUF \
-  --revision d96201194f103c906994f283f504209dc8d2a10c \
-  --include "UD-Q4_K_XL/*" \
-  --include "MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf" \
-  --include "mmproj-BF16.gguf" \
-  --local-dir models/qwen3.8-flash-next
+gufo model install flash-next-q4
 ```
+
+It installs all three and prints the MTP head's path.
 
 ## Run
 
-Pass the first shard; Gufo finds the others.
+Pass the model ID, or the path of the first shard; Gufo finds the others.
 
 ```sh
-MODEL=/path/to/first-shard.gguf
-MTP=models/qwen3.8-flash-next/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
-gufo chat --model "$MODEL"
-gufo serve llm --model "$MODEL" --speculative mtp \
+MTP=~/.local/share/gufo/models/flash-next-q4/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf
+gufo chat --model flash-next-q4
+gufo serve llm --model flash-next-q4 --speculative mtp \
   --mtp-model "$MTP" --sessions 2 --context 32768
 ```
 
@@ -56,6 +52,12 @@ object in a response reports copies as `lookup_n` and `lookup_n_accepted`.
 
 With greedy decoding, MTP produces exactly the AR output. With sampling, both
 modes follow the same distribution, but the same seed gives different text.
+
+For Q8_0 and Q6_K output heads, MTP builds a Q4_K copy of the draft vocabulary
+prefix at load time. Verification and per-request extra vocabulary rows keep
+the original output weights. The copy adds 135 MiB for 98,304 rows of width
+2,560, shared across sessions. Q6_K performance and runtime qualification are
+pending; the Q8_0 benchmark results do not establish a Q6_K speedup.
 
 ## Thinking
 

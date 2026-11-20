@@ -384,10 +384,16 @@ bool Executor::MtpForwardBatch(std::span<const MtpBatchItem> items,
     if (compact_tail) {
       tail.mtp_res = base.res;
       tail.ctx = base.qg;
-      tail.inject = base.mtp_h;
+      // Inject rows move down within their own buffer (rows only move to
+      // lower indices, so the in-order copies never overwrite a pending
+      // source). base.mtp_h aliases s_.xn, which the FFN combine writes
+      // while its blocks still read the inject partials.
+      tail.inject = base.inject;
       for (std::size_t i = 0; i < items.size(); ++i) {
         const auto r = final_rows[i];
         const auto copy = [&](float* dst, const float* src, std::size_t width) {
+          if (dst + i * width == src + r * width)
+            return true;  // the row is already in place
           return Check(hipMemcpyAsync(dst + i * width, src + r * width,
                                       width * sizeof(float),
                                       hipMemcpyDeviceToDevice, stream_),
@@ -569,10 +575,18 @@ bool Executor::MtpHeads(std::span<const MtpHeadItem> items,
       if (!DenseBatch(full_head, base.mixed, batch_logits_, n, error))
         return false;
       for (std::uint32_t i = 0; i < n; ++i) {
-        if (slot[i] < subset_rows)
-          GatherDraftLogits(logits_of(i), items[i].session->mtp_.draft_ids,
-                            static_cast<std::uint32_t>(prefix),
-                            speculative::kDraftVocabExtraRows, stream_);
+        if (slot[i] >= subset_rows)
+          continue;
+        GatherDraftLogits(logits_of(i), items[i].session->mtp_.draft_ids,
+                          static_cast<std::uint32_t>(prefix),
+                          speculative::kDraftVocabExtraRows, stream_);
+        // A requantized prefix scores its rows as alone; the table rows
+        // above keep the full head's values either way.
+        if (prefix_head.data != full_head.data &&
+            !Dense(prefix_head,
+                   base.mixed + std::size_t{slot[i]} * full_head.cols,
+                   logits_of(i), 1, error))
+          return false;
       }
     } else if (subset_rows != 0) {
       float* staged = batch_logits_ + kBatchSessions * vocab -
@@ -1278,7 +1292,31 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                                       : layers[il + 1].hc_attn.norm.f32())
               : model_->hc_head().norm.f32();
       UseScratch(base);
+      const auto tap = std::ranges::find(options_.dflash_layers, il);
+      const auto sample_rows = [&](bool before_combine) {
+        if (tap == options_.dflash_layers.end())
+          return;
+        const auto lane =
+            static_cast<std::size_t>(tap - options_.dflash_layers.begin());
+        const auto stride = options_.dflash_layers.size() * c.hidden_size;
+        for (std::size_t i = 0; i < items.size(); ++i) {
+          const auto n = static_cast<std::uint32_t>(items[i].tokens.size());
+          // Scalar ForwardBody reads a tap before the next HcMix settles
+          // its parked FFN residual. Match the actual scalar row shape.
+          const bool parked = il + 1 < c.num_layers && next_norm != nullptr &&
+                              FusedMixer(layers[il + 1].hc_attn, n);
+          if (before_combine != parked)
+            continue;
+          const auto offset = std::size_t{offsets[i]};
+          DFlashMeanStreams(
+              base.res + offset * c.HcDim(),
+              dflash_features_ + offset * stride + lane * c.hidden_size, n,
+              c.hidden_size, c.hc_count, stride, stream_);
+        }
+      };
+      sample_rows(true);
       CombineBatch(base.res, next_norm, rows);
+      sample_rows(false);
       normed = next_norm != nullptr;
     }
     for (std::size_t i = 0; i < items.size(); ++i) {

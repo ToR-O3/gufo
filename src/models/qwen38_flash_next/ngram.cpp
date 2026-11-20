@@ -127,19 +127,27 @@ std::unique_ptr<NgramTable> NgramTable::Open(const core::GgufReader& reader,
   if (model.GetMetadataString("general.architecture") != "qwen4exp") {
     return fail("expected Qwen3.8-Flash-Next");
   }
+  if (reader.GetMetadataString("general.architecture") != "qwen4exp")
+    return fail("missing or mismatched general.architecture");
   for (const auto* key :
-       {"general.architecture", "qwen4exp.ple.layers",
-        "qwen4exp.ple.ngram_size", "qwen4exp.ple.heads_per_ngram",
+       {"qwen4exp.ple.ngram_size", "qwen4exp.ple.heads_per_ngram",
         "qwen4exp.ple.conv_kernel", "qwen4exp.ple.eos_token_id",
         "qwen4exp.embedding_length_per_layer_input",
-        "qwen4exp.ple.layer_multipliers", "qwen4exp.ple.head_offsets",
-        "qwen4exp.ple.head_vocab_sizes", "qwen4exp.ple.image_token_id"}) {
+        "qwen4exp.ple.image_token_id"}) {
+    const auto value = reader.GetMetadataUint32(key);
+    if (!value || value != model.GetMetadataUint32(key))
+      return fail(std::string("missing or mismatched ") + key);
+  }
+  for (const auto* key :
+       {"qwen4exp.ple.layers", "qwen4exp.ple.layer_multipliers",
+        "qwen4exp.ple.head_offsets", "qwen4exp.ple.head_vocab_sizes"}) {
     const auto* source = reader.FindMetadata(key);
     const auto* target = model.FindMetadata(key);
-    if (source == nullptr || target == nullptr ||
-        source->value != target->value) {
+    if (source == nullptr || target == nullptr)
       return fail(std::string("missing or mismatched ") + key);
-    }
+    const auto values = ReadUnsignedArray(*source);
+    if (!values || values != ReadUnsignedArray(*target))
+      return fail(std::string("missing or mismatched ") + key);
   }
   const auto* source = reader.FindTensor("per_layer_token_embd.weight");
   const auto* target = model.FindTensor("per_layer_token_embd.weight");

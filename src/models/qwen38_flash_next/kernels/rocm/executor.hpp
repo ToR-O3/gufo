@@ -604,10 +604,12 @@ private:
   /// mixer's F32 `inject_w`, the fused MoE combine also leaves its inject
   /// partials in s_.inject (inject_fused_). A decode combine whose `next`
   /// mixer HcMix runs immediately after, with nothing reading res or xn in
-  /// between, is left to that mixer's single launch (FusedMixer).
+  /// between, is left to that mixer's single launch (FusedMixer). A trace
+  /// that reads the intermediate output disables fusion.
   void Combine(float* res, const float* gamma, std::uint32_t n_tokens,
                const float* inject_w = nullptr,
-               const DeviceMixer* next = nullptr) const;
+               const DeviceMixer* next = nullptr,
+               bool allow_fusion = true) const;
   /// Whether HcMix runs a decode batch of `m` as one HcMixQ8Fused launch.
   bool FusedMixer(const DeviceMixer& m, std::uint32_t n_tokens) const;
   /// Hashes the batch's n-gram rows and starts reading them from disk, so
@@ -835,6 +837,8 @@ private:
     float* mtp_res;
     ArgmaxCandidate* mtp_argmax;
     std::int32_t* mtp_token;
+    /// Expert IDs (all zero) of the Q4_K draft head's rows.
+    std::int32_t* draft_head_ids;
     std::uint32_t* mtp_ids;
     std::uint32_t* mtp_scratch_ids;
     float* mtp_scores;
@@ -956,7 +960,7 @@ private:
   std::int32_t* mtp_token_host_{nullptr};
   MtpCandidateLogits* mtp_candidates_host_{nullptr};
   /// The model geometry allows the wide mixer route (see Combine).
-  bool wide_mixer_{false};
+  bool wide_mixer_geometry_{false};
   /// Set by Moe when its epilogue is left for the combine that follows.
   mutable bool moe_pending_{false};
   /// Set before an attention-side combine whose FFN combine fuses the MoE

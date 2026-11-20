@@ -352,6 +352,11 @@ std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeEach(
 
 std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeBatch(
     std::span<const speculative::DraftProposalRequest> requests) {
+  return ProposeBatch(requests, false);
+}
+std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeBatch(
+    std::span<const speculative::DraftProposalRequest> requests,
+    bool single_request_policy) {
   if (requests.size() < 2 || requests.size() > 8)
     return ProposeEach(requests);
   std::array<QwenDFlashGpuDraftBackend*, 8> backends{};
@@ -406,9 +411,11 @@ std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeBatch(
   indices.reserve(requests.size());
   // Sampled and mixed cohorts retain private block choices and RNG replay.
   const auto greedy_batch_size =
-      std::ranges::all_of(
-          requests,
-          [](const auto& request) { return request.temperature == 0.0F; })
+      !single_request_policy &&
+              std::ranges::all_of(requests,
+                                  [](const auto& request) {
+                                    return request.temperature == 0.0F;
+                                  })
           ? requests.size()
           : 1U;
   std::array<const speculative::DFlashLengthController*, 8> controllers{};
@@ -458,13 +465,14 @@ std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeBatch(
     // and jointly planned greedy batches; a greedy request beside sampled
     // peers keeps the full head. The table then decides from the request's
     // own history, so a sampled request drafts the same way in any batch.
-    const bool draft_subset =
-        backend.UseDraftSubset(request.tokens, request.position,
-                               speculative::DraftSubsetAllowed(
-                                   request.temperature > 0.0F,
-                                   static_cast<std::uint32_t>(requests.size()),
-                                   static_cast<std::uint32_t>(requests.size()),
-                                   shared_count.has_value()));
+    const bool draft_subset = backend.UseDraftSubset(
+        request.tokens, request.position,
+        single_request_policy ||
+            speculative::DraftSubsetAllowed(
+                request.temperature > 0.0F,
+                static_cast<std::uint32_t>(requests.size()),
+                static_cast<std::uint32_t>(requests.size()),
+                shared_count.has_value()));
     blocks.push_back({backend.executor_.get(),
                       request.tokens.back(),
                       request.position,
@@ -473,7 +481,10 @@ std::vector<speculative::DraftProposal> QwenDFlashGpuDraftBackend::ProposeBatch(
                       std::span(uniforms[index]).first(count),
                       {},
                       request.sampler,
-                      draft_subset});
+                      draft_subset,
+                      single_request_policy
+                          ? backend.config_.greedy_confidence_cutoff
+                          : 0.0F});
   }
   if (blocks.empty())
     return proposals;

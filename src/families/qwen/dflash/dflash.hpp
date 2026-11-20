@@ -62,6 +62,7 @@ struct QwenDFlashBlockRequest {
   const sampling::SamplerState* sampler{nullptr};
   /// Score the executor's draft vocabulary instead of the full head.
   bool draft_subset{false};
+  float greedy_cutoff{};
 };
 
 class QwenDFlashGpuSnapshot final {
@@ -396,6 +397,10 @@ public:
       const speculative::DraftProposalRequest& request) override;
   [[nodiscard]] std::vector<speculative::DraftProposal> ProposeBatch(
       std::span<const speculative::DraftProposalRequest> requests) override;
+
+  std::vector<speculative::DraftProposal> ProposeBatch(
+      std::span<const speculative::DraftProposalRequest> requests,
+      bool single_request_policy);
 
   void AcceptFeedback(std::span<const tokenization::TokenId> accepted,
                       tokenization::TokenId correction_token) override;

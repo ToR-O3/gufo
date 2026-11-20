@@ -26,6 +26,8 @@
 #include "src/core/platform/fs.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/device_model.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp"
+#include "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h"
 #include "src/models/qwen38_flash_next/ngram.hpp"
 #include "tests/support/temporary_directory.hpp"
 
@@ -36,6 +38,39 @@ using core::GgmlType;
 struct DeviceModelTestAccess {
   DeviceModel& model;
   std::uint64_t state;
+
+  static void CheckQ6DraftVocab(DeviceModel& model) {
+    DeviceModelTestAccess weights{model, 0xD6AF};
+    const auto rows = model.output().rows;
+    const auto cols = model.output().cols;
+    std::vector<std::uint8_t> packed(std::size_t{rows} * (cols / 256) * 210);
+    for (std::size_t b = 0; b < packed.size() / 210; ++b) {
+      auto* block = packed.data() + b * 210;
+      for (int i = 0; i < 208; ++i)
+        block[i] = static_cast<std::uint8_t>(weights.Next());
+      PutHalf(block + 208, 0.0001F);
+    }
+    model.output_ = weights.Make(GgmlType::kQ6_K, rows, cols, packed, 1);
+    model.output_bytes_ = packed.size();
+    const auto target = model.output();
+    std::string error;
+    if (!model.SetDraftVocab(2048, {8000, 8001}, &error))
+      throw std::runtime_error("Q6_K draft vocabulary: " + error);
+    if (model.output().type != GgmlType::kQ6_K ||
+        model.output().data != target.data ||
+        model.output_row_bytes() != std::size_t{cols / 256} * 210 ||
+        model.draft_output().type != GgmlType::kQ4_K ||
+        model.draft_output().data == target.data ||
+        model.draft_output().rows != 2048 ||
+        model.draft_specials().size() != 2 ||
+        model.draft_specials()[0] != 8000 || model.draft_specials()[1] != 8001)
+      throw std::runtime_error("Q6_K draft prefix or target metadata changed");
+    std::vector<std::uint8_t> actual(packed.size());
+    if (hipMemcpy(actual.data(), target.data, actual.size(),
+                  hipMemcpyDeviceToHost) != hipSuccess ||
+        actual != packed)
+      throw std::runtime_error("Q6_K draft vocabulary changed target weights");
+  }
 
   std::uint64_t Next() {
     // splitmix64
@@ -255,6 +290,221 @@ struct DeviceModelTestAccess {
 
 // Test-only access: production has no switch for disabling graphs or overlap.
 struct ExecutorTestAccess {
+  static void CheckMixedHc(Executor& exec, DeviceModel& model,
+                           const DeviceMixer& bf16) {
+    DeviceModelTestAccess weights{model, 0xC011};
+    const auto& q8 = model.layers().front().hc_ffn;
+    const auto& c = exec.config();
+    auto& s = exec.s_;
+    const auto copy = [&](void* to, const void* from, std::size_t bytes) {
+      if (hipMemcpyAsync(to, from, bytes, hipMemcpyDeviceToDevice,
+                         exec.stream_) != hipSuccess)
+        throw std::runtime_error("mixed HC input copy failed");
+    };
+    std::string error;
+    for (const auto rows : {9U, 96U}) {
+      const auto input = weights.F32(rows, c.HcDim(), 0.1F, 0.2F);
+      const auto prior = weights.F32(rows, c.hidden_size, 0.1F, 0.2F);
+      const auto scales = weights.F32(rows, c.hc_count, 0.1F, 0.2F);
+      const auto n = std::size_t{rows} * c.hidden_size;
+      const auto used = c.num_experts_used;
+      const auto down =
+          weights.Half(GgmlType::kF16, rows * used, c.hidden_size, 0.1F);
+      const auto routing = weights.F32(rows, used, 0.02F, 0.1F);
+      const auto router = weights.F32(rows, c.num_experts + 1, 0.1F, 0.2F);
+      const DeviceMixer* mixers[] = {&bf16, &q8, &bf16};
+      for (const auto* mixer : mixers) {
+        std::vector<float> actual(n), expected(n);
+        for (bool reference : {false, true}) {
+          copy(s.hc_defer_w, scales.data, rows * c.hc_count * sizeof(float));
+          copy(s.inject, scales.data, rows * c.hc_count * sizeof(float));
+          copy(s.down_e, down.data, n * used * sizeof(__half));
+          copy(s.shexp_out, prior.data, n * sizeof(float));
+          copy(s.weights, routing.data, rows * used * sizeof(float));
+          copy(s.router, router.data,
+               rows * (c.num_experts + 1) * sizeof(float));
+          copy(s.res, input.data, n * c.hc_count * sizeof(float));
+          copy(s.block_out, prior.data, n * sizeof(float));
+          exec.inject_parts_ = 1;
+          if (reference) {
+            HcApplyDeferred(s.res, s.block_out, s.hc_defer_w, rows,
+                            c.hidden_size, exec.stream_);
+            // Preserve the existing Q8 normalization reduction order.
+            if (mixer == &q8) {
+              if (!HcCombineMoeF16(
+                      s.res, reinterpret_cast<const __half*>(s.down_e),
+                      s.weights, s.shexp_out, s.router + c.num_experts,
+                      c.num_experts + 1, used, s.inject, 1, mixer->norm.f32(),
+                      s.xn_half, s.xn_q8t, rows, c.hidden_size, c.hc_count,
+                      c.rms_eps, exec.stream_))
+                throw std::runtime_error("Q8 reference geometry rejected");
+            } else {
+              MoeEpilogueVec4F16(
+                  reinterpret_cast<const __half*>(s.down_e), s.weights,
+                  s.shexp_out, s.router + c.num_experts, c.num_experts + 1,
+                  s.block_out, rows, used, c.hidden_size, exec.stream_);
+              HcCombine(s.res, s.block_out, s.inject, 1, mixer->norm.f32(),
+                        s.xn, rows, c.hidden_size, c.hc_count, c.rms_eps,
+                        exec.stream_);
+            }
+            exec.xn_half_ = mixer == &q8;
+          } else {
+            exec.moe_pending_ = exec.res_deferred_ = true;
+            exec.Combine(s.res, mixer->norm.f32(), rows, nullptr, mixer);
+            if (exec.xn_half_ != (mixer == &q8))
+              throw std::runtime_error(
+                  "mixed HC used the wrong normalization format");
+          }
+          exec.half_src_ = nullptr;
+          if (!exec.HcMix(*mixer, s.res, true, s.mixed, nullptr, rows,
+                          &error) ||
+              hipStreamSynchronize(exec.stream_) != hipSuccess ||
+              hipMemcpy((reference ? expected : actual).data(), s.mixed,
+                        n * sizeof(float), hipMemcpyDeviceToHost) != hipSuccess)
+            throw std::runtime_error("mixed HC readback failed: " + error);
+        }
+        if (std::memcmp(actual.data(), expected.data(), n * sizeof(float)) != 0)
+          throw std::runtime_error(
+              "mixed HC differs from separate residual updates at " +
+              std::to_string(rows) + " rows, " +
+              (mixer == &q8 ? "Q8" : "BF16"));
+      }
+    }
+    std::cout << "mixed BF16 and Q8 HC transitions pass at 9 and 96 rows\n";
+  }
+  static void CheckIqReadyInput(Executor& exec, DeviceModel& model) {
+    constexpr unsigned n = 2, k = 512, m = 3;
+    DeviceModelTestAccess weights{model, 0xA813};
+    const auto input = weights.F32(n, k, 0.02F, 0.01F);
+    const auto zero = weights.F32(n, k, 0.0F, 0.0F);
+    auto& s = exec.s_;
+    if (hipMemsetAsync(s.ids, 0, n * sizeof(std::int32_t), exec.stream_) !=
+            hipSuccess ||
+        qfn_mmq_quantize_q8_1(input.f32(), s.mixed_q8_1, n, k, exec.stream_))
+      throw std::runtime_error("IQ ready fixture initialization");
+
+    const auto run = [&](const DeviceTensor& gate, const DeviceTensor& up,
+                         const float* x) {
+      std::string error;
+      std::array<float, n * m> result;
+      if (!exec.GatedExperts(gate, up, x, s.ids, s.gate_e, n, 1, &error) ||
+          hipMemcpyAsync(result.data(), s.gate_e, sizeof(result),
+                         hipMemcpyDeviceToHost, exec.stream_) != hipSuccess ||
+          hipStreamSynchronize(exec.stream_) != hipSuccess)
+        throw std::runtime_error("IQ ready projection: " + error);
+      return result;
+    };
+    for (auto [type, block] :
+         {std::pair{GgmlType::kIQ2_S, 82U}, std::pair{GgmlType::kIQ3_XXS, 98U},
+          std::pair{GgmlType::kIQ4_XS, 136U}}) {
+      const auto make = [&](float scale) {
+        std::vector<std::uint8_t> packed(m * (k / 256) * block, 0);
+        for (unsigned i = 0; i < packed.size(); i += block)
+          DeviceModelTestAccess::PutHalf(packed.data() + i, scale);
+        return weights.Make(type, m, k, std::move(packed), 1);
+      };
+      const auto gate = make(0.001F), up = make(0.0005F);
+      exec.DropReadyQ8();
+      const auto reference = run(gate, up, input.f32());
+      const auto fallback = run(gate, up, zero.f32());
+      if (!std::ranges::all_of(reference,
+                               [](float x) { return std::isfinite(x); }) ||
+          reference == fallback)
+        throw std::runtime_error(
+            "IQ ready fixture did not distinguish its inputs");
+      // Poison the fallback with zeros. A hit must read the dedicated Q8
+      // buffer; missing, stale or differently shaped records must read F32.
+      for (unsigned key = 0; key < 5; ++key) {
+        exec.mixed_q8_ready_ = {key == 1 ? input.f32() : zero.f32(),
+                                s.mixed_q8_1, key == 2 ? n - 1 : n,
+                                key == 3 ? k + 512 : k};
+        if (key == 4)
+          exec.DropReadyQ8();
+        const auto actual = run(gate, up, zero.f32());
+        const auto& expected = key == 0 ? reference : fallback;
+        if (std::memcmp(actual.data(), expected.data(), sizeof(actual)) != 0)
+          throw std::runtime_error("IQ ready buffer hit/miss result changed");
+      }
+    }
+    exec.DropReadyQ8();
+  }
+
+  static void CheckDenseDispatch(Executor& exec, DeviceModel& model) {
+    DeviceModelTestAccess weights{model, 0xD35E};
+    constexpr std::uint32_t kRows = 129;
+    constexpr std::uint32_t kCols = 256;
+    constexpr std::uint32_t kOutputs = 3;
+    // Independent packed fixture: every Q4_K weight is exactly 0.5.
+    // Small inputs survive native FP32 dots but disappear in Q8 MMVQ input.
+    std::vector<std::uint8_t> packed(kOutputs * 144, 0);
+    for (std::uint32_t row = 0; row < kOutputs; ++row) {
+      auto* block = packed.data() + row * 144;
+      DeviceModelTestAccess::PutHalf(block, 0.0625F);
+      for (int j = 0; j < 4; ++j) {
+        block[4 + j] = 1;
+        block[12 + j] = 1;
+      }
+      std::fill(block + 16, block + 144, 0x88);
+    }
+    const auto ordinary =
+        weights.Make(GgmlType::kQ4_K, kOutputs, kCols, std::move(packed), 1);
+    std::vector<float> input(kRows * model.output().cols);
+    for (std::size_t i = 0; i < input.size(); ++i)
+      input[i] = i % 32 == 0 ? 1.0F : 0.001F * (1 + (i % 127) / 256.0F);
+    std::vector<std::uint8_t> bytes(input.size() * sizeof(float));
+    std::memcpy(bytes.data(), input.data(), bytes.size());
+    const auto* x = static_cast<const float*>(weights.Upload(bytes));
+    const auto output_bytes = kRows * model.draft_output().rows * sizeof(float);
+    auto* out = static_cast<float*>(
+        weights.Upload(std::vector<std::uint8_t>(output_bytes)));
+    auto* reference = static_cast<float*>(
+        weights.Upload(std::vector<std::uint8_t>(output_bytes)));
+    std::string error;
+    const auto read = [&](const float* src, std::size_t count) {
+      std::vector<float> values(count);
+      if (hipStreamSynchronize(exec.stream_) != hipSuccess ||
+          hipMemcpy(values.data(), src, count * sizeof(float),
+                    hipMemcpyDeviceToHost) != hipSuccess)
+        throw std::runtime_error("dense dispatch download failed");
+      return values;
+    };
+    for (const auto rows : {1U, 8U, 9U, kRows}) {
+      if (!exec.Dense(ordinary, x, out, rows, &error))
+        throw std::runtime_error(error);
+      const auto actual = read(out, rows * kOutputs);
+      for (std::uint32_t row = 0; row < rows; ++row) {
+        double expected = 0;
+        for (std::uint32_t col = 0; col < kCols; ++col)
+          expected += 0.5 * input[row * kCols + col];
+        for (std::uint32_t col = 0; col < kOutputs; ++col)
+          if (!std::isfinite(actual[row * kOutputs + col]) ||
+              std::abs(actual[row * kOutputs + col] - expected) > 2e-5)
+            throw std::runtime_error("ordinary Q4_K dense changed arithmetic");
+      }
+    }
+    const auto& prefix = model.draft_output();
+    if (prefix.type != GgmlType::kQ4_K || prefix.data == model.output().data)
+      throw std::runtime_error("draft prefix was not requantized");
+    auto* ids = static_cast<std::int32_t*>(
+        weights.Upload(std::vector<std::uint8_t>(8 * sizeof(std::int32_t))));
+    for (const auto rows : {1U, 8U}) {
+      if (!exec.Dense(prefix, x, out, rows, &error) ||
+          qfn_mmq_moe_vec(static_cast<int>(prefix.type), prefix.data, x, ids,
+                          reference, static_cast<int>(prefix.rows),
+                          static_cast<int>(prefix.cols), rows, 1, 1,
+                          exec.stream_) != 0)
+        throw std::runtime_error("draft head dispatch failed: " + error);
+      const auto actual = read(out, rows * prefix.rows);
+      const auto expected = read(reference, rows * prefix.rows);
+      const auto finite = [](float value) { return std::isfinite(value); };
+      if (!std::all_of(actual.begin(), actual.end(), finite) ||
+          !std::all_of(expected.begin(), expected.end(), finite) ||
+          std::memcmp(actual.data(), expected.data(),
+                      actual.size() * sizeof(float)) != 0)
+        throw std::runtime_error("draft head bypassed row-invariant MMVQ");
+    }
+    std::cout << "ordinary Q4_K and requantized draft dispatch pass\n";
+  }
   static void EagerNext(Session& session) { session.warmed_.clear(); }
   static std::size_t Graphs(const Session& session) {
     return session.graphs_.size();
@@ -642,7 +892,11 @@ int WideChecks(const Executor& exec) {
 int main(int argc, char** argv) {
   const bool graph_only =
       argc == 2 && std::string_view(argv[1]) == "--decode-graph-only";
-  if (argc != 1 && !graph_only)
+  const bool dense_only =
+      argc == 2 && std::string_view(argv[1]) == "--dense-dispatch-only";
+  const bool hc_only =
+      argc == 2 && std::string_view(argv[1]) == "--mixed-hc-only";
+  if (argc != 1 && !graph_only && !dense_only && !hc_only)
     return 2;
   try {
     auto config = SyntheticConfig();
@@ -682,13 +936,31 @@ int main(int argc, char** argv) {
       Throw("n-gram table", error);
     // A whole 2,030-token prompt in one pass needs the wide scratch. The
     // focused graph regression needs only short prompts around a small budget.
-    auto exec = Executor::Create(*model, ngram.get(),
-                                 {.max_batch = graph_only ? 128U : 2048U,
-                                  .max_logit_rows = 8,
-                                  .max_speculative = 8},
-                                 &error);
+    auto bf16 = model->layers().front().hc_ffn;
+    if (hc_only || argc == 1) {
+      rocm::DeviceModelTestAccess weights{*model, 0xBF16};
+      bf16.down = weights.Half(gufo::core::GgmlType::kBF16, config.hc_low_rank,
+                               config.HcDim(), 0.01F);
+    }
+    auto exec = Executor::Create(
+        *model, ngram.get(),
+        {.max_batch = graph_only || dense_only || hc_only ? 128U : 2048U,
+         .max_logit_rows = 8,
+         .max_speculative = 8},
+        &error);
     if (!exec)
       Throw("executor", error);
+    if (hc_only || argc == 1)
+      rocm::ExecutorTestAccess::CheckMixedHc(*exec, *model, bf16);
+    if (hc_only)
+      return 0;
+    if (dense_only) {
+      rocm::ExecutorTestAccess::CheckIqReadyInput(*exec, *model);
+      rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
+      rocm::DeviceModelTestAccess::CheckQ6DraftVocab(*model);
+      rocm::ExecutorTestAccess::CheckDenseDispatch(*exec, *model);
+      return 0;
+    }
     if (graph_only) {
       DecodeGraphChecks(*exec);
       return 0;

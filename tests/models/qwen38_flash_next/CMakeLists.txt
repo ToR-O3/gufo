@@ -66,6 +66,11 @@ if (ENGINE_ENABLE_HIP)
   add_qwen38_flash_next_test(native_quant_ops gufo_qwen38_flash_next_reference "hip;gpu;gfx1151;quant")
   add_dependencies(qwen38_flash_next_native_quant_ops_test gufo_qwen38_flash_next_hip)
   target_link_libraries(qwen38_flash_next_native_quant_ops_test PRIVATE qwen38_flash_next_test_hip)
+  # Reuse the synthetic model to distinguish dense and draft-head dispatch.
+  add_test(NAME qwen38_flash_next.dense_dispatch
+    COMMAND qwen38_flash_next_wide_verification_test --dense-dispatch-only)
+  set_tests_properties(qwen38_flash_next.dense_dispatch PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151")
   # Reuse the synthetic model fixture, with short prompts around a reduced
   # sparse budget. This exercises actual Executor capture/replay without GGUFs.
   add_test(NAME qwen38_flash_next.decode_graph
@@ -79,6 +84,13 @@ if (ENGINE_ENABLE_HIP)
   add_executable(qwen38_flash_next_session_test EXCLUDE_FROM_ALL session_test.cpp)
   target_link_libraries(qwen38_flash_next_session_test PRIVATE gufo_serving
     qwen38_flash_next_test_hip)
+  add_test(NAME qwen38_flash_next.dflash_pair
+    COMMAND qwen38_flash_next_session_test --dflash-pair 2)
+  set_tests_properties(qwen38_flash_next.dflash_pair PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151;external-model"
+    SKIP_RETURN_CODE 77
+    RUN_SERIAL TRUE
+    TIMEOUT 1800)
   add_executable(qwen38_flash_next_snapshot_test EXCLUDE_FROM_ALL snapshot_test.cpp
     device_headroom_fault.cpp)
   target_link_libraries(qwen38_flash_next_snapshot_test PRIVATE
