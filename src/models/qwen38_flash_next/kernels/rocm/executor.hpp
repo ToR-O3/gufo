@@ -827,7 +827,6 @@ private:
   const DeviceModel* model_{nullptr};
   NgramTable* ngram_{nullptr};
   Options options_;
-  float* dflash_features_{};
   [[nodiscard]] std::shared_ptr<SnapshotAllocator> GetSnapshotAllocator() const;
   mutable std::once_flag snapshot_allocator_once_;
   mutable std::shared_ptr<SnapshotAllocator> snapshot_allocator_;
@@ -860,7 +859,12 @@ private:
   std::unique_ptr<BlasLt> blaslt_;
 
   // Scratch, sized for max_batch tokens. Names follow reference.cpp.
+  // Published taps survive the wide-pass scratch view until CommitDFlash.
+  mutable float* dflash_features_{};
+  mutable std::uint32_t dflash_feature_rows_{};
+
   struct Scratch {
+    float* dflash_features{};  ///< target taps for the active pass width
     std::int32_t* tokens;
     void* x_half;   ///< activations narrowed to the weight's 16-bit type
     void* x_q8[2];  ///< Q8_1 activations of a decode batch, alternating

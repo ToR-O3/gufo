@@ -1193,16 +1193,7 @@ std::unique_ptr<Executor> Executor::Create(const DeviceModel& model,
     e->logits_host_ = static_cast<float*>(logits);
   }
   e->wide_mixer_geometry_ = c.hc_count == 4 && c.hidden_size % 32 == 0;
-  if (!options.dflash_layers.empty()) {
-    e->dflash_features_ =
-        Alloc<float>(a,
-                     std::size_t{options.max_batch} * c.hidden_size *
-                         options.dflash_layers.size(),
-                     error_msg);
-    if (e->dflash_features_ == nullptr)
-      return nullptr;
-  }
-  if (model.has_mtp() || e->dflash_features_ != nullptr) {
+  if (model.has_mtp() || !options.dflash_layers.empty()) {
     s.mtp_argmax = Alloc<ArgmaxCandidate>(a, kArgmaxParts, error_msg);
     // The draft token and its confidence (float bits), one host transfer.
     s.mtp_token = Alloc<std::int32_t>(a, 2, error_msg);
@@ -1297,6 +1288,9 @@ bool Executor::CarveRowScratch(
   const auto i32 = [&](std::size_t n) {
     return static_cast<std::int32_t*>(bytes(n * sizeof(std::int32_t)));
   };
+  s.dflash_features = options_.dflash_layers.empty()
+                          ? nullptr
+                          : f32(T * hidden * options_.dflash_layers.size());
   s.tokens = i32(T);
   s.x_half = bytes(T * model.max_half_cols() * sizeof(std::uint16_t));
   s.x_q8t = bytes(Q8TiledBytes(T, model.max_q8_cols()));
@@ -1429,6 +1423,10 @@ void Executor::ReleaseWidePasses() const {
   if (!scratch_arena_ || !scratch_arena_->transient_mapped() ||
       wide_pass_running_)
     return;
+  if (dflash_features_ == wide_s_.dflash_features) {
+    dflash_features_ = nullptr;
+    dflash_feature_rows_ = 0;
+  }
   scratch_arena_->ReleaseTransient();
 }
 
@@ -3850,7 +3848,7 @@ bool Executor::Run(Session& session, std::uint64_t key, bool graph,
 }
 
 std::span<const float> Executor::DFlashFeatures(std::uint32_t count) const {
-  if (!dflash_features_ || count > options_.max_batch)
+  if (!dflash_features_ || count > dflash_feature_rows_)
     return {};
   return {dflash_features_, std::size_t{count} * config().hidden_size *
                                 options_.dflash_layers.size()};
@@ -3916,6 +3914,8 @@ bool Executor::Forward(Session& session, std::span<const std::int32_t> tokens,
     scratch_rows_ = options_.max_batch;
     UseScratch(wide_s_);
   }
+  dflash_features_ = s_.dflash_features;
+  dflash_feature_rows_ = n;
   if (n_logits > n || n_logits > options_.max_logit_rows) {
     AssignError(error_msg, "requested logit rows exceed the batch or limit");
     return false;
@@ -4264,7 +4264,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // The last target layer's query outputs have no later cache consumer.
     // Preserve all K/V/indexer rows and the final query's original tile.
     const bool last_attention = WidePrefill(n) && !session.mtp_enabled_ &&
-                                dflash_features_ == nullptr &&
+                                s_.dflash_features == nullptr &&
                                 il + 1 == c.num_layers && n_logits == 1 &&
                                 checkpoints.empty();
     if (l.linear) {
@@ -4299,7 +4299,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     // Keep aligned tiles and at least 96 rows to retain the wide arithmetic.
     const auto needed = std::max(96U, n_logits);
     const auto skipped = prefill_phase && !session.mtp_enabled_ &&
-                                 dflash_features_ == nullptr &&
+                                 s_.dflash_features == nullptr &&
                                  il + 1 == c.num_layers && n > needed
                              ? (n - needed) / 128 * 128
                              : 0U;
@@ -4388,7 +4388,7 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
     if (tap != options_.dflash_layers.end()) {
       const auto index =
           static_cast<std::size_t>(tap - options_.dflash_layers.begin());
-      DFlashMeanStreams(s_.res, dflash_features_ + index * c.hidden_size, n,
+      DFlashMeanStreams(s_.res, s_.dflash_features + index * c.hidden_size, n,
                         c.hidden_size, c.hc_count,
                         options_.dflash_layers.size() * c.hidden_size, stream_);
     }

@@ -934,6 +934,8 @@ bool Executor::ForwardWide(Session& session,
 
 bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
                                 std::string* error) const {
+  dflash_features_ = s_.dflash_features;
+  dflash_feature_rows_ = scratch_rows_;
   selected_logits_ = nullptr;
   wide_rows_ = 0;
   DropReadyQ8();
@@ -1400,7 +1402,7 @@ bool Executor::ForwardBatchImpl(std::span<const BatchItem> items, bool wide,
           const auto offset = std::size_t{offsets[i]};
           DFlashMeanStreams(
               base.res + offset * c.HcDim(),
-              dflash_features_ + offset * stride + lane * c.hidden_size, n,
+              base.dflash_features + offset * stride + lane * c.hidden_size, n,
               c.hidden_size, c.hc_count, stride, stream_);
         }
       };

@@ -890,24 +890,27 @@ int WideChecks(const Executor& exec) {
 }  // namespace
 
 int main(int argc, char** argv) {
+  const bool scratch_only =
+      argc == 2 && std::string_view(argv[1]) == "--dflash-scratch-only";
   const bool graph_only =
       argc == 2 && std::string_view(argv[1]) == "--decode-graph-only";
   const bool dense_only =
       argc == 2 && std::string_view(argv[1]) == "--dense-dispatch-only";
   const bool hc_only =
       argc == 2 && std::string_view(argv[1]) == "--mixed-hc-only";
-  if (argc != 1 && !graph_only && !dense_only && !hc_only)
+  if (argc != 1 && !graph_only && !dense_only && !hc_only && !scratch_only)
     return 2;
   try {
     auto config = SyntheticConfig();
-    if (graph_only) {
+    if (graph_only || scratch_only) {
       config.vocab_size = 256;
       config.ple_eos_token = 255;
       config.indexer_top_k = 64;
     }
     auto model = rocm::DeviceModelTestAccess::Build(config);
     std::string error;
-    if (!graph_only && !model->SetDraftVocab(2048, {8000, 8001}, &error))
+    if (!graph_only && !scratch_only &&
+        !model->SetDraftVocab(2048, {8000, 8001}, &error))
       Throw("draft vocabulary", error);
     // The n-gram rows come from a BF16 table file, as from the artifact.
     TemporaryDirectory temp("qfn-wide-verification");
@@ -934,6 +937,49 @@ int main(int argc, char** argv) {
     gufo::platform::CloseFile(file);
     if (!ngram)
       Throw("n-gram table", error);
+    if (scratch_only) {
+      auto reference = Executor::Create(
+          *model, ngram.get(),
+          {.max_batch = 128, .max_context = 128, .dflash_layers = {0, 2}},
+          &error);
+      auto candidate = Executor::Create(*model, ngram.get(),
+                                        {.max_batch = 128,
+                                         .narrow_batch = 8,
+                                         .max_context = 128,
+                                         .dflash_layers = {0, 2}},
+                                        &error);
+      if (!reference || !candidate)
+        Throw("DFlash scratch executors", error);
+      const bool mapped = candidate->AcquireWidePasses();
+      const std::uint32_t count = mapped ? 17 : 8;
+      std::vector<std::int32_t> tokens(count, 3);
+      std::vector<float> expected;
+      for (auto* engine : {reference.get(), candidate.get()}) {
+        auto session = engine->CreateSession(
+            gufo::core::SessionMode::kAutoregressive, 128, &error);
+        if (!session ||
+            !engine->Forward(*session, tokens, 0, nullptr,
+                             Executor::ForwardMode::kPrefill, &error))
+          Throw("DFlash scratch prefill", error);
+        // Read after Forward has restored its narrow scratch view.
+        const auto taps = engine->DFlashFeatures(count);
+        if (taps.size() != std::size_t{count} * config.hidden_size * 2)
+          throw std::runtime_error("DFlash taps lost after prefill");
+        std::vector<float> actual(taps.size());
+        if (hipMemcpy(actual.data(), taps.data(), taps.size_bytes(),
+                      hipMemcpyDeviceToHost) != hipSuccess)
+          throw std::runtime_error("DFlash tap download failed");
+        if (engine == reference.get())
+          expected = std::move(actual);
+        else if (expected != actual)
+          throw std::runtime_error("DFlash scratch changed target taps");
+      }
+      candidate->ReleaseWidePasses();
+      if (mapped && !candidate->DFlashFeatures(count).empty())
+        throw std::runtime_error("DFlash exposed released wide taps");
+      std::cout << "DFlash scratch exact; transient_mapping=" << mapped << '\n';
+      return 0;
+    }
     // A whole 2,030-token prompt in one pass needs the wide scratch. The
     // focused graph regression needs only short prompts around a small budget.
     auto bf16 = model->layers().front().hc_ffn;
