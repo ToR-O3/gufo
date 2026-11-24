@@ -526,6 +526,9 @@ void ContinuationAdapter::BeginRestore(
   Check(hipStreamSynchronize(state.executor->arena_.stream));
   if (state.draft)
     Check(hipStreamSynchronize(state.draft->executor_->stream_));
+  // Restores write K/V rows without a forward pass: back them first.
+  state.executor->arena_.EnsureKvRows(
+      static_cast<std::uint32_t>(ordered.front().valid_rows));
   state.expected = std::move(ordered);
   state.coverage = std::move(coverage);
   state.metadata.fill(std::byte{});
@@ -784,9 +787,9 @@ cache::Completion ContinuationAdapter::LoadPrivatePiece(
         std::memcpy(static_cast<std::byte*>(target) + offset, bytes.data(),
                     bytes.size());
       else
-        Check(hip::CopySnapshotToDevice(
-            static_cast<std::byte*>(target) + offset, bytes.data(),
-            bytes.size(), transfer.Native()));
+        Check(
+            hip::CopySnapshotToDevice(static_cast<std::byte*>(target) + offset,
+                                      bytes.data(), bytes.size(), transfer));
     });
   } catch (...) {
     state.failed = true;
@@ -882,7 +885,7 @@ cache::Completion ContinuationAdapter::TransferRows(
     if (policy_.UsesFp16AttentionKv()) {
       auto* device = native + first * row;
       Check(load ? hip::CopySnapshotToDevice(device, bytes, (end - first) * row,
-                                             transfer.Native())
+                                             transfer)
                  : hip::CopySnapshotToHost(bytes, device, (end - first) * row,
                                            transfer.Native()));
     } else {

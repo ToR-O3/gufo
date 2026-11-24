@@ -18,9 +18,43 @@ ls -l /dev/kfd /dev/dri/renderD* /dev/accel/accel0
 
 As of November 2026, use Linux 6.18.4 or newer and linux-firmware 20260110 or
 newer. The [host configuration guide](https://github.com/gufo-org/toolboxes/blob/main/docs/host-configuration.md)
-lists the kernel parameters and known bad versions. After installing, run
-`gufo diagnose` to check the setup; [troubleshooting](troubleshooting.md)
-explains its findings.
+lists known bad versions. After installing, run `gufo diagnose` to check the
+setup; [troubleshooting](troubleshooting.md) explains its findings.
+
+### Memory settings
+
+The GPU shares system RAM. Let it use almost all of it, through the kernel's
+**GTT** (the system memory the GPU can map), rather than reserving it in the
+BIOS:
+
+1. In the BIOS, set the GPU's dedicated memory (UMA frame buffer or iGPU
+   memory size) to its minimum, 512 MiB.
+2. Add these kernel parameters to the boot command line (on NixOS,
+   `boot.kernelParams`). For 128 GiB of RAM they give the GPU 124 GiB and leave
+   4 GiB to the system:
+
+   ```text
+   amdgpu.gttsize=126976 ttm.pages_limit=32505856
+   ```
+
+   For another size, `amdgpu.gttsize` is your RAM in MiB minus 4096, and
+   `ttm.pages_limit` is that value times 256 (4 KiB pages).
+3. Allow unlimited locked memory: `LimitMEMLOCK=infinity` for a systemd
+   service, or `memlock unlimited` in `/etc/security/limits.d/` for your
+   user.
+
+Reboot and check:
+
+```sh
+cat /sys/class/drm/card*/device/mem_info_vram_total   # 536870912 (512 MiB)
+cat /sys/class/drm/card*/device/mem_info_gtt_total    # about your RAM minus 4 GiB
+ulimit -l                                             # unlimited
+```
+
+Gufo runs with other values, but with a GTT limit well below your RAM the RAM
+cache cannot borrow memory that sessions have reserved and not used yet, and
+with locked memory limited, GPU work can stall for seconds while the kernel
+compacts memory.
 
 For `--npu`, keep the NPU out of runtime suspend. Otherwise, the first request
 after 5 s idle takes about 110 ms longer. The setting resets at boot:
@@ -101,9 +135,10 @@ toolchain: GCC 16.2 and ROCm 10.1.0. Without Nix, install these first:
 | C++20 compiler, CMake 3.21+, Ninja, pkg-config | Building |
 | ROCm HIP, hipBLAS, hipBLASLt, rocBLAS, hipCUB, rocPRIM, rocWMMA | GPU execution |
 | XRT with the amdxdna plugin | NPU execution |
-| ICU, libcurl, OpenSSL, libpng, libjpeg, libwebp | Tokenization, HTTPS, hashing, images |
-| Rust 1.88 or newer, libopus | PNG, WAV and audio decoding |
+| ICU, libcurl, OpenSSL, libpng, libwebp | Tokenization, HTTPS, hashing, images |
+| Rust 1.88 or newer, libopus | PNG, JPEG, WAV and audio decoding |
 | FFmpeg libraries | EmbeddingGemma 2 only |
+| CMake 3.26+ (4.2+ on Windows), Python 3.12+, network access | Building the [Loom runtime](models/loom.md#platforms) from its pinned release |
 | `ffmpeg` and `ffprobe` | Video and audio output |
 
 On Debian or Ubuntu, with
@@ -112,7 +147,7 @@ set up:
 
 ```sh
 sudo apt install build-essential cmake ninja-build pkg-config \
-  libicu-dev libcurl4-openssl-dev libssl-dev libpng-dev libjpeg-dev libwebp-dev \
+  libicu-dev libcurl4-openssl-dev libssl-dev libpng-dev libwebp-dev \
   libopus-dev \
   libavformat-dev libavcodec-dev libavutil-dev libswscale-dev ffmpeg \
   hipblas-dev hipblaslt-dev rocblas-dev \
@@ -150,17 +185,22 @@ next to its DLLs and kernel folders. To build it yourself, see
 
 ## Model files
 
-Each extension pins the weights its models run on: a Hugging Face revision and
-every file's size and SHA-256. `gufo model` downloads them and checks each
-file:
+Extensions can pin weights by Hugging Face revision, file size and SHA-256.
+`gufo model` downloads those weights and checks each file:
 
 ```sh
 gufo model list                   # every model and the extension that offers it
 gufo model install qwen3-asr      # download it
+gufo model install loom-fun/<name>   # an extension resolves the repository
 gufo transcribe --model qwen3-asr --audio speech.wav
 gufo model update                 # move to the files extensions pin now
 gufo model remove qwen3-asr
 ```
+
+`gufo model list --registry` adds the models of [registry](extensions.md)
+extensions you have not installed, read with Git from each reviewed commit
+without building it. A model without a size pins no download; pass its weights'
+path to `--model`. `--json` reports `extensionStatus` and `downloadable`.
 
 Pass an installed model's ID to `--model`; a path still works for weights you
 download yourself. `install` also fetches a model's default companions, such as
@@ -175,3 +215,36 @@ store it once.
 A Hugging Face token is optional. Set `HF_TOKEN`, or run `hf auth login`, for
 gated models and higher rate limits; Gufo sends it only to Hugging Face, never
 to the download servers it redirects to. `HF_ENDPOINT` selects a mirror.
+
+## Scheduled models on NixOS
+
+Import `gufo.nixosModules.model-sync` from your Gufo flake input:
+
+```nix
+{
+  imports = [ gufo.nixosModules.model-sync ];
+  services.gufo-model-sync = {
+    enable = true;
+    models = [ "qwen27-q4" "qwen3-asr" ];
+    onCalendar = "daily";
+    randomizedDelaySec = "30m";
+  };
+}
+```
+
+Only the calendar timer starts sync; activation and boot do not start it or
+catch up missed runs. It installs missing models and calls `gufo model update`
+for installed ones, following the files pinned by their local extensions.
+It never installs extensions, deletes undeclared models or starts Gufo.
+llama-swap can launch Gufo independently using `--model <ID>`.
+
+The default account is `gufo` and the model directory is `/var/lib/gufo/models`.
+Set `user`, `group` and `directory` to share readable files with your inference
+process; give that process the same `GUFO_MODELS_DIR`.
+
+Evaluation rejects IDs that no extension built into `package` offers. To sync
+an external extension's model, [compile it in](extensions.md#compiling-an-extension-in)
+and pass that package as `package`. Each run still checks `gufo model list --json`
+before downloading. For custom deployment hooks, `gufo.lib.mkModelSync {
+inherit pkgs; models = [ "qwen27-q4" ]; }` returns the same executable without
+configuring a service or timer.

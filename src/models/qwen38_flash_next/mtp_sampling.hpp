@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <gufo/ext/sampling.hpp>
+#include <optional>
 #include <span>
 #include <stdexcept>
 
@@ -110,9 +111,11 @@ inline MtpVerification VerifyMtpTarget(std::size_t vocab,
 
 inline MtpVerification VerifyMtpProposal(std::span<const float> logits,
                                          const MtpProposal& proposal,
-                                         sampling::SamplerState& sampler) {
-  return VerifyMtpTarget(logits.size(), proposal, sampler,
-                         [&] { return sampler.Distribution(logits); });
+                                         sampling::SamplerState& sampler,
+                                         double mass_tolerance = 0.0) {
+  return VerifyMtpTarget(
+      logits.size(), proposal, sampler,
+      [&] { return sampler.Distribution(logits); }, mass_tolerance);
 }
 
 inline MtpVerification VerifyMtpProposal(
@@ -121,6 +124,20 @@ inline MtpVerification VerifyMtpProposal(
   return VerifyMtpTarget(vocab, proposal, sampler, [&] {
     return sampler.DistributionFromCandidates(candidates);
   });
+}
+
+inline std::optional<MtpVerification> TryVerifyMtpProposal(
+    std::span<const sampling::LogitCandidate> candidates,
+    std::size_t unpenalized_count, std::size_t vocab,
+    const MtpProposal& proposal, sampling::SamplerState& sampler,
+    double mass_tolerance = 0.0) {
+  auto target =
+      sampler.TryDistributionFromCandidates(candidates, unpenalized_count);
+  if (!target)
+    return std::nullopt;
+  return VerifyMtpTarget(
+      vocab, proposal, sampler, [&] { return std::move(*target); },
+      mass_tolerance);
 }
 
 /// The draft is deterministic, so an exact target sample decides acceptance.

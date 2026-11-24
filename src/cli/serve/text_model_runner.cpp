@@ -16,6 +16,8 @@
 #include "src/cli/serve/component_text_cache.hpp"
 #include "src/cli/serve/logging.hpp"
 #include "src/core/json.hpp"
+#include "src/mem/account.hpp"
+#include "src/mem/ledger.hpp"
 
 namespace gufo::server {
 
@@ -73,7 +75,10 @@ std::optional<ChatRequest> ConstrainChatRequest(
     std::vector<sampling::JsonConstraint::Tool> tools;
     const bool required =
         request.tool_choice == ChatRequest::ToolChoice::kRequired;
-    const auto* syntax = selected.format ? nullptr : &*selected.dialect->syntax;
+    const auto native_syntax = runner.ToolGrammarSyntax(request);
+    const auto* syntax = native_syntax     ? &*native_syntax
+                         : selected.format ? nullptr
+                                           : &*selected.dialect->syntax;
     const auto format = selected.format.value_or(Format::kJson);
     for (const auto& tool : request.tools) {
       const auto definition = tool.definition_json.empty()
@@ -126,7 +131,8 @@ std::optional<ChatRequest> ConstrainChatRequest(
   // parsers do. Reasoning the prompt opened may still repeat the opener;
   // otherwise the model may open it itself unless the request disabled it.
   const auto initial = runner.InitialOutputState(request);
-  const auto reasoning = runner.ReasoningDelimiters();
+  const auto reasoning = runner.ReasoningGrammarMarkers(request).value_or(
+      runner.ReasoningDelimiters());
   if (initial == ext::InitialOutputState::kReasoning)
     grammar = sampling::JsonConstraint::WithReasoning(grammar, reasoning.close);
   else if (initial == ext::InitialOutputState::kAuto &&
@@ -144,6 +150,8 @@ struct ValidatedRunner {
   TextRunnerDescriptor descriptor;
   TextRunnerResourceClaim resources;
   std::vector<TextExecutionPlan> plans;
+  /// Set when the sessions share their demand-mapped state (#715).
+  std::optional<mem::SessionFit> shared_state;
 };
 
 std::optional<std::size_t> PerStateReservationBytes(
@@ -194,11 +202,17 @@ ValidatedRunner ValidateRunner(std::shared_ptr<TextModelRunner> runner,
 
   auto resources = runner->ResourceClaim();
   const auto per_state_reservation = PerStateReservationBytes(resources);
+  std::optional<mem::SessionFit> shared_state;
   if (resources.state_capacity_bytes.has_value() &&
       per_state_reservation.has_value()) {
     const std::size_t per_request = *per_state_reservation;
     const std::size_t capacity = *resources.state_capacity_bytes;
-    if (per_request != 0 && state_count > capacity / per_request) {
+    const auto fit = mem::FitSessions(
+        state_count, per_request,
+        resources.demand_mapped_state_bytes.value_or(0), capacity);
+    if (fit.kind == mem::SessionFit::Kind::kShared) {
+      shared_state = fit;
+    } else if (fit.kind == mem::SessionFit::Kind::kRefused) {
       const auto describe = [](std::size_t bytes) {
         std::ostringstream text;
         text << bytes << " bytes (" << std::fixed << std::setprecision(1)
@@ -206,7 +220,7 @@ ValidatedRunner ValidateRunner(std::shared_ptr<TextModelRunner> runner,
              << " GiB)";
         return text.str();
       };
-      const std::size_t fitting = capacity / per_request;
+      const std::size_t fitting = fit.full_sessions;
       std::ostringstream message;
       message << "text runner request-state claim exceeds state capacity: "
               << state_count << " sessions at " << descriptor.max_context
@@ -263,8 +277,41 @@ ValidatedRunner ValidateRunner(std::shared_ptr<TextModelRunner> runner,
       .descriptor = std::move(descriptor),
       .resources = resources,
       .plans = std::move(plans),
+      .shared_state = shared_state,
   };
 }
+
+/// Caps the state ledger's promise while sessions share their state, from
+/// before their regions exist until after they are gone.
+class SharedStateCap {
+public:
+  SharedStateCap(const std::optional<mem::SessionFit>& fit,
+                 std::size_t sessions, std::uint32_t context) {
+    if (!fit)
+      return;
+    auto& ledger = mem::StateLedger::Process();
+    if (ledger.PromiseCap() != 0)
+      throw std::logic_error(
+          "only one text model may share session state per process");
+    ledger.SetPromiseCap(fit->cap_bytes);
+    active_ = true;
+    Logger::Info(
+        "memory",
+        "event=sessions_share_state sessions=" + std::to_string(sessions) +
+            " context=" + std::to_string(context) +
+            " full_context_sessions=" + std::to_string(fit->full_sessions) +
+            " shared_state_bytes=" + std::to_string(fit->cap_bytes));
+  }
+  ~SharedStateCap() {
+    if (active_)
+      mem::StateLedger::Process().SetPromiseCap(0);
+  }
+  SharedStateCap(const SharedStateCap&) = delete;
+  SharedStateCap& operator=(const SharedStateCap&) = delete;
+
+private:
+  bool active_{false};
+};
 
 }  // namespace
 
@@ -272,13 +319,20 @@ struct TextRunnerPool::Impl {
   Impl(std::shared_ptr<TextModelRunner> model_runner, std::size_t state_count,
        std::optional<TextRunnerDiskCacheOptions> disk_cache_options,
        TextRunnerRamCacheOptions ram_cache_options)
-      : validated(ValidateRunner(std::move(model_runner), state_count)) {
+      : validated(ValidateRunner(std::move(model_runner), state_count)),
+        shared_state_cap(validated.shared_state, state_count,
+                         validated.descriptor.max_context) {
     {
       const auto resources = validated.runner->ResourceClaim();
+      // State sessions were promised but have not written can hold cache
+      // payloads until a session needs the pages back (src/mem/lendable.hpp);
+      // zero unless the backend can lend them.
+      const auto borrowable = mem::StateLedger::Process().BorrowableBytes();
       const auto automatic =
-          resources.retained_snapshot_capacity_bytes.value_or(0);
+          resources.retained_snapshot_capacity_bytes.value_or(0) + borrowable;
       const auto ceiling =
-          resources.retained_snapshot_ceiling_bytes.value_or(automatic);
+          resources.retained_snapshot_ceiling_bytes.value_or(automatic) +
+          borrowable;
       const auto requested =
           ram_cache_options.capacity_bytes
               ? ram_cache_options.capacity_bytes
@@ -293,7 +347,10 @@ struct TextRunnerPool::Impl {
       // metadata still needs a little room, or the load fails before the
       // cache can serve with the RAM cache off.
       // ResourceExhausted is a bad_alloc without a message of its own; name
-      // the budget it refers to instead of a bare "std::bad_alloc".
+      // the budget it refers to instead of a bare "std::bad_alloc". Sample
+      // the host before the slots allocate: the refusal judged that state,
+      // and unwinding frees them before the handler runs.
+      const auto host = ext::SampleHostMemory();
       try {
         component_cache = std::make_unique<ComponentTextCache>(
             validated.runner, state_count, std::min(requested, ceiling),
@@ -301,6 +358,12 @@ struct TextRunnerPool::Impl {
             std::max(ceiling, ComponentTextCache::kOffMetadataBytes),
             ram_cache_options.enabled);
       } catch (const cache::ResourceExhausted&) {
+        Logger::Warn("cache",
+                     "schema=component-cache-v1 event=ram_cache_refused "
+                     "sessions=" +
+                         std::to_string(state_count) + " budget_bytes=" +
+                         std::to_string(std::min(requested, ceiling)) + " " +
+                         ext::DescribeHostMemory(host));
         throw std::runtime_error(
             "the RAM cache budget was exhausted while preparing " +
             std::to_string(state_count) +
@@ -325,7 +388,19 @@ struct TextRunnerPool::Impl {
     }
   }
 
+  ext::HostMemorySample HostSample() const {
+    std::function<ext::HostMemorySample()> sampler;
+    {
+      const std::lock_guard lock(host_sampler_mutex);
+      sampler = host_sampler;
+    }
+    return sampler ? sampler() : ext::SampleHostMemory();
+  }
+  mutable std::mutex host_sampler_mutex;
+  std::function<ext::HostMemorySample()> host_sampler;
   ValidatedRunner validated;
+  // Declared before the cache: the cap outlives the sessions' regions.
+  SharedStateCap shared_state_cap;
   std::unique_ptr<ComponentTextCache> component_cache;
   // Publish a live checkpoint before another admission can fall back to the
   // older prompt snapshot. Decode/prefill work never holds this mutex.
@@ -409,17 +484,18 @@ struct TextRunnerPool::Request::Impl {
       if (count > prefill_offset && count < prompt.size()) {
         count = std::max(Aligned(count), prefill_offset);
       } else if (const auto aligned = Aligned(count);
-                 aligned > prefill_offset && aligned < count &&
-                 lease->TryReserveSnapshot(
-                     // A split pass captures the live state at its end. Its
-                     // adapter need not support predicting an in-pass capture.
-                     // CapturePromptSnapshot checks the exact bytes at that
-                     // end.
-                     runner->Descriptor().capabilities.in_pass_checkpoint
-                         ? lease->CaptureBytes(aligned)
-                         : lease->CaptureBytes(),
-                     aligned, retain_fallback, SnapshotPurpose::kContinuation,
-                     std::span<const TextRunnerToken>(prompt).first(aligned))) {
+                 aligned > prefill_offset && aligned < count && [&] {
+                   const auto bytes =
+                       runner->Descriptor().capabilities.in_pass_checkpoint
+                           ? lease->CaptureBytes(aligned)
+                           : lease->CaptureBytes();
+                   return bytes &&
+                          lease->TryReserveSnapshot(
+                              *bytes, aligned, retain_fallback,
+                              SnapshotPurpose::kContinuation,
+                              std::span<const TextRunnerToken>(prompt).first(
+                                  aligned));
+                 }()) {
         // A disabled cache (or a refused disk-only capture) must not prepare
         // checkpoint scratch or split a pass for a fallback it cannot keep.
         count = aligned;
@@ -456,6 +532,7 @@ struct TextRunnerPool::Request::Impl {
       checkpoints.erase(std::ranges::unique(checkpoints).begin(),
                         checkpoints.end());
     }
+    lease->PersistGrid(checkpoints, snapshot_tokens.size());
   }
 
   /// The prompt context's stop for `position`. A hook moving the wrong way
@@ -1098,7 +1175,8 @@ TextPrefillStep TextRunnerPool::Request::Prefill(std::size_t max_input_tokens,
         // Admission happens before the pass, as for the prompt snapshot
         // captured after one; later targets are admitted when captured.
         bytes = impl_->lease->CaptureBytes(snapshot_position);
-        if (impl_->lease->TryReserveSnapshot(
+        if (bytes &&
+            impl_->lease->TryReserveSnapshot(
                 *bytes, snapshot_position,
                 impl_->retain_fallback && impl_->fallback_position == 0,
                 SnapshotPurpose::kContinuation, impl_->snapshot_tokens)) {
@@ -1536,6 +1614,13 @@ TextRunnerPool::Request::Cancel() noexcept {
   }
 }
 
+std::shared_ptr<mem::StateAccount> TextRunnerPool::Request::state_account()
+    const {
+  if (impl_ == nullptr)
+    return nullptr;
+  return dynamic_cast<TextRunnerState&>(impl_->lease->state()).state_account();
+}
+
 void TextRunnerPool::Request::Invalidate() noexcept {
   if (impl_ != nullptr) {
     if (impl_->snapshot_future.valid())
@@ -1558,6 +1643,25 @@ TextRunnerPool::~TextRunnerPool() = default;
 
 const TextModelRunner& TextRunnerPool::runner() const noexcept {
   return *impl_->validated.runner;
+}
+
+void TextRunnerPool::Idle() const {
+  impl_->validated.runner->Idle();
+  if (impl_->component_cache)
+    (void)impl_->component_cache->RelieveHostPressure(impl_->HostSample());
+}
+
+std::optional<std::uint64_t> TextRunnerPool::AdmissionShortfall() const {
+  const auto shortfall = ext::HostReserveShortfallBytes(impl_->HostSample());
+  if (shortfall <= kAdmissionShortfallBytes)
+    return std::nullopt;
+  return shortfall;
+}
+
+void TextRunnerPool::SetHostSampler(
+    std::function<ext::HostMemorySample()> sampler) {
+  const std::lock_guard lock(impl_->host_sampler_mutex);
+  impl_->host_sampler = std::move(sampler);
 }
 
 const TextRunnerResourceClaim& TextRunnerPool::resource_claim() const noexcept {
@@ -1742,7 +1846,8 @@ TextRunnerPool::Request TextRunnerPool::Acquire(
     const sampling::SamplingConfig& sampling_config,
     const CancellationCheck& is_cancelled,
     std::shared_ptr<const TextPromptContext> context, bool reuse_prompt,
-    std::size_t cache_prefix_tokens, bool stop_at_eos, bool persist) {
+    std::size_t cache_prefix_tokens, bool stop_at_eos, bool persist,
+    StateTicket* state, const RestoreCopyRunner& run_copies) {
   sampling_config.Validate();
   if (prompt.empty()) {
     throw std::invalid_argument("text runner prompt must not be empty");
@@ -1762,7 +1867,8 @@ TextRunnerPool::Request TextRunnerPool::Acquire(
   {
     auto lease = impl_->component_cache->Acquire(
         prompt, is_cancelled, context, reuse_prompt, cache_prefix_tokens,
-        stop_at_eos, persist);
+        stop_at_eos, persist, state ? state->tokens : 0,
+        state ? &state->reservation : nullptr, run_copies);
     if (!lease)
       return {};
     Request request(std::make_unique<Request::Impl>(
@@ -1774,7 +1880,7 @@ TextRunnerPool::Request TextRunnerPool::Acquire(
       const auto common = impl_->component_cache->CachedPrefixTokens(
           request.prompt(), request.impl_->context.get(), true);
       if (common >=
-              request.prefill_position() + Request::kSharedPrefixMinTokens &&
+              request.prefill_position() + Request::kSharedBranchMinTokens &&
           (common + Request::kSharedCheckpointSlack < request.prompt_tokens() ||
            (impl_->shared_prefix_max_boundaries &&
             common >= impl_->shared_prefix_min_tokens &&
@@ -1791,11 +1897,116 @@ TextRunnerPool::Request TextRunnerPool::Acquire(
   return Acquire(std::move(prompt), sampling::SamplingConfig{}, is_cancelled);
 }
 
+bool TextRunnerPool::restores_beside_decode() const noexcept {
+  return impl_->component_cache->restores_beside_decode();
+}
+
+bool TextRunnerPool::shared_state() const noexcept {
+  return impl_->component_cache->shared_state();
+}
+
+std::optional<std::size_t> TextRunnerPool::StateClaimTokens(
+    std::size_t prompt_tokens, std::size_t max_new_tokens) const {
+  const std::size_t context = impl_->validated.descriptor.max_context;
+  std::size_t tokens = std::min(
+      context, prompt_tokens + std::min(max_new_tokens, kStateDecodeTokens));
+  if (!shared_state())
+    return tokens;
+  const std::size_t cap = mem::StateLedger::Process().PromiseCap();
+  auto& cache = *impl_->component_cache;
+  if (cache.StateBytesFor(tokens) <= cap)
+    return tokens;
+  const std::size_t least = std::min(context, prompt_tokens + 1);
+  if (cache.StateBytesFor(least) > cap)
+    return std::nullopt;
+  // The most decode tokens the budget could ever hold beside the prompt.
+  std::size_t low = least, high = tokens;
+  while (high - low > 1) {
+    const std::size_t mid = low + (high - low) / 2;
+    (cache.StateBytesFor(mid) <= cap ? low : high) = mid;
+  }
+  return low;
+}
+
+std::size_t TextRunnerPool::MaxPromptTokens() const {
+  // A prompt leaves at least one token of the context to generate.
+  const std::size_t context = impl_->validated.descriptor.max_context;
+  if (!shared_state())
+    return context - 1;
+  const std::size_t cap = mem::StateLedger::Process().PromiseCap();
+  auto& cache = *impl_->component_cache;
+  if (cache.StateBytesFor(context) <= cap)
+    return context - 1;
+  std::size_t low = 0, high = context;
+  while (high - low > 1) {
+    const std::size_t mid = low + (high - low) / 2;
+    (cache.StateBytesFor(mid) <= cap ? low : high) = mid;
+  }
+  // One generated token beside the prompt.
+  return low > 0 ? low - 1 : 0;
+}
+
+std::optional<TextRunnerPool::StateTicket> TextRunnerPool::ReserveState(
+    std::size_t tokens, std::span<const TextRunnerToken> prompt,
+    const TextPromptContext* context) {
+  auto& cache = *impl_->component_cache;
+  const std::size_t bytes = cache.StateBytesFor(tokens);
+  StateTicket ticket{.tokens = tokens,
+                     .reservation = mem::StateReservation(bytes)};
+  if (!ticket.reservation.ok()) {
+    // Waiters retry on every scheduler turn: skip the prefix lookup when
+    // even everything reclaimable would not cover them.
+    const auto& ledger = mem::StateLedger::Process();
+    if (ledger.ChargeableBytes() + cache.ReclaimableStateBytes() < bytes ||
+        !cache.ReclaimState(bytes, prompt, context,
+                            ComponentTextCache::kStateWriteWait))
+      return std::nullopt;
+    ticket.reservation = mem::StateReservation(bytes);
+    if (!ticket.reservation.ok())
+      return std::nullopt;
+  }
+  return ticket;
+}
+
+std::size_t TextRunnerPool::ReclaimableStateBytes() const {
+  return impl_->component_cache->ReclaimableStateBytes();
+}
+
+bool TextRunnerPool::ExtendState(Request& request, std::size_t tokens) {
+  const auto account = request.state_account();
+  if (!account)
+    return true;
+  tokens =
+      std::min<std::size_t>(tokens, impl_->validated.descriptor.max_context);
+  if (account->Claim(tokens))
+    return true;
+  const std::size_t needed =
+      account->BytesFor(tokens) > account->charged_bytes()
+          ? account->BytesFor(tokens) - account->charged_bytes()
+          : 0;
+  auto& cache = *impl_->component_cache;
+  if (mem::StateLedger::Process().ChargeableBytes() +
+          cache.ReclaimableStateBytes() <
+      needed)
+    return false;
+  return cache.ReclaimState(needed, request.prompt(),
+                            request.impl_->context.get()) &&
+         account->Claim(tokens);
+}
+
 std::optional<TextPendingPublication> TextRunnerPool::PendingPublication(
     std::span<const TextRunnerToken> prompt, const TextPromptContext* context,
     std::uint64_t checkpoint_id) const {
   return impl_->component_cache->PendingPublication(prompt, context,
                                                     checkpoint_id);
+}
+
+std::shared_ptr<const std::atomic<bool>> TextRunnerPool::WarmDisk(
+    std::span<const TextRunnerToken> prompt, const TextPromptContext* context,
+    std::size_t stable, std::chrono::microseconds beside_after) const {
+  return impl_->component_cache ? impl_->component_cache->WarmDisk(
+                                      prompt, context, stable, beside_after)
+                                : nullptr;
 }
 
 std::size_t TextRunnerPool::CachedPrefixTokens(
