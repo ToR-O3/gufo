@@ -319,7 +319,8 @@ void PagePool::BorrowBelowFloor(std::size_t pages) {
     if (free_.size() + recycled_.size() >= pages)
       return;
   }
-  if (!may_create_(pages * kPageBytes))
+  if (!may_create_(pages * kPageBytes) &&
+      host_available_() < floor_bytes_ + pages * kPageBytes)
     (void)Borrow(std::max(pages, kBorrowBatchPages));
 }
 
@@ -544,7 +545,11 @@ void PagePool::Run() {
       // Free 2 MiB blocks first: a page made from them costs no reclaim.
       bool create = may_create_(kPageBytes);
       const std::size_t free = free_.size() + recycled_.size();
-      if (!create && free < kLowPages) {
+      // Fragmentation alone is not host pressure: shedding a hot checkpoint
+      // here can turn another session's restore into a full prefill. Above
+      // the host floor, use the bounded creation fallback below instead.
+      if (!create && free < kLowPages &&
+          host_available_() < floor_bytes_ + kPageBytes) {
         // Otherwise take pages the RAM cache borrowed from the promised
         // state: a map, no new memory. Only up to the low watermark: pages
         // beyond it would sit idle here while the cache could serve them.

@@ -22,6 +22,10 @@ if (ENGINE_ENABLE_HIP)
   add_test(NAME mem_region_test COMMAND mem_region_test)
   set_tests_properties(mem_region_test PROPERTIES
     LABELS "mem;hip;gpu;gfx1151" TIMEOUT 120)
+  add_test(NAME mem_cache_lending_pressure_test
+    COMMAND mem_region_test --cache-lending-pressure)
+  set_tests_properties(mem_cache_lending_pressure_test PROPERTIES
+    LABELS "mem;hip;gpu;gfx1151" TIMEOUT 30)
   add_executable(mem_session_state_test session_state_test.cpp)
   set_source_files_properties(session_state_test.cpp PROPERTIES LANGUAGE HIP)
   target_link_libraries(mem_session_state_test PRIVATE gufo_mem_hip)

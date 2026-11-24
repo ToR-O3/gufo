@@ -4,11 +4,14 @@
 #include <hip/hip_runtime.h>
 
 #include <algorithm>
+#include <atomic>
 #include <cassert>
+#include <chrono>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <thread>
 #include <vector>
 
 #include "src/core/hip/state_memory.hpp"
@@ -623,11 +626,59 @@ void SharedSegments() {
   assert(pool->Stats().pages_in_use == used_before);
 }
 
+// Fragmentation alone must not evict reusable checkpoints. Real host
+// pressure still asks lenders for pages before attempting new allocations.
+void CacheLendingPressure() {
+  class CountingLender final : public gufo::mem::PageLender {
+  public:
+    std::atomic<unsigned> calls{0};
+    std::size_t Lend(std::size_t,
+                     std::vector<hipMemGenericAllocationHandle_t>&) override {
+      ++calls;
+      return 0;
+    }
+    bool TakeBack(hipMemGenericAllocationHandle_t) override { return false; }
+  };
+  constexpr std::uint64_t floor = 1ULL << 30;
+  for (const bool pressure : {false, true}) {
+    auto lender = std::make_shared<CountingLender>();
+    auto pool = std::make_shared<PagePool>(
+        0, [](std::uint64_t) { return false; },
+        [pressure] { return pressure ? floor : 2 * floor; }, floor);
+    pool->AddLender(lender);
+    auto& ledger = StateLedger::Process();
+    ledger.AddReserved(kPageBytes);
+    pool->Warm(kPageBytes);
+    const auto deadline =
+        std::chrono::steady_clock::now() + std::chrono::seconds(5);
+    while (!(pressure ? lender->calls.load() > 0
+                      : pool->Stats().created_ahead > 0) &&
+           std::chrono::steady_clock::now() < deadline)
+      std::this_thread::yield();
+    pool->Stop();
+    if (pressure) {
+      assert(lender->calls > 0);
+      assert(pool->Stats().created_ahead == 0);
+    } else {
+      assert(pool->Stats().created_ahead > 0);
+      assert(lender->calls == 0);
+    }
+    ledger.RemoveReserved(kPageBytes);
+  }
+}
+
 }  // namespace
 
-int main() {
+int main(int argc, char** argv) {
   Check(hipSetDevice(0), "device");
   const bool demand = PagePool::ForDevice(0) != nullptr;
+  if (argc == 2 && std::string(argv[1]) == "--cache-lending-pressure") {
+    assert(demand);
+    PagePool::ForDevice(0)->Stop();
+    CacheLendingPressure();
+    std::puts("mem_region_test: cache lending pressure ok");
+    return 0;
+  }
   if (!demand)
     EagerClearBeforeFirstWrite();
   Segments(demand);
@@ -643,6 +694,7 @@ int main() {
   SharedPages();
   SharedSegments();
   Lending();
+  CacheLendingPressure();
   const auto stats =
       PagePool::ForDevice(0)->Stats();  // after Stop: counters only
   std::printf(
