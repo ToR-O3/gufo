@@ -1932,7 +1932,9 @@ std::unique_ptr<ComponentTextCache::Lease> ComponentTextCache::Acquire(
           request.source = checkpoint.Id();
           {
             const std::lock_guard lock(impl_->mutex);
-            impl_->retention.Touch(checkpoint.Id());
+            // Making room for the restore may evict the retention record.
+            // The pinned checkpoint and validated state remain usable.
+            (void)impl_->retention.TryTouch(checkpoint.Id());
           }
           restored = true;
         } else if (candidate.durable && impl_->streaming) {

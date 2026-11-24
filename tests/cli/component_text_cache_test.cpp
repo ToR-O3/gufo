@@ -1067,6 +1067,54 @@ void FailedRestoreResetsOnce() {
   assert(runner->adapter->RecurrentHash(cold.slot) ==
          runner->adapter->RecurrentHash(state.slot));
 }
+// A restore pins its checkpoint even if making room for its state evicts
+// the retention record. Losing that record must not discard restored state.
+void RestoreSurvivesRetentionEviction() {
+  struct EvictingAdapter final : FakeAdapter {
+    std::function<void()> evict;
+    std::vector<cache::RestoredRows> BeginSharedRestore(
+        cache::Slot& slot, std::span<const cache::ComponentPosition> positions,
+        std::span<const cache::RestoreSource>) override {
+      BeginRestore(slot, positions);
+      if (evict)
+        evict();
+      return {};
+    }
+  };
+  struct EvictingRunner final : Runner {
+    mutable EvictingAdapter* evicting{};
+    std::unique_ptr<ComponentCacheResources> CreateComponentCacheResources(
+        cache::ResourceLedger& ledger, std::size_t) const override {
+      auto owned = std::make_unique<EvictingAdapter>();
+      adapter = evicting = owned.get();
+      auto resources =
+          server::testing::MakeFakeCacheResources(ledger, std::move(owned));
+      resources->release_host = [](std::size_t) { return std::size_t{0}; };
+      return resources;
+    }
+  };
+  auto runner = std::make_shared<EvictingRunner>();
+  ComponentTextCache cache(runner, 2, 1 << 22, {});
+  const std::vector<TextRunnerToken> prompt{1, 2, 3};
+  auto source = cache.Acquire(prompt, {}, {}, true, 0, true);
+  auto& state = dynamic_cast<State&>(source->state());
+  runner->adapter->Append(state.slot, prompt, prompt);
+  const auto hash = runner->adapter->RecurrentHash(state.slot);
+  assert(source->TryReserveSnapshot(source->CaptureBytes(), prompt.size(),
+                                    false, SnapshotPurpose::kContinuation, {}));
+  assert(source->PublishSnapshot(prompt, source->Capture(), false));
+  bool evicted = false;
+  runner->evicting->evict = [&] {
+    (void)cache.RelieveHostPressure({.available = std::uint64_t{3} << 30});
+    evicted = true;
+  };
+  auto restored = cache.Acquire(prompt, {}, {}, true, 0, true);
+  assert(evicted);
+  assert(restored->cached_tokens() == prompt.size());
+  assert(restored->restored_snapshot_bytes() > 0);
+  assert(runner->adapter->RecurrentHash(
+             dynamic_cast<State&>(restored->state()).slot) == hash);
+}
 void RestoreFromBusyBorrowedSource() {
   auto runner = std::make_shared<Runner>();
   ComponentTextCache cache(runner, 2, 1 << 22, {});
@@ -4965,6 +5013,7 @@ int main() {
   ColdAssignmentAvoidsDrainingCancelledSlot(true);
   ColdAssignmentKeepsOneDuplicateDeepFrontier();
   FailedRestoreResetsOnce();
+  RestoreSurvivesRetentionEviction();
   RestoreFromBusyBorrowedSource();
   ImageAfterCachedTextPrefixCaptures();
   ColdAssignmentPrefersPreservedSlot();

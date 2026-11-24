@@ -870,9 +870,13 @@ bool RetentionPolicy::IsUnusedFrontier(CheckpointId id) const {
          !records_[i].frontier_used && !records_[i].forked && !Branch(i);
 }
 void RetentionPolicy::Touch(CheckpointId id) {
+  if (!TryTouch(id))
+    throw std::invalid_argument("unknown retained checkpoint");
+}
+bool RetentionPolicy::TryTouch(CheckpointId id) {
   const auto i = Find(id);
   if (i == limit_)
-    throw std::invalid_argument("unknown retained checkpoint");
+    return false;
   auto& e = records_[i];
   e.last_used = ++clock_;
   e.frontier_used = true;
@@ -880,6 +884,7 @@ void RetentionPolicy::Touch(CheckpointId id) {
   e.used_bytes = admitted_bytes_;
   Emit(RetentionAction::kTouched, RetentionReason::kExplicit, id,
        e.checkpoint->Boundary(), e.purpose, Priority(i), e.last_used);
+  return true;
 }
 void RetentionPolicy::Remove(CheckpointId id) {
   const auto i = Find(id);

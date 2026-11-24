@@ -163,6 +163,8 @@ public:
   void SetDemotion(std::function<void(std::shared_ptr<const Checkpoint>)>);
   [[nodiscard]] bool IsUnusedFrontier(CheckpointId) const;
   void Touch(CheckpointId);
+  // A pinned restore may outlive its retention record.
+  [[nodiscard]] bool TryTouch(CheckpointId);
   void Remove(CheckpointId);
   [[nodiscard]] std::uint32_t Rank(CheckpointId) const;
   [[nodiscard]] std::size_t Size() const { return size_; }
