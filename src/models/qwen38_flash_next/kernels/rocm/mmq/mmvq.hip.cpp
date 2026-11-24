@@ -582,6 +582,7 @@ __launch_bounds__(64) static __global__
 // 2..8 tokens append a multi-token group, experts one token uses append a
 // single-token group. The append order affects scheduling only: no two groups
 // write the same output element.
+template<bool split_single = true>
 static __global__ void group_moe_batch_split(const int32_t* ids,
                                              int32_t* storage, int tokens,
                                              int experts_used) {
@@ -624,7 +625,7 @@ static __global__ void group_moe_batch_split(const int32_t* ids,
       g.slots[count++] = mask;
     }
   }
-  if (count == 1) {
+  if (split_single && count == 1) {
     auto& group = single_groups[atomicAdd(storage + 1, 1)];
     group.expert = expert;
     group.anchor = anchor;
@@ -661,7 +662,7 @@ __launch_bounds__(64) static __global__ void mul_mat_vec_moe_iq_pair_kernel(
   float* output = is_up ? up_out : gate_out;
   const int row0 = blockIdx.x * 2;
   const int blocks_per_row = k / qk;
-  const auto* groups = reinterpret_cast<const MoeBatchGroup*>(storage + 1);
+  const auto* groups = reinterpret_cast<const MoeBatchGroup*>(storage + 2);
   for (int entry = blockIdx.y; entry < storage[0]; entry += gridDim.y) {
     const auto& group = groups[entry];
     if (group.expert < 0) {
@@ -713,7 +714,7 @@ hipError_t mul_mat_vec_moe_iq_pair(const void* gate, const void* up, ggml_type t
                                   int32_t* groups, float* gate_out, float* up_out,
                                   int k, int rows, int tokens, int experts_used,
                                   int input_stride, hipStream_t stream) {
-  group_moe_batch<<<(tokens * experts_used + 127) / 128, 128, 0, stream>>>(
+  group_moe_batch_split<false><<<(tokens * experts_used + 127) / 128, 128, 0, stream>>>(
       ids, groups, tokens, experts_used);
   const auto status = hipGetLastError();
   if (status != hipSuccess)

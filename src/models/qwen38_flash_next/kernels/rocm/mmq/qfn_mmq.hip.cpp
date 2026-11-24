@@ -427,7 +427,9 @@ static int moe_vector_projection(int weight_type, const void* W,
   // Over MMVQ_MAX_BATCH_SIZE tokens, gate/up keeps two counters (multi- and
   // single-token expert groups) and room for every slot in each list.
   const size_t group_bytes =
-      by_expert ? 2 * size_t(n_tokens) * sizeof(int32_t)
+      group_pair ? 2 * sizeof(int32_t) + size_t(n_tokens) * n_expert_used *
+                                            sizeof(MoeBatchGroup)
+      : by_expert ? 2 * size_t(n_tokens) * sizeof(int32_t)
       : ((gated && n_tokens > 1) || group_pair)
           ? (n_tokens > MMVQ_MAX_BATCH_SIZE
                  ? 2 * sizeof(int32_t) + 2 * size_t(n_tokens) * n_expert_used *
@@ -478,7 +480,7 @@ static int moe_vector_projection(int weight_type, const void* W,
 
   const int input_stride = ne10_padded / QK8_1;
   if (group_pair) {
-    if (hipMemsetAsync(groups, 0, sizeof(int32_t), stream) != hipSuccess)
+    if (hipMemsetAsync(groups, 0, 2 * sizeof(int32_t), stream) != hipSuccess)
       return -2;
     err = mul_mat_vec_moe_iq_pair(W, W_b, type, input, ids, groups, out_f32,
                                  out_b, K, M, n_tokens, n_expert_used,
