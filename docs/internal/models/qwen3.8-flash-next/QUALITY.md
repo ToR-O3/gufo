@@ -1,20 +1,31 @@
 # Qwen3.8 Flash-Next quality
 
-## Q6_K draft head extension, November 18, 2026
+## Mixed-quantization integration with v0.36, November 25, 2026
 
-Implementation only; GPU, model and performance checks are pending. The
-Q6_K path reuses the shared Q6_K decoder and the Q8_0 path's Q4_K reference
-quantizer. It retains the original head for target verification and extra
-vocabulary rows, without allocating a full dequantized intermediate.
+Focused GPU checks pass for the retained Q6_K draft head: independent Q4_K
+reference bytes, reconstruction, source preservation, and exact projections
+across batch widths. Dense dispatch keeps the original Q6_K target and uses
+the separate draft prefix. Real-model session checks pass for AR/MTP at
+C2–C8, mixed small/full heads, RNG state, restores, cancellation, and slot
+reuse. These checks use Unsloth v3.1 IQ4_XS; they do not qualify other model
+variants or image inputs.
 
-Added coverage (not yet executed): `mtp_ops` compares Q6_K-derived bytes with
-the independent CPU decoder and host Q4_K reference, checks reconstruction,
-source preservation and finite batch-invariant projections, and covers partial
-launch blocks. `dense_dispatch` requires a separate Q4_K prefix from a Q6_K
-head while preserving target bytes and metadata. Existing Q8_0 checks remain.
-Before adoption, run these checks and affected real-model MTP replay,
-mixed-head batches, sampling and continuation checks, then matched benchmarks.
-The Q8_0 evidence below does not qualify this Q6_K extension.
+The new upstream Q4_K short-row kernel is not selected for the draft prefix.
+It differed from the retained MMVQ path by up to 8.94e-8 at one row while
+matching it at eight rows, failing the existing bitwise batch-invariance
+check. The original strict check passes with MMVQ; its tolerance is unchanged.
+
+IQ grouped experts use the upstream routing layout with two counters and
+reuse its grouping implementation without splitting singleton groups. The
+independent routed WMMA and paired-projection checks pass. The external PLE
+CPU fixtures pass with the new GGUF reader, including compatible integer
+metadata, invalid metadata rejection, and mapped-file lifetime checks.
+
+DFlash target features now use the active prefill scratch allocation. The
+GPU scratch test confirms exact features against fixed storage after Forward
+returns to the narrow view, with transient mapping active, and rejects reads
+after release. Real-model two-session DFlash checks pass. These are numerical
+and lifecycle results; end-to-end timing is recorded separately.
 
 ## Q4_K draft head, November 13, 2026
 
