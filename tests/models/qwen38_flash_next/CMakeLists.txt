@@ -71,6 +71,10 @@ if (ENGINE_ENABLE_HIP)
     COMMAND qwen38_flash_next_wide_verification_test --dense-dispatch-only)
   set_tests_properties(qwen38_flash_next.dense_dispatch PROPERTIES
     LABELS "qwen38_flash_next;hip;gpu;gfx1151")
+  add_test(NAME qwen38_flash_next.dflash_scratch
+    COMMAND qwen38_flash_next_wide_verification_test --dflash-scratch-only)
+  set_tests_properties(qwen38_flash_next.dflash_scratch PROPERTIES
+    LABELS "qwen38_flash_next;hip;gpu;gfx1151")
   # Reuse the synthetic model fixture, with short prompts around a reduced
   # sparse budget. This exercises actual Executor capture/replay without GGUFs.
   add_test(NAME qwen38_flash_next.decode_graph
