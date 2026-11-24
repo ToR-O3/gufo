@@ -2206,19 +2206,6 @@ bool Executor::Dense(const DeviceTensor& w, const float* x, float* out,
       w.data != model_->output().data) {
     // Only the requantized draft prefix uses the row-invariant MMVQ path.
     // Ordinary Q4_K projections retain the native dense route below.
-    if (n_tokens <= kVecBatch && w.cols % 256 == 0) {
-      Q8Input q;
-      if (!Quantize(x, n_tokens, w.cols, &q, error_msg))
-        return false;
-      if (qfn_mmq_q4_K_dense_vec_preq(w.data, q.data, out,
-                                      static_cast<int>(w.rows),
-                                      static_cast<int>(n_tokens),
-                                      static_cast<int>(w.cols), stream_) != 0) {
-        AssignError(error_msg, "Q4_K draft head projection failed");
-        return false;
-      }
-      return true;
-    }
     if (n_tokens > kDraftHeadRows || s_.draft_head_ids == nullptr ||
         qfn_mmq_moe_vec(static_cast<int>(GgmlType::kQ4_K), w.data, x,
                         s_.draft_head_ids, out, static_cast<int>(w.rows),
