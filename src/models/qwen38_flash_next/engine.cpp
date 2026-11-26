@@ -119,6 +119,11 @@ std::shared_ptr<Model> Model::Load(
         "Flash-Next DFlash2 requires one drafter and at most seven proposals");
     return nullptr;
   }
+  if (weights && !options.dflash_model_path.empty()) {
+    AssignError(error_msg,
+                "DFlash2 is not supported with an external weight source");
+    return nullptr;
+  }
   if (weights && !options.ple_model_path.empty()) {
     AssignError(error_msg, "external PLE requires a GGUF weight source");
     return nullptr;
