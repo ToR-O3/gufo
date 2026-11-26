@@ -1,5 +1,38 @@
 # Qwen3.8 Flash-Next quality
 
+## Weight-source integration with v0.37, November 26, 2026
+
+The upstream Q4_K short-row rounding fix now passes the existing strict
+draft-head checks for both Q8_0 and Q6_K sources: reference quantizer bytes,
+source preservation, reconstruction, and bitwise batch-width invariance.
+Draft prefixes use the upstream dense kernel at decode widths. Ordinary
+Q4_K projections retain their native route; the wider draft fallback remains.
+
+External PLE is owned by the GGUF weight source. The existing metadata and
+cache-identity checks still pass. Floating uploads support host-shard inputs
+with the same bounded scratch and explicit rounding as mapped GGUF inputs.
+
+The real-model stage-seam check passes on Unsloth v3.1 IQ4_XS: neutral hooks
+preserve prefill and decode bits, AR/MTP tokens, source identities, and encoded
+n-gram rows. Routing hooks retain the test's separate arithmetic contract.
+An added FP32/F16 input check failed before the integration fix: the custom
+HC optimization left stale FP32 rows for external stages. External stages
+now receive materialized FP32 inputs. Only the default GGUF stages omit those
+rows, retaining the existing qualified fast paths. The same regression check
+passes after the fix without relaxing its assertions.
+
+DFlash2 remains supported through the GGUF entry point. External weight
+sources are rejected before loading because the DFlash backend expects plain
+GGUF tensor storage. This does not qualify DFlash2 over EXL3. EXL3 weights
+and other GGUF variants have not been run in this validation.
+
+The production build passes the selected HTTP suites in AR, built-in PLE
+with MTP, external Q8 PLE with MTP, and DFlash2. Each profile passes all
+17 report entries, covering responses, conversations, structured output,
+streamed tools, sampling ranges, long context, cancellation, and cache
+persistence/reuse. These are functional results; paired request timings are
+recorded separately.
+
 ## Mixed-quantization integration with v0.36, November 25, 2026
 
 Focused GPU checks pass for the retained Q6_K draft head: independent Q4_K
