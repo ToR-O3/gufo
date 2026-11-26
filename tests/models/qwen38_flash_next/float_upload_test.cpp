@@ -32,6 +32,14 @@ int main() {
   assert(hipMemcpy(actual.data(), device, 12, hipMemcpyDeviceToHost) ==
          hipSuccess);
   assert(actual == half);
+  // Extension weight sources may provide host tensors without GGUF regions.
+  small.shard = kHostShard;
+  rocm::FloatUpload host_upload({}, &error);
+  assert(host_upload.Copy(small, GgmlType::kF16, 0, device));
+  assert(hipMemcpy(actual.data(), device, 12, hipMemcpyDeviceToHost) ==
+         hipSuccess);
+  assert(actual == half);
+  small.shard = 0;
   assert(hipFree(device) == hipSuccess);
   // Cross the bounded 8 MiB staging frontier with a ragged final row.
   constexpr std::size_t cols = 65, rows = 65537;

@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <gufo/ext/families/qwen/control_tokens/control_tokens.hpp>
 #include <gufo/ext/sampling.hpp>
 #include <limits>
 #include <optional>

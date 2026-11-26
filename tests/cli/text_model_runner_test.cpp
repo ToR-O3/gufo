@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <chrono>
+#include <cstddef>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -1450,11 +1451,15 @@ void TestProviderToolDialectSelection() {
     Expect(!accepts(*automatic, "<think>\nPlan.</think>" + answer) &&
                !accepts(*automatic, "[[ponder>>Plan.<<ponder]]" + answer),
            "other reasoning framing is no reasoning of this provider");
+    // A runner that cannot turn reasoning off keeps kAuto when the request
+    // disables it (Inkling's lowest effort still thinks); one that can closes
+    // it in the prompt and reports content (below).
     const auto disabled = constrain(
         DialectRunner("ledger-runner", ponder, Initial::kAuto), tools, false);
-    Expect(!accepts(*disabled, "[[ponder>>\nPlan.<<ponder]]" + answer) &&
-               accepts(*disabled, answer),
-           "disabled reasoning admits no reasoning phase");
+    Expect(
+        accepts(*disabled, "[[ponder>>\nPlan.<<ponder]]" + answer) &&
+            accepts(*disabled, answer),
+        "kAuto keeps the model's own reasoning when the request disables it");
     for (const auto initial :
          {Initial::kContent, Initial::kContentAfterReasoning}) {
       const auto content =
@@ -1506,10 +1511,37 @@ void LegacyResourceClaimAggregateKeepsItsFields() {
              !claim.prompt_admission_budget_bytes &&
              !claim.prompt_admission_available_bytes,
          "legacy aggregate initializers leave prompt admission disabled");
+  Expect(!claim.expert_cache.store &&
+             !claim.expert_cache.prompt_cache_share_per_session_bytes,
+         "legacy aggregate initializers stream no experts");
+}
+
+void ExpertCacheClaimBoundsTheAutomaticBudget() {
+  // The store is incomplete here; only its address is compared, never used.
+  std::byte storage{};
+  auto* store = reinterpret_cast<gufo::expert_stream::Store*>(&storage);
+  gufo::ext::TextRunnerResourceClaim claim{};
+  claim.retained_snapshot_capacity_bytes = 10u << 20;
+  Expect(!claim.expert_cache.store &&
+             gufo::ext::AutomaticRetainedBytes(claim, 4) == (10u << 20),
+         "a runner without streamed experts keeps its automatic budget");
+  claim.expert_cache.prompt_cache_share_per_session_bytes = 1u << 20;
+  Expect(gufo::ext::AutomaticRetainedBytes(claim, 4) == (10u << 20),
+         "a share without a store is ignored");
+  claim.expert_cache.store = store;
+  Expect(gufo::ext::AutomaticRetainedBytes(claim, 1) == (1u << 20) &&
+             gufo::ext::AutomaticRetainedBytes(claim, 3) == (3u << 20),
+         "the share scales with the sessions");
+  Expect(gufo::ext::AutomaticRetainedBytes(claim, 16) == (10u << 20),
+         "the share never raises the measured budget");
+  claim.expert_cache.prompt_cache_share_per_session_bytes.reset();
+  Expect(gufo::ext::AutomaticRetainedBytes(claim, 2) == (10u << 20),
+         "a store without a share keeps the automatic budget");
 }
 
 int main() {
   LegacyResourceClaimAggregateKeepsItsFields();
+  ExpertCacheClaimBoundsTheAutomaticBudget();
   TestPromptCountingValidatesCapabilitiesBeforeInference();
   TestServerInstructionsAreFraming();
   TestReasoningDelimitersFollowTheRunner();

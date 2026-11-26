@@ -44,7 +44,9 @@ public:
             std::uint32_t shard_base, void* destination) {
     const auto start = std::chrono::steady_clock::now();
     try {
-      if (t.experts != 1 || t.shard + shard_base >= shards_.size())
+      const bool host = t.shard == kHostShard;
+      if (t.experts != 1 || (!host && t.shard + shard_base >= shards_.size()) ||
+          (host && t.data == nullptr))
         throw std::runtime_error(
             "conversion requires an ordinary matrix and valid shard");
       if (destination_type != core::GgmlType::kF16 &&
@@ -71,17 +73,18 @@ public:
             "floating weight scratch exceeds 64000000 bytes");
       const auto batch =
           std::min(kBufferBytes / src_row, kBufferBytes / dst_row);
-      const auto& shard = shards_[t.shard + shard_base];
+      const core::GgufMappedRegion* shard =
+          host ? nullptr : &shards_[t.shard + shard_base];
       crypto::Sha256Hasher digest;
       for (std::size_t first = 0; first < t.rows; first += batch) {
         const auto count = std::min<std::size_t>(batch, t.rows - first);
         const auto input_bytes = count * src_row;
-        if (platform::FileValid(shard.file_descriptor)) {
+        if (shard && platform::FileValid(shard->file_descriptor)) {
           std::size_t done = 0;
           while (done < input_bytes) {
             std::error_code ec;
             const auto n = platform::ReadAt(
-                shard.file_descriptor, t.file_offset + first * src_row + done,
+                shard->file_descriptor, t.file_offset + first * src_row + done,
                 source_.data() + done, input_bytes - done, ec);
             if (n == 0 && ec == std::errc::interrupted)
               continue;

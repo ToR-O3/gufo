@@ -597,6 +597,12 @@ void TestDialects() {
        R"({"call_format":"pythonic","calls_open":"<|tool_call_start|>[","call_separator":", ","calls_close":"]<|tool_call_end|>","think_open":"<think>","think_end":"</think>","thinking":"always"})",
        "<|tool_call_start|>[get_weather(city='Paris')]<|tool_call_end|>",
        "<|tool_call_start|>["},
+      {"inkling2",
+       R"({"call_format":"inkling2","call_marker":"<|content_invoke_tool_json|>","think_open":"<|message_model|><|content_thinking|>","think_end":"<|end_message|>","thinking":"toggle"})",
+       "<|message_model|>get_weather<|content_invoke_tool_json|>"
+       "{\"name\":\"get_weather\",\"args\":{\"city\":\"Paris\"}}"
+       "<|end_message|>",
+       "<|message_model|>"},
       {"atem",
        R"({"call_format":"atem","think_open":"<|start|>assistant to=self<|message|>","think_end":"<|start|>assistant to=user<|message|>","thinking":"always"})",
        " to=get_weather<|message|><atem:function_calls>\n<atem:invoke "
@@ -606,6 +612,12 @@ void TestDialects() {
        " to="},
   };
   for (const auto& c : cases) {
+    // Automatic tool use stays on the device only where a lazy grammar cannot
+    // tell a call from other output by its start.
+    const std::string format = c.format;
+    CHECK(NativeDialectOf(json::parse(c.chat)).auto_on_device ==
+              (format == "harmony" || format == "atem" || format == "inkling2"),
+          format + ": auto tool use on the device");
     fake::reset();
     fake::state().script = PeakScript;
     Fixture f(true, 2, c.chat);
@@ -953,8 +965,48 @@ void TestDialectParallelAndEdges() {
 
 }  // namespace
 
+// --speculative is refused, not ignored, for a package without a drafter; one
+// with a drafter loads, and no speculation needs none.
+void TestSpeculativeNeedsDrafter() {
+  std::cerr << "speculative: a package without a drafter refuses it\n";
+  const auto dir =
+      std::filesystem::temp_directory_path() /
+      ("loom_speculative_test_" + std::to_string(gufo::platform::ProcessId()));
+  std::filesystem::create_directories(dir);
+  std::ofstream(dir / "model.json")
+      << R"({"schema_version":1,"programs":{},"services":{"chat":{"kind":"text"}},)"
+         R"("variants":{"v":{"services":{"chat":{"config":{"llm.card":true,)"
+         R"("llm.logits":false}}}}}})";
+  const auto create = [&](ext::TextSpeculativeBackend backend,
+                          std::uint32_t depth, std::string* error) {
+    fake::reset();
+    fake::state().script = PeakScript;
+    fake::state().draft_depth = depth;
+    ext::TextRunnerOptions options;
+    options.model_path = dir.string();
+    options.speculative.backend = backend;
+    return CreateLoomRunner(options, error) != nullptr;
+  };
+  std::string error;
+  CHECK(!create(ext::TextSpeculativeBackend::kMtp, 0, &error));
+  CHECK(error ==
+            "loom: --speculative mtp needs a drafter, and this package has "
+            "none; give one with --mtp-model",
+        error);
+  CHECK(!create(ext::TextSpeculativeBackend::kDFlash, 0, &error));
+  CHECK(error.find("--speculative dflash2") != std::string::npos &&
+            error.find("--dflash-model") != std::string::npos,
+        error);
+  error.clear();
+  CHECK(create(ext::TextSpeculativeBackend::kMtp, 4, &error), error);
+  CHECK(create(ext::TextSpeculativeBackend::kDisabled, 0, &error), error);
+  fake::reset();
+  std::filesystem::remove_all(dir);
+}
+
 int main() {
   TestDevicePathUnchanged();
+  TestSpeculativeNeedsDrafter();
   TestLogprobs();
   TestRepetitionPenalty();
   TestMinP();

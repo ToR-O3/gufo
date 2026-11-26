@@ -36,15 +36,18 @@ void Validation() {
   const auto embedded = QwenFlashNextCompatibilityIdentity(
       artifact, draft, true, 4096, 4, 1, "absolute-v1");
   const auto external = QwenFlashNextCompatibilityIdentity(
-      artifact, draft, true, 4096, 4, 1, "absolute-v1", artifact);
+      artifact, draft, true, 4096, 4, 1, "absolute-v1",
+      ext::kGgufIdentityScheme, ext::kGgufIdentityScheme, artifact);
   const auto other_external = QwenFlashNextCompatibilityIdentity(
-      artifact, draft, true, 4096, 4, 1, "absolute-v1", draft);
+      artifact, draft, true, 4096, 4, 1, "absolute-v1",
+      ext::kGgufIdentityScheme, ext::kGgufIdentityScheme, draft);
   Require(embedded != external, "embedded and external PLE caches alias");
   Require(external != other_external, "different PLE tables alias");
   Reject(
       [&] {
-        QwenFlashNextCompatibilityIdentity(artifact, draft, true, 4096, 4, 1,
-                                           "absolute-v1", "invalid");
+        QwenFlashNextCompatibilityIdentity(
+            artifact, draft, true, 4096, 4, 1, "absolute-v1",
+            ext::kGgufIdentityScheme, ext::kGgufIdentityScheme, "invalid");
       },
       "Flash-Next PLE cache requires an artifact fingerprint");
 

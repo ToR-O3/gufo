@@ -4,6 +4,10 @@
 #include <cstddef>
 #include <cstdint>
 #include <functional>
+#include <gufo/ext/families/qwen/draft_vocab/draft_vocab.hpp>
+#include <gufo/ext/families/qwen/text/tokenizer.hpp>
+#include <gufo/ext/families/qwen/vision/encoder.hpp>
+#include <gufo/ext/families/qwen/vision/prompt.hpp>
 #include <gufo/ext/prompt_lookup.hpp>
 #include <gufo/ext/sampling.hpp>
 #include <gufo/ext/session_mode.hpp>
@@ -35,6 +39,10 @@ namespace gufo::hip {
 class QwenDFlashGpuModel;
 class QwenDFlashGpuDraftBackend;
 }  // namespace gufo::hip
+namespace gufo::ext::qwen::flash_next {
+class Stages;
+class WeightSource;
+}  // namespace gufo::ext::qwen::flash_next
 
 namespace gufo::models::qwen38_flash_next {
 
@@ -88,6 +96,13 @@ public:
   [[nodiscard]] static std::shared_ptr<Model> Load(
       const std::string& model_path, const ModelOptions& options,
       std::string* error_msg = nullptr);
+  /// Load with overridden per-layer stages and weight source; a null
+  /// argument keeps the GGUF default (stages.hpp, weight_source.hpp).
+  [[nodiscard]] static std::shared_ptr<Model> Load(
+      const std::string& model_path, const ModelOptions& options,
+      std::unique_ptr<ext::qwen::flash_next::Stages> stages,
+      std::unique_ptr<ext::qwen::flash_next::WeightSource> weights,
+      std::string* error_msg = nullptr);
 
   [[nodiscard]] std::unique_ptr<Session> CreateSession(
       core::SessionMode mode, std::uint32_t max_context,
@@ -134,9 +149,6 @@ public:
   [[nodiscard]] std::size_t DFlashStateBytes(std::uint32_t context) const;
   [[nodiscard]] std::size_t DFlashCacheBytes(std::uint32_t context) const;
   /// Bound external PLE artifact, or null when using the embedded table.
-  [[nodiscard]] const core::GgufReader* PleReader() const noexcept {
-    return ple_reader_.get();
-  }
   /// Trunk tensors the official GGUF keeps in F32 but this artifact stores
   /// as Q8_0 (see `ExpandedQ8_0Tensors`). The official MTP sidecar ships its
   /// inject as Q8_0, so the draft block is not counted.
@@ -145,6 +157,11 @@ public:
     return options_.decode_concurrency;
   }
   [[nodiscard]] std::string ModelName() const;
+  /// Cache identity the weight source reports; empty for GGUF artifacts,
+  /// whose callers hash the reader.
+  [[nodiscard]] std::string ArtifactIdentity() const;
+  /// WeightSource::DraftIdentity: the bound MTP block's cache identity.
+  [[nodiscard]] std::string DraftIdentity() const;
   [[nodiscard]] const Config& config() const noexcept;
   [[nodiscard]] const tokenization::QwenTokenizer& tokenizer() const noexcept {
     return *tokenizer_;
@@ -174,9 +191,12 @@ private:
   Model() = default;
 
   ModelOptions options_;
-  std::shared_ptr<core::GgufReader> reader_;
-  std::shared_ptr<core::GgufReader> mtp_reader_;
-  std::shared_ptr<core::GgufReader> ple_reader_;
+  /// Declared first: the weights, device model and stages borrow from it.
+  std::unique_ptr<ext::qwen::flash_next::WeightSource> source_;
+  /// Outlives executor_, which calls it.
+  std::unique_ptr<ext::qwen::flash_next::Stages> stages_;
+  /// Rows of a narrow prompt pass (WeightSource::PreferredPrefillChunk).
+  std::uint32_t prefill_chunk_{0};
   std::unique_ptr<ModelWeights> weights_;
   std::unique_ptr<MtpWeights> mtp_weights_;
   std::shared_ptr<const tokenization::QwenTokenizer> tokenizer_;

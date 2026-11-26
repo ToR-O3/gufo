@@ -6,6 +6,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <optional>
 #include <span>
@@ -17,21 +18,24 @@
 
 #include "gufo/ext/component_cache_resources.hpp"
 #include "gufo/ext/experimental/admission_query.hpp"
+#include "gufo/ext/families/qwen/control_tokens/control_tokens.hpp"
+#include "gufo/ext/families/qwen/text/chat_template.hpp"
+#include "gufo/ext/families/qwen/text/tokenizer.hpp"
+#include "gufo/ext/families/qwen/vision/encoder.hpp"
+#include "gufo/ext/families/qwen/vision/image_cache.hpp"
+#include "gufo/ext/families/qwen/vision/prompt.hpp"
 #include "gufo/ext/gguf_identity.hpp"
 #include "gufo/ext/host.hpp"
 #include "gufo/ext/host_budget.hpp"
-#include "src/families/qwen/control_tokens/control_tokens.hpp"
-#include "src/families/qwen/text/chat_template.hpp"
-#include "src/families/qwen/text/tokenizer.hpp"
-#include "src/families/qwen/vision/encoder.hpp"
-#include "src/families/qwen/vision/image_cache.hpp"
-#include "src/families/qwen/vision/prompt.hpp"
+#include "gufo/ext/sha256.hpp"
 #include "src/models/qwen38_flash_next/continuation_adapter.hpp"
 #include "src/models/qwen38_flash_next/continuation_identity.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
 #include "src/models/qwen38_flash_next/kernels/rocm/executor.hpp"
 #include "src/models/qwen38_flash_next/probe.hpp"
 #include "src/models/qwen38_flash_next/rope_scaling.hpp"
+#include "src/models/qwen38_flash_next/stages.hpp"
+#include "src/models/qwen38_flash_next/weight_source.hpp"
 
 namespace gufo::models::qwen38_flash_next {
 namespace {
@@ -257,12 +261,13 @@ public:
   sampling::JsonConstraint::ToolFormat ToolFormat() const override {
     return sampling::JsonConstraint::ToolFormat::kQwen;
   }
-  QwenFlashNextTextRunner(std::shared_ptr<QwenFlashNextModel> model,
-                          std::uint32_t max_context, bool use_mtp,
-                          std::uint32_t max_draft_tokens,
-                          std::string artifact_fingerprint = {},
-                          std::string mtp_fingerprint = {},
-                          std::string ple_fingerprint = {})
+  QwenFlashNextTextRunner(
+      std::shared_ptr<QwenFlashNextModel> model, std::uint32_t max_context,
+      bool use_mtp, std::uint32_t max_draft_tokens,
+      std::string artifact_fingerprint = {}, std::string mtp_fingerprint = {},
+      std::string_view artifact_scheme = ext::kGgufIdentityScheme,
+      std::string_view draft_scheme = ext::kGgufIdentityScheme,
+      std::string ple_fingerprint = {})
       : model_(std::move(model)),
         max_context_(max_context),
         use_mtp_(use_mtp),
@@ -278,7 +283,7 @@ public:
           model_->DecodeConcurrency(),
           models::qwen38_flash_next::RopePositionPolicy(
               model_->config().rope_scaling),
-          ple_fingerprint);
+          artifact_scheme, draft_scheme, ple_fingerprint);
     } else {
       component_identity_ = QwenFlashNextProcessIdentity(
           model_.get(), max_context_, use_mtp_, max_draft_tokens_,
@@ -854,51 +859,44 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
     std::shared_ptr<Model> model, std::uint32_t max_context,
     const ext::TextSpeculativeConfig& speculative_config,
     std::string artifact_fingerprint, std::string draft_artifact_fingerprint,
+    std::string_view artifact_scheme, std::string_view draft_scheme,
     std::string ple_artifact_fingerprint) {
   const bool use_mtp =
       speculative_config.backend == ext::TextSpeculativeBackend::kMtp;
   return std::make_shared<QwenFlashNextTextRunner>(
       std::move(model), max_context, use_mtp,
       speculative_config.max_draft_tokens, std::move(artifact_fingerprint),
-      std::move(draft_artifact_fingerprint),
+      std::move(draft_artifact_fingerprint), artifact_scheme, draft_scheme,
       std::move(ple_artifact_fingerprint));
 }
 
-std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
-    const ext::TextRunnerOptions& options, std::string* error) {
-  std::shared_ptr<const core::GgufReader> reader = options.reader;
-  if (!reader) {
-    std::string load_error;
-    auto reader_owner =
-        core::GgufReader::OpenFile(options.model_path, &load_error);
-    if (!reader_owner) {
-      if (error)
-        *error = "Failed to open GGUF: " + load_error;
-      return nullptr;
-    }
-    reader = std::shared_ptr<const core::GgufReader>(std::move(reader_owner));
-  }
-  const auto architecture =
-      reader->GetMetadataString("general.architecture").value_or("");
-  if (architecture != "qwen4exp") {
-    if (error)
-      *error = "Flash-Next requires architecture qwen4exp";
-    return nullptr;
-  }
-  const std::uint32_t qwen4exp_native_context =
-      reader->GetMetadataUint32("qwen4exp.context_length").value_or(0);
+namespace {
+
+using Fingerprints = FlashNextCacheIdentities;
+
+/// What the GGUF and non-GGUF entry points share once the artifact's native
+/// context and draft path are known. `fingerprints` fills the disk cache
+/// identities the options leave empty, after the model has loaded.
+std::shared_ptr<ext::TextModelRunner> CreateRunner(
+    const ext::TextRunnerOptions& options, std::uint32_t native_context,
+    std::string_view no_context_error, const std::string& mtp_path,
+    std::unique_ptr<ext::qwen::flash_next::Stages> stages,
+    std::unique_ptr<ext::qwen::flash_next::WeightSource> weights,
+    const std::function<bool(const Model&, bool use_mtp, Fingerprints*,
+                             std::string* error)>& fingerprints,
+    std::string* error) {
   std::uint32_t max_context = options.max_context;
   if (max_context == 0) {
-    max_context = qwen4exp_native_context;
+    max_context = native_context;
     if (max_context < 2) {
       if (error)
-        *error = "GGUF has no valid native context length; specify --context";
+        *error = no_context_error;
       return nullptr;
     }
   }
   std::optional<RopeScaling> rope_scaling;
-  if (!ResolveRopeScaling(max_context, qwen4exp_native_context,
-                          options.enable_yarn, &rope_scaling, error)) {
+  if (!ResolveRopeScaling(max_context, native_context, options.enable_yarn,
+                          &rope_scaling, error)) {
     return nullptr;
   }
   const bool use_mtp =
@@ -912,7 +910,8 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
           "Qwen3.8-Flash-Next supports MTP and DFlash2 speculative decoding";
     return nullptr;
   }
-  if ((use_mtp || use_dflash) && options.speculative.draft_model_path.empty()) {
+  if ((use_mtp && mtp_path.empty()) ||
+      (use_dflash && options.speculative.draft_model_path.empty())) {
     if (error)
       *error = use_dflash ? "Flash-Next DFlash2 requires --dflash-model"
                           : "Flash-Next MTP requires --mtp-model";
@@ -925,8 +924,7 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
       options.model_path,
       ModelOptions{
           .max_context = max_context,
-          .mtp_model_path =
-              use_mtp ? options.speculative.draft_model_path : std::string{},
+          .mtp_model_path = use_mtp ? mtp_path : std::string{},
           .max_draft_tokens = use_dflash ? options.speculative.max_draft_tokens
                                          : kMaxMtpDraftTokens,
           .vision_model_path = options.vision_model_path,
@@ -941,10 +939,18 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
                                ? speculative::DFlashDraftPolicy::kFixed
                                : speculative::DFlashDraftPolicy::kAdaptive,
       },
-      &load_error);
+      std::move(stages), std::move(weights), &load_error);
   if (!model) {
     if (error)
       *error = "Failed to load Flash-Next model: " + load_error;
+    return nullptr;
+  }
+  // The context and YaRN above were sized from native_context.
+  if (native_context != 0 && model->config().context_length != native_context) {
+    if (error)
+      *error = "Flash-Next native context " + std::to_string(native_context) +
+               " does not match the model's " +
+               std::to_string(model->config().context_length);
     return nullptr;
   }
   try {
@@ -984,42 +990,19 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
         rows -= 8;
     model->LimitCopyRows(rows);
   }
-  std::string model_fingerprint = options.disk_cache.model_artifact_fingerprint;
-  if (!options.disk_cache.directory.empty() && model_fingerprint.empty()) {
-    try {
-      model_fingerprint = core::GgufIdentityHex(*reader);
-    } catch (const std::exception& e) {
-      if (error)
-        *error = std::string("Flash-Next disk cache fingerprinting failed: ") +
-                 e.what();
-      return nullptr;
-    }
-  }
-  std::string draft_fingerprint =
-      options.disk_cache.draft_model_artifact_fingerprint;
-  if (!options.disk_cache.directory.empty() && (use_mtp || use_dflash) &&
-      draft_fingerprint.empty()) {
-    std::string mtp_error;
-    auto mtp_reader = core::GgufReader::OpenFile(
-        options.speculative.draft_model_path, &mtp_error);
-    if (!mtp_reader) {
-      if (error)
-        *error = "Failed to open draft model: " + mtp_error;
-      return nullptr;
-    }
-    try {
-      draft_fingerprint = core::GgufIdentityHex(*mtp_reader);
-    } catch (const std::exception& e) {
-      if (error)
-        *error =
-            std::string("Draft disk cache fingerprinting failed: ") + e.what();
-      return nullptr;
-    }
-  }
+  Fingerprints ids{options.disk_cache.model_artifact_fingerprint,
+                   options.disk_cache.draft_model_artifact_fingerprint};
+  if (!options.disk_cache.directory.empty() &&
+      !fingerprints(*model, use_mtp, &ids, error))
+    return nullptr;
   std::string ple_fingerprint;
-  if (!options.disk_cache.directory.empty() && model->PleReader()) {
+  const std::string ple_path = ple_model ? *ple_model : options.ple_model_path;
+  if (!options.disk_cache.directory.empty() && !ple_path.empty()) {
+    auto reader = core::GgufReader::OpenFile(ple_path, error);
+    if (!reader)
+      return nullptr;
     try {
-      ple_fingerprint = core::GgufIdentityHex(*model->PleReader());
+      ple_fingerprint = core::GgufIdentityHex(*reader);
     } catch (const std::exception& e) {
       if (error)
         *error =
@@ -1027,9 +1010,156 @@ std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
       return nullptr;
     }
   }
-  return CreateQwenFlashNextTextRunner(std::move(model), max_context,
-                                       options.speculative, model_fingerprint,
-                                       draft_fingerprint, ple_fingerprint);
+  return CreateQwenFlashNextTextRunner(
+      std::move(model), max_context, options.speculative, ids.model, ids.draft,
+      ids.model_scheme, ids.draft_scheme, std::move(ple_fingerprint));
+}
+
+}  // namespace
+
+std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
+    const ext::TextRunnerOptions& options, std::string* error) {
+  std::shared_ptr<const core::GgufReader> reader = options.reader;
+  if (!reader) {
+    std::string load_error;
+    auto reader_owner =
+        core::GgufReader::OpenFile(options.model_path, &load_error);
+    if (!reader_owner) {
+      if (error)
+        *error = "Failed to open GGUF: " + load_error;
+      return nullptr;
+    }
+    reader = std::shared_ptr<const core::GgufReader>(std::move(reader_owner));
+  }
+  const auto architecture =
+      reader->GetMetadataString("general.architecture").value_or("");
+  if (architecture != "qwen4exp") {
+    if (error)
+      *error = "Flash-Next requires architecture qwen4exp";
+    return nullptr;
+  }
+  const std::uint32_t qwen4exp_native_context =
+      reader->GetMetadataUint32("qwen4exp.context_length").value_or(0);
+  const auto gguf_fingerprints = [&](const Model&, bool use_mtp,
+                                     Fingerprints* ids,
+                                     std::string* fingerprint_error) {
+    std::string* model_fingerprint = &ids->model;
+    std::string* draft_fingerprint = &ids->draft;
+    if (model_fingerprint->empty()) {
+      try {
+        *model_fingerprint = core::GgufIdentityHex(*reader);
+      } catch (const std::exception& e) {
+        if (fingerprint_error)
+          *fingerprint_error =
+              std::string("Flash-Next disk cache fingerprinting failed: ") +
+              e.what();
+        return false;
+      }
+    }
+    if ((use_mtp ||
+         options.speculative.backend == ext::TextSpeculativeBackend::kDFlash) &&
+        draft_fingerprint->empty()) {
+      std::string mtp_error;
+      auto mtp_reader = core::GgufReader::OpenFile(
+          options.speculative.draft_model_path, &mtp_error);
+      if (!mtp_reader) {
+        if (fingerprint_error)
+          *fingerprint_error = "Failed to open MTP model: " + mtp_error;
+        return false;
+      }
+      try {
+        *draft_fingerprint = core::GgufIdentityHex(*mtp_reader);
+      } catch (const std::exception& e) {
+        if (fingerprint_error)
+          *fingerprint_error =
+              std::string("MTP disk cache fingerprinting failed: ") + e.what();
+        return false;
+      }
+    }
+    return true;
+  };
+  return CreateRunner(
+      options, qwen4exp_native_context,
+      "GGUF has no valid native context length; specify --context",
+      options.speculative.draft_model_path, nullptr, nullptr, gguf_fingerprints,
+      error);
+}
+
+bool ResolveWeightSourceIdentities(const Model& model, bool use_mtp,
+                                   bool own_draft, const std::string& mtp_path,
+                                   FlashNextCacheIdentities* ids,
+                                   std::string* error) {
+  const auto fail = [&](std::string message) {
+    if (error)
+      *error = std::move(message);
+    return false;
+  };
+  if (ids->model.empty()) {
+    ids->model = model.ArtifactIdentity();
+    ids->model_scheme = ext::qwen::flash_next::kWeightSourceIdentityScheme;
+  }
+  if (use_mtp && ids->draft.empty()) {
+    ids->draft = model.DraftIdentity();
+    ids->draft_scheme = ext::qwen::flash_next::kWeightSourceIdentityScheme;
+    if (ids->draft.empty() && own_draft && !model.ArtifactIdentity().empty()) {
+      const std::string seed = model.ArtifactIdentity() + ":mtp";
+      ids->draft = crypto::Sha256Hex(
+          {reinterpret_cast<const std::uint8_t*>(seed.data()), seed.size()});
+    } else if (ids->draft.empty() && !own_draft) {
+      // A separate draft model: its GGUF identity, when it is one.
+      std::string open_error;
+      auto reader = core::GgufReader::OpenFile(mtp_path, &open_error);
+      if (!reader)
+        return fail(
+            "the Flash-Next weight source has no draft identity and its "
+            "draft model is not a GGUF: " +
+            open_error);
+      try {
+        ids->draft = core::GgufIdentityHex(*reader);
+      } catch (const std::exception& e) {
+        return fail(std::string("MTP disk cache fingerprinting failed: ") +
+                    e.what());
+      }
+      ids->draft_scheme = ext::kGgufIdentityScheme;
+    }
+  }
+  if (ids->model.empty() || (use_mtp && ids->draft.empty()))
+    return fail("the Flash-Next weight source has no disk cache identity");
+  if (!IsSha256Hex(ids->model) || (use_mtp && !IsSha256Hex(ids->draft)))
+    return fail(
+        "Flash-Next disk cache identities must be lowercase SHA-256 hex");
+  return true;
+}
+
+std::shared_ptr<ext::TextModelRunner> CreateQwenFlashNextTextRunner(
+    const ext::TextRunnerOptions& options,
+    std::unique_ptr<ext::qwen::flash_next::Stages> stages,
+    std::unique_ptr<ext::qwen::flash_next::WeightSource> weights,
+    std::string* error) {
+  if (!weights) {
+    if (error)
+      *error = "Flash-Next runner needs a weight source";
+    return nullptr;
+  }
+  const std::uint32_t native_context =
+      weights->NativeContextLength(options.model_path);
+  const std::string mtp_path = weights->MtpPath(
+      options.model_path, options.speculative.draft_model_path);
+  // A draft block bound from the artifact itself, rather than a separate
+  // draft model.
+  const bool own_draft = mtp_path == options.model_path;
+  const auto source_fingerprints = [&](const Model& model, bool use_mtp,
+                                       Fingerprints* ids,
+                                       std::string* fingerprint_error) {
+    return ResolveWeightSourceIdentities(model, use_mtp, own_draft, mtp_path,
+                                         ids, fingerprint_error);
+  };
+  return CreateRunner(
+      options, native_context,
+      "the Flash-Next weight source reports no native context length; "
+      "specify --context",
+      mtp_path, std::move(stages), std::move(weights), source_fingerprints,
+      error);
 }
 
 }  // namespace gufo::models::qwen38_flash_next
