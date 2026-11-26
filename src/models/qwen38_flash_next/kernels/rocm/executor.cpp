@@ -4491,8 +4491,8 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       return false;
     }
     // Only omit the F32 and tiled-Q8 mix if every GDN projection reads F16.
-    const bool half_only = WidePrefill(n) && n <= options_.max_batch &&
-                           l.linear &&
+    const bool half_only = options_.stages == nullptr && WidePrefill(n) &&
+                           n <= options_.max_batch && l.linear &&
                            ((DenseF16Route(l.ssm_in, n) &&
                              l.ssm_alpha_beta.type == GgmlType::kF16 &&
                              l.ssm_alpha_beta.cols == l.ssm_in.cols) ||
@@ -4548,8 +4548,9 @@ bool Executor::ForwardBody(Session& session, std::uint32_t n,
       defer_residual_ =
           stages_->MoeDefersEpilogue(StageCtx(&l, rows, error_msg));
       const bool half_consumers =
-          prefill_phase && defer_residual_ && rows <= options_.max_batch &&
-          l.router.type == GgmlType::kF16 && l.router.cols == c.hidden_size;
+          options_.stages == nullptr && prefill_phase && defer_residual_ &&
+          rows <= options_.max_batch && l.router.type == GgmlType::kF16 &&
+          l.router.cols == c.hidden_size;
       // GatedDense must leave the routed input in x_half intact. These
       // down routes use the private shared-expert staging buffer; other
       // formats may overwrite x_half and need the F32 mix for rebuilding it.

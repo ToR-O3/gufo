@@ -21,6 +21,7 @@
 #include <hip/hip_runtime.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <cmath>
 #include <cstdint>
@@ -41,6 +42,7 @@
 #include "src/ext/continuation.hpp"
 #include "src/families/qwen/text/tokenizer.hpp"
 #include "src/models/qwen38_flash_next/engine.hpp"
+#include "src/models/qwen38_flash_next/float_weights.hpp"
 #include "src/models/qwen38_flash_next/ngram.hpp"
 #include "src/models/qwen38_flash_next/runner.hpp"
 #include "src/models/qwen38_flash_next/stages.hpp"
@@ -306,6 +308,23 @@ public:
     if (ctx.phase == fn::Phase::kPrompt && Edited(ctx.layer.index()) &&
         ctx.layer.tensor(fn::TensorId::kRouter).data() != nullptr)
       ++c_.moe_on_prompt_copy;
+    if (ctx.phase == fn::Phase::kPrompt && Edited(ctx.layer.index())) {
+      // Stages receive FP32 rows even when the default GGUF route could
+      // consume only the cached F16 representation.
+      const auto cols = ctx.layer.tensor(fn::TensorId::kRouter).cols();
+      const auto* half = ctx.defaults.HalfRows(ctx, x, cols);
+      std::array<float, 64> values{};
+      std::array<std::uint16_t, 64> narrowed{};
+      Require(hipMemcpy(values.data(), x, sizeof(values),
+                        hipMemcpyDeviceToHost) == hipSuccess,
+              "stage FP32 input copy");
+      Require(hipMemcpy(narrowed.data(), half, sizeof(narrowed),
+                        hipMemcpyDeviceToHost) == hipSuccess,
+              "stage F16 input copy");
+      for (std::size_t i = 0; i < values.size(); ++i)
+        Require(qfn::FloatToHalf(values[i]) == narrowed[i],
+                "stage FP32 input differs from its F16 rows");
+    }
     return ctx.defaults.MoeFfn(ctx, routing, x, out);
   }
   bool PromptLayer(const fn::StageContext& ctx, fn::LayerEdit& edit,

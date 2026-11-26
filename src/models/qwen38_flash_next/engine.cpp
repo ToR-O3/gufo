@@ -132,8 +132,9 @@ std::shared_ptr<Model> Model::Load(
   m->source_ = weights ? std::move(weights)
                        : ext::qwen::flash_next::CreateGgufWeightSource(
                              options.ple_model_path);
-  m->stages_ = stages ? std::move(stages)
-                      : std::make_unique<ext::qwen::flash_next::Stages>();
+  // A null stage selects the executor's GGUF defaults. Custom stages
+  // receive the full FP32 inputs promised by the extension interface.
+  m->stages_ = std::move(stages);
   m->prefill_chunk_ = m->source_->PreferredPrefillChunk();
   if (m->prefill_chunk_ == 0) {
     AssignError(error_msg, "weight source prefill chunk must be positive");
