@@ -36,3 +36,9 @@ pages explain how to install it, run models, and extend it with your own.
 Developer documentation, design records and per-model evidence live in
 [`internal/`](internal/development.md), in the repository only. Start with
 [development](internal/development.md) and [testing](internal/testing.md).
+
+## Community fork records
+
+- [Release reports](reports/README.md): archived measurements and investigations through v0.36.
+- [Customizations](customizations.md): retained changes and validation scope.
+- [Benchmark policy](benchmark-policy.md): repeat counts, comparison conditions and reporting rules.
