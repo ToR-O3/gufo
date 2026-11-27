@@ -1,0 +1,129 @@
+{
+  "schema": "sc117-setting-rename-quality-output-comparison-v1",
+  "checked_utc": "2026-10-04T17:48:22.109935+00:00",
+  "source_commit": "1859bb69a3da2aed0ec0d4e58cf7f5e79ab88ac1",
+  "historical_source_commit": "8c95dce5a906841709013cbcaf32f838ba9bd04b",
+  "case_count": 12,
+  "all_visible_responses_and_counts_identical": true,
+  "scope": "Fresh generated answers are compared after independent new-answer review. This is a naming invariance check, not a statement that all answers are correct.",
+  "sources": [
+    {
+      "path": "outputs/v0.7.0/runs/ar-formal-1/quality-generation/summary.json",
+      "sha256": "75d7ee9e90ccbf7cebbbfa1a87871487357d28a75caff69205e1a2228f0b80f5"
+    },
+    {
+      "path": "outputs/v0.7.0-q8_0/runs/ar-formal-1/quality-generation/summary.json",
+      "sha256": "ba26e1b5b34571e51c154a3d9a3888f23015c07a5d979d68ae7624de15ffaa2d"
+    }
+  ],
+  "rows": [
+    {
+      "id": "ja01_schedule",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "b6832473fad4d879fab9006fea59e4bfb9260241e20985caa16c99e0e0fdd46e"
+    },
+    {
+      "id": "ja02_summary",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "13f22d7f90f91af89f38728b14a25fcad56da8e3dfcfce474f3e58a97f972b5a"
+    },
+    {
+      "id": "ja03_polite",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "5dee87bcdf50ea9b101f3365aba71afc00303a76af90edc710b21a0c4bb85bef"
+    },
+    {
+      "id": "ja04_exception",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "b1238dc34663c153c2b3d352d5188e9f0e9962d27f2cea4bfbe0525f149060fe"
+    },
+    {
+      "id": "code01_unique",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "95642fde0f6c9159a781a5cd2948d2d3b23b133e06a0d08db5d3ae38073a4702"
+    },
+    {
+      "id": "code02_merge",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "3fbb276cae1c4ae0eb5b6fc59b7f9314c07da45c8bb2c196668ecdcc15710220"
+    },
+    {
+      "id": "code03_search",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "414b2dd68bd6be5eb9f2b2158bded0bde3768c0afc3b42d22b2af1920c349c72"
+    },
+    {
+      "id": "code04_brackets",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "bc2e316624aab1945ebcefe4a317db2e9657b90fec14bfc13e3226793d480cf5"
+    },
+    {
+      "id": "math01_linear",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451"
+    },
+    {
+      "id": "math02_union",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "eb1e33e8a81b697b75855af6bfcdbcbf7cbbde9f94962ceaec1ed8af21f5a50f"
+    },
+    {
+      "id": "math03_probability",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "088ae5cc7815cf98be130c0421b8ba0cb92125b5a50045e0aff058e5e04bfe94"
+    },
+    {
+      "id": "math04_sequence",
+      "same_fixed_input_and_template": true,
+      "same_settings": true,
+      "visible_text_equal": true,
+      "finish_reason_equal": true,
+      "prompt_and_output_counts_equal": true,
+      "new_text_sha256": "c3af1173742af1e8748353f64cd4742d214a9b9327a937cce2104362a924edf8"
+    }
+  ]
+}

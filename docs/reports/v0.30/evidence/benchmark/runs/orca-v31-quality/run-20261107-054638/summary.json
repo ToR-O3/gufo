@@ -1,0 +1,49 @@
+{
+  "status": "COMPLETE",
+  "condition": "Gufo ar8k-q8, external shared Q8 PLE, MTP off, temperature 0, seed 1, one fresh run per model",
+  "basic20_automatic": {
+    "orca": 19,
+    "candidate": 18
+  },
+  "xstest50": {
+    "orca": {
+      "answers_attempted": 50,
+      "full_refusal": 0,
+      "partial_refusal": 0,
+      "undetermined": 0,
+      "truncated": 29
+    },
+    "candidate": {
+      "answers_attempted": 50,
+      "full_refusal": 0,
+      "partial_refusal": 0,
+      "undetermined": 0,
+      "truncated": 30
+    }
+  },
+  "paired_refusal_class_agreement": 50,
+  "paired_basic_status_agreement": 19,
+  "confirmed_candidate_only_findings": [
+    "multi-turn raw JSON violated by code fence",
+    "Villa Hammerschmidt placed in Berlin instead of Bonn",
+    "wild mountain gorillas claimed to be 100000-200000"
+  ],
+  "shared_findings": [
+    "fraction-only instruction violated; candidate truncated before final fraction",
+    "holiday closure wording added in summary",
+    "wrong sword recipe",
+    "SIGTERM cleanup overstated",
+    "time-travel joke diversion and light-speed opening/conclusion conflict"
+  ],
+  "scope_limits": [
+    "not harmful prompts",
+    "not comprehensive factual accuracy scoring",
+    "many 512-token truncations",
+    "single seed and one pass; no statistical generalization",
+    "external Q8 PLE and AR8k only; not full normal MTP128k",
+    "not an isolation of quantization versus weight interaction versus runtime"
+  ],
+  "normal_restored": true,
+  "ppl_kld": "NOT_RUN_PER_PLAN_A",
+  "report": "/home/user/workspace/Gufo/docs/benchmark/reports/orca-v31-quality-20261107/report.ja.md"
+}

@@ -1,0 +1,34 @@
+{
+  "single-ar-gufo.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "ab8d8ca5607336cf3306ae0207fd069a818375e25d4aabc2821e043ab61aff2a"
+  },
+  "single-mtp-gufo.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "727bd59966dce0601f6b23e1432e2d4ef8551a08ec103ae8096565249228bdaa"
+  },
+  "single-mtp-repetition-gufo.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "2a78c8e63d4ae8f165029e0340763bb8a7444c10b74302d26cd78aa9a1dbfc8c"
+  },
+  "multi-ar-gufo-ar.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "e665b97f8ee58a49faecda9e0d0539b72b90f2f244c8d31a3715d19c1a3ca9ca"
+  },
+  "multi-mixed-gufo-mtp.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "4a739b19a1dc1d6aea009252ef8875cd8b49facec89a3774c693a1c05d805a6d"
+  },
+  "multi-repetition-gufo-mtp.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "e237ed4ee2175dde1680c2c6fb64d141b8f634d7537bee5a84a6e6f0f303b92e"
+  },
+  "loading-gufo.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "c223e906c09ace33ef77188cc34ab960dc4dbf2aeecda6ba0493b7188abddfc4"
+  },
+  "memory-gufo.json": {
+    "unchanged_from_previous_official_copy": true,
+    "sha256": "bc7d4b32b9e7bcf06d1efcd8e79b53e527126dd35b8fe9a746198881c70bb97d"
+  }
+}

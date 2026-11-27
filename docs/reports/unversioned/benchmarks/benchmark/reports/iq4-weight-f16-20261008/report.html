@@ -1,0 +1,17 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gufo IQ4 ③A：精度確認で不採用</title>
+<style>body{font:16px/1.8 system-ui,sans-serif;max-width:1080px;margin:36px auto;padding:0 22px;background:#f6f8fb;color:#1e293b}section{background:white;border:1px solid #dbe3ed;border-radius:12px;padding:22px;margin:18px 0}h1{font-size:27px}h2{font-size:20px}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;white-space:nowrap}th{background:#eef3fa}.scroll{overflow:auto}code{font-size:12px;overflow-wrap:anywhere}a{color:#1455a0}</style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p>
+<h1>③A IQ4重みの一時FP16展開：精度確認で不採用</h1>
+<section><h2>現在の判断</h2><p>精度を下げる変更は採用しない方針に従い、③Aは不採用としました。候補固有の精度低下は検出されていませんが、独立したCPU参照の精度基準には一部不合格です。実験コード全体を作業中ソースから取り除き、採用済み①＋②＋④のソースとテストへ復元しています。候補の変更履歴・実行ファイル・失敗ログは保存しています。指定された32K／128K・前後各3回の速度測定は<strong>未実施（0件）</strong>です。</p>
+<p>通常Gufoは採用済み①＋②＋④で復帰し、起動正常と実行ファイルの一致を確認しました。Strataは停止のままです。候補と変更前の実行ファイルを保持しています。</p></section>
+<section><h2>不採用となった実験の範囲</h2><p>IQ4_XSのSSM出力投影2560×6144だけを対象に、非投機Prefillの128〜2048行で重みを一度FP16に展開し、既存と同じWMMAのタイル・FP32積算順序で計算します。30MiBの作業領域を対象実行器ごとに一つ確保し、層とチャンクをまたいで使い回します。全重みの常駐FP16化ではありません。</p>
+<p>Strata <code>82f46a8</code> の <code>src/prefill/gemm.cu:813–827</code>を参考にしました。paddingの追加、他の投影、Decode、小型HCのFP32計算、Q4の計算方式は変更していません。</p></section>
+<section><h2>数値検証</h2><div class="scroll"><table><tr><th>入力行数</th><th>展開重み対CPU・ビット</th><th>新旧GPU出力・ビット</th><th>CPU参照・相対RMS</th><th>最大絶対差</th><th>基準2e-5</th></tr><tr><td>1</td><td>一致</td><td>一致</td><td>0.000130603</td><td>8.16977e-09</td><td>不合格</td></tr><tr><td>127</td><td>一致</td><td>一致</td><td>1.71366e-05</td><td>0.00139082</td><td>合格</td></tr><tr><td>128</td><td>一致</td><td>一致</td><td>1.29538e-05</td><td>0.00110835</td><td>合格</td></tr><tr><td>129</td><td>一致</td><td>一致</td><td>2.2823e-05</td><td>0.00207686</td><td>不合格</td></tr><tr><td>2048</td><td>一致</td><td>一致</td><td>1.99907e-05</td><td>0.00108201</td><td>合格</td></tr></table></div>
+<p>新旧GPU出力は各行数の全出力要素で比較。展開重みは全15,728,640要素をCPU復号＋FP16変換と比較しています。CPU倍精度の内積参照は各行数で24出力位置を比較しています。</p>
+<p>新しい試験データには符号の異なる重み・ごく小さい重みと入力を含みます。CPU参照基準を超えた結果も従来GPU経路とビット一致しており、この試験では候補追加による数値悪化は検出されていません。ただし独立参照に不合格である事実は維持し、実モデルの生成品質や公式モデルとの同等性は未確認です。</p>
+<p>最初に検出したゼロの符号差は、テストを変更せず展開処理で符号を保持する修正を行い、全重みのビット一致が通りました。独立CPU参照の相対RMS基準2e-5も変更していません。</p></section>
+<section><h2>配置改善との関係</h2><p>前に提案した行間への余白追加は、③Aで展開したFP16重みが前提のため続行しません。配置だけを変えても、今回の独立CPU参照との数値差は解消しません。</p><p>現在のIQ4形式のまま、値と計算順序を保って配置だけを変える方法は別の実験として検討できます。ただし現行にもLDS内の配置改善があり、追加の速度改善は未確認です。まだ実装・測定していません。</p><p>実モデルの分割入力確認と32K／128K・前後各3回の性能測定は実施していません。通常運用は①＋②＋④を維持します。</p></section>
+<section><h2>保存情報</h2><p>採用済みソース：<code>76c7ad0a5e6766f3e294b3f1ccb38a4bddd30713</code><br>候補ソース：<code>fd9af43de6e6a1e128392b2514edc2488e4b9856</code></p>
+<p><span title="参照先はローカル保管">診断と判断の全記録</span> ／ <span title="参照先はローカル保管">候補の変更</span> ／ <span title="参照先はローカル保管">全行数の診断ログ</span> ／ <span title="参照先はローカル保管">最初のゼロ符号診断</span> ／ <span title="参照先はローカル保管">通常版復帰</span> ／ <span title="参照先はローカル保管">実装範囲</span></p>
+<p>自動承認レビューは、符号付きゼロを一致判定の例外にする提案を「精度基準を緩めない」規則に反するとして却下しました。その例外は適用せず、実装を修正しています。</p></section></body></html>

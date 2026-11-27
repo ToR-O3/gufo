@@ -1,0 +1,34 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo v0.28.1 検証</title><style>body{font:16px/1.75 system-ui,sans-serif;max-width:1100px;margin:36px auto;padding:0 22px;color:#18243a;background:#f7f9fc}h1{font-size:26px}h2{font-size:21px;margin-top:36px}table{border-collapse:collapse;width:100%;background:white}td{border:1px solid #cbd5e1;padding:9px 12px}tr:first-child{font-weight:700;background:#e8eef8}code{font-size:.9em;background:#e8edf3;padding:2px 4px;overflow-wrap:anywhere}a{color:#174f9c}p{overflow-wrap:anywhere}</style><h1>Gufo v0.28.1：Attention境界修正と128K確認</h1>
+<p>v0.28.1と独立修正<code>8f4a7e77</code>を通常版へ反映し、Huihui IQ4_XS＋BF16 n-gramで起動済み。ROCm 10.1、2セッション・各128K、thinking auto、共有MTP上限7／下限1、RAMキャッシュ4 GiB、prefill chunk512、Docker再起動<code>on-failure:3</code>を維持した。</p>
+<h2>MTP文章128K</h2>
+<table>
+<tr><td>構成</td><td>回数</td><td>Prefill (tok/s)</td><td>TTFT (秒)</td><td>Decode (tok/s)</td></tr>
+<tr><td>前回 v0.27.0＋速度改善、BF16あり</td><td>3回平均</td><td>894.95</td><td>2.304</td><td>31.18</td></tr>
+<tr><td>今回 v0.28.1＋境界修正、BF16あり</td><td>1回</td><td>961.10</td><td>2.153</td><td>33.66</td></tr>
+</table>
+<p>Gufo公式single-mtp／prose、履歴目標131072、1セッション、context133760、thinking off、greedy。実測要求はキャッシュ済み履歴131,052＋追加2,054トークン、生成128トークン。TTFTは追加要求の待ち時間で、128K履歴全体の準備時間ではない。</p>
+<p>※前回は保存済み3回平均、今回は指定どおり1回。公式が生成する入力は回ごとに異なり、背景負荷・ファイルキャッシュの差もあるため、速度差の確定には後日の3回測定を使う。外部n-gramなしは今回は未測定。</p>
+<h2>最低限の動作確認</h2>
+<ul>
+<li>Attention境界の36条件すべてで単独処理とビット一致。GPUグラフ再利用を含む。独立FP64参照との最大誤差8.24e-8（上限1e-6）。</li>
+<li>修正を無効にした比較用テストでは不一致を検出。既存Attentionテスト、こちらと公式の両HCテストは合格。</li>
+<li>キャッシュ済み2,040トークン、6要求同時のMTP確認を1回実施。6件すべての128トークン回答が単独ARと完全一致。</li>
+<li>通常構成でready、登録モデル、実行バイナリとROCm 10.1、BF16 PLEの読み込み、通常パラメータ、短い応答「OK」を確認。</li>
+<li>正式な同時利用ベンチ3回、全履歴・全モデルの再確認は後日に延期。</li>
+</ul>
+<p>試験初回は、私が指定した<code>--min-draft-tokens 3</code>がサーバーで許可されず起動前に終了した。元の通常Gufoへ復帰後、許可される通常値の上限7／下限1に修正して同時MTPだけ再確認した。推論中の停止ではなく、試験設定の誤り。初回ログは保存済み。</p>
+<h2>128K試験中のメモリ</h2>
+<table><tr><td>観測範囲</td><td>報告総量 (GiB)</td><td>観測最大使用量 (GiB)</td><td>観測最小空き・利用可能量 (GiB)</td></tr><tr><td>Windowsに見えている物理メモリ</td><td>63.65</td><td>58.03</td><td>5.62</td></tr><tr><td>WSL全体（総量−MemAvailable）</td><td>23.46</td><td>12.56</td><td>10.90</td></tr><tr><td>HIPが報告するGPUメモリ</td><td>111.48</td><td>79.39</td><td>32.08</td></tr><tr><td>Docker cgroup（ファイルキャッシュ等を含む）</td><td>—</td><td>9.35</td><td>—</td></tr><tr><td>GufoプロセスRSS</td><td>—</td><td>9.50</td><td>—</td></tr></table>
+<p>読み込み・ウォームアップ・履歴準備・測定を含む1セッション試験の観測値。常用の2セッション起動時とは区別する。Windows・WSL・HIP・Dockerは集計範囲が重なるため足し合わせない。GPU欄はHIPの報告値であり、独立した物理VRAM容量という意味ではない。</p>
+<p>通常の2セッション起動後の瞬間値：WSLの利用可能量は17.20 GiB、HIPの報告使用量は77.51 GiB／空き33.97 GiB。上表の試験中ピークとは別の時点。</p>
+<h2>コミットと保存先</h2>
+<ul>
+<li>公式取り込み：<code>0090201a</code>。</li>
+<li>独立修正：<code>8f4a7e77</code>。内部Attention API・GPUカーネル・呼び出し・回帰テスト・品質記録の5ファイル。</li>
+<li><a href="../../../../../cross-version/investigations/gufo-commit-guide.ja.md">修正台帳</a>：意図／変更したファイル／変更内容／確認できた結果、および全変更ファイルを追記。</li>
+<li><a href="../../../../evidence/benchmark/reports/v0281-attention-boundary-20261101-163558/summary.json">集計JSON</a>、<span title="参照先はローカル保管">実測1回の詳細</span>、<a href="../../../../evidence/benchmark/reports/v0281-attention-boundary-20261101-163558/normal/summary.json">通常起動の確認</a>。</li>
+<li>通常イメージ：<code>gufo:v0.28.1-attention-8f4a7e77-rocm101</code>。</li>
+<li><span title="参照先はローカル保管">今回のソース</span>。</li>
+<li>実行ファイルSHA-256：<code>445cdac8dfc8bc4b94cc6752d33d0a0c39a75ef2bb1a30db34365b5ed70dfbf5</code>。</li>
+</ul>
+<p>今回の修正はGufo本体のAttention計算順序への対処。既存の量子化拡張とモデルは維持した。<code>AMD_SERIALIZE_COPY=2</code>は別件の転送待機として引き続き有効。</p></html>

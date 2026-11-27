@@ -1,0 +1,727 @@
+{
+  "reference": "toro3-builtin",
+  "total": 72,
+  "identical_payloads": 72,
+  "pairs": [
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 0,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2040,
+      "prefill_tokens_toro3": 2040,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 0,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2032,
+      "prefill_tokens_toro3": 2032,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 0,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2053,
+      "prefill_tokens_toro3": 2053,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 4096,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2043,
+      "prefill_tokens_toro3": 2043,
+      "cached_tokens_unsloth": 4095,
+      "cached_tokens_toro3": 4095
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 4096,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2026,
+      "prefill_tokens_toro3": 2026,
+      "cached_tokens_unsloth": 4095,
+      "cached_tokens_toro3": 4095
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 4096,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2028,
+      "prefill_tokens_toro3": 2028,
+      "cached_tokens_unsloth": 4095,
+      "cached_tokens_toro3": 4095
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 8192,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2048,
+      "prefill_tokens_toro3": 2048,
+      "cached_tokens_unsloth": 8184,
+      "cached_tokens_toro3": 8184
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 8192,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2055,
+      "prefill_tokens_toro3": 2055,
+      "cached_tokens_unsloth": 8184,
+      "cached_tokens_toro3": 8184
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 8192,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2042,
+      "prefill_tokens_toro3": 2042,
+      "cached_tokens_unsloth": 8184,
+      "cached_tokens_toro3": 8184
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 12288,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 12249,
+      "cached_tokens_toro3": 12249
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 12288,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2048,
+      "prefill_tokens_toro3": 2048,
+      "cached_tokens_unsloth": 12249,
+      "cached_tokens_toro3": 12249
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 12288,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2052,
+      "prefill_tokens_toro3": 2052,
+      "cached_tokens_unsloth": 12249,
+      "cached_tokens_toro3": 12249
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 16384,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 16324,
+      "cached_tokens_toro3": 16324
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 16384,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 16324,
+      "cached_tokens_toro3": 16324
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 16384,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2048,
+      "prefill_tokens_toro3": 2048,
+      "cached_tokens_unsloth": 16324,
+      "cached_tokens_toro3": 16324
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 32768,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2029,
+      "prefill_tokens_toro3": 2029,
+      "cached_tokens_unsloth": 32718,
+      "cached_tokens_toro3": 32718
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 32768,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2068,
+      "prefill_tokens_toro3": 2068,
+      "cached_tokens_unsloth": 32718,
+      "cached_tokens_toro3": 32718
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 32768,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2042,
+      "prefill_tokens_toro3": 2042,
+      "cached_tokens_unsloth": 32718,
+      "cached_tokens_toro3": 32718
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 65536,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2058,
+      "prefill_tokens_toro3": 2058,
+      "cached_tokens_unsloth": 65447,
+      "cached_tokens_toro3": 65447
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 65536,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2052,
+      "prefill_tokens_toro3": 2052,
+      "cached_tokens_unsloth": 65447,
+      "cached_tokens_toro3": 65447
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 65536,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2071,
+      "prefill_tokens_toro3": 2071,
+      "cached_tokens_unsloth": 65447,
+      "cached_tokens_toro3": 65447
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 131072,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 130932,
+      "cached_tokens_toro3": 130932
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 131072,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2062,
+      "prefill_tokens_toro3": 2062,
+      "cached_tokens_unsloth": 130932,
+      "cached_tokens_toro3": 130932
+    },
+    {
+      "table": "single-ar-gufo-single",
+      "depth": 131072,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2045,
+      "prefill_tokens_toro3": 2045,
+      "cached_tokens_unsloth": 130932,
+      "cached_tokens_toro3": 130932
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 0,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2040,
+      "prefill_tokens_toro3": 2040,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 0,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2032,
+      "prefill_tokens_toro3": 2032,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 0,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2053,
+      "prefill_tokens_toro3": 2053,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 4096,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2042,
+      "prefill_tokens_toro3": 2042,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 4096,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2025,
+      "prefill_tokens_toro3": 2025,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 4096,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2027,
+      "prefill_tokens_toro3": 2027,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 8192,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 8185,
+      "cached_tokens_toro3": 8185
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 8192,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2054,
+      "prefill_tokens_toro3": 2054,
+      "cached_tokens_unsloth": 8185,
+      "cached_tokens_toro3": 8185
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 8192,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2041,
+      "prefill_tokens_toro3": 2041,
+      "cached_tokens_unsloth": 8185,
+      "cached_tokens_toro3": 8185
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 12288,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2046,
+      "prefill_tokens_toro3": 2046,
+      "cached_tokens_unsloth": 12250,
+      "cached_tokens_toro3": 12250
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 12288,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 12250,
+      "cached_tokens_toro3": 12250
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 12288,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2051,
+      "prefill_tokens_toro3": 2051,
+      "cached_tokens_unsloth": 12250,
+      "cached_tokens_toro3": 12250
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 16384,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2046,
+      "prefill_tokens_toro3": 2046,
+      "cached_tokens_unsloth": 16325,
+      "cached_tokens_toro3": 16325
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 16384,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2046,
+      "prefill_tokens_toro3": 2046,
+      "cached_tokens_unsloth": 16325,
+      "cached_tokens_toro3": 16325
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 16384,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2047,
+      "prefill_tokens_toro3": 2047,
+      "cached_tokens_unsloth": 16325,
+      "cached_tokens_toro3": 16325
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 32768,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2028,
+      "prefill_tokens_toro3": 2028,
+      "cached_tokens_unsloth": 32719,
+      "cached_tokens_toro3": 32719
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 32768,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2067,
+      "prefill_tokens_toro3": 2067,
+      "cached_tokens_unsloth": 32719,
+      "cached_tokens_toro3": 32719
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 32768,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2041,
+      "prefill_tokens_toro3": 2041,
+      "cached_tokens_unsloth": 32719,
+      "cached_tokens_toro3": 32719
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 65536,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2057,
+      "prefill_tokens_toro3": 2057,
+      "cached_tokens_unsloth": 65448,
+      "cached_tokens_toro3": 65448
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 65536,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2051,
+      "prefill_tokens_toro3": 2051,
+      "cached_tokens_unsloth": 65448,
+      "cached_tokens_toro3": 65448
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 65536,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2070,
+      "prefill_tokens_toro3": 2070,
+      "cached_tokens_unsloth": 65448,
+      "cached_tokens_toro3": 65448
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 131072,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2046,
+      "prefill_tokens_toro3": 2046,
+      "cached_tokens_unsloth": 130933,
+      "cached_tokens_toro3": 130933
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 131072,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2061,
+      "prefill_tokens_toro3": 2061,
+      "cached_tokens_unsloth": 130933,
+      "cached_tokens_toro3": 130933
+    },
+    {
+      "table": "single-mtp-gufo-single",
+      "depth": 131072,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2044,
+      "prefill_tokens_toro3": 2044,
+      "cached_tokens_unsloth": 130933,
+      "cached_tokens_toro3": 130933
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 0,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2034,
+      "prefill_tokens_toro3": 2034,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 0,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2026,
+      "prefill_tokens_toro3": 2026,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 0,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2048,
+      "prefill_tokens_toro3": 2048,
+      "cached_tokens_unsloth": 0,
+      "cached_tokens_toro3": 0
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 4096,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2038,
+      "prefill_tokens_toro3": 2038,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 4096,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2022,
+      "prefill_tokens_toro3": 2022,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 4096,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2022,
+      "prefill_tokens_toro3": 2022,
+      "cached_tokens_unsloth": 4096,
+      "cached_tokens_toro3": 4096
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 8192,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2042,
+      "prefill_tokens_toro3": 2042,
+      "cached_tokens_unsloth": 8189,
+      "cached_tokens_toro3": 8189
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 8192,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2049,
+      "prefill_tokens_toro3": 2049,
+      "cached_tokens_unsloth": 8189,
+      "cached_tokens_toro3": 8189
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 8192,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2036,
+      "prefill_tokens_toro3": 2036,
+      "cached_tokens_unsloth": 8189,
+      "cached_tokens_toro3": 8189
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 12288,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2043,
+      "prefill_tokens_toro3": 2043,
+      "cached_tokens_unsloth": 12256,
+      "cached_tokens_toro3": 12256
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 12288,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2041,
+      "prefill_tokens_toro3": 2041,
+      "cached_tokens_unsloth": 12256,
+      "cached_tokens_toro3": 12256
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 12288,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2045,
+      "prefill_tokens_toro3": 2045,
+      "cached_tokens_unsloth": 12256,
+      "cached_tokens_toro3": 12256
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 16384,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2041,
+      "prefill_tokens_toro3": 2041,
+      "cached_tokens_unsloth": 16332,
+      "cached_tokens_toro3": 16332
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 16384,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2041,
+      "prefill_tokens_toro3": 2041,
+      "cached_tokens_unsloth": 16332,
+      "cached_tokens_toro3": 16332
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 16384,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2042,
+      "prefill_tokens_toro3": 2042,
+      "cached_tokens_unsloth": 16332,
+      "cached_tokens_toro3": 16332
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 32768,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2022,
+      "prefill_tokens_toro3": 2022,
+      "cached_tokens_unsloth": 32734,
+      "cached_tokens_toro3": 32734
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 32768,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2063,
+      "prefill_tokens_toro3": 2063,
+      "cached_tokens_unsloth": 32734,
+      "cached_tokens_toro3": 32734
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 32768,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2036,
+      "prefill_tokens_toro3": 2036,
+      "cached_tokens_unsloth": 32734,
+      "cached_tokens_toro3": 32734
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 65536,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2052,
+      "prefill_tokens_toro3": 2052,
+      "cached_tokens_unsloth": 65481,
+      "cached_tokens_toro3": 65481
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 65536,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2048,
+      "prefill_tokens_toro3": 2048,
+      "cached_tokens_unsloth": 65481,
+      "cached_tokens_toro3": 65481
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 65536,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2064,
+      "prefill_tokens_toro3": 2064,
+      "cached_tokens_unsloth": 65481,
+      "cached_tokens_toro3": 65481
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 131072,
+      "repetition": 1,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2040,
+      "prefill_tokens_toro3": 2040,
+      "cached_tokens_unsloth": 131000,
+      "cached_tokens_toro3": 131000
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 131072,
+      "repetition": 2,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2056,
+      "prefill_tokens_toro3": 2056,
+      "cached_tokens_unsloth": 131000,
+      "cached_tokens_toro3": 131000
+    },
+    {
+      "table": "single-mtp-repetition-gufo-single",
+      "depth": 131072,
+      "repetition": 3,
+      "same_http_payload": true,
+      "prefill_tokens_unsloth": 2040,
+      "prefill_tokens_toro3": 2040,
+      "cached_tokens_unsloth": 131000,
+      "cached_tokens_toro3": 131000
+    }
+  ]
+}

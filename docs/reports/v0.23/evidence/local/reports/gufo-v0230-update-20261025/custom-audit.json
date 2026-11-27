@@ -1,0 +1,53 @@
+{
+  "upstream_version": "0.23.0",
+  "official_commit": "1fafd5ad633a2934d32a2c227aa8951fa5ab22bf",
+  "before_head": "e26b62505ed9d2f6849eb0a56e1fc1fe2e4d23b7",
+  "code_revision": "2e8af5838cd6d28e3fdd6b46455b01cbb486db57",
+  "custom_files_compared": 92,
+  "unchanged_files": 82,
+  "adaptation": "CompatibilityUpload uses platform::FileValid/ReadAt instead of direct POSIX descriptor/pread access; row conversion, buffers, rounding and tolerances unchanged.",
+  "conflict": "serve_test.py retains local weight-compat checks and all upstream embedding modality checks.",
+  "preserved": [
+    "native IQ4_XS/IQ4_NL plus Q5_K/Q6_K routes",
+    "bounded SC117 compatibility allowlist",
+    "GDN/HC direct half staging with original rounding",
+    "adopted A: SwigluHalf preserve_f32=true and Materialize",
+    "AR continuation/cache identity custom fix",
+    "current Orca-compatible MTP file and Vision sidecar"
+  ],
+  "not_reintroduced": [
+    "B1",
+    "B2",
+    "C",
+    "full FP16 weight staging",
+    "INT8 MoE experiments"
+  ],
+  "remaining": [
+    "v0.22 C8 MTP prose exact mismatch: 8/24, reproduced historically; v0.23 not tested",
+    "historical IQ4 prefill slowdown and official-value gap: cause unresolved",
+    "historical component-cache allocation stalls: cause unresolved"
+  ],
+  "proposals": [
+    {
+      "priority": 1,
+      "title": "Orca IQ4-specific MTP cost calibration",
+      "basis": "mtp_costs.hpp tables were measured with official Q4 target/Q8 MTP. Native IQ4 and Q6_K output kernels have different costs.",
+      "scope": "Measure existing cost-audit for C1/C2 at selected depths, retain fixed deterministic cost tables; gate any adopted table by qualified tensor layout, leaving other models unchanged.",
+      "validation": "Greedy AR/MTP exactness, seeded replay, C2 and cache/restore, actual proposed/accepted/round counts; matched uncached timings. Speed gain is unknown."
+    },
+    {
+      "priority": 2,
+      "title": "Profile IQ4 prefill before shape-specific tile/launch tuning",
+      "basis": "IQ4 shares generic half and routed WMMA helpers, while official Q8-specific fused paths remain type-specific. The codebook and strict small FP32 reductions prevent blindly applying Q8 arithmetic.",
+      "scope": "Profile dense, routed experts, shared expert, HC and attention separately; if warranted adjust only an IQ4 launch/tile choice without changing operands, rounding or K accumulation order. No automatic B1/B2/C revival.",
+      "validation": "Independent FP64/operator oracle with unchanged thresholds, exact half/intermediate checks where required, tail shapes and model/HTTP output gates before matched 32K/128K timing."
+    },
+    {
+      "priority": 3,
+      "title": "Strengthen the Q6_K small-head integration regression gate",
+      "basis": "v0.23 expands small-head eligibility; prior C8 mismatch remains unresolved.",
+      "scope": "Focused Japanese/rare-token fallback, sampled seeded C2, penalty/constraint, EOS and restore cases; reproduce prior C8 case separately.",
+      "validation": "Keep target full-vocabulary verification and all existing exactness requirements; do not adopt performance work that hides a correctness failure."
+    }
+  ]
+}

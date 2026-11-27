@@ -1,0 +1,32 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gufo v0.27.0更新とHuihui・ROCmの検証</title>
+<style>body{font:16px/1.75 system-ui,sans-serif;background:#f5f6f8;color:#202630;margin:0}main{max-width:1060px;margin:auto;padding:30px 24px 70px}h1{font-size:26px}h2{font-size:21px;margin-top:32px}table{border-collapse:collapse;width:100%;background:white;margin:16px 0}th,td{padding:10px 14px;border:1px solid #d6dce5;text-align:left}th{background:#e9eef5}.note{color:#536173;font-size:14px}.important{background:#fff0dc;border-left:5px solid #b76a13;padding:14px 18px}code{overflow-wrap:anywhere}a{color:#175ca6}</style>
+<main><h1>Gufo v0.27.0更新とHuihui・ROCmの検証</h1><p class="note">2026年10月30日／WSL・AlmaLinux 10。更新確認と原因切り分けの記録です。公式性能ベンチマークは今回実施していません。</p>
+<p><strong>通常運用は、カスタム対応を保持したGufo v0.27.0＋ROCm 7.2.3で復帰しました。</strong>Huihui、2セッション、131,072 token、thinking auto、MTP draft 7／min 1、RAMキャッシュ4 GiB、Docker on-failure:3を維持しています。旧v0.26＋7.2.3は停止した復帰用コンテナとして保持し、Strataは変更していません。</p>
+<div class="important"><strong>説明の訂正：Huihuiも追加対応を使っていました。</strong><br>「Huihuiは公式の既存経路だけで動く」という前提は誤りでした。公式未改造v0.27は、<code>blk.0.ffn_gate_exps.weight has unsupported format IQ3_S</code>で読み込みに失敗しました。反復入力の推論比較には到達しておらず、追加対応の影響を除外できません。</div>
+<h2>実機で確認できたこと</h2><table><thead><tr><th>Gufo本体</th><th>ROCm</th><th>今回の結果</th></tr></thead><tbody>
+<tr><td>カスタム統合v0.27.0</td><td>10.1</td><td>GPU演算11項目は合格。Huihuiの独立起動AR反復要求は初回が完了せず、約156秒で中断。その後の同条件試験は実施していません。</td></tr>
+<tr><td>公式未改造v0.27.0</td><td>10.1</td><td>初回のモデル読み込みでIQ3_S非対応エラー。推論未実施。3回の予定でしたが、読み込み非対応のため1回で打ち切り。</td></tr>
+<tr><td>カスタム統合v0.27.0</td><td>7.2.3</td><td>Huihuiの独立した起動でAR 3/3・MTP 3/3完了。通常設定で機能6項目と反復要求3/3を確認。こちらを採用。</td></tr></tbody></table>
+<p>公式版はカスタム統合版と同じ固定ツールチェーンでビルドし、公式コミットの1,469ファイルとの一致を確認しました。WSL向けランタイム、モデル、入力、起動条件をそろえています。ただし、モデル読み込みで止まったため、本体の追加対応の有無による応答停止の比較は成立していません。</p>
+<p><strong>原因は未確定です。</strong>Gufoの追加差分、公式処理、ROCm、WSL用ROCDXGの影響を現段階では分離できていません。「ROCmだけが原因」「こちらの改造は無関係」とは結論していません。</p>
+<h2>Huihuiの中身を読み直した結果</h2><p>現在使用中の3分割GGUFのヘッダーを直接読みました。以下はエキスパート重みのテンソル数であり、ファイル容量やパラメータ数の比率ではありません。</p>
+<table><thead><tr><th>形式</th><th>テンソル数</th></tr></thead><tbody><tr><td>IQ3_S</td><td>94</td></tr><tr><td>IQ4_NL</td><td>43</td></tr><tr><td>IQ4_XS</td><td>2</td></tr><tr><td>Q8_0</td><td>5</td></tr></tbody></table>
+<p>モデル名のUD-IQ4_XSは、すべての重みがIQ4_XSであることを意味しません。Huihuiも、ISTA由来モデル向けに追加した形式判定とGPUへの接続を通ります。モデル間でエラーの有無が異なることだけでは、追加対応の正否を判定できません。</p>
+<h2>今回取り込んだ変更と検証範囲</h2><p><a href="https://github.com/gufo-org/gufo/releases/tag/v0.27.0">公式v0.27.0</a>を取り込み、OrcaのIQ4系とISTA由来の混合量子化対応を保持しました。公式の小バッチ処理の引数追加とローカルのGroupedGrid引数を整合させ、Q8_0のF32展開修正を取り込んでいます。配布元名で分岐する処理は追加していません。</p>
+<table><thead><tr><th>確認内容</th><th>結果・範囲</th></tr></thead><tbody>
+<tr><td>CPU・リポジトリ確認</td><td>check-pr 72件と追加4件を実行し合格。追加分には重複項目を含みます。</td></tr>
+<tr><td>GPU演算</td><td>11スイート合格。うち7件は同じイメージ・同じテストバイナリで直前に得た合格記録を再利用。投影テストは下記の順序修正を適用。</td></tr>
+<tr><td>Huihui</td><td>日本語JSON、継続会話、生成Pythonの実行結果、画像、ツール呼び出し、thinkingを確認。AR・MTPは各3回、毎回起動し直して反復入力を検証。</td></tr>
+<tr><td>Orca・SC117</td><td>追加経路のソース・CPU／GPU演算を確認。今回の更新では両モデル全体の読み込み・推論・性能ベンチは未実施。</td></tr>
+<tr><td>性能と長期安定性</td><td>公式3回ベンチ、最大コンテキスト負荷、長時間運用は未実施。今回の短い動作確認を性能比較や完全な安定性保証には使いません。</td></tr></tbody></table>
+<h2>7.2.3で失敗したGPUテストについて</h2><p>公式の投影テストは、別ストリームで計算する出力をデフォルトストリームからゼロ初期化しており、その順序が保証されていませんでした。診断版は同期なしで3/3失敗し、20,480要素すべてがゼロになりました。初期化の完了待ちを入れると3/3合格しました。</p>
+<p>最終検証では、テスト内の初期化2か所だけを計算と同じストリームにそろえ、合格を確認しました。期待値との完全一致、解放済みメモリへの書き込み検出などの判定は変更していません。これは検証コードの修正であり、Gufo本体のバイナリは同一です。</p>
+<p class="note">このテストの順序問題と、ROCm10.1でのHuihui反復入力の停止は、別々に観測した現象です。同一原因と確認できたわけではありません。<a href="https://rocm.github.io/hip/Synchonization.html">HIPの同期仕様</a></p>
+<h2>終了時のメモリ</h2><p class="note">2026-10-30T07:05:32.472479+00:00に取得。WindowsとWSLは集計範囲が重なるため、合計しません。以下は終了時のスナップショットで、公式メモリ負荷試験の値ではありません。</p>
+<table><thead><tr><th>観測範囲</th><th>利用可能量</th><th>補足</th></tr></thead><tbody>
+<tr><td>Windows OSが認識する物理メモリ</td><td>9.52 GiB</td><td>OS認識量 63.65 GiB。GPU用予約領域を含む機器全体の容量とは異なります。</td></tr>
+<tr><td>WSL MemAvailable</td><td>14.00 GiB</td><td>WSL MemTotal 23.46 GiB</td></tr>
+<tr><td>今回の7.2.3検証中のWSL MemAvailable最小</td><td>12.43 GiB</td><td>2秒間隔、244標本。ロード・アンロードとビルドを含む観測範囲。機器全体やVRAMの空き最小値ではありません。</td></tr></tbody></table>
+<p>試験用モデルコンテナは削除し、ビルド用コンテナは停止しました。通常モデルを稼働させているGufoだけが動作しています。過去のベンチ結果や今回の失敗記録は混ぜずに保持しています。</p>
+<details><summary>追跡用の記録</summary><p>採用イメージ：<code>gufo:v0.27.0-mixed-01497fcd-rocm723</code><br>統合コミット：<code>01497fcd790485ca15201b1abedc4f4620beb54f</code><br>公式コミット：<code>de15fdb91f6992f09a2514dabd6d6a8e5f8a2efc</code><br>記録一式：<code>/home/user/Apps/Gufo/deployments/v0270-update-20261030-151123</code><br>復帰用コンテナ：<code>Gufo-v0260-rocm723-rollback</code><br>公式未改造本体の保存イメージ：<code>gufo:v0.27.0-upstream-de15fdb9-rocm101</code></p></details></main></html>

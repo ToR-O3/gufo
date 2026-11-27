@@ -1,0 +1,1216 @@
+{
+  "long-copy": {
+    "ar": {
+      "start": {
+        "event": "start",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "--pull=never",
+          "--name",
+          "gufo-dflash-opt-long-copy",
+          "--device=/dev/dxg",
+          "-p",
+          "127.0.0.1:44889:8080",
+          "--mount",
+          "type=bind,src=/tmp/gufo-dflash-opt.Qyi04W,dst=/task",
+          "--mount",
+          "type=volume,src=gufo-v0300-nix,dst=/nix,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Models,dst=/models,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Apps/Gufo/rocdxg-rocm10.1/lib,dst=/opt/rocm/lib,readonly",
+          "--mount",
+          "type=bind,src=/usr/lib/wsl/lib/libdxcore.so,dst=/usr/lib/libdxcore.so,readonly",
+          "-e",
+          "AMD_SERIALIZE_COPY=2",
+          "-e",
+          "GUFO_DFOPT_TRACE=0",
+          "-e",
+          "GUFO_DFOPT_TOKENS=1",
+          "--entrypoint",
+          "/task/gufo-experiment-v2",
+          "gufo:v0.31.0-quant-refactor-96f1aa8c-rocm101",
+          "serve",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8080",
+          "--sessions",
+          "1",
+          "llm",
+          "--model",
+          "/models/ToRO3-Qwen3.8-Flash-Next-Uncensored-GGUF/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00004.gguf",
+          "--served-model-name",
+          "ToRO3",
+          "--context",
+          "131072",
+          "--cache-ram-bytes",
+          "4294967296",
+          "--think",
+          "auto",
+          "--prefill-chunk",
+          "512",
+          "--speculative",
+          "off",
+          "--request-timeout-ms",
+          "220000",
+          "--draft-tokens",
+          "7"
+        ],
+        "scenario": [
+          "repetition"
+        ],
+        "repeat": 3
+      },
+      "terminal": [
+        {
+          "event": "finished",
+          "exit": 0
+        }
+      ],
+      "cases": {
+        "repetition": {
+          "n": 3,
+          "prompt_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "completion_tokens": {
+            "median": 512,
+            "min": 512,
+            "max": 512
+          },
+          "prefill_ms": {
+            "median": 2107.4786,
+            "min": 2077.4298,
+            "max": 2117.8637
+          },
+          "decode_tok_s": {
+            "median": 29.3326,
+            "min": 28.9337,
+            "max": 29.4625
+          },
+          "ttft_ms": {
+            "median": 2186.9293,
+            "min": 2146.5035,
+            "max": 2199.71
+          },
+          "response_ms": {
+            "median": 19670.9806,
+            "min": 19602.8285,
+            "max": 19868.8465
+          },
+          "cached_tokens": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "prefilled_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "cache_restore_ms": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "drafted": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "accepted": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "lookup": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "lookup_accepted": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "sse_median_gap_ms": {
+            "median": 33.8435,
+            "min": 33.6458,
+            "max": 34.257
+          },
+          "sse_max_gap_ms": {
+            "median": 139.9035,
+            "min": 75.7661,
+            "max": 163.1045
+          },
+          "server_max_gap_ms": {
+            "median": 139.5145,
+            "min": 76.2864,
+            "max": 163.1579
+          },
+          "execution_width": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cohort_wall_tok_s": null,
+          "cohort_decode_wall_tok_s": null,
+          "plans": [
+            "serial-c1"
+          ],
+          "members": {
+            "0": {
+              "decode_tok_s": {
+                "median": 29.3326,
+                "min": 28.9337,
+                "max": 29.4625
+              },
+              "ttft_ms": {
+                "median": 2186.9293,
+                "min": 2146.5035,
+                "max": 2199.71
+              },
+              "max_gap_ms": {
+                "median": 139.9035,
+                "min": 75.7661,
+                "max": 163.1045
+              }
+            }
+          }
+        }
+      },
+      "hip_memory": {
+        "hip_free_bytes": 44691562496,
+        "hip_total_bytes": 119696543744
+      },
+      "hip_after_case": {
+        "repetition": {
+          "hip_free_bytes": 43998281728,
+          "hip_total_bytes": 119696543744
+        }
+      },
+      "peak_docker_anon_gib": 2.99346923828125,
+      "peak_docker_total_gib": 3.5852622985839844,
+      "min_wsl_available_gib": 16.33248519897461,
+      "memory_samples": 101,
+      "token_check": {
+        "method": "tokenized prompt hash",
+        "AR_traces": 4,
+        "tested_traces": 4,
+        "matched": 4,
+        "differences": [],
+        "missing_prompts": []
+      },
+      "prefill_hashes": [],
+      "target_batch_widths": {},
+      "draft_batch_widths": {},
+      "phases": [
+        {
+          "case": "repetition",
+          "rep": 0,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 34.14726661132818,
+          "decode_ms_per_token": 34.14726661132818,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 1,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 33.9414556269531,
+          "decode_ms_per_token": 33.9414556269531,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 2,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 34.09171625000001,
+          "decode_ms_per_token": 34.09171625000001,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 3,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 34.56178038085937,
+          "decode_ms_per_token": 34.56178038085937,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        }
+      ]
+    },
+    "auto-window": {
+      "start": {
+        "event": "start",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "--pull=never",
+          "--name",
+          "gufo-dflash-opt-long-copy",
+          "--device=/dev/dxg",
+          "-p",
+          "127.0.0.1:45527:8080",
+          "--mount",
+          "type=bind,src=/tmp/gufo-dflash-opt.Qyi04W,dst=/task",
+          "--mount",
+          "type=volume,src=gufo-v0300-nix,dst=/nix,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Models,dst=/models,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Apps/Gufo/rocdxg-rocm10.1/lib,dst=/opt/rocm/lib,readonly",
+          "--mount",
+          "type=bind,src=/usr/lib/wsl/lib/libdxcore.so,dst=/usr/lib/libdxcore.so,readonly",
+          "-e",
+          "AMD_SERIALIZE_COPY=2",
+          "-e",
+          "GUFO_DFOPT_TRACE=0",
+          "-e",
+          "GUFO_DFOPT_WINDOW=1",
+          "-e",
+          "GUFO_DFOPT_TOKENS=1",
+          "--entrypoint",
+          "/task/gufo-experiment-v2",
+          "gufo:v0.31.0-quant-refactor-96f1aa8c-rocm101",
+          "serve",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8080",
+          "--sessions",
+          "1",
+          "llm",
+          "--model",
+          "/models/ToRO3-Qwen3.8-Flash-Next-Uncensored-GGUF/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00004.gguf",
+          "--served-model-name",
+          "ToRO3",
+          "--context",
+          "131072",
+          "--cache-ram-bytes",
+          "4294967296",
+          "--think",
+          "auto",
+          "--prefill-chunk",
+          "512",
+          "--speculative",
+          "dflash2",
+          "--request-timeout-ms",
+          "220000",
+          "--draft-tokens",
+          "7",
+          "--dflash-model",
+          "/models/DFlash2/Qwen3.8-Flash-Next-DFlash2-Q8_0.gguf",
+          "--draft-policy",
+          "adaptive"
+        ],
+        "scenario": [
+          "repetition"
+        ],
+        "repeat": 3
+      },
+      "terminal": [
+        {
+          "event": "finished",
+          "exit": 0
+        }
+      ],
+      "cases": {
+        "repetition": {
+          "n": 3,
+          "prompt_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "completion_tokens": {
+            "median": 512,
+            "min": 512,
+            "max": 512
+          },
+          "prefill_ms": {
+            "median": 2377.9703,
+            "min": 2350.0862,
+            "max": 2442.588
+          },
+          "decode_tok_s": {
+            "median": 87.0807,
+            "min": 84.5526,
+            "max": 87.3592
+          },
+          "ttft_ms": {
+            "median": 2529.1291,
+            "min": 2502.3327,
+            "max": 2598.4579
+          },
+          "response_ms": {
+            "median": 8537.0,
+            "min": 8457.7404,
+            "max": 8621.2078
+          },
+          "cached_tokens": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "prefilled_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "cache_restore_ms": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "drafted": {
+            "median": 459,
+            "min": 459,
+            "max": 459
+          },
+          "accepted": {
+            "median": 446,
+            "min": 446,
+            "max": 446
+          },
+          "lookup": {
+            "median": 434,
+            "min": 434,
+            "max": 434
+          },
+          "lookup_accepted": {
+            "median": 421,
+            "min": 421,
+            "max": 421
+          },
+          "sse_median_gap_ms": {
+            "median": 0.0195,
+            "min": 0.0148,
+            "max": 0.0205
+          },
+          "sse_max_gap_ms": {
+            "median": 191.3074,
+            "min": 175.3314,
+            "max": 205.7372
+          },
+          "server_max_gap_ms": {
+            "median": 190.6886,
+            "min": 176.4354,
+            "max": 206.0687
+          },
+          "execution_width": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cohort_wall_tok_s": null,
+          "cohort_decode_wall_tok_s": null,
+          "plans": [
+            "serial-c1"
+          ],
+          "members": {
+            "0": {
+              "decode_tok_s": {
+                "median": 87.0807,
+                "min": 84.5526,
+                "max": 87.3592
+              },
+              "ttft_ms": {
+                "median": 2529.1291,
+                "min": 2502.3327,
+                "max": 2598.4579
+              },
+              "max_gap_ms": {
+                "median": 191.3074,
+                "min": 175.3314,
+                "max": 205.7372
+              }
+            }
+          }
+        }
+      },
+      "hip_memory": {
+        "hip_free_bytes": 43618729984,
+        "hip_total_bytes": 119696543744
+      },
+      "hip_after_case": {
+        "repetition": {
+          "hip_free_bytes": 42606399488,
+          "hip_total_bytes": 119696543744
+        }
+      },
+      "peak_docker_anon_gib": 3.2996368408203125,
+      "peak_docker_total_gib": 3.8947525024414062,
+      "min_wsl_available_gib": 15.778972625732422,
+      "memory_samples": 57,
+      "token_check": {
+        "method": "tokenized prompt hash",
+        "AR_traces": 4,
+        "tested_traces": 4,
+        "matched": 4,
+        "differences": [],
+        "missing_prompts": []
+      },
+      "prefill_hashes": [],
+      "target_batch_widths": {},
+      "draft_batch_widths": {},
+      "phases": [
+        {
+          "case": "repetition",
+          "rep": 0,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 10.93989065234375,
+          "decode_ms_per_token": 10.93989065234375,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 1,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.483595740234374,
+          "decode_ms_per_token": 11.483595740234374,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 2,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.826956205078126,
+          "decode_ms_per_token": 11.826956205078126,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 3,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.446996001953126,
+          "decode_ms_per_token": 11.446996001953126,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        }
+      ]
+    },
+    "auto": {
+      "start": {
+        "event": "start",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "--pull=never",
+          "--name",
+          "gufo-dflash-opt-long-copy",
+          "--device=/dev/dxg",
+          "-p",
+          "127.0.0.1:46363:8080",
+          "--mount",
+          "type=bind,src=/tmp/gufo-dflash-opt.Qyi04W,dst=/task",
+          "--mount",
+          "type=volume,src=gufo-v0300-nix,dst=/nix,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Models,dst=/models,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Apps/Gufo/rocdxg-rocm10.1/lib,dst=/opt/rocm/lib,readonly",
+          "--mount",
+          "type=bind,src=/usr/lib/wsl/lib/libdxcore.so,dst=/usr/lib/libdxcore.so,readonly",
+          "-e",
+          "AMD_SERIALIZE_COPY=2",
+          "-e",
+          "GUFO_DFOPT_TRACE=0",
+          "-e",
+          "GUFO_DFOPT_TOKENS=1",
+          "--entrypoint",
+          "/task/gufo-experiment-v2",
+          "gufo:v0.31.0-quant-refactor-96f1aa8c-rocm101",
+          "serve",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8080",
+          "--sessions",
+          "1",
+          "llm",
+          "--model",
+          "/models/ToRO3-Qwen3.8-Flash-Next-Uncensored-GGUF/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00004.gguf",
+          "--served-model-name",
+          "ToRO3",
+          "--context",
+          "131072",
+          "--cache-ram-bytes",
+          "4294967296",
+          "--think",
+          "auto",
+          "--prefill-chunk",
+          "512",
+          "--speculative",
+          "dflash2",
+          "--request-timeout-ms",
+          "220000",
+          "--draft-tokens",
+          "7",
+          "--dflash-model",
+          "/models/DFlash2/Qwen3.8-Flash-Next-DFlash2-Q8_0.gguf",
+          "--draft-policy",
+          "adaptive"
+        ],
+        "scenario": [
+          "repetition"
+        ],
+        "repeat": 3
+      },
+      "terminal": [
+        {
+          "event": "finished",
+          "exit": 0
+        }
+      ],
+      "cases": {
+        "repetition": {
+          "n": 3,
+          "prompt_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "completion_tokens": {
+            "median": 512,
+            "min": 512,
+            "max": 512
+          },
+          "prefill_ms": {
+            "median": 2696.3845,
+            "min": 2580.5994,
+            "max": 2722.4718
+          },
+          "decode_tok_s": {
+            "median": 86.7677,
+            "min": 86.3055,
+            "max": 87.0771
+          },
+          "ttft_ms": {
+            "median": 2843.6594,
+            "min": 2725.5819,
+            "max": 2874.2456
+          },
+          "response_ms": {
+            "median": 8814.8253,
+            "min": 8671.2414,
+            "max": 8873.7884
+          },
+          "cached_tokens": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "prefilled_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "cache_restore_ms": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "drafted": {
+            "median": 459,
+            "min": 459,
+            "max": 459
+          },
+          "accepted": {
+            "median": 446,
+            "min": 446,
+            "max": 446
+          },
+          "lookup": {
+            "median": 434,
+            "min": 434,
+            "max": 434
+          },
+          "lookup_accepted": {
+            "median": 421,
+            "min": 421,
+            "max": 421
+          },
+          "sse_median_gap_ms": {
+            "median": 0.0147,
+            "min": 0.0145,
+            "max": 0.015
+          },
+          "sse_max_gap_ms": {
+            "median": 194.2177,
+            "min": 193.7461,
+            "max": 213.7733
+          },
+          "server_max_gap_ms": {
+            "median": 194.3209,
+            "min": 193.3823,
+            "max": 214.1569
+          },
+          "execution_width": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cohort_wall_tok_s": null,
+          "cohort_decode_wall_tok_s": null,
+          "plans": [
+            "serial-c1"
+          ],
+          "members": {
+            "0": {
+              "decode_tok_s": {
+                "median": 86.7677,
+                "min": 86.3055,
+                "max": 87.0771
+              },
+              "ttft_ms": {
+                "median": 2843.6594,
+                "min": 2725.5819,
+                "max": 2874.2456
+              },
+              "max_gap_ms": {
+                "median": 194.2177,
+                "min": 193.7461,
+                "max": 213.7733
+              }
+            }
+          }
+        }
+      },
+      "hip_memory": {
+        "hip_free_bytes": 44479676416,
+        "hip_total_bytes": 119696543744
+      },
+      "hip_after_case": {
+        "repetition": {
+          "hip_free_bytes": 43472330752,
+          "hip_total_bytes": 119696543744
+        }
+      },
+      "peak_docker_anon_gib": 3.2793006896972656,
+      "peak_docker_total_gib": 3.8739013671875,
+      "min_wsl_available_gib": 15.80203628540039,
+      "memory_samples": 59,
+      "token_check": {
+        "method": "tokenized prompt hash",
+        "AR_traces": 4,
+        "tested_traces": 4,
+        "matched": 4,
+        "differences": [],
+        "missing_prompts": []
+      },
+      "prefill_hashes": [],
+      "target_batch_widths": {},
+      "draft_batch_widths": {},
+      "phases": [
+        {
+          "case": "repetition",
+          "rep": 0,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.603596025390623,
+          "decode_ms_per_token": 11.603596025390623,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 1,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.484074292968746,
+          "decode_ms_per_token": 11.484074292968746,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 2,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.586745042968749,
+          "decode_ms_per_token": 11.586745042968749,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 3,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 11.525019691406246,
+          "decode_ms_per_token": 11.525019691406246,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        }
+      ]
+    },
+    "mtp": {
+      "start": {
+        "event": "start",
+        "command": [
+          "docker",
+          "run",
+          "--rm",
+          "--pull=never",
+          "--name",
+          "gufo-dflash-opt-long-copy",
+          "--device=/dev/dxg",
+          "-p",
+          "127.0.0.1:47811:8080",
+          "--mount",
+          "type=bind,src=/tmp/gufo-dflash-opt.Qyi04W,dst=/task",
+          "--mount",
+          "type=volume,src=gufo-v0300-nix,dst=/nix,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Models,dst=/models,readonly",
+          "--mount",
+          "type=bind,src=/home/user/Apps/Gufo/rocdxg-rocm10.1/lib,dst=/opt/rocm/lib,readonly",
+          "--mount",
+          "type=bind,src=/usr/lib/wsl/lib/libdxcore.so,dst=/usr/lib/libdxcore.so,readonly",
+          "-e",
+          "AMD_SERIALIZE_COPY=2",
+          "-e",
+          "GUFO_DFOPT_TRACE=0",
+          "-e",
+          "GUFO_DFOPT_TOKENS=1",
+          "--entrypoint",
+          "/task/gufo-experiment-v2",
+          "gufo:v0.31.0-quant-refactor-96f1aa8c-rocm101",
+          "serve",
+          "--host",
+          "0.0.0.0",
+          "--port",
+          "8080",
+          "--sessions",
+          "1",
+          "llm",
+          "--model",
+          "/models/ToRO3-Qwen3.8-Flash-Next-Uncensored-GGUF/UD-IQ4_XS/Qwen3.8-Flash-Next-UD-IQ4_XS-00001-of-00004.gguf",
+          "--served-model-name",
+          "ToRO3",
+          "--context",
+          "131072",
+          "--cache-ram-bytes",
+          "4294967296",
+          "--think",
+          "auto",
+          "--prefill-chunk",
+          "512",
+          "--speculative",
+          "mtp",
+          "--request-timeout-ms",
+          "220000",
+          "--draft-tokens",
+          "7",
+          "--mtp-model",
+          "/models/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf"
+        ],
+        "scenario": [
+          "repetition"
+        ],
+        "repeat": 3
+      },
+      "terminal": [
+        {
+          "event": "finished",
+          "exit": 0
+        }
+      ],
+      "cases": {
+        "repetition": {
+          "n": 3,
+          "prompt_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "completion_tokens": {
+            "median": 512,
+            "min": 512,
+            "max": 512
+          },
+          "prefill_ms": {
+            "median": 2096.7825,
+            "min": 2075.6561,
+            "max": 2138.9123
+          },
+          "decode_tok_s": {
+            "median": 61.7967,
+            "min": 55.5283,
+            "max": 62.0179
+          },
+          "ttft_ms": {
+            "median": 2163.4792,
+            "min": 2141.7733,
+            "max": 2212.617
+          },
+          "response_ms": {
+            "median": 10445.8049,
+            "min": 10437.961,
+            "max": 11452.2413
+          },
+          "cached_tokens": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "prefilled_tokens": {
+            "median": 2578,
+            "min": 2578,
+            "max": 2578
+          },
+          "cache_restore_ms": {
+            "median": 0,
+            "min": 0,
+            "max": 0
+          },
+          "drafted": {
+            "median": 522,
+            "min": 522,
+            "max": 522
+          },
+          "accepted": {
+            "median": 474,
+            "min": 474,
+            "max": 474
+          },
+          "lookup": {
+            "median": 511,
+            "min": 511,
+            "max": 511
+          },
+          "lookup_accepted": {
+            "median": 463,
+            "min": 463,
+            "max": 463
+          },
+          "sse_median_gap_ms": {
+            "median": 0.0103,
+            "min": 0.0099,
+            "max": 0.0112
+          },
+          "sse_max_gap_ms": {
+            "median": 455.913,
+            "min": 378.5588,
+            "max": 548.0051
+          },
+          "server_max_gap_ms": {
+            "median": 456.0189,
+            "min": 379.0858,
+            "max": 549.0919
+          },
+          "execution_width": {
+            "median": 1,
+            "min": 1,
+            "max": 1
+          },
+          "cohort_wall_tok_s": null,
+          "cohort_decode_wall_tok_s": null,
+          "plans": [
+            "serial-c1"
+          ],
+          "members": {
+            "0": {
+              "decode_tok_s": {
+                "median": 61.7967,
+                "min": 55.5283,
+                "max": 62.0179
+              },
+              "ttft_ms": {
+                "median": 2163.4792,
+                "min": 2141.7733,
+                "max": 2212.617
+              },
+              "max_gap_ms": {
+                "median": 455.913,
+                "min": 378.5588,
+                "max": 548.0051
+              }
+            }
+          }
+        }
+      },
+      "hip_memory": {
+        "hip_free_bytes": 41583165440,
+        "hip_total_bytes": 119696543744
+      },
+      "hip_after_case": {
+        "repetition": {
+          "hip_free_bytes": 40103677952,
+          "hip_total_bytes": 119696543744
+        }
+      },
+      "peak_docker_anon_gib": 3.0115509033203125,
+      "peak_docker_total_gib": 3.6041221618652344,
+      "min_wsl_available_gib": 16.381423950195312,
+      "memory_samples": 67,
+      "token_check": {
+        "method": "tokenized prompt hash",
+        "AR_traces": 4,
+        "tested_traces": 4,
+        "matched": 4,
+        "differences": [],
+        "missing_prompts": []
+      },
+      "prefill_hashes": [],
+      "target_batch_widths": {},
+      "draft_batch_widths": {},
+      "phases": [
+        {
+          "case": "repetition",
+          "rep": 0,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 16.356372966796876,
+          "decode_ms_per_token": 16.356372966796876,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 1,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 16.18209034765625,
+          "decode_ms_per_token": 16.18209034765625,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 2,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 16.1243662734375,
+          "decode_ms_per_token": 16.1243662734375,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        },
+        {
+          "case": "repetition",
+          "rep": 3,
+          "tokens": 512,
+          "cycles": 0,
+          "generated": 0,
+          "verified": 0,
+          "accepted": 0,
+          "lookup": 0,
+          "max_verified": 0,
+          "small_head_cycles": 0,
+          "proposal_ms_per_token": 0.0,
+          "target_ms_per_token": 0.0,
+          "selection_ms_per_token": 0.0,
+          "rollback_ms_per_token": 0.0,
+          "feature_ms_per_token": 0.0,
+          "residual_ms_per_token": 18.00882726171875,
+          "decode_ms_per_token": 18.00882726171875,
+          "prefill_feature_ms": 0,
+          "prefill_feature_rows": 0,
+          "last_layer_skipped_rows": 0
+        }
+      ]
+    }
+  }
+}

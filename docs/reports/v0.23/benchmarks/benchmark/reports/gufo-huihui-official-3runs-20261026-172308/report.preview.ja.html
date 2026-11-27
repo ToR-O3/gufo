@@ -1,0 +1,272 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo公式ベンチ：Huihui・SC117・Orca・公式値</title><style>
+:root{color-scheme:dark}body{font:15px/1.7 system-ui,"Yu Gothic",sans-serif;color:#e9eff7;background:#111923;max-width:1880px;margin:auto;padding:24px}h1{font-size:28px}h2{margin-top:38px;color:#acd8ff}h3{margin:24px 0 10px}.scroll{overflow:auto;border:1px solid #34465a;border-radius:8px}table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;font-size:14px}th,td{padding:10px 12px;border-bottom:1px solid #34465a;text-align:right;white-space:nowrap}th{background:#213145;text-align:center}td:first-child,th:first-child{text-align:left}.group{border-left:2px solid #58728b}.perf td:nth-child(2),.perf td:nth-child(5),.perf td:nth-child(8),.perf td:nth-child(11){border-left:2px solid #40566d}.perf td:nth-child(n+8):nth-child(-n+10),.huihui{background:#193a3d}.muted,.note{color:#bdcada}a{color:#9fd9ff}.callout{background:#1d2c3d;border-left:4px solid #7fb6d9;padding:12px 16px}details{margin:22px 0}summary{cursor:pointer;color:#acd8ff}p{max-width:1500px}code{overflow-wrap:anywhere}footer{margin-top:32px;font-size:13px;color:#b6c4d3}.warning{color:#f0cc89}</style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><h1>Gufo公式ベンチ：Huihui・SC117・Orca・公式公開値</h1><p>Huihui v2 UD-IQ4_XSを各条件3回測定。SC117 IQ3_Sは保存済みの1回測定、Orca IQ4_XSは2026年10月25日の3回測定を使用しています。緑背景が今回のHuihuiです。</p><p class="warning">測定途中のプレビューです。空欄は未完了であり、最終結果ではありません。</p><div class="scroll"><table><thead><tr><th>比較列</th><th>モデル・補助モデル</th><th>測定日</th><th>Gufo実行版</th><th>速度／読み込み／メモリの回数</th></tr></thead><tbody><tr><td>SC117 IQ3_S</td><td>GSQ-RCO abliterated・共通Q8_0 MTP</td><td>2026-10-26</td><td>v0.23.0＋ISTA対応 e41472d</td><td>1／1／1</td></tr><tr><td>Orca IQ4_XS</td><td>OrcaRouter・Orca用MTP</td><td>2026-10-25</td><td>v0.23.0＋Orca対応 2e8af58</td><td>3／1／1</td></tr><tr><td>Huihui UD-IQ4_XS</td><td>Huihui v2・共通Q8_0 MTP</td><td>2026-10-26</td><td>v0.23.0＋ISTA対応 e41472d</td><td>3／3／3</td></tr><tr><td>公式 UD-Q4_K_XL</td><td>Unsloth・共通Q8_0 MTP</td><td>2026-10-18</td><td>開発元 fec4759d</td><td>公開添付データどおり（単独1〜2回）</td></tr></tbody></table></div><p class="callout">平均 ± 標準偏差。セルにカーソルを合わせると回数と最小・最大を表示します。モデル、MTP、実行ファイル、測定日が異なるため、傾向を見る比較です。公式の単独TTFTは未公表。同時利用のTTFTは公式添付JSONの実測値から集計しました。<a href="https://github.com/gufo-org/gufo/blob/v0.23.0/docs/models/qwen3.8-flash-next/BENCHMARKS.md">公式公開表</a>。</p><h2>単独利用：Prefill・TTFT・Decode</h2><p>履歴は再利用する会話の長さ。その後に約2,048 tokenを追加し、128 tokenを生成します。履歴128Kでも、新たなPrefillは約2Kです。TTFTはサーバー計測値。PrefillとDecodeは大きいほど速く、TTFTは小さいほど短時間です。</p><h3>AR（MTPなし）</h3><div class="scroll"><table class="perf" id="single-ar"><thead><tr><th rowspan="2">履歴</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0K</td><td title="n=1 / 最小 974.1018 / 最大 974.1018">974.10</td><td title="n=1 / 最小 2.1190 / 最大 2.1190">2.119</td><td title="n=1 / 最小 25.1414 / 最大 25.1414">25.14</td><td title="n=3 / 最小 941.7052 / 最大 982.2948">966.23 ± 21.58</td><td title="n=3 / 最小 2.0714 / 最大 2.1827">2.116 ± 0.059</td><td title="n=3 / 最小 29.1782 / 最大 29.5533">29.32 ± 0.20</td><td title="n=3 / 最小 1141.7721 / 最大 1234.1334">1,184.01 ± 46.68</td><td title="n=3 / 最小 1.6767 / 最大 1.7970">1.747 ± 0.063</td><td title="n=3 / 最小 27.0904 / 最大 27.5460">27.39 ± 0.26</td><td title="n=1">1,801.01</td><td class="muted">未公表</td><td title="n=1">28.29</td></tr><tr><td>4K</td><td title="n=1 / 最小 926.3642 / 最大 926.3642">926.36</td><td title="n=1 / 最小 2.2069 / 最大 2.2069">2.207</td><td title="n=1 / 最小 24.9115 / 最大 24.9115">24.91</td><td title="n=3 / 最小 913.0774 / 最大 949.0397">931.44 ± 17.99</td><td title="n=3 / 最小 2.1359 / 最大 2.2382">2.184 ± 0.051</td><td title="n=3 / 最小 29.7799 / 最大 30.8170">30.20 ± 0.55</td><td title="n=3 / 最小 1067.8034 / 最大 1164.5311">1,112.68 ± 48.74</td><td title="n=3 / 最小 1.7406 / 最大 1.9002">1.830 ± 0.081</td><td title="n=3 / 最小 27.0344 / 最大 27.8747">27.43 ± 0.42</td><td title="n=1">1,727.95</td><td class="muted">未公表</td><td title="n=1">28.27</td></tr><tr><td>8K</td><td title="n=1 / 最小 847.1980 / 最大 847.1980">847.20</td><td title="n=1 / 最小 2.4187 / 最大 2.4187">2.419</td><td title="n=1 / 最小 25.3188 / 最大 25.3188">25.32</td><td title="n=3 / 最小 895.8022 / 最大 919.7742">904.55 ± 13.23</td><td title="n=3 / 最小 2.2275 / 最大 2.2923">2.267 ± 0.035</td><td title="n=3 / 最小 30.2718 / 最大 31.0958">30.58 ± 0.45</td><td title="n=3 / 最小 1044.7635 / 最大 1172.8531">1,124.47 ± 69.55</td><td title="n=3 / 最小 1.7533 / 最大 1.9562">1.828 ± 0.112</td><td title="n=3 / 最小 27.5135 / 最大 27.8585">27.68 ± 0.17</td><td title="n=1">1,721.41</td><td class="muted">未公表</td><td title="n=1">28.27</td></tr><tr><td>12K</td><td title="n=1 / 最小 929.2651 / 最大 929.2651">929.27</td><td title="n=1 / 最小 2.2043 / 最大 2.2043">2.204</td><td title="n=1 / 最小 25.3298 / 最大 25.3298">25.33</td><td title="n=3 / 最小 897.4421 / 最大 972.3715">945.85 ± 41.98</td><td title="n=3 / 最小 2.1076 / 最大 2.2888">2.171 ± 0.102</td><td title="n=3 / 最小 29.4241 / 最大 30.7362">30.20 ± 0.69</td><td title="n=3 / 最小 1134.9699 / 最大 1177.1020">1,157.83 ± 21.29</td><td title="n=3 / 最小 1.7447 / 最大 1.8058">1.772 ± 0.031</td><td title="n=3 / 最小 27.4122 / 最大 28.2412">27.83 ± 0.41</td><td title="n=1">1,710.64</td><td class="muted">未公表</td><td title="n=1">28.21</td></tr><tr><td>16K</td><td title="n=1 / 最小 903.6365 / 最大 903.6365">903.64</td><td title="n=1 / 最小 2.2672 / 最大 2.2672">2.267</td><td title="n=1 / 最小 24.7262 / 最大 24.7262">24.73</td><td title="n=3 / 最小 930.4226 / 最大 948.6860">938.95 ± 9.19</td><td title="n=3 / 最小 2.1595 / 最大 2.2030">2.182 ± 0.022</td><td title="n=3 / 最小 29.6111 / 最大 30.6529">30.30 ± 0.60</td><td title="n=3 / 最小 1107.3365 / 最大 1196.9189">1,161.59 ± 47.70</td><td title="n=3 / 最小 1.7121 / 最大 1.8505">1.767 ± 0.074</td><td title="n=3 / 最小 27.5553 / 最大 28.1510">27.77 ± 0.33</td><td title="n=1">1,706.86</td><td class="muted">未公表</td><td title="n=1">28.25</td></tr><tr><td>32K</td><td title="n=1 / 最小 854.6872 / 最大 854.6872">854.69</td><td title="n=1 / 最小 2.3778 / 最大 2.3778">2.378</td><td title="n=1 / 最小 24.4736 / 最大 24.4736">24.47</td><td title="n=3 / 最小 919.2971 / 最大 938.8994">932.29 ± 11.25</td><td title="n=3 / 最小 2.1655 / 最大 2.2526">2.199 ± 0.047</td><td title="n=3 / 最小 30.6224 / 最大 30.8493">30.75 ± 0.12</td><td title="n=3 / 最小 1045.1022 / 最大 1143.0411">1,105.39 ± 52.75</td><td title="n=3 / 最小 1.7904 / 最大 1.9815">1.858 ± 0.107</td><td title="n=3 / 最小 26.9857 / 最大 27.7130">27.43 ± 0.39</td><td title="n=1">1,672.60</td><td class="muted">未公表</td><td title="n=1">28.18</td></tr><tr><td>64K</td><td title="n=1 / 最小 881.2336 / 最大 881.2336">881.23</td><td title="n=1 / 最小 2.3429 / 最大 2.3429">2.343</td><td title="n=1 / 最小 24.3946 / 最大 24.3946">24.39</td><td title="n=3 / 最小 860.9671 / 最大 891.8547">874.69 ± 15.73</td><td title="n=3 / 最小 2.3298 / 最大 2.3975">2.363 ± 0.034</td><td title="n=3 / 最小 28.6923 / 最大 28.9757">28.84 ± 0.14</td><td title="n=3 / 最小 1049.4214 / 最大 1105.9411">1,074.86 ± 28.68</td><td title="n=3 / 最小 1.8616 / 最大 1.9805">1.925 ± 0.060</td><td title="n=3 / 最小 27.4691 / 最大 27.6186">27.56 ± 0.08</td><td title="n=1">1,602.93</td><td class="muted">未公表</td><td title="n=1">28.09</td></tr><tr><td>128K</td><td title="n=1 / 最小 841.7643 / 最大 841.7643">841.76</td><td title="n=1 / 最小 2.4445 / 最大 2.4445">2.444</td><td title="n=1 / 最小 23.9365 / 最大 23.9365">23.94</td><td title="n=3 / 最小 877.7273 / 最大 909.1865">892.38 ± 15.84</td><td title="n=3 / 最小 2.2623 / 最大 2.3428">2.311 ± 0.043</td><td title="n=3 / 最小 28.7464 / 最大 29.8289">29.40 ± 0.57</td><td title="n=3 / 最小 1006.8977 / 最大 1033.9921">1,016.87 ± 14.90</td><td title="n=3 / 最小 1.9891 / 最大 2.0568">2.031 ± 0.036</td><td title="n=3 / 最小 26.8396 / 最大 27.2590">27.01 ± 0.22</td><td title="n=1">1,557.18</td><td class="muted">未公表</td><td title="n=1">27.85</td></tr></tbody></table></div><h3>MTP・文章</h3><div class="scroll"><table class="perf" id="single-mtp"><thead><tr><th rowspan="2">履歴</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0K</td><td title="n=1 / 最小 884.7616 / 最大 884.7616">884.76</td><td title="n=1 / 最小 2.3376 / 最大 2.3376">2.338</td><td title="n=1 / 最小 29.4354 / 最大 29.4354">29.44</td><td title="n=3 / 最小 718.7419 / 最大 849.1803">794.27 ± 67.62</td><td title="n=3 / 最小 2.4205 / 最大 2.8488">2.589 ± 0.228</td><td title="n=3 / 最小 34.1833 / 最大 37.4358">35.98 ± 1.65</td><td title="n=3 / 最小 977.9643 / 最大 1056.6304">1,028.69 ± 44.00</td><td title="n=3 / 最小 1.9432 / 最大 2.1217">2.012 ± 0.096</td><td title="n=3 / 最小 27.9721 / 最大 32.1298">30.72 ± 2.38</td><td title="n=1">1,728.77</td><td class="muted">未公表</td><td title="n=1">35.79</td></tr><tr><td>4K</td><td title="n=1 / 最小 879.6981 / 最大 879.6981">879.70</td><td title="n=1 / 最小 2.3238 / 最大 2.3238">2.324</td><td title="n=1 / 最小 33.9532 / 最大 33.9532">33.95</td><td title="n=3 / 最小 811.6837 / 最大 859.6864">834.81 ± 24.05</td><td title="n=3 / 最小 2.3575 / 最大 2.5183">2.437 ± 0.080</td><td title="n=3 / 最小 31.8455 / 最大 35.9482">33.80 ± 2.06</td><td title="n=3 / 最小 957.1312 / 最大 1058.0255">1,012.42 ± 51.14</td><td title="n=3 / 最小 1.9176 / 最大 2.1173">2.012 ± 0.100</td><td title="n=3 / 最小 36.2730 / 最大 37.1724">36.73 ± 0.45</td><td title="n=1">1,669.38</td><td class="muted">未公表</td><td title="n=1">37.64</td></tr><tr><td>8K</td><td title="n=1 / 最小 896.4593 / 最大 896.4593">896.46</td><td title="n=1 / 最小 2.2863 / 最大 2.2863">2.286</td><td title="n=1 / 最小 33.0820 / 最大 33.0820">33.08</td><td title="n=3 / 最小 846.2487 / 最大 865.4207">856.24 ± 9.61</td><td title="n=3 / 最小 2.3759 / 最大 2.4220">2.394 ± 0.025</td><td title="n=3 / 最小 37.0173 / 最大 39.7886">38.13 ± 1.46</td><td title="n=3 / 最小 981.8007 / 最大 1065.5843">1,036.23 ± 47.18</td><td title="n=3 / 最小 1.9179 / 最大 2.0943">1.981 ± 0.098</td><td title="n=3 / 最小 32.4788 / 最大 35.8550">34.29 ± 1.70</td><td title="n=1">1,669.91</td><td class="muted">未公表</td><td title="n=1">36.91</td></tr><tr><td>12K</td><td title="n=1 / 最小 842.8558 / 最大 842.8558">842.86</td><td title="n=1 / 最小 2.4302 / 最大 2.4302">2.430</td><td title="n=1 / 最小 30.3022 / 最大 30.3022">30.30</td><td title="n=3 / 最小 823.1795 / 最大 873.7169">856.52 ± 28.88</td><td title="n=3 / 最小 2.3484 / 最大 2.4893">2.396 ± 0.081</td><td title="n=3 / 最小 36.5626 / 最大 39.2575">37.79 ± 1.36</td><td title="n=3 / 最小 997.0140 / 最大 1060.2662">1,021.87 ± 33.73</td><td title="n=3 / 最小 1.9367 / 最大 2.0555">2.008 ± 0.063</td><td title="n=3 / 最小 32.0346 / 最大 36.2603">34.52 ± 2.21</td><td title="n=1">1,652.67</td><td class="muted">未公表</td><td title="n=1">39.28</td></tr><tr><td>16K</td><td title="n=1 / 最小 889.7143 / 最大 889.7143">889.71</td><td title="n=1 / 最小 2.3032 / 最大 2.3032">2.303</td><td title="n=1 / 最小 32.4851 / 最大 32.4851">32.49</td><td title="n=3 / 最小 849.9024 / 最大 879.0706">859.91 ± 16.60</td><td title="n=3 / 最小 2.3312 / 最大 2.4113">2.383 ± 0.045</td><td title="n=3 / 最小 32.8662 / 最大 38.1677">35.18 ± 2.72</td><td title="n=3 / 最小 1003.5162 / 最大 1043.7767">1,026.12 ± 20.58</td><td title="n=3 / 最小 1.9630 / 最大 2.0416">1.998 ± 0.040</td><td title="n=3 / 最小 33.0503 / 最大 36.4419">34.52 ± 1.74</td><td title="n=1">1,635.18</td><td class="muted">未公表</td><td title="n=1">40.54</td></tr><tr><td>32K</td><td title="n=1 / 最小 865.6839 / 最大 865.6839">865.68</td><td title="n=1 / 最小 2.3479 / 最大 2.3479">2.348</td><td title="n=1 / 最小 32.0064 / 最大 32.0064">32.01</td><td title="n=3 / 最小 842.7919 / 最大 858.2480">850.60 ± 7.73</td><td title="n=3 / 最小 2.3925 / 最大 2.4261">2.410 ± 0.017</td><td title="n=3 / 最小 37.8246 / 最大 40.4423">39.05 ± 1.32</td><td title="n=3 / 最小 1028.4675 / 最大 1045.7846">1,034.26 ± 9.98</td><td title="n=3 / 最小 1.9443 / 最大 2.0141">1.982 ± 0.035</td><td title="n=3 / 最小 34.4462 / 最大 36.2312">35.17 ± 0.94</td><td title="n=1">1,618.63</td><td class="muted">未公表</td><td title="n=1">39.97</td></tr><tr><td>64K</td><td title="n=1 / 最小 872.3388 / 最大 872.3388">872.34</td><td title="n=1 / 最小 2.3670 / 最大 2.3670">2.367</td><td title="n=1 / 最小 33.6526 / 最大 33.6526">33.65</td><td title="n=3 / 最小 818.9467 / 最大 847.0159">831.09 ± 14.41</td><td title="n=3 / 最小 2.4283 / 最大 2.5186">2.486 ± 0.050</td><td title="n=3 / 最小 34.8552 / 最大 39.1197">36.47 ± 2.31</td><td title="n=3 / 最小 943.9043 / 最大 973.9760">961.73 ± 15.79</td><td title="n=3 / 最小 2.1116 / 最大 2.1894">2.149 ± 0.039</td><td title="n=3 / 最小 33.3300 / 最大 35.1981">34.53 ± 1.04</td><td title="n=1">1,556.32</td><td class="muted">未公表</td><td title="n=1">39.23</td></tr><tr><td>128K</td><td title="n=1 / 最小 859.3780 / 最大 859.3780">859.38</td><td title="n=1 / 最小 2.3930 / 最大 2.3930">2.393</td><td title="n=1 / 最小 34.8713 / 最大 34.8713">34.87</td><td title="n=3 / 最小 795.7354 / 最大 818.7868">810.23 ± 12.62</td><td title="n=3 / 最小 2.5169 / 最大 2.6019">2.545 ± 0.049</td><td title="n=3 / 最小 37.1820 / 最大 38.0872">37.60 ± 0.46</td><td title="n=3 / 最小 869.2046 / 最大 997.9253">944.36 ± 67.02</td><td title="n=3 / 最小 2.0627 / 最大 2.3849">2.193 ± 0.169</td><td title="n=3 / 最小 30.4685 / 最大 35.7927">33.42 ± 2.71</td><td title="n=1">1,481.19</td><td class="muted">未公表</td><td title="n=1">39.87</td></tr></tbody></table></div><h3>MTP・反復文</h3><div class="scroll"><table class="perf" id="single-mtp-repetition"><thead><tr><th rowspan="2">履歴</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0K</td><td title="n=1 / 最小 904.2280 / 最大 904.2280">904.23</td><td title="n=1 / 最小 2.2805 / 最大 2.2805">2.281</td><td title="n=1 / 最小 83.0639 / 最大 83.0639">83.06</td><td title="n=3 / 最小 834.4824 / 最大 894.6353">873.67 ± 33.97</td><td title="n=3 / 最小 2.2744 / 最大 2.4461">2.359 ± 0.086</td><td title="n=3 / 最小 97.5945 / 最大 101.4960">100.19 ± 2.25</td><td title="n=3 / 最小 906.0030 / 最大 1006.7577">962.26 ± 51.40</td><td title="n=3 / 最小 2.0401 / 最大 2.2844">2.151 ± 0.124</td><td title="n=3 / 最小 72.4306 / 最大 88.2294">82.60 ± 8.83</td><td title="n=2">1,734.96 ± 0.85</td><td class="muted">未公表</td><td title="n=2">116.93 ± 0.10</td></tr><tr><td>4K</td><td title="n=1 / 最小 893.3989 / 最大 893.3989">893.40</td><td title="n=1 / 最小 2.2830 / 最大 2.2830">2.283</td><td title="n=1 / 最小 83.4342 / 最大 83.4342">83.43</td><td title="n=3 / 最小 790.8427 / 最大 861.9385">835.54 ± 38.92</td><td title="n=3 / 最小 2.3479 / 最大 2.5792">2.432 ± 0.128</td><td title="n=3 / 最小 82.9929 / 最大 93.0216">89.52 ± 5.66</td><td title="n=3 / 最小 949.6528 / 最大 1052.5475">993.66 ± 53.04</td><td title="n=3 / 最小 1.9228 / 最大 2.1313">2.046 ± 0.110</td><td title="n=3 / 最小 81.6412 / 最大 86.5343">83.60 ± 2.59</td><td title="n=2">1,676.83 ± 1.73</td><td class="muted">未公表</td><td title="n=2">116.41 ± 0.07</td></tr><tr><td>8K</td><td title="n=1 / 最小 889.4755 / 最大 889.4755">889.48</td><td title="n=1 / 最小 2.2993 / 最大 2.2993">2.299</td><td title="n=1 / 最小 83.0020 / 最大 83.0020">83.00</td><td title="n=3 / 最小 869.6397 / 最大 883.5049">875.86 ± 7.04</td><td title="n=3 / 最小 2.3137 / 最大 2.3462">2.334 ± 0.018</td><td title="n=3 / 最小 92.8195 / 最大 102.1274">96.30 ± 5.08</td><td title="n=3 / 最小 1021.2579 / 最大 1053.0711">1,040.62 ± 16.99</td><td title="n=3 / 最小 1.9417 / 最大 2.0086">1.965 ± 0.037</td><td title="n=3 / 最小 84.4595 / 最大 92.2463">87.62 ± 4.09</td><td title="n=2">1,661.58 ± 2.67</td><td class="muted">未公表</td><td title="n=2">114.08 ± 0.01</td></tr><tr><td>12K</td><td title="n=1 / 最小 862.2958 / 最大 862.2958">862.30</td><td title="n=1 / 最小 2.3720 / 最大 2.3720">2.372</td><td title="n=1 / 最小 75.4242 / 最大 75.4242">75.42</td><td title="n=3 / 最小 879.5908 / 最大 906.8049">892.60 ± 13.65</td><td title="n=3 / 最小 2.2580 / 最大 2.3255">2.292 ± 0.034</td><td title="n=3 / 最小 94.3798 / 最大 99.4433">96.10 ± 2.90</td><td title="n=3 / 最小 758.1772 / 最大 839.1417">805.73 ± 42.29</td><td title="n=3 / 最小 2.4399 / 最大 2.6976">2.543 ± 0.136</td><td title="n=3 / 最小 74.9982 / 最大 84.3869">80.03 ± 4.73</td><td title="n=2">1,660.54 ± 1.22</td><td class="muted">未公表</td><td title="n=2">105.48 ± 0.15</td></tr><tr><td>16K</td><td title="n=1 / 最小 823.6293 / 最大 823.6293">823.63</td><td title="n=1 / 最小 2.4824 / 最大 2.4824">2.482</td><td title="n=1 / 最小 77.0345 / 最大 77.0345">77.03</td><td title="n=3 / 最小 864.7828 / 最大 909.0004">886.32 ± 22.13</td><td title="n=3 / 最小 2.2494 / 最大 2.3636">2.307 ± 0.057</td><td title="n=3 / 最小 94.0729 / 最大 97.0910">95.22 ± 1.63</td><td title="n=3 / 最小 998.1481 / 最大 1029.2165">1,011.12 ± 16.16</td><td title="n=3 / 最小 1.9879 / 最大 2.0476">2.023 ± 0.031</td><td title="n=3 / 最小 87.1268 / 最大 91.9154">88.72 ± 2.76</td><td title="n=2">1,609.90 ± 52.77</td><td class="muted">未公表</td><td title="n=2">113.32 ± 0.23</td></tr><tr><td>32K</td><td title="n=1 / 最小 847.4170 / 最大 847.4170">847.42</td><td title="n=1 / 最小 2.3902 / 最大 2.3902">2.390</td><td title="n=1 / 最小 74.9125 / 最大 74.9125">74.91</td><td title="n=3 / 最小 854.0162 / 最大 898.5976">872.88 ± 23.07</td><td title="n=3 / 最小 2.2547 / 最大 2.4197">2.343 ± 0.083</td><td title="n=3 / 最小 87.2278 / 最大 95.2430">91.17 ± 4.01</td><td title="n=3 / 最小 978.3312 / 最大 1027.1300">1,008.88 ± 26.62</td><td title="n=3 / 最小 1.9863 / 最大 2.0720">2.028 ± 0.043</td><td title="n=3 / 最小 86.1783 / 最大 87.2594">86.89 ± 0.62</td><td title="n=2">1,582.22 ± 58.44</td><td class="muted">未公表</td><td title="n=2">105.38 ± 0.17</td></tr><tr><td>64K</td><td title="n=1 / 最小 868.4050 / 最大 868.4050">868.41</td><td title="n=1 / 最小 2.3705 / 最大 2.3705">2.371</td><td title="n=1 / 最小 77.6190 / 最大 77.6190">77.62</td><td title="n=3 / 最小 828.7197 / 最大 846.0118">839.15 ± 9.18</td><td title="n=3 / 最小 2.4273 / 最大 2.4987">2.456 ± 0.038</td><td title="n=3 / 最小 91.8911 / 最大 92.2678">92.07 ± 0.19</td><td title="n=3 / 最小 1031.8522 / 最大 1038.5681">1,035.49 ± 3.39</td><td title="n=3 / 最小 1.9782 / 最大 1.9991">1.991 ± 0.012</td><td title="n=3 / 最小 82.9853 / 最大 87.2741">84.59 ± 2.34</td><td title="n=2">1,518.16 ± 69.06</td><td class="muted">未公表</td><td title="n=2">104.78 ± 0.21</td></tr><tr><td>128K</td><td title="n=1 / 最小 848.9185 / 最大 848.9185">848.92</td><td title="n=1 / 最小 2.4170 / 最大 2.4170">2.417</td><td title="n=1 / 最小 78.7756 / 最大 78.7756">78.78</td><td title="n=3 / 最小 839.1216 / 最大 864.1957">854.91 ± 13.74</td><td title="n=3 / 最小 2.3719 / 最大 2.4671">2.407 ± 0.052</td><td title="n=3 / 最小 90.2993 / 最大 91.2192">90.84 ± 0.48</td><td title="n=3 / 最小 923.7977 / 最大 975.4335">956.46 ± 28.41</td><td title="n=3 / 最小 2.1085 / 最大 2.2252">2.156 ± 0.061</td><td title="n=3 / 最小 81.3366 / 最大 90.5591">85.58 ± 4.66</td><td title="n=1">1,437.91</td><td class="muted">未公表</td><td title="n=1">108.37</td></tr></tbody></table></div><p class="note">公式MTPのPrefillは、文章／反復文それぞれに対応する添付JSONの実測値です。公式表本文が採用する「両負荷の高い方」とは集計方法が異なります。SC117の履歴0KのAR/MTP出力一致は過去記録で未達のため、該当速度は参考値です。</p><h2>同時利用：Prefill・TTFT・Decode</h2><p>全利用者の入力を先に処理し、その後の128 token生成を測定します。この試験のPrefillは「対象外」。TTFTは各回の利用者平均、Decodeは各回の利用者別速度の合計です。HuihuiとOrcaはそれぞれ3回の平均を表示します。公式TTFTは公開添付JSONのserver_ttft_msから集計。単独利用のDecodeとは集計範囲が異なります。</p><h3>AR文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時利用者</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0235 / 最大 0.0235">0.023</td><td title="n=1 / 最小 25.0931 / 最大 25.0931">25.09</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0087 / 最大 0.0117">0.010 ± 0.002</td><td title="n=3 / 最小 30.4901 / 最大 30.6669">30.59 ± 0.09</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0077 / 最大 0.0294">0.015 ± 0.012</td><td title="n=3 / 最小 27.3431 / 最大 28.8435">28.32 ± 0.85</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0009 / 最大 0.0009">0.001</td><td title="n=1 / 最小 28.2439 / 最大 28.2439">28.24</td></tr><tr><td>2人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0277 / 最大 0.0277">0.028</td><td title="n=1 / 最小 41.7006 / 最大 41.7006">41.70</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0160 / 最大 0.0183">0.017 ± 0.001</td><td title="n=3 / 最小 49.7980 / 最大 51.6605">50.94 ± 1.00</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0141 / 最大 0.0294">0.019 ± 0.009</td><td title="n=3 / 最小 44.5316 / 最大 46.7456">46.00 ± 1.27</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0008 / 最大 0.0008">0.001</td><td title="n=1 / 最小 50.6645 / 最大 50.6645">50.66</td></tr><tr><td>4人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0409 / 最大 0.0409">0.041</td><td title="n=1 / 最小 60.5498 / 最大 60.5498">60.55</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0286 / 最大 0.0313">0.030 ± 0.001</td><td title="n=3 / 最小 76.8219 / 最大 77.9129">77.43 ± 0.56</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0296 / 最大 0.0412">0.034 ± 0.007</td><td title="n=3 / 最小 66.3969 / 最大 68.3434">67.37 ± 0.97</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0009 / 最大 0.0009">0.001</td><td title="n=1 / 最小 86.0147 / 最大 86.0147">86.01</td></tr><tr><td>6人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0495 / 最大 0.0495">0.049</td><td title="n=1 / 最小 65.7419 / 最大 65.7419">65.74</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0428 / 最大 0.0573">0.048 ± 0.008</td><td title="n=3 / 最小 91.0292 / 最大 94.3591">93.13 ± 1.83</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0408 / 最大 0.0507">0.045 ± 0.005</td><td title="n=3 / 最小 77.1977 / 最大 79.3718">78.23 ± 1.09</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0010 / 最大 0.0010">0.001</td><td title="n=1 / 最小 108.3429 / 最大 108.3429">108.34</td></tr><tr><td>8人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0592 / 最大 0.0592">0.059</td><td title="n=1 / 最小 75.7972 / 最大 75.7972">75.80</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0585 / 最大 0.0603">0.059 ± 0.001</td><td title="n=3 / 最小 94.7303 / 最大 101.7042">99.16 ± 3.85</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0563 / 最大 0.0633">0.059 ± 0.004</td><td title="n=3 / 最小 84.4876 / 最大 87.4735">86.16 ± 1.52</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0012 / 最大 0.0012">0.001</td><td title="n=1 / 最小 125.4829 / 最大 125.4829">125.48</td></tr></tbody></table></div><h3>MTP文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時利用者</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1人</td><td class="muted">対象外</td><td class="muted">未完了</td><td title="n=1 / 最小 30.6300 / 最大 30.6300">30.63 †</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0092 / 最大 0.0140">0.011 ± 0.003</td><td title="n=3 / 最小 36.0763 / 最大 37.7675">36.82 ± 0.87</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0082 / 最大 0.0335">0.017 ± 0.015</td><td title="n=3 / 最小 34.5694 / 最大 34.9318">34.79 ± 0.19</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0040 / 最大 0.0040">0.004</td><td title="n=1 / 最小 35.7431 / 最大 35.7431">35.74</td></tr><tr><td>2人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0334 / 最大 0.0334">0.033</td><td title="n=1 / 最小 42.8071 / 最大 42.8071">42.81</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0154 / 最大 0.0208">0.018 ± 0.003</td><td title="n=3 / 最小 55.0565 / 最大 59.0507">56.59 ± 2.15</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0135 / 最大 0.0317">0.020 ± 0.010</td><td title="n=3 / 最小 43.5785 / 最大 45.0735">44.34 ± 0.75</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0073 / 最大 0.0073">0.007</td><td title="n=1 / 最小 61.3041 / 最大 61.3041">61.30</td></tr><tr><td>4人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0423 / 最大 0.0423">0.042</td><td title="n=1 / 最小 55.7130 / 最大 55.7130">55.71</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0338 / 最大 0.0367">0.035 ± 0.001</td><td title="n=3 / 最小 71.7762 / 最大 79.2297">76.31 ± 3.98</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0307 / 最大 0.0466">0.036 ± 0.009</td><td title="n=3 / 最小 59.7028 / 最大 62.3345">60.86 ± 1.34</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0128 / 最大 0.0128">0.013</td><td title="n=1 / 最小 88.7747 / 最大 88.7747">88.77</td></tr><tr><td>6人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0536 / 最大 0.0536">0.054</td><td title="n=1 / 最小 63.1149 / 最大 63.1149">63.11</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0450 / 最大 0.0482">0.046 ± 0.002</td><td title="n=3 / 最小 81.1012 / 最大 89.2012">84.37 ± 4.27</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0435 / 最大 0.0604">0.053 ± 0.009</td><td title="n=3 / 最小 66.3010 / 最大 73.5147">70.22 ± 3.65</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0184 / 最大 0.0184">0.018</td><td title="n=1 / 最小 109.7391 / 最大 109.7391">109.74</td></tr><tr><td>8人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0608 / 最大 0.0608">0.061</td><td title="n=1 / 最小 72.6652 / 最大 72.6652">72.67</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0609 / 最大 0.0694">0.065 ± 0.004</td><td title="n=3 / 最小 86.1839 / 最大 94.3941">90.15 ± 4.11</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0599 / 最大 0.0913">0.071 ± 0.018</td><td title="n=3 / 最小 74.2681 / 最大 81.5923">78.05 ± 3.67</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0243 / 最大 0.0243">0.024</td><td title="n=1 / 最小 127.0163 / 最大 127.0163">127.02</td></tr></tbody></table></div><h3>MTP反復文</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時利用者</th><th colspan="3" class="group iq3s">SC117 IQ3_S</th><th colspan="3" class="group iq4xs_previous">Orca IQ4_XS</th><th colspan="3" class="group huihui">Huihui UD-IQ4_XS</th><th colspan="3" class="group official">公式 UD-Q4_K_XL</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0265 / 最大 0.0265">0.026</td><td title="n=1 / 最小 82.9763 / 最大 82.9763">82.98</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0095 / 最大 0.0134">0.011 ± 0.002</td><td title="n=3 / 最小 92.3744 / 最大 100.9725">95.53 ± 4.73</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0078 / 最大 0.0288">0.015 ± 0.012</td><td title="n=3 / 最小 87.0135 / 最大 92.2245">89.79 ± 2.62</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0041 / 最大 0.0041">0.004</td><td title="n=1 / 最小 116.5011 / 最大 116.5011">116.50</td></tr><tr><td>2人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0319 / 最大 0.0319">0.032</td><td title="n=1 / 最小 84.2978 / 最大 84.2978">84.30</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0158 / 最大 0.0245">0.019 ± 0.005</td><td title="n=3 / 最小 101.3543 / 最大 108.7358">104.05 ± 4.07</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0148 / 最大 0.0318">0.021 ± 0.010</td><td title="n=3 / 最小 90.6928 / 最大 103.4542">97.18 ± 6.38</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0085 / 最大 0.0085">0.009</td><td title="n=1 / 最小 165.4978 / 最大 165.4978">165.50</td></tr><tr><td>4人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0642 / 最大 0.0642">0.064</td><td title="n=1 / 最小 83.6286 / 最大 83.6286">83.63</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0293 / 最大 0.0324">0.030 ± 0.002</td><td title="n=3 / 最小 109.9734 / 最大 116.0059">112.85 ± 3.03</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0283 / 最大 0.0479">0.036 ± 0.010</td><td title="n=3 / 最小 97.2068 / 最大 110.8922">104.32 ± 6.86</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0128 / 最大 0.0128">0.013</td><td title="n=1 / 最小 218.1227 / 最大 218.1227">218.12</td></tr><tr><td>6人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0565 / 最大 0.0565">0.057</td><td title="n=1 / 最小 93.0903 / 最大 93.0903">93.09</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0430 / 最大 0.0485">0.047 ± 0.003</td><td title="n=3 / 最小 108.0004 / 最大 112.5352">110.52 ± 2.31</td><td class="muted">対象外</td><td class="muted">未完了</td><td class="muted">未完了</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0184 / 最大 0.0184">0.018</td><td title="n=1 / 最小 231.8456 / 最大 231.8456">231.85</td></tr><tr><td>8人</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0673 / 最大 0.0673">0.067</td><td title="n=1 / 最小 95.9861 / 最大 95.9861">95.99</td><td class="muted">対象外</td><td title="n=3 / 最小 0.0590 / 最大 0.0675">0.065 ± 0.005</td><td title="n=3 / 最小 109.6313 / 最大 113.9398">111.84 ± 2.16</td><td class="muted">対象外</td><td class="muted">未完了</td><td class="muted">未完了</td><td class="muted">対象外</td><td title="n=1 / 最小 0.0241 / 最大 0.0241">0.024</td><td title="n=1 / 最小 245.8122 / 最大 245.8122">245.81</td></tr></tbody></table></div><p class="note">† は同じモデルのAR基準との出力一致が未達の参考値。SC117の過去の判定も保持しています。</p><h2>読み込み時間と公式メモリ試験</h2><p>読み込みは対象GGUFとMTPのWSLファイルキャッシュを解放し、常駐ページがゼロであることを確認してからHTTP準備完了までを測定しました（Windowsのストレージキャッシュは未リセット）。メモリ試験はMTPなし・同時処理1・コンテキスト133,121・画像プロジェクターなしで揃えています。</p><div class="scroll"><table><thead><tr><th>測定項目</th><th>SC117 IQ3_S</th><th>Orca IQ4_XS</th><th>Huihui UD-IQ4_XS</th><th>公式 UD-Q4_K_XL</th></tr></thead><tbody><tr><td>読み込み時間（秒）</td><td>21.290</td><td>27.531</td><td>22.349 ± 1.043</td><td>16.417</td></tr><tr><td>2K入力＋128生成：GPU使用量ピーク</td><td>61.10 GiB</td><td>73.29 GiB</td><td>未完了</td><td>88.78 GiB</td></tr><tr><td>16K履歴＋4K入力＋128生成：GPU使用量ピーク</td><td>62.83 GiB</td><td>74.91 GiB</td><td>未完了</td><td>90.53 GiB</td></tr></tbody></table></div><p class="callout">この表のメモリは、決められた同一負荷での <strong>GPU全体のHIP使用量ピーク</strong>です。下の表はWindowsやWSLを含むシステム全体の観測値です。測定範囲が異なり、モデル単体の使用量として読み替えたり足し合わせたりできません。</p><h2>実行前・実行中・実行後のメモリ</h2><p>すべてGiBで表示（1 GiB＝1,024³ byte）。使用量は区間内の最大、空き／利用可能は区間内の最小です。Windowsの計測対象はGPU専用領域を除く約63.65 GiB、WSLは約23.46 GiBで、その使用量はWindows側にも含まれます。GPUのHIP値とも重複するため、各列を足さないでください。</p><div class="scroll"><table><thead><tr><th>状態</th><th>Windows 使用最大</th><th>Windows 空き最小</th><th>WSL 使用最大</th><th>WSL 利用可能最小</th><th>GPU/Windows 使用最大</th><th>GPU/HIP 使用最大</th><th>GPU/HIP 空き最小</th><th>Docker 使用最大</th></tr></thead><tbody><tr><td>実行前：Huihui通常起動中</td><td>45.97 GiB</td><td>17.68 GiB</td><td>6.44 GiB</td><td>17.03 GiB</td><td>77.95 GiB</td><td>未取得</td><td>未取得</td><td>3.08 GiB</td></tr><tr><td>モデル停止後・測定前</td><td>34.72 GiB</td><td>28.93 GiB</td><td>3.34 GiB</td><td>20.12 GiB</td><td>1.41 GiB</td><td>未取得</td><td>未取得</td><td>0.01 GiB</td></tr><tr><td>測定中：読み込み3回</td><td>43.76 GiB</td><td>19.89 GiB</td><td>6.47 GiB</td><td>17.00 GiB</td><td>75.48 GiB</td><td>76.10 GiB</td><td>35.38 GiB</td><td>2.21 GiB</td></tr><tr><td>測定中：単独AR</td><td>45.01 GiB</td><td>18.64 GiB</td><td>13.12 GiB</td><td>10.35 GiB</td><td>76.72 GiB</td><td>76.72 GiB</td><td>34.75 GiB</td><td>9.79 GiB</td></tr><tr><td>測定中：単独MTP</td><td>47.42 GiB</td><td>16.23 GiB</td><td>13.19 GiB</td><td>10.28 GiB</td><td>79.76 GiB</td><td>79.76 GiB</td><td>31.72 GiB</td><td>9.84 GiB</td></tr><tr><td>測定中：同時利用</td><td>39.37 GiB</td><td>24.27 GiB</td><td>6.65 GiB</td><td>16.81 GiB</td><td>72.71 GiB</td><td>72.71 GiB</td><td>38.77 GiB</td><td>3.34 GiB</td></tr></tbody></table></div><p class="note">GPU/Windowsは対象GPUの専用＋共有使用量。HIPとは計上方法が違うため、横に並べた別の観測値です。HIP監視はベンチ準備後に始めたため実行前は未取得。復帰後のHIPは追加の読み取りで確認します。</p><details><summary>メモリの定義・キャッシュ・圧縮・測定回数</summary><div class="scroll"><table><thead><tr><th>指標</th><th>意味</th></tr></thead><tbody><tr><td>Windows</td><td>Windowsの可視RAM。使用量=RamTotalBytes-RamFreeBytes。GPU専用領域を含む全128GBの残量ではない。</td></tr><tr><td>WSL</td><td>使用量=MemTotal-MemAvailable。空きは再利用可能メモリを含むMemAvailable。</td></tr><tr><td>Docker</td><td>Docker statsのコンテナメモリ。WSLの内数でGPU全体の使用量ではない。</td></tr><tr><td>HIP</td><td>hipMemGetInfoのGPU全体の使用量=total-free。Windows RAM/GPUカウンターと重複し得るため合算しない。</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>状態</th><th>WSLキャッシュ最大</th><th>WSLスワップ使用最大</th><th>Windows圧縮最大</th><th>vmmemWSL最大</th><th>Windows GPU専用使用最大</th><th>Windows GPU共有使用最大</th><th>サンプル数 Win／WSL／HIP</th></tr></thead><tbody><tr><td>実行前：Huihui通常起動中</td><td>3.23 GiB</td><td>4.82 GiB</td><td>2.57 GiB</td><td>9.30 GiB</td><td>63.70 GiB</td><td>14.25 GiB</td><td>2/4/0</td></tr><tr><td>モデル停止後・測定前</td><td>2.65 GiB</td><td>4.82 GiB</td><td>2.54 GiB</td><td>8.37 GiB</td><td>0.57 GiB</td><td>0.84 GiB</td><td>1/1/0</td></tr><tr><td>測定中：読み込み3回</td><td>3.21 GiB</td><td>4.82 GiB</td><td>2.54 GiB</td><td>9.35 GiB</td><td>63.72 GiB</td><td>11.76 GiB</td><td>29/27/331</td></tr><tr><td>測定中：単独AR</td><td>3.34 GiB</td><td>4.81 GiB</td><td>2.95 GiB</td><td>15.85 GiB</td><td>63.70 GiB</td><td>13.02 GiB</td><td>147/144/1763</td></tr><tr><td>測定中：単独MTP</td><td>3.49 GiB</td><td>4.80 GiB</td><td>11.62 GiB</td><td>14.79 GiB</td><td>63.72 GiB</td><td>16.03 GiB</td><td>278/275/3363</td></tr><tr><td>測定中：同時利用</td><td>3.50 GiB</td><td>4.79 GiB</td><td>5.05 GiB</td><td>6.74 GiB</td><td>63.81 GiB</td><td>8.91 GiB</td><td>214/206/2512</td></tr></tbody></table></div><p>HIPは250ms間隔で収集。WindowsとWSL/Dockerは約2秒の待機に取得時間を加えた間隔です。温度センサーはWSLから未取得。電源プラン：電源設定の GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (バランス)。</p></details><details><summary>Huihuiの3回の個別値</summary><div class="scroll"><table><thead><tr><th>試験</th><th>履歴</th><th>指標</th><th>1回目</th><th>2回目</th><th>3回目</th></tr></thead><tbody><tr><td>AR（MTPなし）</td><td>0K</td><td>Prefill(tok/s)</td><td>1234.133</td><td>1141.772</td><td>1176.137</td></tr><tr><td>AR（MTPなし）</td><td>0K</td><td>TTFT(秒)</td><td>1.677</td><td>1.797</td><td>1.769</td></tr><tr><td>AR（MTPなし）</td><td>0K</td><td>Decode(tok/s)</td><td>27.525</td><td>27.090</td><td>27.546</td></tr><tr><td>AR（MTPなし）</td><td>4K</td><td>Prefill(tok/s)</td><td>1105.715</td><td>1164.531</td><td>1067.803</td></tr><tr><td>AR（MTPなし）</td><td>4K</td><td>TTFT(秒)</td><td>1.849</td><td>1.741</td><td>1.900</td></tr><tr><td>AR（MTPなし）</td><td>4K</td><td>Decode(tok/s)</td><td>27.034</td><td>27.875</td><td>27.374</td></tr><tr><td>AR（MTPなし）</td><td>8K</td><td>Prefill(tok/s)</td><td>1155.791</td><td>1172.853</td><td>1044.764</td></tr><tr><td>AR（MTPなし）</td><td>8K</td><td>TTFT(秒)</td><td>1.773</td><td>1.753</td><td>1.956</td></tr><tr><td>AR（MTPなし）</td><td>8K</td><td>Decode(tok/s)</td><td>27.513</td><td>27.669</td><td>27.859</td></tr><tr><td>AR（MTPなし）</td><td>12K</td><td>Prefill(tok/s)</td><td>1134.970</td><td>1161.423</td><td>1177.102</td></tr><tr><td>AR（MTPなし）</td><td>12K</td><td>TTFT(秒)</td><td>1.806</td><td>1.766</td><td>1.745</td></tr><tr><td>AR（MTPなし）</td><td>12K</td><td>Decode(tok/s)</td><td>27.834</td><td>27.412</td><td>28.241</td></tr><tr><td>AR（MTPなし）</td><td>16K</td><td>Prefill(tok/s)</td><td>1107.336</td><td>1196.919</td><td>1180.513</td></tr><tr><td>AR（MTPなし）</td><td>16K</td><td>TTFT(秒)</td><td>1.850</td><td>1.712</td><td>1.738</td></tr><tr><td>AR（MTPなし）</td><td>16K</td><td>Decode(tok/s)</td><td>27.596</td><td>27.555</td><td>28.151</td></tr><tr><td>AR（MTPなし）</td><td>32K</td><td>Prefill(tok/s)</td><td>1128.037</td><td>1045.102</td><td>1143.041</td></tr><tr><td>AR（MTPなし）</td><td>32K</td><td>TTFT(秒)</td><td>1.802</td><td>1.982</td><td>1.790</td></tr><tr><td>AR（MTPなし）</td><td>32K</td><td>Decode(tok/s)</td><td>26.986</td><td>27.588</td><td>27.713</td></tr><tr><td>AR（MTPなし）</td><td>64K</td><td>Prefill(tok/s)</td><td>1069.211</td><td>1105.941</td><td>1049.421</td></tr><tr><td>AR（MTPなし）</td><td>64K</td><td>TTFT(秒)</td><td>1.933</td><td>1.862</td><td>1.980</td></tr><tr><td>AR（MTPなし）</td><td>64K</td><td>Decode(tok/s)</td><td>27.578</td><td>27.619</td><td>27.469</td></tr><tr><td>AR（MTPなし）</td><td>128K</td><td>Prefill(tok/s)</td><td>1006.898</td><td>1009.715</td><td>1033.992</td></tr><tr><td>AR（MTPなし）</td><td>128K</td><td>TTFT(秒)</td><td>2.046</td><td>2.057</td><td>1.989</td></tr><tr><td>AR（MTPなし）</td><td>128K</td><td>Decode(tok/s)</td><td>26.931</td><td>27.259</td><td>26.840</td></tr><tr><td>MTP・文章</td><td>0K</td><td>Prefill(tok/s)</td><td>977.964</td><td>1056.630</td><td>1051.466</td></tr><tr><td>MTP・文章</td><td>0K</td><td>TTFT(秒)</td><td>2.122</td><td>1.943</td><td>1.972</td></tr><tr><td>MTP・文章</td><td>0K</td><td>Decode(tok/s)</td><td>32.053</td><td>27.972</td><td>32.130</td></tr><tr><td>MTP・文章</td><td>4K</td><td>Prefill(tok/s)</td><td>1022.089</td><td>957.131</td><td>1058.025</td></tr><tr><td>MTP・文章</td><td>4K</td><td>TTFT(秒)</td><td>2.000</td><td>2.117</td><td>1.918</td></tr><tr><td>MTP・文章</td><td>4K</td><td>Decode(tok/s)</td><td>36.273</td><td>36.743</td><td>37.172</td></tr><tr><td>MTP・文章</td><td>8K</td><td>Prefill(tok/s)</td><td>1061.297</td><td>981.801</td><td>1065.584</td></tr><tr><td>MTP・文章</td><td>8K</td><td>TTFT(秒)</td><td>1.931</td><td>2.094</td><td>1.918</td></tr><tr><td>MTP・文章</td><td>8K</td><td>Decode(tok/s)</td><td>34.544</td><td>32.479</td><td>35.855</td></tr><tr><td>MTP・文章</td><td>12K</td><td>Prefill(tok/s)</td><td>1008.317</td><td>997.014</td><td>1060.266</td></tr><tr><td>MTP・文章</td><td>12K</td><td>TTFT(秒)</td><td>2.032</td><td>2.056</td><td>1.937</td></tr><tr><td>MTP・文章</td><td>12K</td><td>Decode(tok/s)</td><td>35.265</td><td>32.035</td><td>36.260</td></tr><tr><td>MTP・文章</td><td>16K</td><td>Prefill(tok/s)</td><td>1043.777</td><td>1003.516</td><td>1031.079</td></tr><tr><td>MTP・文章</td><td>16K</td><td>TTFT(秒)</td><td>1.963</td><td>2.042</td><td>1.988</td></tr><tr><td>MTP・文章</td><td>16K</td><td>Decode(tok/s)</td><td>33.050</td><td>34.079</td><td>36.442</td></tr><tr><td>MTP・文章</td><td>32K</td><td>Prefill(tok/s)</td><td>1045.785</td><td>1028.468</td><td>1028.521</td></tr><tr><td>MTP・文章</td><td>32K</td><td>TTFT(秒)</td><td>1.944</td><td>2.014</td><td>1.988</td></tr><tr><td>MTP・文章</td><td>32K</td><td>Decode(tok/s)</td><td>34.835</td><td>36.231</td><td>34.446</td></tr><tr><td>MTP・文章</td><td>64K</td><td>Prefill(tok/s)</td><td>943.904</td><td>973.976</td><td>967.313</td></tr><tr><td>MTP・文章</td><td>64K</td><td>TTFT(秒)</td><td>2.189</td><td>2.112</td><td>2.146</td></tr><tr><td>MTP・文章</td><td>64K</td><td>Decode(tok/s)</td><td>33.330</td><td>35.198</td><td>35.069</td></tr><tr><td>MTP・文章</td><td>128K</td><td>Prefill(tok/s)</td><td>965.962</td><td>869.205</td><td>997.925</td></tr><tr><td>MTP・文章</td><td>128K</td><td>TTFT(秒)</td><td>2.133</td><td>2.385</td><td>2.063</td></tr><tr><td>MTP・文章</td><td>128K</td><td>Decode(tok/s)</td><td>30.469</td><td>33.989</td><td>35.793</td></tr><tr><td>MTP・反復文</td><td>0K</td><td>Prefill(tok/s)</td><td>974.024</td><td>1006.758</td><td>906.003</td></tr><tr><td>MTP・反復文</td><td>0K</td><td>TTFT(秒)</td><td>2.130</td><td>2.040</td><td>2.284</td></tr><tr><td>MTP・反復文</td><td>0K</td><td>Decode(tok/s)</td><td>72.431</td><td>87.152</td><td>88.229</td></tr><tr><td>MTP・反復文</td><td>4K</td><td>Prefill(tok/s)</td><td>978.766</td><td>949.653</td><td>1052.548</td></tr><tr><td>MTP・反復文</td><td>4K</td><td>TTFT(秒)</td><td>2.085</td><td>2.131</td><td>1.923</td></tr><tr><td>MTP・反復文</td><td>4K</td><td>Decode(tok/s)</td><td>82.614</td><td>81.641</td><td>86.534</td></tr><tr><td>MTP・反復文</td><td>8K</td><td>Prefill(tok/s)</td><td>1053.071</td><td>1021.258</td><td>1047.528</td></tr><tr><td>MTP・反復文</td><td>8K</td><td>TTFT(秒)</td><td>1.942</td><td>2.009</td><td>1.946</td></tr><tr><td>MTP・反復文</td><td>8K</td><td>Decode(tok/s)</td><td>92.246</td><td>84.459</td><td>86.169</td></tr><tr><td>MTP・反復文</td><td>12K</td><td>Prefill(tok/s)</td><td>758.177</td><td>819.867</td><td>839.142</td></tr><tr><td>MTP・反復文</td><td>12K</td><td>TTFT(秒)</td><td>2.698</td><td>2.492</td><td>2.440</td></tr><tr><td>MTP・反復文</td><td>12K</td><td>Decode(tok/s)</td><td>74.998</td><td>84.387</td><td>80.709</td></tr><tr><td>MTP・反復文</td><td>16K</td><td>Prefill(tok/s)</td><td>1005.992</td><td>998.148</td><td>1029.216</td></tr><tr><td>MTP・反復文</td><td>16K</td><td>TTFT(秒)</td><td>2.032</td><td>2.048</td><td>1.988</td></tr><tr><td>MTP・反復文</td><td>16K</td><td>Decode(tok/s)</td><td>87.127</td><td>91.915</td><td>87.128</td></tr><tr><td>MTP・反復文</td><td>32K</td><td>Prefill(tok/s)</td><td>978.331</td><td>1021.183</td><td>1027.130</td></tr><tr><td>MTP・反復文</td><td>32K</td><td>TTFT(秒)</td><td>2.072</td><td>2.025</td><td>1.986</td></tr><tr><td>MTP・反復文</td><td>32K</td><td>Decode(tok/s)</td><td>87.259</td><td>87.243</td><td>86.178</td></tr><tr><td>MTP・反復文</td><td>64K</td><td>Prefill(tok/s)</td><td>1031.852</td><td>1038.568</td><td>1036.055</td></tr><tr><td>MTP・反復文</td><td>64K</td><td>TTFT(秒)</td><td>1.997</td><td>1.978</td><td>1.999</td></tr><tr><td>MTP・反復文</td><td>64K</td><td>Decode(tok/s)</td><td>82.985</td><td>83.518</td><td>87.274</td></tr><tr><td>MTP・反復文</td><td>128K</td><td>Prefill(tok/s)</td><td>975.434</td><td>970.145</td><td>923.798</td></tr><tr><td>MTP・反復文</td><td>128K</td><td>TTFT(秒)</td><td>2.108</td><td>2.134</td><td>2.225</td></tr><tr><td>MTP・反復文</td><td>128K</td><td>Decode(tok/s)</td><td>90.559</td><td>81.337</td><td>84.837</td></tr></tbody></table></div></details><details><summary>検証と出典</summary><pre>{
+  &quot;measurement_checks&quot;: {
+    &quot;single_72_samples&quot;: true,
+    &quot;single_24_cells_three_runs&quot;: true,
+    &quot;all_single_output_128&quot;: true,
+    &quot;single_new_tokens_and_depth&quot;: true,
+    &quot;loading_three_cold_runs&quot;: true,
+    &quot;memory_three_two_workload_sweeps&quot;: false,
+    &quot;AR文章_C1_three_prepared_runs&quot;: true,
+    &quot;AR文章_C2_three_prepared_runs&quot;: true,
+    &quot;AR文章_C4_three_prepared_runs&quot;: true,
+    &quot;AR文章_C6_three_prepared_runs&quot;: true,
+    &quot;AR文章_C8_three_prepared_runs&quot;: true,
+    &quot;MTP文章_C1_three_prepared_runs&quot;: true,
+    &quot;MTP文章_C2_three_prepared_runs&quot;: true,
+    &quot;MTP文章_C4_three_prepared_runs&quot;: true,
+    &quot;MTP文章_C6_three_prepared_runs&quot;: true,
+    &quot;MTP文章_C8_three_prepared_runs&quot;: true,
+    &quot;MTP反復文_C1_three_prepared_runs&quot;: true,
+    &quot;MTP反復文_C2_three_prepared_runs&quot;: true,
+    &quot;MTP反復文_C4_three_prepared_runs&quot;: true,
+    &quot;MTP反復文_C6_three_prepared_runs&quot;: false,
+    &quot;MTP反復文_C8_three_prepared_runs&quot;: false,
+    &quot;multi_189_samples&quot;: false,
+    &quot;all_23_official_jobs_completed&quot;: false,
+    &quot;official_suite_completed&quot;: false,
+    &quot;all_single_http_traces_and_hashes&quot;: true,
+    &quot;single_greedy_no_penalties&quot;: true,
+    &quot;single_response_content_timings_finish&quot;: true,
+    &quot;AR_no_drafts_MTP_has_drafts&quot;: true
+  },
+  &quot;quality&quot;: {
+    &quot;single_prose_ar_mtp_pairs&quot;: [
+      {
+        &quot;depth&quot;: 0,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 0,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 0,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 4096,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 4096,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 4096,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 8192,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 8192,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 8192,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 12288,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 12288,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 12288,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 16384,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 16384,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 16384,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 32768,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 32768,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 32768,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 65536,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 65536,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 65536,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 131072,
+        &quot;repetition&quot;: 1,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 131072,
+        &quot;repetition&quot;: 2,
+        &quot;exact&quot;: true
+      },
+      {
+        &quot;depth&quot;: 131072,
+        &quot;repetition&quot;: 3,
+        &quot;exact&quot;: true
+      }
+    ],
+    &quot;single_prose_ar_mtp_all_exact&quot;: true,
+    &quot;multi_exact&quot;: {
+      &quot;AR文章&quot;: {
+        &quot;1&quot;: true,
+        &quot;2&quot;: true,
+        &quot;4&quot;: true,
+        &quot;6&quot;: true,
+        &quot;8&quot;: true
+      },
+      &quot;MTP文章&quot;: {
+        &quot;1&quot;: true,
+        &quot;2&quot;: true,
+        &quot;4&quot;: true,
+        &quot;6&quot;: true,
+        &quot;8&quot;: true
+      },
+      &quot;MTP反復文&quot;: {
+        &quot;1&quot;: true,
+        &quot;2&quot;: true,
+        &quot;4&quot;: true
+      }
+    }
+  },
+  &quot;official_jobs&quot;: [
+    {
+      &quot;job&quot;: &quot;loading&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:25:53.774169+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;single-ar&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:33:17.077365+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;single-mtp&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:47:21.826396+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;fresh-prose-AR-control&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:47:53.344326+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;fresh-repetition-AR-control&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:48:23.452981+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-ar-c1&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:49:00.747313+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-ar-c2&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:49:41.854506+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-ar-c4&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:50:29.518054+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-ar-c6&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:51:24.267808+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-ar-c8&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:52:26.267084+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-mixed-c1&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:53:03.051317+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-mixed-c2&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:53:46.115934+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-mixed-c4&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:54:38.515176+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-mixed-c6&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:55:38.737163+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-mixed-c8&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:56:46.734015+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-repetition-c1&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:57:17.405335+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-repetition-c2&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:57:51.189203+00:00&quot;
+    },
+    {
+      &quot;job&quot;: &quot;multi-repetition-c4&quot;,
+      &quot;ok&quot;: true,
+      &quot;at&quot;: &quot;2026-10-26T08:58:32.555079+00:00&quot;
+    }
+  ]
+}</pre></details><footer>Huihuiのみ今回測定。SC117・Orcaの再測定はしていません。元レポートは変更せず保持。通常設定への復帰は測定終了後に確認します。<br><a href="../../../../evidence/benchmark/reports/gufo-huihui-official-3runs-20261026-172308/comparison.json">集計JSON</a> ／ <span title="参照先はローカル保管">単独利用の個別値CSV</span> ／ <span title="参照先はローカル保管">同時利用の個別値CSV</span></footer></body></html>

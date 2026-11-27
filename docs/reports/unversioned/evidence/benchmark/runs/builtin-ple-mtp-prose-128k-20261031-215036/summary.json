@@ -1,0 +1,81 @@
+{
+  "completed": true,
+  "normal_restored": true,
+  "normal_settings_unchanged": true,
+  "inference_command_equal_except_external_ple_and_container_name_port": true,
+  "bf16_source": "/home/user/Apps/Gufo/benchmarks/bf16-ple-mtp-prose-128k-20261031-213714",
+  "bf16_mean_three_runs": {
+    "prefill_tokens_per_second": 695.6647712462039,
+    "server_ttft_ms": 2968.4900949999997,
+    "decode_tokens_per_second": 32.15592318225076
+  },
+  "builtin_single_run": {
+    "concurrency": 1,
+    "repetition": 1,
+    "request_index": 1,
+    "prompt_tokens": 133106,
+    "cached_prompt_tokens": 131052,
+    "completion_tokens": 128,
+    "prefill_tokens": 2054,
+    "wall_ms": 7562.7253930142615,
+    "client_ttft_ms": 3555.864838999696,
+    "client_event_inter_token_ms": 31.511251952849314,
+    "queue_ms": 14.38175,
+    "prefill_ms": 3531.8877,
+    "decode_ms": 3981.7520449999993,
+    "server_ttft_ms": 3546.370439,
+    "server_inter_token_ms": 31.51097927559054,
+    "server_max_inter_token_ms": 118.214375,
+    "requested_logical_concurrency": 1,
+    "physical_execution_width": 1,
+    "execution_plan": "serial-c1",
+    "metrics_source": "gufo",
+    "cache_hit": true,
+    "draft_tokens": 92,
+    "draft_accepted_tokens": 56,
+    "draft_acceptance": 0.6086956521739131,
+    "case_id": null,
+    "category": null,
+    "completion_sha256": "16e1e7681441ca8a4cd5ed605f7c58429f297ed6da4a40a9919b65cb4338dc8f",
+    "prefill_tokens_per_second": 581.5586945190811,
+    "decode_tokens_per_second": 32.14665266782076,
+    "whole_request_tokens_per_second": 288.52032654994025,
+    "started_at": 213318.456479058,
+    "finished_at": 213326.019204451,
+    "run": 1
+  },
+  "builtin_change_percent_vs_bf16_mean": {
+    "prefill_tokens_per_second": -16.402451503001203,
+    "server_ttft_ms": 19.467147455649503,
+    "decode_tokens_per_second": -0.02882988113094287
+  },
+  "builtin_memory": {
+    "windows_used_peak_bytes": 52511748096,
+    "windows_available_min_bytes": 15829000192,
+    "wsl_available_min_bytes": 11249836032,
+    "gpu_used_peak_bytes": 85334999040,
+    "gpu_free_min_bytes": 34361544704,
+    "process_rss_peak_bytes": 10274295808,
+    "container_memory_peak_bytes": 10184982528,
+    "window": "ready through benchmark completion, including history preparation"
+  },
+  "bf16_memory": {
+    "windows_samples": 196,
+    "windows_total_bytes": 68340748288,
+    "windows_used_peak_bytes": 56230621184,
+    "windows_available_min_bytes": 12110127104,
+    "wsl_samples": 396,
+    "wsl_available_min_bytes": 11104407552,
+    "process_rss_peak_bytes": null,
+    "container_memory_peak_bytes": null,
+    "gpu_samples": 230,
+    "gpu_used_peak_bytes": 85470236672,
+    "gpu_free_min_bytes": 34226307072
+  },
+  "limitations": [
+    "Built-in PLE measured once at user request; BF16 measured three times.",
+    "Sequential comparison, not randomized; background applications and cache state may vary.",
+    "Automatic RAM cache differs slightly because it is based on available memory.",
+    "No Q8 PLE speed or answer-quality measurement was performed."
+  ]
+}

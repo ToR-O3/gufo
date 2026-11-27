@@ -1,0 +1,157 @@
+{
+  "measured_at": "2026-11-06T19:56:49.015217+09:00",
+  "scope": "Q5_0 compatibility; context 8192, built-in PLE, pp about 2048, tg 128; not a full model or performance regression qualification",
+  "modes": {
+    "off": {
+      "measured_requests": 3,
+      "warmup_requests": 1,
+      "prompt_tokens": [
+        2032,
+        2053,
+        2023
+      ],
+      "completion_tokens": [
+        128,
+        128,
+        128
+      ],
+      "draft_tokens": [
+        0,
+        0,
+        0
+      ],
+      "draft_accepted_tokens": [
+        0,
+        0,
+        0
+      ],
+      "metrics": {
+        "prefill_tokens_per_second": {
+          "values": [
+            886.3041313824863,
+            860.9041396009444,
+            874.5477430678678
+          ],
+          "mean": 873.9186713504329,
+          "min": 860.9041396009444,
+          "max": 886.3041313824863
+        },
+        "decode_tokens_per_second": {
+          "values": [
+            29.3555871911851,
+            28.99484834779504,
+            29.8258568276264
+          ],
+          "mean": 29.392097455535513,
+          "min": 28.99484834779504,
+          "max": 29.8258568276264
+        },
+        "server_ttft_ms": {
+          "values": [
+            2309.92117,
+            2401.900224,
+            2331.121642
+          ],
+          "mean": 2347.6476786666667,
+          "min": 2309.92117,
+          "max": 2401.900224
+        }
+      }
+    },
+    "mtp": {
+      "measured_requests": 3,
+      "warmup_requests": 1,
+      "prompt_tokens": [
+        2032,
+        2053,
+        2023
+      ],
+      "completion_tokens": [
+        128,
+        128,
+        128
+      ],
+      "draft_tokens": [
+        125,
+        118,
+        98
+      ],
+      "draft_accepted_tokens": [
+        65,
+        64,
+        57
+      ],
+      "metrics": {
+        "prefill_tokens_per_second": {
+          "values": [
+            851.0817329452325,
+            801.1836019206984,
+            815.5659959658461
+          ],
+          "mean": 822.6104436105924,
+          "min": 801.1836019206984,
+          "max": 851.0817329452325
+        },
+        "decode_tokens_per_second": {
+          "values": [
+            32.3307953290227,
+            31.959863796308888,
+            33.30996067077329
+          ],
+          "mean": 32.53353993203496,
+          "min": 31.959863796308888,
+          "max": 33.30996067077329
+        },
+        "server_ttft_ms": {
+          "values": [
+            2406.705641,
+            2580.401425,
+            2502.319819
+          ],
+          "mean": 2496.475628333333,
+          "min": 2406.705641,
+          "max": 2580.401425
+        }
+      }
+    }
+  },
+  "ar_mtp_completion_hash_matches": [
+    {
+      "repetition": 0,
+      "warmup": true,
+      "equal": true
+    },
+    {
+      "repetition": 1,
+      "warmup": false,
+      "equal": true
+    },
+    {
+      "repetition": 2,
+      "warmup": false,
+      "equal": true
+    },
+    {
+      "repetition": 3,
+      "warmup": false,
+      "equal": true
+    }
+  ],
+  "memory": {
+    "total_samples": 16,
+    "error_samples": 0,
+    "note": "Sampled global HIP pool, WSL MemAvailable, Windows OS-visible AvailableBytes. Sequential probes; phases can change while sampling. Observed extrema are not continuous peaks or model-only allocations.",
+    "off": {
+      "samples": 4,
+      "hip_max_observed_used_bytes": 72757854208,
+      "wsl_min_observed_available_kib": 16538880,
+      "windows_min_observed_available_bytes": 20404195328
+    },
+    "mtp": {
+      "samples": 4,
+      "hip_max_observed_used_bytes": 76008865792,
+      "wsl_min_observed_available_kib": 16431508,
+      "windows_min_observed_available_bytes": 17376256000
+    }
+  }
+}

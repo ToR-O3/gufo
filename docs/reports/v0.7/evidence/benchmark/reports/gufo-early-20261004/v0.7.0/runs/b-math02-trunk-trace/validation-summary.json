@@ -1,0 +1,3417 @@
+{
+  "schema": "sc117-v070-B-trunk-summary-v1",
+  "source_commit": "8c95dce5a906841709013cbcaf32f838ba9bd04b",
+  "official_base": "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d",
+  "qualification_namespace": "v0.7.0",
+  "binary_sha256": "8eb05242d4bdac4593ea173d381fdaa5b66abd0b723cdf4d85be6e5d4d43fb44",
+  "image_id": "sha256:2ca5708b963bd09bde1eb944f00fa73ad4897b2e0f9c3963e5a209b032c73871",
+  "exit_code": 0,
+  "oom_killed": false,
+  "started_utc": "2026-10-04T15:33:55.071192569Z",
+  "finished_utc": "2026-10-04T15:38:06.350458966Z",
+  "container_duration_seconds": 251.279266,
+  "omp_environment": {
+    "OMP_NUM_THREADS": "16",
+    "OMP_WAIT_POLICY": "PASSIVE",
+    "OMP_PLACES": "cores",
+    "OMP_PROC_BIND": "close"
+  },
+  "legacy_results_reused": false,
+  "status": "completed",
+  "assessment": "Fresh same-storage full-model comparisons completed; no blanket global allclose PASS claimed.",
+  "input_conditions": {
+    "context": 64,
+    "prompt_tokens": 41,
+    "prefill_batch": 64,
+    "trace_positions": [
+      0,
+      40
+    ],
+    "cpu_reference_storage": "kDecode (Q8_1 activation emulation)",
+    "logits_dtype": "float32_le",
+    "logits_shape": [
+      1,
+      248320
+    ]
+  },
+  "conversion_manifest": {
+    "path": "conversion-manifest.json",
+    "converted_tensors": 375,
+    "q8_tensors": 206,
+    "canonical_sha256": "b2a63f2d3c648a5cd131ea809be242a982b1bc056d539ce065dbb9eb602011f6"
+  },
+  "global_logit_comparisons": [
+    {
+      "reference": "cpu_decode",
+      "candidate": "gpu_decode",
+      "max_abs": 0.7100522518157959,
+      "relative_l2": 0.06212611851651607,
+      "kl_reference_to_candidate": 0.00946104852172078,
+      "top1_equal": true,
+      "top10_set_overlap": 10,
+      "reference_top10_ids": [
+        18,
+        19,
+        17,
+        16,
+        21,
+        20,
+        159481,
+        99516,
+        48543,
+        26312
+      ],
+      "candidate_top10_ids": [
+        18,
+        19,
+        17,
+        21,
+        16,
+        20,
+        159481,
+        99516,
+        48543,
+        26312
+      ],
+      "reference_top2_margin": 0.39697837829589844,
+      "candidate_top2_margin": 0.3886089324951172
+    },
+    {
+      "reference": "gpu_decode",
+      "candidate": "gpu_prefill",
+      "max_abs": 1.5108652114868164,
+      "relative_l2": 0.1135196061624741,
+      "kl_reference_to_candidate": 0.024894892272564886,
+      "top1_equal": true,
+      "top10_set_overlap": 9,
+      "reference_top10_ids": [
+        18,
+        19,
+        17,
+        21,
+        16,
+        20,
+        159481,
+        99516,
+        48543,
+        26312
+      ],
+      "candidate_top10_ids": [
+        18,
+        19,
+        17,
+        21,
+        20,
+        16,
+        159481,
+        99516,
+        48543,
+        22
+      ],
+      "reference_top2_margin": 0.3886089324951172,
+      "candidate_top2_margin": 0.06553077697753906
+    },
+    {
+      "reference": "cpu_decode",
+      "candidate": "gpu_prefill",
+      "max_abs": 1.3519649356603622,
+      "relative_l2": 0.11080717215190647,
+      "kl_reference_to_candidate": 0.031580617826413845,
+      "top1_equal": true,
+      "top10_set_overlap": 9,
+      "reference_top10_ids": [
+        18,
+        19,
+        17,
+        16,
+        21,
+        20,
+        159481,
+        99516,
+        48543,
+        26312
+      ],
+      "candidate_top10_ids": [
+        18,
+        19,
+        17,
+        21,
+        20,
+        16,
+        159481,
+        99516,
+        48543,
+        22
+      ],
+      "reference_top2_margin": 0.39697837829589844,
+      "candidate_top2_margin": 0.06553077697753906
+    }
+  ],
+  "router_selection": {
+    "rows_checked": 288,
+    "status": "passed",
+    "audit_file": "router-audit.json"
+  },
+  "stage_observations": [
+    {
+      "reference": "cpu_decode",
+      "candidate": "gpu_decode",
+      "different_selected_route_rows": [
+        {
+          "position": 0,
+          "layer": 20,
+          "reference_ids": [
+            39,
+            400,
+            341,
+            429,
+            230,
+            120,
+            324,
+            267,
+            336,
+            389
+          ],
+          "candidate_ids": [
+            39,
+            400,
+            429,
+            341,
+            230,
+            120,
+            324,
+            267,
+            336,
+            389
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 4,
+          "reference_ids": [
+            222,
+            465,
+            506,
+            131,
+            252,
+            156,
+            28,
+            198,
+            325,
+            59
+          ],
+          "candidate_ids": [
+            222,
+            465,
+            506,
+            131,
+            252,
+            156,
+            28,
+            325,
+            198,
+            59
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 6,
+          "reference_ids": [
+            285,
+            283,
+            432,
+            112,
+            330,
+            223,
+            13,
+            165,
+            445,
+            412
+          ],
+          "candidate_ids": [
+            285,
+            283,
+            432,
+            112,
+            330,
+            13,
+            223,
+            165,
+            445,
+            412
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 7,
+          "reference_ids": [
+            438,
+            452,
+            242,
+            158,
+            191,
+            84,
+            199,
+            144,
+            303,
+            60
+          ],
+          "candidate_ids": [
+            438,
+            452,
+            242,
+            191,
+            158,
+            84,
+            199,
+            144,
+            60,
+            303
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 11,
+          "reference_ids": [
+            371,
+            391,
+            273,
+            163,
+            165,
+            500,
+            108,
+            189,
+            234,
+            422
+          ],
+          "candidate_ids": [
+            371,
+            391,
+            273,
+            163,
+            165,
+            500,
+            108,
+            189,
+            422,
+            84
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 12,
+          "reference_ids": [
+            459,
+            390,
+            37,
+            63,
+            228,
+            421,
+            277,
+            253,
+            290,
+            288
+          ],
+          "candidate_ids": [
+            459,
+            390,
+            37,
+            228,
+            63,
+            421,
+            277,
+            253,
+            290,
+            288
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 13,
+          "reference_ids": [
+            347,
+            387,
+            385,
+            273,
+            50,
+            91,
+            461,
+            148,
+            286,
+            93
+          ],
+          "candidate_ids": [
+            347,
+            385,
+            387,
+            273,
+            50,
+            91,
+            461,
+            148,
+            286,
+            93
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 14,
+          "reference_ids": [
+            138,
+            212,
+            506,
+            117,
+            486,
+            335,
+            214,
+            14,
+            417,
+            314
+          ],
+          "candidate_ids": [
+            138,
+            212,
+            506,
+            117,
+            486,
+            335,
+            214,
+            14,
+            417,
+            127
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 15,
+          "reference_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            193,
+            289,
+            375,
+            494,
+            156
+          ],
+          "candidate_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            289,
+            193,
+            375,
+            494,
+            288
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 16,
+          "reference_ids": [
+            391,
+            23,
+            58,
+            429,
+            243,
+            299,
+            480,
+            26,
+            278,
+            189
+          ],
+          "candidate_ids": [
+            391,
+            23,
+            58,
+            243,
+            429,
+            299,
+            480,
+            278,
+            26,
+            189
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 17,
+          "reference_ids": [
+            381,
+            499,
+            61,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "candidate_ids": [
+            61,
+            381,
+            499,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 18,
+          "reference_ids": [
+            264,
+            184,
+            370,
+            211,
+            49,
+            471,
+            212,
+            46,
+            87,
+            376
+          ],
+          "candidate_ids": [
+            264,
+            184,
+            211,
+            370,
+            49,
+            471,
+            212,
+            46,
+            87,
+            376
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 19,
+          "reference_ids": [
+            170,
+            192,
+            377,
+            319,
+            173,
+            145,
+            103,
+            31,
+            225,
+            470
+          ],
+          "candidate_ids": [
+            170,
+            192,
+            377,
+            319,
+            173,
+            103,
+            145,
+            31,
+            225,
+            26
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 20,
+          "reference_ids": [
+            55,
+            248,
+            261,
+            15,
+            485,
+            99,
+            344,
+            442,
+            377,
+            210
+          ],
+          "candidate_ids": [
+            55,
+            248,
+            15,
+            261,
+            485,
+            99,
+            442,
+            344,
+            210,
+            377
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 23,
+          "reference_ids": [
+            68,
+            227,
+            267,
+            224,
+            467,
+            463,
+            233,
+            242,
+            0,
+            365
+          ],
+          "candidate_ids": [
+            68,
+            227,
+            267,
+            224,
+            233,
+            463,
+            467,
+            0,
+            242,
+            390
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 24,
+          "reference_ids": [
+            175,
+            283,
+            191,
+            87,
+            262,
+            11,
+            46,
+            490,
+            370,
+            425
+          ],
+          "candidate_ids": [
+            175,
+            283,
+            191,
+            11,
+            87,
+            262,
+            46,
+            490,
+            425,
+            189
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 25,
+          "reference_ids": [
+            111,
+            139,
+            132,
+            361,
+            58,
+            443,
+            154,
+            442,
+            68,
+            142
+          ],
+          "candidate_ids": [
+            111,
+            139,
+            361,
+            132,
+            443,
+            58,
+            154,
+            442,
+            68,
+            142
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 26,
+          "reference_ids": [
+            488,
+            240,
+            177,
+            203,
+            211,
+            28,
+            107,
+            393,
+            424,
+            322
+          ],
+          "candidate_ids": [
+            488,
+            240,
+            177,
+            203,
+            107,
+            28,
+            211,
+            393,
+            322,
+            424
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 27,
+          "reference_ids": [
+            273,
+            371,
+            250,
+            165,
+            391,
+            127,
+            84,
+            234,
+            197,
+            48
+          ],
+          "candidate_ids": [
+            273,
+            371,
+            250,
+            165,
+            391,
+            84,
+            127,
+            48,
+            197,
+            234
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 28,
+          "reference_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            220
+          ],
+          "candidate_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            277
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 30,
+          "reference_ids": [
+            476,
+            138,
+            460,
+            160,
+            212,
+            506,
+            80,
+            383,
+            314,
+            233
+          ],
+          "candidate_ids": [
+            476,
+            460,
+            138,
+            160,
+            212,
+            506,
+            80,
+            383,
+            314,
+            14
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 31,
+          "reference_ids": [
+            288,
+            318,
+            289,
+            426,
+            199,
+            265,
+            226,
+            449,
+            346,
+            227
+          ],
+          "candidate_ids": [
+            288,
+            199,
+            318,
+            289,
+            226,
+            265,
+            426,
+            449,
+            346,
+            227
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 32,
+          "reference_ids": [
+            58,
+            299,
+            480,
+            23,
+            8,
+            243,
+            235,
+            163,
+            391,
+            278
+          ],
+          "candidate_ids": [
+            58,
+            299,
+            480,
+            8,
+            23,
+            243,
+            235,
+            163,
+            391,
+            278
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 33,
+          "reference_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            471
+          ],
+          "candidate_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            84
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 34,
+          "reference_ids": [
+            264,
+            314,
+            211,
+            184,
+            212,
+            370,
+            49,
+            471,
+            148,
+            31
+          ],
+          "candidate_ids": [
+            264,
+            314,
+            184,
+            211,
+            212,
+            370,
+            49,
+            471,
+            148,
+            31
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 35,
+          "reference_ids": [
+            15,
+            172,
+            315,
+            264,
+            335,
+            145,
+            136,
+            30,
+            319,
+            275
+          ],
+          "candidate_ids": [
+            15,
+            264,
+            172,
+            315,
+            335,
+            145,
+            136,
+            30,
+            319,
+            275
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 36,
+          "reference_ids": [
+            253,
+            36,
+            328,
+            274,
+            82,
+            414,
+            212,
+            461,
+            203,
+            458
+          ],
+          "candidate_ids": [
+            253,
+            36,
+            328,
+            274,
+            82,
+            414,
+            461,
+            212,
+            203,
+            458
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 37,
+          "reference_ids": [
+            118,
+            42,
+            380,
+            170,
+            103,
+            418,
+            255,
+            84,
+            57,
+            392
+          ],
+          "candidate_ids": [
+            42,
+            380,
+            170,
+            118,
+            103,
+            418,
+            84,
+            255,
+            38,
+            75
+          ],
+          "set_overlap": 8
+        },
+        {
+          "position": 40,
+          "layer": 38,
+          "reference_ids": [
+            345,
+            223,
+            293,
+            81,
+            57,
+            41,
+            30,
+            338,
+            466,
+            287
+          ],
+          "candidate_ids": [
+            345,
+            223,
+            293,
+            81,
+            57,
+            41,
+            30,
+            287,
+            338,
+            267
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 43,
+          "reference_ids": [
+            282,
+            9,
+            102,
+            302,
+            234,
+            53,
+            206,
+            501,
+            494,
+            465
+          ],
+          "candidate_ids": [
+            282,
+            102,
+            9,
+            302,
+            234,
+            53,
+            206,
+            501,
+            494,
+            465
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 44,
+          "reference_ids": [
+            251,
+            161,
+            244,
+            410,
+            137,
+            400,
+            277,
+            110,
+            312,
+            56
+          ],
+          "candidate_ids": [
+            251,
+            244,
+            161,
+            410,
+            137,
+            400,
+            277,
+            110,
+            312,
+            56
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 45,
+          "reference_ids": [
+            448,
+            256,
+            394,
+            81,
+            65,
+            404,
+            100,
+            227,
+            195,
+            408
+          ],
+          "candidate_ids": [
+            448,
+            256,
+            81,
+            394,
+            65,
+            100,
+            404,
+            227,
+            195,
+            408
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 46,
+          "reference_ids": [
+            204,
+            197,
+            399,
+            171,
+            49,
+            304,
+            133,
+            371,
+            350,
+            105
+          ],
+          "candidate_ids": [
+            204,
+            197,
+            399,
+            171,
+            49,
+            304,
+            133,
+            371,
+            105,
+            350
+          ],
+          "set_overlap": 10
+        }
+      ],
+      "pos0_layer5": [
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_input",
+          "error": {
+            "elements": 2560,
+            "max_abs": 8.106231689453125e-06,
+            "relative_l2": 1.6760788308874415e-06,
+            "reference_rms": 0.6861615312954091,
+            "other_rms": 0.6861615845206972,
+            "mean_reference_minus_other": -9.365442110720324e-09,
+            "cosine": 0.9999999999985957
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_output",
+          "error": {
+            "elements": 2560,
+            "max_abs": 0.00012115808203816414,
+            "relative_l2": 0.0013648301603527814,
+            "reference_rms": 0.020523091368598957,
+            "other_rms": 0.02052982810741658,
+            "mean_reference_minus_other": -4.105032886059234e-07,
+            "cosine": 0.9999991227818407
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "router_logits",
+          "error": {
+            "elements": 513,
+            "max_abs": 4.76837158203125e-06,
+            "relative_l2": 1.9580991442263274e-07,
+            "reference_rms": 6.676931456125626,
+            "other_rms": 6.676932170647407,
+            "mean_reference_minus_other": 7.089815641704359e-07,
+            "cosine": 0.9999999999999881
+          }
+        }
+      ]
+    },
+    {
+      "reference": "gpu_decode",
+      "candidate": "gpu_prefill",
+      "different_selected_route_rows": [
+        {
+          "position": 0,
+          "layer": 20,
+          "reference_ids": [
+            39,
+            400,
+            429,
+            341,
+            230,
+            120,
+            324,
+            267,
+            336,
+            389
+          ],
+          "candidate_ids": [
+            39,
+            400,
+            341,
+            429,
+            230,
+            120,
+            324,
+            267,
+            336,
+            389
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 0,
+          "layer": 36,
+          "reference_ids": [
+            39,
+            230,
+            255,
+            429,
+            114,
+            341,
+            267,
+            269,
+            336,
+            30
+          ],
+          "candidate_ids": [
+            39,
+            230,
+            255,
+            429,
+            114,
+            341,
+            267,
+            269,
+            30,
+            336
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 6,
+          "reference_ids": [
+            285,
+            283,
+            432,
+            112,
+            330,
+            13,
+            223,
+            165,
+            445,
+            412
+          ],
+          "candidate_ids": [
+            285,
+            283,
+            432,
+            112,
+            330,
+            223,
+            13,
+            165,
+            445,
+            412
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 7,
+          "reference_ids": [
+            438,
+            452,
+            242,
+            191,
+            158,
+            84,
+            199,
+            144,
+            60,
+            303
+          ],
+          "candidate_ids": [
+            438,
+            452,
+            242,
+            191,
+            158,
+            84,
+            199,
+            144,
+            303,
+            60
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 11,
+          "reference_ids": [
+            371,
+            391,
+            273,
+            163,
+            165,
+            500,
+            108,
+            189,
+            422,
+            84
+          ],
+          "candidate_ids": [
+            371,
+            391,
+            273,
+            163,
+            165,
+            500,
+            108,
+            189,
+            234,
+            422
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 13,
+          "reference_ids": [
+            347,
+            385,
+            387,
+            273,
+            50,
+            91,
+            461,
+            148,
+            286,
+            93
+          ],
+          "candidate_ids": [
+            347,
+            387,
+            385,
+            273,
+            50,
+            91,
+            461,
+            148,
+            286,
+            93
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 15,
+          "reference_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            289,
+            193,
+            375,
+            494,
+            288
+          ],
+          "candidate_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            193,
+            289,
+            375,
+            494,
+            288
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 16,
+          "reference_ids": [
+            391,
+            23,
+            58,
+            243,
+            429,
+            299,
+            480,
+            278,
+            26,
+            189
+          ],
+          "candidate_ids": [
+            391,
+            23,
+            58,
+            243,
+            429,
+            299,
+            480,
+            26,
+            278,
+            189
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 17,
+          "reference_ids": [
+            61,
+            381,
+            499,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "candidate_ids": [
+            381,
+            61,
+            499,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 19,
+          "reference_ids": [
+            170,
+            192,
+            377,
+            319,
+            173,
+            103,
+            145,
+            31,
+            225,
+            26
+          ],
+          "candidate_ids": [
+            170,
+            192,
+            377,
+            319,
+            173,
+            145,
+            103,
+            31,
+            225,
+            470
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 20,
+          "reference_ids": [
+            55,
+            248,
+            15,
+            261,
+            485,
+            99,
+            442,
+            344,
+            210,
+            377
+          ],
+          "candidate_ids": [
+            55,
+            261,
+            248,
+            15,
+            485,
+            99,
+            344,
+            442,
+            377,
+            109
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 21,
+          "reference_ids": [
+            70,
+            100,
+            228,
+            406,
+            255,
+            469,
+            131,
+            189,
+            418,
+            230
+          ],
+          "candidate_ids": [
+            70,
+            100,
+            228,
+            406,
+            255,
+            469,
+            131,
+            189,
+            418,
+            340
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 22,
+          "reference_ids": [
+            81,
+            30,
+            57,
+            41,
+            345,
+            223,
+            293,
+            195,
+            287,
+            132
+          ],
+          "candidate_ids": [
+            81,
+            30,
+            41,
+            57,
+            345,
+            223,
+            293,
+            195,
+            132,
+            287
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 23,
+          "reference_ids": [
+            68,
+            227,
+            267,
+            224,
+            233,
+            463,
+            467,
+            0,
+            242,
+            390
+          ],
+          "candidate_ids": [
+            267,
+            68,
+            224,
+            227,
+            463,
+            233,
+            0,
+            467,
+            242,
+            390
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 24,
+          "reference_ids": [
+            175,
+            283,
+            191,
+            11,
+            87,
+            262,
+            46,
+            490,
+            425,
+            189
+          ],
+          "candidate_ids": [
+            175,
+            283,
+            191,
+            87,
+            262,
+            11,
+            46,
+            425,
+            490,
+            370
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 26,
+          "reference_ids": [
+            488,
+            240,
+            177,
+            203,
+            107,
+            28,
+            211,
+            393,
+            322,
+            424
+          ],
+          "candidate_ids": [
+            488,
+            240,
+            177,
+            203,
+            211,
+            28,
+            107,
+            393,
+            322,
+            424
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 27,
+          "reference_ids": [
+            273,
+            371,
+            250,
+            165,
+            391,
+            84,
+            127,
+            48,
+            197,
+            234
+          ],
+          "candidate_ids": [
+            273,
+            250,
+            371,
+            165,
+            391,
+            127,
+            84,
+            48,
+            234,
+            197
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 28,
+          "reference_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            277
+          ],
+          "candidate_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            28
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 30,
+          "reference_ids": [
+            476,
+            460,
+            138,
+            160,
+            212,
+            506,
+            80,
+            383,
+            314,
+            14
+          ],
+          "candidate_ids": [
+            476,
+            138,
+            460,
+            160,
+            212,
+            506,
+            383,
+            80,
+            314,
+            14
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 31,
+          "reference_ids": [
+            288,
+            199,
+            318,
+            289,
+            226,
+            265,
+            426,
+            449,
+            346,
+            227
+          ],
+          "candidate_ids": [
+            288,
+            199,
+            318,
+            289,
+            265,
+            226,
+            426,
+            449,
+            227,
+            389
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 32,
+          "reference_ids": [
+            58,
+            299,
+            480,
+            8,
+            23,
+            243,
+            235,
+            163,
+            391,
+            278
+          ],
+          "candidate_ids": [
+            58,
+            299,
+            480,
+            23,
+            8,
+            243,
+            235,
+            163,
+            391,
+            278
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 33,
+          "reference_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            84
+          ],
+          "candidate_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            381
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 34,
+          "reference_ids": [
+            264,
+            314,
+            184,
+            211,
+            212,
+            370,
+            49,
+            471,
+            148,
+            31
+          ],
+          "candidate_ids": [
+            264,
+            314,
+            184,
+            211,
+            212,
+            370,
+            49,
+            471,
+            148,
+            302
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 35,
+          "reference_ids": [
+            15,
+            264,
+            172,
+            315,
+            335,
+            145,
+            136,
+            30,
+            319,
+            275
+          ],
+          "candidate_ids": [
+            15,
+            172,
+            264,
+            315,
+            335,
+            145,
+            136,
+            30,
+            319,
+            277
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 36,
+          "reference_ids": [
+            253,
+            36,
+            328,
+            274,
+            82,
+            414,
+            461,
+            212,
+            203,
+            458
+          ],
+          "candidate_ids": [
+            36,
+            253,
+            328,
+            274,
+            82,
+            414,
+            212,
+            461,
+            203,
+            458
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 37,
+          "reference_ids": [
+            42,
+            380,
+            170,
+            118,
+            103,
+            418,
+            84,
+            255,
+            38,
+            75
+          ],
+          "candidate_ids": [
+            42,
+            380,
+            170,
+            118,
+            103,
+            418,
+            38,
+            84,
+            255,
+            75
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 38,
+          "reference_ids": [
+            345,
+            223,
+            293,
+            81,
+            57,
+            41,
+            30,
+            287,
+            338,
+            267
+          ],
+          "candidate_ids": [
+            345,
+            223,
+            81,
+            293,
+            57,
+            41,
+            30,
+            338,
+            466,
+            287
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 39,
+          "reference_ids": [
+            295,
+            59,
+            68,
+            120,
+            271,
+            509,
+            199,
+            315,
+            447,
+            452
+          ],
+          "candidate_ids": [
+            295,
+            59,
+            120,
+            68,
+            509,
+            271,
+            199,
+            315,
+            447,
+            452
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 40,
+          "reference_ids": [
+            359,
+            481,
+            346,
+            141,
+            254,
+            197,
+            148,
+            449,
+            378,
+            174
+          ],
+          "candidate_ids": [
+            359,
+            481,
+            346,
+            141,
+            254,
+            197,
+            148,
+            449,
+            378,
+            316
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 41,
+          "reference_ids": [
+            222,
+            261,
+            327,
+            260,
+            356,
+            50,
+            269,
+            362,
+            129,
+            497
+          ],
+          "candidate_ids": [
+            222,
+            261,
+            327,
+            260,
+            356,
+            50,
+            362,
+            269,
+            129,
+            497
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 42,
+          "reference_ids": [
+            345,
+            360,
+            353,
+            334,
+            350,
+            19,
+            466,
+            176,
+            393,
+            433
+          ],
+          "candidate_ids": [
+            345,
+            360,
+            353,
+            334,
+            350,
+            466,
+            19,
+            433,
+            487,
+            176
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 44,
+          "reference_ids": [
+            251,
+            244,
+            161,
+            410,
+            137,
+            400,
+            277,
+            110,
+            312,
+            56
+          ],
+          "candidate_ids": [
+            251,
+            244,
+            161,
+            410,
+            110,
+            277,
+            312,
+            400,
+            137,
+            56
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 45,
+          "reference_ids": [
+            448,
+            256,
+            81,
+            394,
+            65,
+            100,
+            404,
+            227,
+            195,
+            408
+          ],
+          "candidate_ids": [
+            448,
+            394,
+            256,
+            404,
+            65,
+            81,
+            227,
+            100,
+            195,
+            408
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 46,
+          "reference_ids": [
+            204,
+            197,
+            399,
+            171,
+            49,
+            304,
+            133,
+            371,
+            105,
+            350
+          ],
+          "candidate_ids": [
+            204,
+            171,
+            197,
+            399,
+            49,
+            133,
+            304,
+            388,
+            350,
+            371
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 47,
+          "reference_ids": [
+            283,
+            62,
+            305,
+            274,
+            124,
+            113,
+            451,
+            328,
+            430,
+            177
+          ],
+          "candidate_ids": [
+            305,
+            283,
+            62,
+            274,
+            124,
+            451,
+            113,
+            430,
+            328,
+            293
+          ],
+          "set_overlap": 9
+        }
+      ],
+      "pos0_layer5": [
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_input",
+          "error": {
+            "elements": 2560,
+            "max_abs": 0.01011347770690918,
+            "relative_l2": 0.0032189350803137205,
+            "reference_rms": 0.6861615845206972,
+            "other_rms": 0.6861786490257462,
+            "mean_reference_minus_other": -1.4093530921854835e-05,
+            "cosine": 0.9999948196665512
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_output",
+          "error": {
+            "elements": 2560,
+            "max_abs": 0.0009317104704678059,
+            "relative_l2": 0.010976246899583743,
+            "reference_rms": 0.02052982810741658,
+            "other_rms": 0.020492888019872552,
+            "mean_reference_minus_other": 3.7313997307109046e-06,
+            "cosine": 0.9999412741419054
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "router_logits",
+          "error": {
+            "elements": 513,
+            "max_abs": 0.007968902587890625,
+            "relative_l2": 0.0004403904585888892,
+            "reference_rms": 6.676932170647407,
+            "other_rms": 6.678863966618671,
+            "mean_reference_minus_other": 0.00195124321281329,
+            "cosine": 0.9999999448982239
+          }
+        }
+      ]
+    },
+    {
+      "reference": "cpu_decode",
+      "candidate": "gpu_prefill",
+      "different_selected_route_rows": [
+        {
+          "position": 0,
+          "layer": 36,
+          "reference_ids": [
+            39,
+            230,
+            255,
+            429,
+            114,
+            341,
+            267,
+            269,
+            336,
+            30
+          ],
+          "candidate_ids": [
+            39,
+            230,
+            255,
+            429,
+            114,
+            341,
+            267,
+            269,
+            30,
+            336
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 4,
+          "reference_ids": [
+            222,
+            465,
+            506,
+            131,
+            252,
+            156,
+            28,
+            198,
+            325,
+            59
+          ],
+          "candidate_ids": [
+            222,
+            465,
+            506,
+            131,
+            252,
+            156,
+            28,
+            325,
+            198,
+            59
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 7,
+          "reference_ids": [
+            438,
+            452,
+            242,
+            158,
+            191,
+            84,
+            199,
+            144,
+            303,
+            60
+          ],
+          "candidate_ids": [
+            438,
+            452,
+            242,
+            191,
+            158,
+            84,
+            199,
+            144,
+            303,
+            60
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 12,
+          "reference_ids": [
+            459,
+            390,
+            37,
+            63,
+            228,
+            421,
+            277,
+            253,
+            290,
+            288
+          ],
+          "candidate_ids": [
+            459,
+            390,
+            37,
+            228,
+            63,
+            421,
+            277,
+            253,
+            290,
+            288
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 14,
+          "reference_ids": [
+            138,
+            212,
+            506,
+            117,
+            486,
+            335,
+            214,
+            14,
+            417,
+            314
+          ],
+          "candidate_ids": [
+            138,
+            212,
+            506,
+            117,
+            486,
+            335,
+            214,
+            14,
+            417,
+            127
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 15,
+          "reference_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            193,
+            289,
+            375,
+            494,
+            156
+          ],
+          "candidate_ids": [
+            226,
+            6,
+            318,
+            199,
+            169,
+            193,
+            289,
+            375,
+            494,
+            288
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 16,
+          "reference_ids": [
+            391,
+            23,
+            58,
+            429,
+            243,
+            299,
+            480,
+            26,
+            278,
+            189
+          ],
+          "candidate_ids": [
+            391,
+            23,
+            58,
+            243,
+            429,
+            299,
+            480,
+            26,
+            278,
+            189
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 17,
+          "reference_ids": [
+            381,
+            499,
+            61,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "candidate_ids": [
+            381,
+            61,
+            499,
+            372,
+            422,
+            166,
+            84,
+            209,
+            305,
+            105
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 18,
+          "reference_ids": [
+            264,
+            184,
+            370,
+            211,
+            49,
+            471,
+            212,
+            46,
+            87,
+            376
+          ],
+          "candidate_ids": [
+            264,
+            184,
+            211,
+            370,
+            49,
+            471,
+            212,
+            46,
+            87,
+            376
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 20,
+          "reference_ids": [
+            55,
+            248,
+            261,
+            15,
+            485,
+            99,
+            344,
+            442,
+            377,
+            210
+          ],
+          "candidate_ids": [
+            55,
+            261,
+            248,
+            15,
+            485,
+            99,
+            344,
+            442,
+            377,
+            109
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 21,
+          "reference_ids": [
+            70,
+            100,
+            228,
+            406,
+            255,
+            469,
+            131,
+            189,
+            418,
+            230
+          ],
+          "candidate_ids": [
+            70,
+            100,
+            228,
+            406,
+            255,
+            469,
+            131,
+            189,
+            418,
+            340
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 22,
+          "reference_ids": [
+            81,
+            30,
+            57,
+            41,
+            345,
+            223,
+            293,
+            195,
+            287,
+            132
+          ],
+          "candidate_ids": [
+            81,
+            30,
+            41,
+            57,
+            345,
+            223,
+            293,
+            195,
+            132,
+            287
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 23,
+          "reference_ids": [
+            68,
+            227,
+            267,
+            224,
+            467,
+            463,
+            233,
+            242,
+            0,
+            365
+          ],
+          "candidate_ids": [
+            267,
+            68,
+            224,
+            227,
+            463,
+            233,
+            0,
+            467,
+            242,
+            390
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 24,
+          "reference_ids": [
+            175,
+            283,
+            191,
+            87,
+            262,
+            11,
+            46,
+            490,
+            370,
+            425
+          ],
+          "candidate_ids": [
+            175,
+            283,
+            191,
+            87,
+            262,
+            11,
+            46,
+            425,
+            490,
+            370
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 25,
+          "reference_ids": [
+            111,
+            139,
+            132,
+            361,
+            58,
+            443,
+            154,
+            442,
+            68,
+            142
+          ],
+          "candidate_ids": [
+            111,
+            139,
+            361,
+            132,
+            443,
+            58,
+            154,
+            442,
+            68,
+            142
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 26,
+          "reference_ids": [
+            488,
+            240,
+            177,
+            203,
+            211,
+            28,
+            107,
+            393,
+            424,
+            322
+          ],
+          "candidate_ids": [
+            488,
+            240,
+            177,
+            203,
+            211,
+            28,
+            107,
+            393,
+            322,
+            424
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 27,
+          "reference_ids": [
+            273,
+            371,
+            250,
+            165,
+            391,
+            127,
+            84,
+            234,
+            197,
+            48
+          ],
+          "candidate_ids": [
+            273,
+            250,
+            371,
+            165,
+            391,
+            127,
+            84,
+            48,
+            234,
+            197
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 28,
+          "reference_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            220
+          ],
+          "candidate_ids": [
+            459,
+            390,
+            160,
+            290,
+            37,
+            217,
+            253,
+            421,
+            203,
+            28
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 30,
+          "reference_ids": [
+            476,
+            138,
+            460,
+            160,
+            212,
+            506,
+            80,
+            383,
+            314,
+            233
+          ],
+          "candidate_ids": [
+            476,
+            138,
+            460,
+            160,
+            212,
+            506,
+            383,
+            80,
+            314,
+            14
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 31,
+          "reference_ids": [
+            288,
+            318,
+            289,
+            426,
+            199,
+            265,
+            226,
+            449,
+            346,
+            227
+          ],
+          "candidate_ids": [
+            288,
+            199,
+            318,
+            289,
+            265,
+            226,
+            426,
+            449,
+            227,
+            389
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 33,
+          "reference_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            471
+          ],
+          "candidate_ids": [
+            299,
+            210,
+            347,
+            209,
+            61,
+            305,
+            499,
+            105,
+            422,
+            381
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 34,
+          "reference_ids": [
+            264,
+            314,
+            211,
+            184,
+            212,
+            370,
+            49,
+            471,
+            148,
+            31
+          ],
+          "candidate_ids": [
+            264,
+            314,
+            184,
+            211,
+            212,
+            370,
+            49,
+            471,
+            148,
+            302
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 35,
+          "reference_ids": [
+            15,
+            172,
+            315,
+            264,
+            335,
+            145,
+            136,
+            30,
+            319,
+            275
+          ],
+          "candidate_ids": [
+            15,
+            172,
+            264,
+            315,
+            335,
+            145,
+            136,
+            30,
+            319,
+            277
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 36,
+          "reference_ids": [
+            253,
+            36,
+            328,
+            274,
+            82,
+            414,
+            212,
+            461,
+            203,
+            458
+          ],
+          "candidate_ids": [
+            36,
+            253,
+            328,
+            274,
+            82,
+            414,
+            212,
+            461,
+            203,
+            458
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 37,
+          "reference_ids": [
+            118,
+            42,
+            380,
+            170,
+            103,
+            418,
+            255,
+            84,
+            57,
+            392
+          ],
+          "candidate_ids": [
+            42,
+            380,
+            170,
+            118,
+            103,
+            418,
+            38,
+            84,
+            255,
+            75
+          ],
+          "set_overlap": 8
+        },
+        {
+          "position": 40,
+          "layer": 38,
+          "reference_ids": [
+            345,
+            223,
+            293,
+            81,
+            57,
+            41,
+            30,
+            338,
+            466,
+            287
+          ],
+          "candidate_ids": [
+            345,
+            223,
+            81,
+            293,
+            57,
+            41,
+            30,
+            338,
+            466,
+            287
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 39,
+          "reference_ids": [
+            295,
+            59,
+            68,
+            120,
+            271,
+            509,
+            199,
+            315,
+            447,
+            452
+          ],
+          "candidate_ids": [
+            295,
+            59,
+            120,
+            68,
+            509,
+            271,
+            199,
+            315,
+            447,
+            452
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 40,
+          "reference_ids": [
+            359,
+            481,
+            346,
+            141,
+            254,
+            197,
+            148,
+            449,
+            378,
+            174
+          ],
+          "candidate_ids": [
+            359,
+            481,
+            346,
+            141,
+            254,
+            197,
+            148,
+            449,
+            378,
+            316
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 41,
+          "reference_ids": [
+            222,
+            261,
+            327,
+            260,
+            356,
+            50,
+            269,
+            362,
+            129,
+            497
+          ],
+          "candidate_ids": [
+            222,
+            261,
+            327,
+            260,
+            356,
+            50,
+            362,
+            269,
+            129,
+            497
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 42,
+          "reference_ids": [
+            345,
+            360,
+            353,
+            334,
+            350,
+            19,
+            466,
+            176,
+            393,
+            433
+          ],
+          "candidate_ids": [
+            345,
+            360,
+            353,
+            334,
+            350,
+            466,
+            19,
+            433,
+            487,
+            176
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 43,
+          "reference_ids": [
+            282,
+            9,
+            102,
+            302,
+            234,
+            53,
+            206,
+            501,
+            494,
+            465
+          ],
+          "candidate_ids": [
+            282,
+            102,
+            9,
+            302,
+            234,
+            53,
+            206,
+            501,
+            494,
+            465
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 44,
+          "reference_ids": [
+            251,
+            161,
+            244,
+            410,
+            137,
+            400,
+            277,
+            110,
+            312,
+            56
+          ],
+          "candidate_ids": [
+            251,
+            244,
+            161,
+            410,
+            110,
+            277,
+            312,
+            400,
+            137,
+            56
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 45,
+          "reference_ids": [
+            448,
+            256,
+            394,
+            81,
+            65,
+            404,
+            100,
+            227,
+            195,
+            408
+          ],
+          "candidate_ids": [
+            448,
+            394,
+            256,
+            404,
+            65,
+            81,
+            227,
+            100,
+            195,
+            408
+          ],
+          "set_overlap": 10
+        },
+        {
+          "position": 40,
+          "layer": 46,
+          "reference_ids": [
+            204,
+            197,
+            399,
+            171,
+            49,
+            304,
+            133,
+            371,
+            350,
+            105
+          ],
+          "candidate_ids": [
+            204,
+            171,
+            197,
+            399,
+            49,
+            133,
+            304,
+            388,
+            350,
+            371
+          ],
+          "set_overlap": 9
+        },
+        {
+          "position": 40,
+          "layer": 47,
+          "reference_ids": [
+            283,
+            62,
+            305,
+            274,
+            124,
+            113,
+            451,
+            328,
+            430,
+            177
+          ],
+          "candidate_ids": [
+            305,
+            283,
+            62,
+            274,
+            124,
+            451,
+            113,
+            430,
+            328,
+            293
+          ],
+          "set_overlap": 9
+        }
+      ],
+      "pos0_layer5": [
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_input",
+          "error": {
+            "elements": 2560,
+            "max_abs": 0.010106801986694336,
+            "relative_l2": 0.0032189422875782106,
+            "reference_rms": 0.6861615312954091,
+            "other_rms": 0.6861786490257462,
+            "mean_reference_minus_other": -1.4102896363965555e-05,
+            "cosine": 0.999994819645689
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "ffn_output",
+          "error": {
+            "elements": 2560,
+            "max_abs": 0.0008834092877805233,
+            "relative_l2": 0.010645749912985145,
+            "reference_rms": 0.020523091368598957,
+            "other_rms": 0.020492888019872552,
+            "mean_reference_minus_other": 3.3208964421049815e-06,
+            "cosine": 0.9999443349992062
+          }
+        },
+        {
+          "position": 0,
+          "layer": 5,
+          "stage": "router_logits",
+          "error": {
+            "elements": 513,
+            "max_abs": 0.007972240447998047,
+            "relative_l2": 0.0004404711184965401,
+            "reference_rms": 6.676931456125626,
+            "other_rms": 6.678863966618671,
+            "mean_reference_minus_other": 0.0019519521943774604,
+            "cosine": 0.9999999448936818
+          }
+        }
+      ]
+    }
+  ],
+  "precision_contract": {
+    "scope": "Source contract, not an actual same-input HC primitive oracle",
+    "file": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+    "official_v0_7_0_and_candidate_Dense_F32_pointer_region_identical": true,
+    "region_sha256": "f1cd532003cbf6951741167a0542dea4d567046b6f4ec60605461b115f795c80",
+    "candidate_start_line": 808,
+    "decode": "BF16 weights are widened to F32; SmallGemm consumes F32 input on nonmatrix route (line854).",
+    "prefill": "BF16 weight matrix route narrows input to BF16, dispatches HIP_R_16BF (lines874-885).",
+    "dtype": "HC weights remain BF16 and are outside selective Q8 conversion."
+  },
+  "per_path_seconds": {
+    "cpu_decode": 193.965750122,
+    "gpu_decode": 2.531828936,
+    "gpu_prefill": 1.156441134
+  },
+  "limitations": [
+    "All global errors are descriptive; no retrospective global tolerance is introduced.",
+    "Trace records positions0/40, not every intervening recurrent state.",
+    "HC source contract is unchanged; it is not a same-input HC operator numerical oracle.",
+    "Local rounding cause is assessed separately in b-layer5-ffn-replay from the new trace, without assuming a prior bin crossing."
+  ],
+  "raw_artifacts": [
+    {
+      "path": "comparisons.json",
+      "bytes": 770000,
+      "sha256": "30c937c0fa481b7fbfdbed99603b87564075cf559e1831240acd0ad559d6809f"
+    },
+    {
+      "path": "conversion-manifest.json",
+      "bytes": 105089,
+      "sha256": "9398662b5eb765346445fb2e81db0c9e84a169b8d6a02e185c0987f2ce73a18a"
+    },
+    {
+      "path": "cpu_decode.logits.f32",
+      "bytes": 993280,
+      "sha256": "aba9d28d704dd9c4f8e331a7cf981c0f15e731d82d88a326fd220555570a7a68"
+    },
+    {
+      "path": "cpu_decode.trace.f32",
+      "bytes": 12175232,
+      "sha256": "f43f0020c2de3e43395885baa22490f1cc8c87bad4b5cae19267a75bb41822a6"
+    },
+    {
+      "path": "cpu_decode.trace.json",
+      "bytes": 220620,
+      "sha256": "9f2a34fd39d30ce8858797e1a5f1ffc73f4b9323dcc2ff2c6552ba718ec92dc4"
+    },
+    {
+      "path": "gpu_decode.logits.f32",
+      "bytes": 993280,
+      "sha256": "ac23cb063bb0233c72c43b72e6ce227aa2c9ec0211da88f45095774e718c8ad4"
+    },
+    {
+      "path": "gpu_decode.trace.f32",
+      "bytes": 12175232,
+      "sha256": "d1e4654272056eb66047ad8dfc7ca320a0d40065b4218ebf17cb1966485e19eb"
+    },
+    {
+      "path": "gpu_decode.trace.json",
+      "bytes": 220653,
+      "sha256": "1b62b0e3febc1343a00f11a55a00c9d443116b355c9ed9afc9a470b96a75351c"
+    },
+    {
+      "path": "gpu_prefill.logits.f32",
+      "bytes": 993280,
+      "sha256": "cb98433f62354335195b66b4825dcbafd1c353ba43be144da413703fb1f5bc3d"
+    },
+    {
+      "path": "gpu_prefill.trace.f32",
+      "bytes": 12175232,
+      "sha256": "a2b2164be8625c5632686d5ba481a37be28ab410498d7c9ab0a9d31af009b8b9"
+    },
+    {
+      "path": "gpu_prefill.trace.json",
+      "bytes": 220612,
+      "sha256": "e6871cb3251121032edde22447f5573b585d95609c518f88a337b73d5f2b791c"
+    },
+    {
+      "path": "input-token-ids.i32",
+      "bytes": 164,
+      "sha256": "ecf1008f86791af42c6f780457f015ce8d08fa6484d228662eadda2c8e5fc311"
+    },
+    {
+      "path": "launch-console.json",
+      "bytes": 4779,
+      "sha256": "bcc0ff11696c792ed1aab216f01a699733dba8f7c25f050b4ae6a0d208a9f0da"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 839,
+      "sha256": "dec1a91fc6de95cbcdc2dd6939d46d2c7a817ff673afce6347ae88c28a6ba952"
+    },
+    {
+      "path": "math02_union.prompt.txt",
+      "bytes": 216,
+      "sha256": "b01ff261e97af7fec6d02482a7dd278e746a5a4061ff662d23edb680c08e9612"
+    },
+    {
+      "path": "owned-containers-before-launch.jsonl",
+      "bytes": 2424,
+      "sha256": "999404c77ca727a5e7ab97420566a04db6f8ebab4b43ee25177724495045f804"
+    },
+    {
+      "path": "router-audit.json",
+      "bytes": 247632,
+      "sha256": "7a1f3904bb920dba6fee1c0b859f24ae76738f232cfdacc78abc69305d013a5b"
+    },
+    {
+      "path": "run.log",
+      "bytes": 77877,
+      "sha256": "242ed0a77d02170765530b805e69930fbde7917e6072915ec3b8391442290d64"
+    },
+    {
+      "path": "source.json",
+      "bytes": 1297,
+      "sha256": "1ba7147858efe69404a1dd8d3540a5016887b5893c55b8ab2afac9898cb9deed"
+    },
+    {
+      "path": "state.json",
+      "bytes": 5157,
+      "sha256": "dc11d82c12a1b74db370200ff58bd1c07060a1afa9e0ea4978f97cf069dcc7d5"
+    }
+  ]
+}

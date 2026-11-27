@@ -1,0 +1,449 @@
+{
+  "status": "passed",
+  "base_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+  "device": "AMD gfx1151 (Strix Halo), WSL/RocDXG, HSA_ENABLE_DXG_DETECTION=1",
+  "build": "CMake gpu-test (RelWithDebInfo with assertions), pinned Nix toolchain, run-gpu.sh",
+  "test_command": "ctest --preset gpu-full -R '^qwen38_flash_next.(sc117_expert_ops|compat_upload)$' --output-on-failure",
+  "tests": {
+    "qwen38_flash_next.sc117_expert_ops": {
+      "status": "passed",
+      "wall_seconds": 1.11
+    },
+    "qwen38_flash_next.compat_upload": {
+      "status": "passed",
+      "wall_seconds": 0.17,
+      "q8_rows": 1700,
+      "conversion_scratch_bytes": 16787456,
+      "conversion_scratch_decimal_GB": 0.016787456,
+      "checks": "Exact independent Q8 golden bytes across more than two upload batches; exact BF16-to-F16 bits."
+    }
+  },
+  "timing_note": "Test execution times are correctness-run wall times, not inference performance benchmarks.",
+  "coverage": {
+    "formats": [
+      "IQ2_S",
+      "IQ3_XXS",
+      "IQ3_S",
+      "IQ4_XS",
+      "IQ4_NL",
+      "Q2_0"
+    ],
+    "expert_ids": [
+      0,
+      271,
+      511
+    ],
+    "physical_expert_strides": 512,
+    "tokens": [
+      1,
+      8,
+      9,
+      32,
+      33,
+      129
+    ],
+    "split_33": [
+      9,
+      24
+    ],
+    "real_gate_up_shape": [
+      640,
+      2560
+    ],
+    "real_down_shape": [
+      2560,
+      640
+    ],
+    "ragged_output_rows": 7,
+    "paired_gate_up": "distinct packed weights plus independent SwiGLU comparison",
+    "negative_checks": [
+      "partial row block rejected",
+      "unknown type rejected"
+    ],
+    "finite": "Every output checked finite; selected rows checked against independent FP64 dots. This is operator coverage, not a full-model MTP/long-context pass."
+  },
+  "reference": {
+    "weights": "CPU dequant functions independently checked by CPU-agent fixtures against llama.cpp fixed commit 11fe02151f79c41d0d4af7da708755d73b9c0da6; FP64 dot accumulation in GPU test.",
+    "vector_activations": "Downloaded Q8_1 bytes, with independent scale-bit and code checks before use; FP16 scales.",
+    "tiled_activations": "Independent Q8_1 quantization, FP32 scales; unambiguous random inputs plus exact scale=1 half-code goldens.",
+    "normal_rows": "Exclude designated row1, which includes FP16 maximum65504, negative scales, signed subnormals and zero; stress rows remain in full metrics."
+  },
+  "acceptance": {
+    "unchanged_dot_bound": "u=2^-24; n=2K+32; gamma=n*u/(1-n*u); abs_error <= gamma*sum(abs(w*x))+1e-7. Chosen before measurements from FP32 multiply/add/reduction forward error.",
+    "fractional_dot_goldens": "Exact equality required for IQ2_S +/-5.375 and IQ3_XXS +/-15.5; no tolerance.",
+    "activation_codes": "Scale bits must match; differing integer code may only be adjacent at a half-integer within4*u*abs(x/d), reflecting float reassociation. Final operator fixtures have0 differing codes.",
+    "swiglu": "abs_error <= 2e-6*(1+abs(reference)), including FP32 exp/multiply rounding."
+  },
+  "discovered_and_fixed": {
+    "IQ2_S": "Integer (sumi0*ls0+sumi1*ls1+(sumi0+sumi1)/2)/4 lost eighth fractions. Fixed numerator (2ls0+1)*sumi0+(2ls1+1)*sumi1, converted to float then multiplied by1/8.",
+    "IQ3_XXS": "Integer (ls*sumi+sumi/2)/2 lost half fractions. Fixed numerator (2ls+1)*sumi, converted to float then multiplied by1/4.",
+    "regression": "Unit-scale activations with cancelling +/-127 anchors and packed codebook entries43 and62 produce exact +/-5.375 and +/-15.5; old integer division produces +/-5 and +/-15.",
+    "Q8_boundary_diagnostic": "Initial random fixture recorded11 boundary-code differences per K2560 case-series, unrelated to packed-weight arithmetic. Those logs are retained. Final operator fixture moves ambiguous random ties away by0.125 code and includes explicit +/-0.5,+/-1.5 with exactly unit scale."
+  },
+  "dispatch_limits": {
+    "IQ2_S_IQ3_XXS_IQ3_S_IQ4_XS": "Packed vector decode/verify and native tiled MMQ prefill.",
+    "IQ4_NL": "Vector decode and K640 prefill; tiled MMQ only whenK divisible by256. Potential production-tail-backed K640 MMQ remains unimplemented and unverified.",
+    "Q2_0": "Packed vector route at every batch width;64values/18bytes, code-1.",
+    "fusion": "New formats use paired or separate nonfused projection fallback; existing Q4/Q5/Q8 fusion retained."
+  },
+  "raw_logs": [
+    "work/sc117-gpu-initial.log",
+    "work/sc117-gpu-initial-detail.log",
+    "work/sc117-gpu-quantized-input.log",
+    "work/sc117-gpu-quantized-input-detail.log",
+    "work/sc117-gpu-final.log",
+    "work/sc117-gpu-final-detail.log",
+    "work/sc117-gpu-fractional-fix-build.log"
+  ],
+  "metrics": [
+    {
+      "format": "IQ2_S",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 11.823,
+      "relative_l2": 6.02829e-08,
+      "normal_max_absolute_error": 1.62248e-06,
+      "normal_relative_l2": 6.24854e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ2_S",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 46.5395,
+      "relative_l2": 2.16528e-07,
+      "normal_max_absolute_error": 6.69974e-06,
+      "normal_relative_l2": 2.34117e-07,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ2_S",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 7.74589e-05,
+      "relative_l2": 5.17708e-08,
+      "normal_max_absolute_error": 1.02085e-06,
+      "normal_relative_l2": 5.01262e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ2_S",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 0.000167182,
+      "relative_l2": 8.91254e-08,
+      "normal_max_absolute_error": 1.68408e-06,
+      "normal_relative_l2": 1.04031e-07,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_XXS",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 37.3278,
+      "relative_l2": 6.60956e-08,
+      "normal_max_absolute_error": 2.0368e-06,
+      "normal_relative_l2": 5.79029e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_XXS",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 159.761,
+      "relative_l2": 1.71312e-07,
+      "normal_max_absolute_error": 9.747e-06,
+      "normal_relative_l2": 1.69804e-07,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_XXS",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 4.80856e-05,
+      "relative_l2": 5.68853e-08,
+      "normal_max_absolute_error": 3.12645e-06,
+      "normal_relative_l2": 6.06155e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_XXS",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 3.38977e-05,
+      "relative_l2": 6.30154e-08,
+      "normal_max_absolute_error": 1.18058e-06,
+      "normal_relative_l2": 5.18406e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_S",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 35.2418,
+      "relative_l2": 6.47687e-08,
+      "normal_max_absolute_error": 1.30665e-06,
+      "normal_relative_l2": 5.53116e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_S",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 100.715,
+      "relative_l2": 1.63574e-07,
+      "normal_max_absolute_error": 5.73021e-06,
+      "normal_relative_l2": 1.37793e-07,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_S",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 9.74918e-05,
+      "relative_l2": 4.86789e-08,
+      "normal_max_absolute_error": 1.6503e-06,
+      "normal_relative_l2": 4.29031e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ3_S",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 0.000113893,
+      "relative_l2": 6.39679e-08,
+      "normal_max_absolute_error": 2.8163e-06,
+      "normal_relative_l2": 6.601e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_XS",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 334.101,
+      "relative_l2": 6.66562e-08,
+      "normal_max_absolute_error": 1.58558e-05,
+      "normal_relative_l2": 5.82203e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_XS",
+      "M": 640,
+      "K": 2560,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 681.333,
+      "relative_l2": 1.41083e-07,
+      "normal_max_absolute_error": 4.23328e-05,
+      "normal_relative_l2": 1.39059e-07,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_XS",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 0.00259762,
+      "relative_l2": 4.01456e-08,
+      "normal_max_absolute_error": 1.65217e-05,
+      "normal_relative_l2": 3.26142e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_XS",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 0.00228493,
+      "relative_l2": 5.82882e-08,
+      "normal_max_absolute_error": 4.64013e-05,
+      "normal_relative_l2": 8.07746e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 2560,
+      "K": 640,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 1395,
+      "max_absolute_error": 6.34583,
+      "relative_l2": 6.31083e-08,
+      "normal_max_absolute_error": 6.11879e-07,
+      "normal_relative_l2": 4.29804e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 2560,
+      "K": 640,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 1225,
+      "max_absolute_error": 6.34583,
+      "relative_l2": 6.30443e-08,
+      "normal_max_absolute_error": 6.11879e-07,
+      "normal_relative_l2": 4.18295e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 7,
+      "K": 32,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 3.5679e-06,
+      "relative_l2": 3.9723e-09,
+      "normal_max_absolute_error": 4.65661e-08,
+      "normal_relative_l2": 4.75414e-09,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 7,
+      "K": 32,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 3.5679e-06,
+      "relative_l2": 4.3211e-09,
+      "normal_max_absolute_error": 4.65661e-08,
+      "normal_relative_l2": 5.80675e-09,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 4.3562,
+      "relative_l2": 5.24527e-08,
+      "normal_max_absolute_error": 1.06078e-06,
+      "normal_relative_l2": 4.25938e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "IQ4_NL",
+      "M": 7,
+      "K": 256,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 4.9423,
+      "relative_l2": 5.7912e-08,
+      "normal_max_absolute_error": 9.44822e-07,
+      "normal_relative_l2": 5.14063e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "Q2_0",
+      "M": 2560,
+      "K": 640,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 1395,
+      "max_absolute_error": 0.0964975,
+      "relative_l2": 6.26137e-08,
+      "normal_max_absolute_error": 6.51926e-09,
+      "normal_relative_l2": 2.39012e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "Q2_0",
+      "M": 2560,
+      "K": 640,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 1225,
+      "max_absolute_error": 0.0964975,
+      "relative_l2": 6.13703e-08,
+      "normal_max_absolute_error": 6.51926e-09,
+      "normal_relative_l2": 2.27878e-08,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "Q2_0",
+      "M": 7,
+      "K": 64,
+      "experts": 512,
+      "path": "vector",
+      "checked_dot_products": 4185,
+      "max_absolute_error": 1.00583e-07,
+      "relative_l2": 1.06974e-08,
+      "normal_max_absolute_error": 0.0,
+      "normal_relative_l2": 0.0,
+      "activation_boundary_codes": 0
+    },
+    {
+      "format": "Q2_0",
+      "M": 7,
+      "K": 64,
+      "experts": 512,
+      "path": "prefill",
+      "checked_dot_products": 3675,
+      "max_absolute_error": 1.00583e-07,
+      "relative_l2": 1.17297e-08,
+      "normal_max_absolute_error": 0.0,
+      "normal_relative_l2": 0.0,
+      "activation_boundary_codes": 0
+    }
+  ],
+  "source_sha256": {
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/vecdotq.hpp": "2a885e255a1ddd3c10e57b44b41fb6cb18a8b6c60fd2a73538461c20e5d00f4c",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/mmvq.hip.cpp": "164271535f3db13b62248f22cec807ffbd88567cd0456ffebf07bf0e612aacb3",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp": "ca46da43a244acb8edbe71f49dc9bad6240daf3e9cce909ba290da768e4cb881",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h": "39f196748be53ef041c046033421f97230ac66bb4064c1bc436c22b9e5abaea4",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/common.hpp": "b0613ae5584c648ef3383c92c5a4d0928b44509a31f3715a6e69fb22b28250ec",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_ggml_stubs.h": "8ae9805713ab735a9dd880a477fe0edb91999b595941317e4b2b4b2b137dc4f6",
+    "src/models/qwen38_flash_next/kernels/rocm/executor.cpp": "18cd444eaaa588c11dab83ac90f522e1515c4ba6a666ee2ad849ca079e03b224",
+    "tests/models/qwen38_flash_next/sc117_expert_ops_test.cpp": "1a1e917a45953e6b645a4e22bafdc47c27d52ba0762caad038835a62ddc4e4eb",
+    "tests/models/qwen38_flash_next/compat_upload_test.cpp": "993141251dde19fe27069cdc18ddbb4a0b94ed62c85993e023716def62746f08"
+  }
+}

@@ -1,0 +1,1071 @@
+{
+  "root_cause": "not established",
+  "production_code_changed": false,
+  "production_configuration_changed": false,
+  "runtime": "ROCm 10.1",
+  "normal_restored": {
+    "health": "passed",
+    "container_identity_unchanged": true,
+    "config_unchanged": true,
+    "host_config_unchanged": true,
+    "normal_settings_unchanged": true,
+    "models": {
+      "object": "list",
+      "data": [
+        {
+          "id": "Qwen3.8-FN-UD-IQ4_XS",
+          "object": "model",
+          "created": 1793356812,
+          "owned_by": "gufo",
+          "context_length": 131072,
+          "architecture": {
+            "input_modalities": [
+              "text",
+              "image"
+            ]
+          }
+        }
+      ]
+    },
+    "time": 1793356812.6185286,
+    "functional": "passed",
+    "seconds": 3.141486590000568,
+    "content": "Music bends stories the firelight instead apples. And when boats evening of for the",
+    "usage": {
+      "prompt_tokens": 2034,
+      "completion_tokens": 16,
+      "total_tokens": 2050,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "cached_tokens": 0,
+      "prompt_tokens_per_second": 781.5459456262201,
+      "completion_tokens_per_second": 52.496263611247635,
+      "draft_tokens": 13,
+      "draft_tokens_accepted": 13,
+      "gufo": {
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 2034,
+          "captures": 2,
+          "captured_capacity_bytes": 328925184,
+          "borrowed_capacity_bytes": 47710208,
+          "copied_payload_bytes": 278768820,
+          "captured_checkpoint_ids": [
+            2,
+            192
+          ],
+          "global_spill": {
+            "idle_bytes": 0,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 0,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0,
+            "residual_wait_ms": 206.646985,
+            "reassignments": 1,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 2289023931,
+          "global_ram_bytes": 2289023931,
+          "global_peak_ledger_bytes": 2289043584,
+          "global_peak_ram_bytes": 2289043584,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 1900412928,
+              "reserved_bytes": 0,
+              "peak_bytes": 2229338112
+            },
+            "backing_assigned": {
+              "bytes": 47710208,
+              "reserved_bytes": 47710208,
+              "peak_bytes": 48168960
+            },
+            "backing_materialized": {
+              "bytes": 458752,
+              "reserved_bytes": 0,
+              "peak_bytes": 458752
+            },
+            "private_state": {
+              "bytes": 266993664,
+              "reserved_bytes": 0,
+              "peak_bytes": 266993664
+            },
+            "private_tail": {
+              "bytes": 13762560,
+              "reserved_bytes": 0,
+              "peak_bytes": 13762560
+            },
+            "metadata": {
+              "bytes": 59685819,
+              "reserved_bytes": 0,
+              "peak_bytes": 59705472
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        },
+        "cache_hit": false,
+        "cache_miss_reason": "disabled",
+        "cache_common_prefix_tokens": 0,
+        "cache_checkpoint_tokens": 0,
+        "cache_restore_bytes": 0,
+        "cache_snapshot_bytes": 326479028,
+        "cache_disk_queued_bytes": 0,
+        "cache_shared_bytes": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 27.428644,
+        "cache_disk_enqueue_ms": 0.002184,
+        "cache_disk_hit": false,
+        "cache_shared_prefix_snapshots": 0,
+        "cache_shared_prefix_bytes": 0,
+        "cache_shared_prefix_ms": 0,
+        "draft_rounds": 3,
+        "prefill_tokens": 2034,
+        "prefill_chunks": 1,
+        "active_decode_prefill_chunks": 0,
+        "max_prefill_chunk_tokens": 2034,
+        "queue_depth_at_submit": 1,
+        "client_queue_depth_at_submit": 1,
+        "resident_requests_at_admission": 1,
+        "requested_logical_concurrency": 2,
+        "physical_execution_width": 1,
+        "queue_ms": 208.433402,
+        "shared_prefix_wait_ms": 0,
+        "prefill_ms": 2602.534133,
+        "decode_ms": 304.783596,
+        "ttft_ms": 2811.084121,
+        "mean_inter_token_ms": 21.125939666666667,
+        "max_inter_token_ms": 148.632566,
+        "execution_plan": "serial-fallback"
+      }
+    },
+    "reference_match": true
+  },
+  "cases": [
+    {
+      "case": "model-barrier-opt-disabled",
+      "started": 1793355826.9401417,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793355887.5579462,
+      "interpretation_ja": "DEBUG_CLR_AQL_BARRIER_OPT=0でも停止、検査領域は初期値。"
+    },
+    {
+      "case": "model-baseline",
+      "started": 1793353227.0559282,
+      "status": "incomplete",
+      "elapsed": 96.6628012410074,
+      "ttft": null,
+      "output": "",
+      "finished": 1793353354.2972727,
+      "termination_reason": "Manually stopped after 96.66 seconds with no generated tokens; heartbeat comments prevented the original inactivity timeout.",
+      "interpretation_ja": "通常の再現要求。約97秒無応答で手動終了。初版ハーネスの期限処理を修正後、別ケースで再確認。"
+    },
+    {
+      "case": "model-blit-logits",
+      "started": 1793355192.5598035,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793355238.1352556,
+      "interpretation_ja": "診断結果の件数が0のまま。これを実際のlogitsが全て0だという証拠には使わない。"
+    },
+    {
+      "case": "model-blit-threshold-1024",
+      "started": 1793354904.4764154,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793354951.116985,
+      "interpretation_ja": "コピーを計算カーネル経由にするとチェックポイントを通るが、!の誤出力と停止。"
+    },
+    {
+      "case": "model-blit-trace",
+      "started": 1793355002.3977678,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793355049.0298922,
+      "interpretation_ja": "コピー位置を通過しても誤出力と停止。回避策として採用不可。"
+    },
+    {
+      "case": "model-cpu-dependent-signal",
+      "started": 1793355964.8011332,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793356011.3625898,
+      "interpretation_ja": "ROC_CPU_WAIT_FOR_SIGNAL=1でも停止。"
+    },
+    {
+      "case": "model-dispatch-worker",
+      "started": 1793354654.0020058,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793354699.5166068,
+      "interpretation_ja": "AMD_DIRECT_DISPATCH=0でも停止。"
+    },
+    {
+      "case": "model-hip-copy-log",
+      "started": 1793354122.260229,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793354166.8813567,
+      "interpretation_ja": "約970 KiBのD2H転送。入力依存信号なしで投入され、完了信号を待ち続ける。"
+    },
+    {
+      "case": "model-host-kernarg",
+      "started": 1793355902.7016923,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793355949.2085958,
+      "interpretation_ja": "HIP_FORCE_DEV_KERNARG=0で停止。ただしgfx1151では実質的な配置変更にならず、配置の反証には使わない。"
+    },
+    {
+      "case": "model-inspector-negative",
+      "started": 1793355522.3116956,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793355567.8528903,
+      "interpretation_ja": "COPY設定なし。同期成功後もGPU検査用領域が0xa5の初期値。その後コピーで停止。"
+    },
+    {
+      "case": "model-inspector-positive",
+      "started": 1793355460.7806826,
+      "status": "passed",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 2034,
+        "completion_tokens": 16,
+        "total_tokens": 2050,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "cached_tokens": 0,
+        "prompt_tokens_per_second": 780.9692875680088,
+        "completion_tokens_per_second": 29.915517158557176,
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "gufo": {
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 4,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2034,
+            "captures": 2,
+            "captured_capacity_bytes": 321323008,
+            "borrowed_capacity_bytes": 44040192,
+            "copied_payload_bytes": 274961588,
+            "captured_checkpoint_ids": [
+              2,
+              178
+            ],
+            "global_spill": {
+              "idle_bytes": 0,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 0,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0,
+              "residual_wait_ms": 27.460371,
+              "reassignments": 1,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2289009671,
+            "global_ram_bytes": 2289009671,
+            "global_peak_ledger_bytes": 2289028752,
+            "global_peak_ram_bytes": 2289028752,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 1908015104,
+                "reserved_bytes": 0,
+                "peak_bytes": 2229338112
+              },
+              "backing_assigned": {
+                "bytes": 44040192,
+                "reserved_bytes": 44040192,
+                "peak_bytes": 44498944
+              },
+              "backing_materialized": {
+                "bytes": 458752,
+                "reserved_bytes": 0,
+                "peak_bytes": 458752
+              },
+              "private_state": {
+                "bytes": 264110080,
+                "reserved_bytes": 0,
+                "peak_bytes": 264110080
+              },
+              "private_tail": {
+                "bytes": 12713984,
+                "reserved_bytes": 0,
+                "peak_bytes": 12713984
+              },
+              "metadata": {
+                "bytes": 59671559,
+                "reserved_bytes": 0,
+                "peak_bytes": 59690640
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          },
+          "cache_hit": false,
+          "cache_miss_reason": "disabled",
+          "cache_common_prefix_tokens": 0,
+          "cache_checkpoint_tokens": 0,
+          "cache_restore_bytes": 0,
+          "cache_snapshot_bytes": 319001780,
+          "cache_disk_queued_bytes": 0,
+          "cache_shared_bytes": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 27.665598,
+          "cache_disk_enqueue_ms": 0.002284,
+          "cache_disk_hit": false,
+          "cache_shared_prefix_snapshots": 0,
+          "cache_shared_prefix_bytes": 0,
+          "cache_shared_prefix_ms": 0,
+          "draft_rounds": 0,
+          "prefill_tokens": 2034,
+          "prefill_chunks": 1,
+          "active_decode_prefill_chunks": 0,
+          "max_prefill_chunk_tokens": 2034,
+          "queue_depth_at_submit": 1,
+          "client_queue_depth_at_submit": 1,
+          "resident_requests_at_admission": 1,
+          "requested_logical_concurrency": 2,
+          "physical_execution_width": 1,
+          "queue_ms": 28.428565,
+          "shared_prefix_wait_ms": 0,
+          "prefill_ms": 2604.455812,
+          "decode_ms": 534.839492,
+          "ttft_ms": 2633.025566,
+          "mean_inter_token_ms": 36.48717286666667,
+          "max_inter_token_ms": 50.543488,
+          "execution_plan": "serial-fallback"
+        }
+      },
+      "done": true,
+      "elapsed": 3.18433242199535,
+      "ttft": 2.636659185998724,
+      "output": "Music bends stories the firelight instead apples. And when boats evening of for the",
+      "finished": 1793355503.606007,
+      "interpretation_ja": "COPY=2。GPU/CPUの248,320個のlogitsの集計・チェックサム一致。回答一致。"
+    },
+    {
+      "case": "model-iq3s-second-zero-wait",
+      "started": 1793354413.3545365,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793354478.4558456,
+      "interpretation_ja": "IQ3_S側の一方の初期化だけを待機しても停止。"
+    },
+    {
+      "case": "model-kernel-stamps-negative",
+      "started": 1793356223.785407,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793356270.3525267,
+      "interpretation_ja": "細かい記録追加で停止位置が移動。最初のIQ3_S内部5カーネルは通過し、通過記録11/293。"
+    },
+    {
+      "case": "model-kernel-stamps-positive",
+      "started": 1793356299.7770996,
+      "status": "passed",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 2034,
+        "completion_tokens": 16,
+        "total_tokens": 2050,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "cached_tokens": 0,
+        "prompt_tokens_per_second": 804.4178011847346,
+        "completion_tokens_per_second": 29.840346295577536,
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "gufo": {
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 4,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2034,
+            "captures": 2,
+            "captured_capacity_bytes": 321323008,
+            "borrowed_capacity_bytes": 44040192,
+            "copied_payload_bytes": 274961588,
+            "captured_checkpoint_ids": [
+              2,
+              178
+            ],
+            "global_spill": {
+              "idle_bytes": 0,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 0,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0,
+              "residual_wait_ms": 19.302395,
+              "reassignments": 1,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2289009671,
+            "global_ram_bytes": 2289009671,
+            "global_peak_ledger_bytes": 2289028752,
+            "global_peak_ram_bytes": 2289028752,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 1908015104,
+                "reserved_bytes": 0,
+                "peak_bytes": 2229338112
+              },
+              "backing_assigned": {
+                "bytes": 44040192,
+                "reserved_bytes": 44040192,
+                "peak_bytes": 44498944
+              },
+              "backing_materialized": {
+                "bytes": 458752,
+                "reserved_bytes": 0,
+                "peak_bytes": 458752
+              },
+              "private_state": {
+                "bytes": 264110080,
+                "reserved_bytes": 0,
+                "peak_bytes": 264110080
+              },
+              "private_tail": {
+                "bytes": 12713984,
+                "reserved_bytes": 0,
+                "peak_bytes": 12713984
+              },
+              "metadata": {
+                "bytes": 59671559,
+                "reserved_bytes": 0,
+                "peak_bytes": 59690640
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          },
+          "cache_hit": false,
+          "cache_miss_reason": "disabled",
+          "cache_common_prefix_tokens": 0,
+          "cache_checkpoint_tokens": 0,
+          "cache_restore_bytes": 0,
+          "cache_snapshot_bytes": 319001780,
+          "cache_disk_queued_bytes": 0,
+          "cache_shared_bytes": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 26.195094,
+          "cache_disk_enqueue_ms": 0.001934,
+          "cache_disk_hit": false,
+          "cache_shared_prefix_snapshots": 0,
+          "cache_shared_prefix_bytes": 0,
+          "cache_shared_prefix_ms": 0,
+          "draft_rounds": 0,
+          "prefill_tokens": 2034,
+          "prefill_chunks": 1,
+          "active_decode_prefill_chunks": 0,
+          "max_prefill_chunk_tokens": 2034,
+          "queue_depth_at_submit": 1,
+          "client_queue_depth_at_submit": 1,
+          "resident_requests_at_admission": 1,
+          "requested_logical_concurrency": 2,
+          "physical_execution_width": 1,
+          "queue_ms": 20.294565,
+          "shared_prefix_wait_ms": 0,
+          "prefill_ms": 2528.536784,
+          "decode_ms": 536.186807,
+          "ttft_ms": 2548.937132,
+          "mean_inter_token_ms": 36.56832313333334,
+          "max_inter_token_ms": 49.059337,
+          "execution_plan": "serial-fallback"
+        }
+      },
+      "done": true,
+      "elapsed": 3.105249308006023,
+      "ttft": 2.55228345899377,
+      "output": "Music bends stories the firelight instead apples. And when boats evening of for the",
+      "finished": 1793356329.6059468,
+      "interpretation_ja": "修正版診断＋COPY=2。通過記録293/293、参照回答と一致。"
+    },
+    {
+      "case": "model-large-signal-pool",
+      "started": 1793356384.759056,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793356431.2755067,
+      "interpretation_ja": "ROC_SIGNAL_POOL_SIZE=4096でも停止。"
+    },
+    {
+      "case": "model-one-hw-queue",
+      "started": 1793356686.1095238,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793356732.774756,
+      "interpretation_ja": "GPU_MAX_HW_QUEUES=1でも停止。"
+    },
+    {
+      "case": "model-replace-mmq-zero",
+      "started": 1793353920.5892522,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793353967.0664167,
+      "interpretation_ja": "初期化を独立GPUカーネルに置き換えても停止。"
+    },
+    {
+      "case": "model-stamps-negative",
+      "started": 1793356036.7311573,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793356083.2585795,
+      "interpretation_ja": "GPU通過記録2/288。最初のIQ3_S処理の初期化2個の後から記録がない。同期APIは成功。"
+    },
+    {
+      "case": "model-stamps-positive",
+      "started": 1793356140.394555,
+      "status": "incomplete",
+      "server_error": {
+        "message": "Qwen3.8-Flash-Next decode failed: graph capture end: operation failed due to a previous error during capture",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "done": true,
+      "elapsed": 2.7432733879977604,
+      "ttft": 2.591684561994043,
+      "output": "Music bends",
+      "finished": 1793356168.7114978,
+      "interpretation_ja": "通過記録288/288。診断コードが後段グラフ記録へ干渉し、要求全体は失敗。修正版で別途再試験。"
+    },
+    {
+      "case": "model-trace-only",
+      "started": 1793353369.6637514,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793353415.3736377,
+      "interpretation_ja": ""
+    },
+    {
+      "case": "model-wait-all",
+      "started": 1793353450.8044903,
+      "status": "failed",
+      "done": true,
+      "elapsed": 2.766654708990245,
+      "ttft": 2.6493543120013783,
+      "output": "Music bends",
+      "finished": 1793353479.3268893,
+      "server_error": {
+        "message": "Qwen3.8-Flash-Next decode failed: graph capture end: operation failed due to a previous error during capture",
+        "type": "server_error",
+        "code": "generation_failed"
+      },
+      "interpretation_ja": "診断の待機がグラフ記録に干渉。2トークン後にサーバーエラー。合格には含めない。"
+    },
+    {
+      "case": "model-wait-copy-only",
+      "started": 1793353703.7992156,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793353756.5200756,
+      "interpretation_ja": "データコピー後の待機だけでは停止。"
+    },
+    {
+      "case": "model-wait-last-zero",
+      "started": 1793354010.4749086,
+      "status": "failed",
+      "error": "TimeoutError: Absolute request deadline exceeded",
+      "finished": 1793354056.0608466,
+      "interpretation_ja": "最後の初期化後の待機は成功するが、その後のコピーで停止。"
+    },
+    {
+      "case": "model-wait-memset",
+      "started": 1793353512.9706564,
+      "status": "passed",
+      "done": true,
+      "elapsed": 3.085010657989187,
+      "ttft": 2.5335002659994643,
+      "output": "Music bends stories the firelight instead apples. And when boats evening of for the",
+      "finished": 1793353555.6878572,
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 2034,
+        "completion_tokens": 16,
+        "total_tokens": 2050,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "cached_tokens": 0,
+        "prompt_tokens_per_second": 810.9977867611232,
+        "completion_tokens_per_second": 29.95011084620259,
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "gufo": {
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 4,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2034,
+            "captures": 2,
+            "captured_capacity_bytes": 321323008,
+            "borrowed_capacity_bytes": 44040192,
+            "copied_payload_bytes": 274961588,
+            "captured_checkpoint_ids": [
+              2,
+              178
+            ],
+            "global_spill": {
+              "idle_bytes": 0,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 0,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0,
+              "residual_wait_ms": 20.494582,
+              "reassignments": 1,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2289009671,
+            "global_ram_bytes": 2289009671,
+            "global_peak_ledger_bytes": 2289028752,
+            "global_peak_ram_bytes": 2289028752,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 1908015104,
+                "reserved_bytes": 0,
+                "peak_bytes": 2229338112
+              },
+              "backing_assigned": {
+                "bytes": 44040192,
+                "reserved_bytes": 44040192,
+                "peak_bytes": 44498944
+              },
+              "backing_materialized": {
+                "bytes": 458752,
+                "reserved_bytes": 0,
+                "peak_bytes": 458752
+              },
+              "private_state": {
+                "bytes": 264110080,
+                "reserved_bytes": 0,
+                "peak_bytes": 264110080
+              },
+              "private_tail": {
+                "bytes": 12713984,
+                "reserved_bytes": 0,
+                "peak_bytes": 12713984
+              },
+              "metadata": {
+                "bytes": 59671559,
+                "reserved_bytes": 0,
+                "peak_bytes": 59690640
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          },
+          "cache_hit": false,
+          "cache_miss_reason": "disabled",
+          "cache_common_prefix_tokens": 0,
+          "cache_checkpoint_tokens": 0,
+          "cache_restore_bytes": 0,
+          "cache_snapshot_bytes": 319001780,
+          "cache_disk_queued_bytes": 0,
+          "cache_shared_bytes": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 26.867552,
+          "cache_disk_enqueue_ms": 0.0023550000000000003,
+          "cache_disk_hit": false,
+          "cache_shared_prefix_snapshots": 0,
+          "cache_shared_prefix_bytes": 0,
+          "cache_shared_prefix_ms": 0,
+          "draft_rounds": 0,
+          "prefill_tokens": 2034,
+          "prefill_chunks": 1,
+          "active_decode_prefill_chunks": 0,
+          "max_prefill_chunk_tokens": 2034,
+          "queue_depth_at_submit": 1,
+          "client_queue_depth_at_submit": 1,
+          "resident_requests_at_admission": 1,
+          "requested_logical_concurrency": 2,
+          "physical_execution_width": 1,
+          "queue_ms": 21.649322,
+          "shared_prefix_wait_ms": 0,
+          "prefill_ms": 2508.021641,
+          "decode_ms": 534.221729,
+          "ttft_ms": 2529.802918,
+          "mean_inter_token_ms": 36.43315606666667,
+          "max_inter_token_ms": 51.99001,
+          "execution_plan": "serial-fallback"
+        }
+      },
+      "interpretation_ja": "初期化後だけ待機し、16トークンの参照回答と一致。"
+    },
+    {
+      "case": "model-wait-mmq-memset",
+      "started": 1793353649.6202002,
+      "status": "passed",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 2034,
+        "completion_tokens": 16,
+        "total_tokens": 2050,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "cached_tokens": 0,
+        "prompt_tokens_per_second": 805.7179554896421,
+        "completion_tokens_per_second": 30.272945187707066,
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "gufo": {
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 4,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2034,
+            "captures": 2,
+            "captured_capacity_bytes": 321323008,
+            "borrowed_capacity_bytes": 44040192,
+            "copied_payload_bytes": 274961588,
+            "captured_checkpoint_ids": [
+              2,
+              178
+            ],
+            "global_spill": {
+              "idle_bytes": 0,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 0,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0,
+              "residual_wait_ms": 3.674785,
+              "reassignments": 1,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2289009671,
+            "global_ram_bytes": 2289009671,
+            "global_peak_ledger_bytes": 2289028752,
+            "global_peak_ram_bytes": 2289028752,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 1908015104,
+                "reserved_bytes": 0,
+                "peak_bytes": 2229338112
+              },
+              "backing_assigned": {
+                "bytes": 44040192,
+                "reserved_bytes": 44040192,
+                "peak_bytes": 44498944
+              },
+              "backing_materialized": {
+                "bytes": 458752,
+                "reserved_bytes": 0,
+                "peak_bytes": 458752
+              },
+              "private_state": {
+                "bytes": 264110080,
+                "reserved_bytes": 0,
+                "peak_bytes": 264110080
+              },
+              "private_tail": {
+                "bytes": 12713984,
+                "reserved_bytes": 0,
+                "peak_bytes": 12713984
+              },
+              "metadata": {
+                "bytes": 59671559,
+                "reserved_bytes": 0,
+                "peak_bytes": 59690640
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          },
+          "cache_hit": false,
+          "cache_miss_reason": "disabled",
+          "cache_common_prefix_tokens": 0,
+          "cache_checkpoint_tokens": 0,
+          "cache_restore_bytes": 0,
+          "cache_snapshot_bytes": 319001780,
+          "cache_disk_queued_bytes": 0,
+          "cache_shared_bytes": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 26.479916,
+          "cache_disk_enqueue_ms": 0.0022640000000000004,
+          "cache_disk_hit": false,
+          "cache_shared_prefix_snapshots": 0,
+          "cache_shared_prefix_bytes": 0,
+          "cache_shared_prefix_ms": 0,
+          "draft_rounds": 0,
+          "prefill_tokens": 2034,
+          "prefill_chunks": 1,
+          "active_decode_prefill_chunks": 0,
+          "max_prefill_chunk_tokens": 2034,
+          "queue_depth_at_submit": 1,
+          "client_queue_depth_at_submit": 1,
+          "resident_requests_at_admission": 1,
+          "requested_logical_concurrency": 2,
+          "physical_execution_width": 1,
+          "queue_ms": 4.610532,
+          "shared_prefix_wait_ms": 0,
+          "prefill_ms": 2524.456587,
+          "decode_ms": 528.5247239999999,
+          "ttft_ms": 2529.160496,
+          "mean_inter_token_ms": 36.015186666666665,
+          "max_inter_token_ms": 50.152332,
+          "execution_plan": "serial-fallback"
+        }
+      },
+      "done": true,
+      "elapsed": 3.073142250010278,
+      "ttft": 2.532710451996536,
+      "output": "Music bends stories the firelight instead apples. And when boats evening of for the",
+      "finished": 1793353683.317446,
+      "interpretation_ja": "MMQ一時領域の初期化後だけ待機し、参照回答と一致。"
+    },
+    {
+      "case": "model-wait-mmq-memset-repeat",
+      "started": 1793354562.5554028,
+      "status": "passed",
+      "finish_reason": "length",
+      "usage": {
+        "prompt_tokens": 2034,
+        "completion_tokens": 16,
+        "total_tokens": 2050,
+        "prompt_tokens_details": {
+          "cached_tokens": 0
+        },
+        "cached_tokens": 0,
+        "prompt_tokens_per_second": 790.4760648668529,
+        "completion_tokens_per_second": 29.702273690487093,
+        "draft_tokens": 0,
+        "draft_tokens_accepted": 0,
+        "gufo": {
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 4,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2034,
+            "captures": 2,
+            "captured_capacity_bytes": 321323008,
+            "borrowed_capacity_bytes": 44040192,
+            "copied_payload_bytes": 274961588,
+            "captured_checkpoint_ids": [
+              2,
+              178
+            ],
+            "global_spill": {
+              "idle_bytes": 0,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 0,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0,
+              "residual_wait_ms": 3.874967,
+              "reassignments": 1,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2289009671,
+            "global_ram_bytes": 2289009671,
+            "global_peak_ledger_bytes": 2289028752,
+            "global_peak_ram_bytes": 2289028752,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 1908015104,
+                "reserved_bytes": 0,
+                "peak_bytes": 2229338112
+              },
+              "backing_assigned": {
+                "bytes": 44040192,
+                "reserved_bytes": 44040192,
+                "peak_bytes": 44498944
+              },
+              "backing_materialized": {
+                "bytes": 458752,
+                "reserved_bytes": 0,
+                "peak_bytes": 458752
+              },
+              "private_state": {
+                "bytes": 264110080,
+                "reserved_bytes": 0,
+                "peak_bytes": 264110080
+              },
+              "private_tail": {
+                "bytes": 12713984,
+                "reserved_bytes": 0,
+                "peak_bytes": 12713984
+              },
+              "metadata": {
+                "bytes": 59671559,
+                "reserved_bytes": 0,
+                "peak_bytes": 59690640
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          },
+          "cache_hit": false,
+          "cache_miss_reason": "disabled",
+          "cache_common_prefix_tokens": 0,
+          "cache_checkpoint_tokens": 0,
+          "cache_restore_bytes": 0,
+          "cache_snapshot_bytes": 319001780,
+          "cache_disk_queued_bytes": 0,
+          "cache_shared_bytes": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 25.60527,
+          "cache_disk_enqueue_ms": 0.0029360000000000002,
+          "cache_disk_hit": false,
+          "cache_shared_prefix_snapshots": 0,
+          "cache_shared_prefix_bytes": 0,
+          "cache_shared_prefix_ms": 0,
+          "draft_rounds": 0,
+          "prefill_tokens": 2034,
+          "prefill_chunks": 1,
+          "active_decode_prefill_chunks": 0,
+          "max_prefill_chunk_tokens": 2034,
+          "queue_depth_at_submit": 1,
+          "client_queue_depth_at_submit": 1,
+          "resident_requests_at_admission": 1,
+          "requested_logical_concurrency": 2,
+          "physical_execution_width": 1,
+          "queue_ms": 4.800363,
+          "shared_prefix_wait_ms": 0,
+          "prefill_ms": 2573.132939,
+          "decode_ms": 538.6792999999999,
+          "ttft_ms": 2578.056904,
+          "mean_inter_token_ms": 36.65599233333333,
+          "max_inter_token_ms": 50.844311,
+          "execution_plan": "serial-fallback"
+        }
+      },
+      "done": true,
+      "elapsed": 3.1323596110014478,
+      "ttft": 2.5821356040105456,
+      "output": "Music bends stories the firelight instead apples. And when boats evening of for the",
+      "finished": 1793354591.131114,
+      "interpretation_ja": "同じ条件の別の冷間起動。参照回答と一致。"
+    },
+    {
+      "case": "standalone-busy-device",
+      "started": 1793354293.0249155,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793354294.6799703,
+      "interpretation_ja": ""
+    },
+    {
+      "case": "standalone-concurrent-copy",
+      "started": 1793354870.6887689,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793354874.1399834,
+      "interpretation_ja": "8 CPUスレッド×64 MiB×100反復。各反復の端と最終全データを照合。"
+    },
+    {
+      "case": "standalone-inspector-control",
+      "started": 1793355373.3410034,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793355374.6153157,
+      "interpretation_ja": "同じGPU/CPU検査器を単独HIP処理で照合し一致。"
+    },
+    {
+      "case": "standalone-iq-large",
+      "started": 1793356538.4245627,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793356540.7826173,
+      "interpretation_ja": "モデルなし。IQ3_S/IQ4_XS/IQ4_NLを各8連続実行。全出力を独立CPU参照と照合。deviceメモリ。"
+    },
+    {
+      "case": "standalone-iq-managed",
+      "started": 1793356618.0629606,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793356621.6190076,
+      "interpretation_ja": "同じ大規模IQ演算をmanaged＋coarse-grain重みで照合。"
+    },
+    {
+      "case": "standalone-memset-device",
+      "started": 1793353776.4435174,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793353778.3869274,
+      "interpretation_ja": ""
+    },
+    {
+      "case": "standalone-memset-managed",
+      "started": 1793353813.4268935,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793353815.535789,
+      "interpretation_ja": ""
+    },
+    {
+      "case": "standalone-pageable",
+      "started": 1793353206.1330206,
+      "status": "passed",
+      "exit_code": 0,
+      "finished": 1793353208.2132235,
+      "interpretation_ja": ""
+    }
+  ],
+  "not_a_formal_benchmark": true,
+  "report": "/mnt/c/Users/user/.codex/.chatgpt-projects/g-p-6ace4e02b85c819184ca7d692a788996/outputs/gufo-hip-copy-rootcause-20261030/report.ja.html"
+}

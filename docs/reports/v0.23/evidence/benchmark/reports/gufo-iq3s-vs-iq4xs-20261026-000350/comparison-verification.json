@@ -1,0 +1,62 @@
+{
+  "iq3s": {
+    "checks": {
+      "usual_23_passed": true,
+      "cancellation_passed": true,
+      "official_21_jobs_complete": true,
+      "official_all_jobs_ok": false,
+      "single_24_cells_one_sample": true,
+      "single_workload_valid": true,
+      "single_prose_ar_mtp_exact": false,
+      "multi_63_samples_15_cells": true,
+      "multi_matches_fresh_ar": false,
+      "multi_prepared_output128": true,
+      "cold_all_files_zero": true,
+      "memory_two_workloads": true,
+      "same_binary": true,
+      "single_response_hashes_and_finish": true,
+      "single_greedy_no_penalties": true
+    },
+    "all_passed": false,
+    "failed_checks": [
+      "official_all_jobs_ok",
+      "single_prose_ar_mtp_exact",
+      "multi_matches_fresh_ar"
+    ],
+    "single_samples": 24,
+    "multi_samples": 63
+  },
+  "iq4xs": {
+    "checks": {
+      "usual_23_passed": true,
+      "cancellation_passed": true,
+      "official_21_jobs_complete": true,
+      "official_all_jobs_ok": true,
+      "single_24_cells_one_sample": true,
+      "single_workload_valid": true,
+      "single_prose_ar_mtp_exact": true,
+      "multi_63_samples_15_cells": true,
+      "multi_matches_fresh_ar": true,
+      "multi_prepared_output128": true,
+      "cold_all_files_zero": true,
+      "memory_two_workloads": true,
+      "same_binary": true,
+      "single_response_hashes_and_finish": true,
+      "single_greedy_no_penalties": true
+    },
+    "all_passed": true,
+    "failed_checks": [],
+    "single_samples": 24,
+    "multi_samples": 63
+  },
+  "monitor": {
+    "windows_acquired": true,
+    "windows_error_absent": true,
+    "gpu_mapping": true,
+    "hip_valid": true,
+    "host_acquired": true,
+    "periodic_power_valid": true,
+    "power_plan_unchanged": true,
+    "host_monitor_no_errors": true
+  }
+}

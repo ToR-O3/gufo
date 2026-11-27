@@ -1,0 +1,1288 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo 固定入力・PLE各3回</title><style>
+:root{color-scheme:dark}body{background:#111923;color:#eaf0f7;font:15px/1.7 system-ui,"Yu Gothic",sans-serif;margin:auto;max-width:2200px;padding:24px}h1{font-size:28px}h2{color:#abd8ff;margin-top:38px}h3{margin-top:25px}.scroll{overflow:auto;border:1px solid #34465a;border-radius:8px;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #34465a;text-align:right;white-space:nowrap}th{background:#213145;text-align:center}td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:#1a2838;z-index:1}.current,.perf td:nth-child(6n+5),.perf td:nth-child(6n+6),.perf td:nth-child(6n+7){background:#173438}.perf td:nth-child(6n+2){border-left:2px solid #5b718a}.perf{min-width:2900px}.good{color:#9cd8c0}.lower,.warning{color:#f1c88a}.muted,.note{color:#b9c7d8}small{display:block;font-size:12px}.callout{border-left:4px solid #7fb6d9;background:#1d2c3d;padding:12px 16px}a{color:#9dd9ff}p{max-width:1600px}details{margin:20px 0}summary{cursor:pointer;color:#b4d9ff}pre{white-space:pre-wrap;overflow-wrap:anywhere}footer{margin-top:30px;color:#b9c7d8} .perf{min-width:3500px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:4300px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:1100px}.compact{min-width:1100px}.perf td.current{background:#173438}small{display:block}.summary{max-width:1100px}details pre{max-height:32em;overflow:auto}  .perf{min-width:1200px} .raw{font-size:12px;white-space:normal;max-width:400px} .summary{max-width:1500px} .all-samples{min-width:1500px} .badge{color:#aee4c6} .compact{min-width:850px}</style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><h1>Gufo v0.31.0：固定入力・PLE各3回の測定</h1><p>Unsloth v3.1系 IQ4_XS（Orca重み移植版）。同じ入力・固定した回答履歴を用い、AR／MTP文章／MTP反復を8深度で各3回。外部Q8_0 PLEと内蔵PLEを交互に測定しました。同時利用と読み込み速度の測定は対象外です。</p><div class="callout">測定数 144/144。入力固定：True。再利用／新規処理トークン数固定：True。今回の代表値は3回の中央値です。3点だけで外れ値を断定して削除せず、全値を残しています。</div><h2>今回確認できたこと</h2><p>AR同士は16/16条件、MTP同士は32/32条件で3回答が完全一致しました。AR／MTPの文章回答は、内蔵PLE 24/24、外部Q8_0 PLE 24/24で一致しました。固定した8入力を各3回比較した結果です。前回の入力・履歴では再検証していないため、過去の不一致が偶然だったとは判断できません。</p><p>同じ回答でも速度は変動しました。次表の幅は（最大−最小）÷中央値で、48条件それぞれの3実測値から計算しています。5%／10%は幅の大きさを把握する区分であり、合否判定や信頼区間ではありません。</p><div class="scroll"><table class="compact"><tr><th>指標</th><th>幅5%以内の条件数</th><th>幅10%以内の条件数</th><th>幅の中央値</th></tr><tr><td>Prefill</td><td>28/48</td><td>38/48</td><td>3.9%</td></tr><tr><td>TTFT</td><td>28/48</td><td>38/48</td><td>4.3%</td></tr><tr><td>Decode</td><td>29/48</td><td>43/48</td><td>3.5%</td></tr></table></div><p>通常の確認は3回の中央値と全値を残し、大きく揺れた条件や変更の影響を受ける条件に追加測定を絞る方法を勧めます。今回の3回だけでは、毎回10回が必要とする根拠は得られていません。</p><p>例えば内蔵PLE・AR・履歴0のPrefillは 1170.71 / 1168.08 / 613.37 tok/sでした。平均は984.05、中央値は1168.08 tok/sです。遅い1回で平均が下がる例ですが、その値を誤測定と断定して削除せず、3回の中央値を採用しています。</p><p class="note">太字は中央値、［ ］は第1～第3四分位。範囲とIQR（第3−第1四分位）も表示します。四分位は位置 (n−1)×p の線形補間。全3値・平均・標準偏差は各セルを展開すると確認できます。中央値は極端な1点の影響を抑えるための代表値であり、3回だけでは安定性を十分に判定できない場合があります。</p><p>測定はHTTP、greedy・seed=1・thinking off、1セッション、context 133760、約2048 tokenの追加入力・128 token生成。8深度の組ごとにサーバーを再起動し、同じウォームアップを実施。履歴のassistant文は常に「Acknowledged.」。前置きをキャッシュ再利用なしで作成し、短い別要求で実行スロットを空けてから、RAM上の保存状態を復元します。RAMキャッシュは両PLEとも8GiBです。履歴0は再利用なし。</p><p class="note">キャッシュ準備を統制した追加実験です。旧3回測定は各回の入力・生成履歴とキャッシュ経路が異なり、今回の数字と直接の速度改善率を計算できません。128K欄も、128K履歴の再利用後に約2Kを追加した速度です。通常起動の2セッション・thinking autoとは異なります。</p><p class="badge">通常設定への復帰確認：完了（内蔵PLE、既存コンテナ・引数・環境を照合、API応答確認済み）。</p><p class="note">最初の4GiB設定では128KのMTP履歴を保持できず、約64Kを再計算しました。条件不成立として当初の24件を別保存し、8GiB設定で全条件を最初から揃え直しています。遅い値だけを除外したものではありません。</p><h2>速度の中央値とばらつき</h2><h3>AR</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">IQ4_XS・履歴</th><th colspan="3">内蔵PLE</th><th colspan="3">外部Q8_0 PLE</th></tr><tr><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th></tr></thead><tbody><tr><td>0</td><td><b>1,168.08</b><small>［890.72–1,169.39］</small><small>IQR 278.67（23.9%）</small><small>範囲 613.37–1,170.71</small><details><summary>全3値・平均</summary><div class="raw">1,170.71 / 1,168.08 / 613.37<br>平均 984.05 ± SD 321.02<br>全測定値を保持、除外なし</div></details></td><td><b>1.788</b><small>［1.785–2.579］</small><small>IQR 0.794（44.4%）</small><small>範囲 1.782–3.370</small><details><summary>全3値・平均</summary><div class="raw">1.782 / 1.788 / 3.370<br>平均 2.314 ± SD 0.915<br>全測定値を保持、除外なし</div></details></td><td><b>28.63</b><small>［28.27–28.94］</small><small>IQR 0.67（2.3%）</small><small>範囲 27.90–29.24</small><details><summary>全3値・平均</summary><div class="raw">29.24 / 28.63 / 27.90<br>平均 28.59 ± SD 0.67<br>全測定値を保持、除外なし</div></details></td><td><b>1,202.36</b><small>［1,190.51–1,204.35］</small><small>IQR 13.83（1.2%）</small><small>範囲 1,178.67–1,206.33</small><details><summary>全3値・平均</summary><div class="raw">1,178.67 / 1,206.33 / 1,202.36<br>平均 1,195.79 ± SD 14.96<br>全測定値を保持、除外なし</div></details></td><td><b>1.740</b><small>［1.734–1.761］</small><small>IQR 0.026（1.5%）</small><small>範囲 1.729–1.781</small><details><summary>全3値・平均</summary><div class="raw">1.781 / 1.729 / 1.740<br>平均 1.750 ± SD 0.028<br>全測定値を保持、除外なし</div></details></td><td><b>29.11</b><small>［29.10–29.24］</small><small>IQR 0.14（0.5%）</small><small>範囲 29.09–29.37</small><details><summary>全3値・平均</summary><div class="raw">29.37 / 29.11 / 29.09<br>平均 29.19 ± SD 0.16<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>4K</td><td><b>1,144.88</b><small>［1,139.71–1,147.85］</small><small>IQR 8.13（0.7%）</small><small>範囲 1,134.55–1,150.81</small><details><summary>全3値・平均</summary><div class="raw">1,144.88 / 1,134.55 / 1,150.81<br>平均 1,143.41 ± SD 8.23<br>全測定値を保持、除外なし</div></details></td><td><b>1.825</b><small>［1.819–1.834］</small><small>IQR 0.014（0.8%）</small><small>範囲 1.814–1.842</small><details><summary>全3値・平均</summary><div class="raw">1.825 / 1.842 / 1.814<br>平均 1.827 ± SD 0.014<br>全測定値を保持、除外なし</div></details></td><td><b>29.04</b><small>［28.85–29.08］</small><small>IQR 0.23（0.8%）</small><small>範囲 28.67–29.13</small><details><summary>全3値・平均</summary><div class="raw">29.13 / 28.67 / 29.04<br>平均 28.95 ± SD 0.24<br>全測定値を保持、除外なし</div></details></td><td><b>1,159.08</b><small>［1,151.95–1,159.80］</small><small>IQR 7.86（0.7%）</small><small>範囲 1,144.81–1,160.53</small><details><summary>全3値・平均</summary><div class="raw">1,159.08 / 1,144.81 / 1,160.53<br>平均 1,154.81 ± SD 8.68<br>全測定値を保持、除外なし</div></details></td><td><b>1.801</b><small>［1.801–1.813］</small><small>IQR 0.012（0.7%）</small><small>範囲 1.800–1.825</small><details><summary>全3値・平均</summary><div class="raw">1.801 / 1.825 / 1.800<br>平均 1.809 ± SD 0.014<br>全測定値を保持、除外なし</div></details></td><td><b>29.02</b><small>［28.93–29.10］</small><small>IQR 0.17（0.6%）</small><small>範囲 28.84–29.18</small><details><summary>全3値・平均</summary><div class="raw">29.02 / 28.84 / 29.18<br>平均 29.01 ± SD 0.17<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>8K</td><td><b>1,124.15</b><small>［1,110.86–1,128.18］</small><small>IQR 17.32（1.5%）</small><small>範囲 1,097.56–1,132.21</small><details><summary>全3値・平均</summary><div class="raw">1,132.21 / 1,097.56 / 1,124.15<br>平均 1,117.97 ± SD 18.13<br>全測定値を保持、除外なし</div></details></td><td><b>1.880</b><small>［1.874–1.902］</small><small>IQR 0.028（1.5%）</small><small>範囲 1.868–1.924</small><details><summary>全3値・平均</summary><div class="raw">1.868 / 1.924 / 1.880<br>平均 1.891 ± SD 0.030<br>全測定値を保持、除外なし</div></details></td><td><b>28.42</b><small>［28.22–28.65］</small><small>IQR 0.42（1.5%）</small><small>範囲 28.03–28.87</small><details><summary>全3値・平均</summary><div class="raw">28.42 / 28.03 / 28.87<br>平均 28.44 ± SD 0.42<br>全測定値を保持、除外なし</div></details></td><td><b>1,116.17</b><small>［938.95–1,140.30］</small><small>IQR 201.35（18.0%）</small><small>範囲 761.73–1,164.44</small><details><summary>全3値・平均</summary><div class="raw">761.73 / 1,116.17 / 1,164.44<br>平均 1,014.11 ± SD 219.90<br>全測定値を保持、除外なし</div></details></td><td><b>1.895</b><small>［1.855–2.324］</small><small>IQR 0.468（24.7%）</small><small>範囲 1.815–2.752</small><details><summary>全3値・平均</summary><div class="raw">2.752 / 1.895 / 1.815<br>平均 2.154 ± SD 0.519<br>全測定値を保持、除外なし</div></details></td><td><b>28.06</b><small>［26.56–28.47］</small><small>IQR 1.91（6.8%）</small><small>範囲 25.05–28.87</small><details><summary>全3値・平均</summary><div class="raw">25.05 / 28.06 / 28.87<br>平均 27.33 ± SD 2.01<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>12K</td><td><b>1,094.67</b><small>［1,090.49–1,122.11］</small><small>IQR 31.62（2.9%）</small><small>範囲 1,086.31–1,149.55</small><details><summary>全3値・平均</summary><div class="raw">1,086.31 / 1,094.67 / 1,149.55<br>平均 1,110.18 ± SD 34.35<br>全測定値を保持、除外なし</div></details></td><td><b>1.936</b><small>［1.890–1.942］</small><small>IQR 0.052（2.7%）</small><small>範囲 1.844–1.948</small><details><summary>全3値・平均</summary><div class="raw">1.948 / 1.936 / 1.844<br>平均 1.909 ± SD 0.057<br>全測定値を保持、除外なし</div></details></td><td><b>28.35</b><small>［27.95–28.83］</small><small>IQR 0.87（3.1%）</small><small>範囲 27.55–29.30</small><details><summary>全3値・平均</summary><div class="raw">28.35 / 27.55 / 29.30<br>平均 28.40 ± SD 0.87<br>全測定値を保持、除外なし</div></details></td><td><b>1,155.66</b><small>［1,118.32–1,156.21］</small><small>IQR 37.89（3.3%）</small><small>範囲 1,080.98–1,156.76</small><details><summary>全3値・平均</summary><div class="raw">1,155.66 / 1,080.98 / 1,156.76<br>平均 1,131.13 ± SD 43.44<br>全測定値を保持、除外なし</div></details></td><td><b>1.834</b><small>［1.833–1.896］</small><small>IQR 0.062（3.4%）</small><small>範囲 1.833–1.958</small><details><summary>全3値・平均</summary><div class="raw">1.834 / 1.958 / 1.833<br>平均 1.875 ± SD 0.072<br>全測定値を保持、除外なし</div></details></td><td><b>29.01</b><small>［28.51–29.03］</small><small>IQR 0.52（1.8%）</small><small>範囲 28.00–29.05</small><details><summary>全3値・平均</summary><div class="raw">29.01 / 28.00 / 29.05<br>平均 28.69 ± SD 0.59<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>16K</td><td><b>1,103.31</b><small>［1,094.34–1,135.52］</small><small>IQR 41.19（3.7%）</small><small>範囲 1,085.36–1,167.74</small><details><summary>全3値・平均</summary><div class="raw">1,103.31 / 1,085.36 / 1,167.74<br>平均 1,118.80 ± SD 43.32<br>全測定値を保持、除外なし</div></details></td><td><b>1.920</b><small>［1.869–1.936］</small><small>IQR 0.068（3.5%）</small><small>範囲 1.818–1.953</small><details><summary>全3値・平均</summary><div class="raw">1.920 / 1.953 / 1.818<br>平均 1.897 ± SD 0.070<br>全測定値を保持、除外なし</div></details></td><td><b>28.56</b><small>［28.30–28.69］</small><small>IQR 0.39（1.4%）</small><small>範囲 28.04–28.82</small><details><summary>全3値・平均</summary><div class="raw">28.56 / 28.04 / 28.82<br>平均 28.47 ± SD 0.40<br>全測定値を保持、除外なし</div></details></td><td><b>1,132.24</b><small>［1,111.74–1,133.92］</small><small>IQR 22.17（2.0%）</small><small>範囲 1,091.25–1,135.59</small><details><summary>全3値・平均</summary><div class="raw">1,135.59 / 1,091.25 / 1,132.24<br>平均 1,119.69 ± SD 24.69<br>全測定値を保持、除外なし</div></details></td><td><b>1.877</b><small>［1.871–1.909］</small><small>IQR 0.038（2.0%）</small><small>範囲 1.865–1.941</small><details><summary>全3値・平均</summary><div class="raw">1.865 / 1.941 / 1.877<br>平均 1.894 ± SD 0.041<br>全測定値を保持、除外なし</div></details></td><td><b>28.49</b><small>［28.23–28.50］</small><small>IQR 0.27（0.9%）</small><small>範囲 27.98–28.51</small><details><summary>全3値・平均</summary><div class="raw">28.49 / 27.98 / 28.51<br>平均 28.33 ± SD 0.30<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>32K</td><td><b>1,138.03</b><small>［1,119.44–1,149.50］</small><small>IQR 30.06（2.6%）</small><small>範囲 1,100.84–1,160.97</small><details><summary>全3値・平均</summary><div class="raw">1,138.03 / 1,100.84 / 1,160.97<br>平均 1,133.28 ± SD 30.34<br>全測定値を保持、除外なし</div></details></td><td><b>1.860</b><small>［1.842–1.895］</small><small>IQR 0.053（2.9%）</small><small>範囲 1.825–1.931</small><details><summary>全3値・平均</summary><div class="raw">1.860 / 1.931 / 1.825<br>平均 1.872 ± SD 0.054<br>全測定値を保持、除外なし</div></details></td><td><b>27.51</b><small>［27.46–28.16］</small><small>IQR 0.71（2.6%）</small><small>範囲 27.40–28.81</small><details><summary>全3値・平均</summary><div class="raw">27.40 / 27.51 / 28.81<br>平均 27.91 ± SD 0.79<br>全測定値を保持、除外なし</div></details></td><td><b>1,119.86</b><small>［1,118.21–1,131.66］</small><small>IQR 13.44（1.2%）</small><small>範囲 1,116.56–1,143.45</small><details><summary>全3値・平均</summary><div class="raw">1,116.56 / 1,119.86 / 1,143.45<br>平均 1,126.62 ± SD 14.66<br>全測定値を保持、除外なし</div></details></td><td><b>1.892</b><small>［1.871–1.894］</small><small>IQR 0.023（1.2%）</small><small>範囲 1.850–1.896</small><details><summary>全3値・平均</summary><div class="raw">1.896 / 1.892 / 1.850<br>平均 1.880 ± SD 0.025<br>全測定値を保持、除外なし</div></details></td><td><b>27.60</b><small>［27.52–27.79］</small><small>IQR 0.27（1.0%）</small><small>範囲 27.44–27.98</small><details><summary>全3値・平均</summary><div class="raw">27.60 / 27.44 / 27.98<br>平均 27.67 ± SD 0.28<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>64K</td><td><b>1,076.13</b><small>［1,072.20–1,082.17］</small><small>IQR 9.97（0.9%）</small><small>範囲 1,068.28–1,088.22</small><details><summary>全3値・平均</summary><div class="raw">1,076.13 / 1,088.22 / 1,068.28<br>平均 1,077.54 ± SD 10.05<br>全測定値を保持、除外なし</div></details></td><td><b>2.016</b><small>［2.007–2.023］</small><small>IQR 0.016（0.8%）</small><small>範囲 1.999–2.030</small><details><summary>全3値・平均</summary><div class="raw">2.016 / 1.999 / 2.030<br>平均 2.015 ± SD 0.016<br>全測定値を保持、除外なし</div></details></td><td><b>27.24</b><small>［27.12–27.28］</small><small>IQR 0.16（0.6%）</small><small>範囲 27.01–27.32</small><details><summary>全3値・平均</summary><div class="raw">27.24 / 27.01 / 27.32<br>平均 27.19 ± SD 0.16<br>全測定値を保持、除外なし</div></details></td><td><b>1,069.50</b><small>［1,068.90–1,075.27］</small><small>IQR 6.38（0.6%）</small><small>範囲 1,068.29–1,081.04</small><details><summary>全3値・平均</summary><div class="raw">1,069.50 / 1,081.04 / 1,068.29<br>平均 1,072.95 ± SD 7.04<br>全測定値を保持、除外なし</div></details></td><td><b>2.029</b><small>［2.021–2.031］</small><small>IQR 0.010（0.5%）</small><small>範囲 2.013–2.033</small><details><summary>全3値・平均</summary><div class="raw">2.029 / 2.013 / 2.033<br>平均 2.025 ± SD 0.010<br>全測定値を保持、除外なし</div></details></td><td><b>27.67</b><small>［27.41–27.76］</small><small>IQR 0.34（1.2%）</small><small>範囲 27.15–27.84</small><details><summary>全3値・平均</summary><div class="raw">27.15 / 27.67 / 27.84<br>平均 27.55 ± SD 0.36<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>128K</td><td><b>1,017.10</b><small>［1,011.87–1,025.87］</small><small>IQR 14.00（1.4%）</small><small>範囲 1,006.63–1,034.64</small><details><summary>全3値・平均</summary><div class="raw">1,006.63 / 1,017.10 / 1,034.64<br>平均 1,019.46 ± SD 14.15<br>全測定値を保持、除外なし</div></details></td><td><b>2.175</b><small>［2.152–2.181］</small><small>IQR 0.029（1.3%）</small><small>範囲 2.128–2.186</small><details><summary>全3値・平均</summary><div class="raw">2.186 / 2.175 / 2.128<br>平均 2.163 ± SD 0.031<br>全測定値を保持、除外なし</div></details></td><td><b>27.63</b><small>［27.60–27.69］</small><small>IQR 0.10（0.3%）</small><small>範囲 27.56–27.75</small><details><summary>全3値・平均</summary><div class="raw">27.63 / 27.56 / 27.75<br>平均 27.65 ± SD 0.10<br>全測定値を保持、除外なし</div></details></td><td><b>1,017.94</b><small>［1,013.83–1,026.19］</small><small>IQR 12.37（1.2%）</small><small>範囲 1,009.72–1,034.45</small><details><summary>全3値・平均</summary><div class="raw">1,009.72 / 1,017.94 / 1,034.45<br>平均 1,020.70 ± SD 12.60<br>全測定値を保持、除外なし</div></details></td><td><b>2.166</b><small>［2.150–2.173］</small><small>IQR 0.023（1.0%）</small><small>範囲 2.135–2.180</small><details><summary>全3値・平均</summary><div class="raw">2.180 / 2.166 / 2.135<br>平均 2.160 ± SD 0.023<br>全測定値を保持、除外なし</div></details></td><td><b>26.99</b><small>［26.95–27.22］</small><small>IQR 0.27（1.0%）</small><small>範囲 26.91–27.44</small><details><summary>全3値・平均</summary><div class="raw">27.44 / 26.91 / 26.99<br>平均 27.12 ± SD 0.29<br>全測定値を保持、除外なし</div></details></td></tr></tbody></table></div><h3>MTP 文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">IQ4_XS・履歴</th><th colspan="3">内蔵PLE</th><th colspan="3">外部Q8_0 PLE</th></tr><tr><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th></tr></thead><tbody><tr><td>0</td><td><b>1,103.55</b><small>［1,099.60–1,120.27］</small><small>IQR 20.67（1.9%）</small><small>範囲 1,095.65–1,136.99</small><details><summary>全3値・平均</summary><div class="raw">1,103.55 / 1,136.99 / 1,095.65<br>平均 1,112.06 ± SD 21.94<br>全測定値を保持、除外なし</div></details></td><td><b>1.894</b><small>［1.867–1.898］</small><small>IQR 0.032（1.7%）</small><small>範囲 1.839–1.903</small><details><summary>全3値・平均</summary><div class="raw">1.894 / 1.839 / 1.903<br>平均 1.879 ± SD 0.035<br>全測定値を保持、除外なし</div></details></td><td><b>31.32</b><small>［31.23–31.38］</small><small>IQR 0.15（0.5%）</small><small>範囲 31.14–31.44</small><details><summary>全3値・平均</summary><div class="raw">31.32 / 31.14 / 31.44<br>平均 31.30 ± SD 0.15<br>全測定値を保持、除外なし</div></details></td><td><b>1,134.56</b><small>［1,124.74–1,135.50］</small><small>IQR 10.77（0.9%）</small><small>範囲 1,114.91–1,136.44</small><details><summary>全3値・平均</summary><div class="raw">1,114.91 / 1,134.56 / 1,136.44<br>平均 1,128.64 ± SD 11.93<br>全測定値を保持、除外なし</div></details></td><td><b>1.845</b><small>［1.841–1.862］</small><small>IQR 0.021（1.1%）</small><small>範囲 1.836–1.878</small><details><summary>全3値・平均</summary><div class="raw">1.878 / 1.845 / 1.836<br>平均 1.853 ± SD 0.022<br>全測定値を保持、除外なし</div></details></td><td><b>29.88</b><small>［29.88–30.06］</small><small>IQR 0.18（0.6%）</small><small>範囲 29.88–30.24</small><details><summary>全3値・平均</summary><div class="raw">29.88 / 30.24 / 29.88<br>平均 30.00 ± SD 0.21<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>4K</td><td><b>1,077.84</b><small>［1,073.43–1,081.39］</small><small>IQR 7.96（0.7%）</small><small>範囲 1,069.01–1,084.93</small><details><summary>全3値・平均</summary><div class="raw">1,084.93 / 1,069.01 / 1,077.84<br>平均 1,077.26 ± SD 7.98<br>全測定値を保持、除外なし</div></details></td><td><b>1.937</b><small>［1.931–1.946］</small><small>IQR 0.015（0.8%）</small><small>範囲 1.925–1.955</small><details><summary>全3値・平均</summary><div class="raw">1.925 / 1.955 / 1.937<br>平均 1.939 ± SD 0.015<br>全測定値を保持、除外なし</div></details></td><td><b>28.49</b><small>［28.35–28.52］</small><small>IQR 0.17（0.6%）</small><small>範囲 28.20–28.55</small><details><summary>全3値・平均</summary><div class="raw">28.20 / 28.49 / 28.55<br>平均 28.41 ± SD 0.19<br>全測定値を保持、除外なし</div></details></td><td><b>937.80</b><small>［890.64–938.54］</small><small>IQR 47.91（5.1%）</small><small>範囲 843.48–939.29</small><details><summary>全3値・平均</summary><div class="raw">937.80 / 843.48 / 939.29<br>平均 906.86 ± SD 54.89<br>全測定値を保持、除外なし</div></details></td><td><b>2.248</b><small>［2.237–2.360］</small><small>IQR 0.123（5.5%）</small><small>範囲 2.225–2.472</small><details><summary>全3値・平均</summary><div class="raw">2.248 / 2.472 / 2.225<br>平均 2.315 ± SD 0.136<br>全測定値を保持、除外なし</div></details></td><td><b>31.36</b><small>［30.79–31.92］</small><small>IQR 1.12（3.6%）</small><small>範囲 30.23–32.47</small><details><summary>全3値・平均</summary><div class="raw">32.47 / 30.23 / 31.36<br>平均 31.35 ± SD 1.12<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>8K</td><td><b>892.88</b><small>［865.13–896.02］</small><small>IQR 30.89（3.5%）</small><small>範囲 837.38–899.16</small><details><summary>全3値・平均</summary><div class="raw">892.88 / 837.38 / 899.16<br>平均 876.47 ± SD 34.00<br>全測定値を保持、除外なし</div></details></td><td><b>2.368</b><small>［2.362–2.443］</small><small>IQR 0.081（3.4%）</small><small>範囲 2.356–2.518</small><details><summary>全3値・平均</summary><div class="raw">2.368 / 2.518 / 2.356<br>平均 2.414 ± SD 0.090<br>全測定値を保持、除外なし</div></details></td><td><b>29.84</b><small>［29.51–30.33］</small><small>IQR 0.82（2.8%）</small><small>範囲 29.18–30.83</small><details><summary>全3値・平均</summary><div class="raw">30.83 / 29.84 / 29.18<br>平均 29.95 ± SD 0.83<br>全測定値を保持、除外なし</div></details></td><td><b>880.10</b><small>［856.71–901.86］</small><small>IQR 45.15（5.1%）</small><small>範囲 833.33–923.62</small><details><summary>全3値・平均</summary><div class="raw">923.62 / 880.10 / 833.33<br>平均 879.02 ± SD 45.16<br>全測定値を保持、除外なし</div></details></td><td><b>2.404</b><small>［2.358–2.471］</small><small>IQR 0.113（4.7%）</small><small>範囲 2.312–2.537</small><details><summary>全3値・平均</summary><div class="raw">2.312 / 2.404 / 2.537<br>平均 2.418 ± SD 0.114<br>全測定値を保持、除外なし</div></details></td><td><b>30.57</b><small>［30.57–30.77］</small><small>IQR 0.20（0.7%）</small><small>範囲 30.57–30.97</small><details><summary>全3値・平均</summary><div class="raw">30.57 / 30.57 / 30.97<br>平均 30.70 ± SD 0.23<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>12K</td><td><b>1,015.08</b><small>［1,007.27–1,032.02］</small><small>IQR 24.75（2.4%）</small><small>範囲 999.45–1,048.96</small><details><summary>全3値・平均</summary><div class="raw">999.45 / 1,015.08 / 1,048.96<br>平均 1,021.16 ± SD 25.31<br>全測定値を保持、除外なし</div></details></td><td><b>2.105</b><small>［2.061–2.111］</small><small>IQR 0.050（2.4%）</small><small>範囲 2.018–2.117</small><details><summary>全3値・平均</summary><div class="raw">2.117 / 2.105 / 2.018<br>平均 2.080 ± SD 0.054<br>全測定値を保持、除外なし</div></details></td><td><b>35.25</b><small>［34.91–35.28］</small><small>IQR 0.37（1.0%）</small><small>範囲 34.56–35.30</small><details><summary>全3値・平均</summary><div class="raw">34.56 / 35.25 / 35.30<br>平均 35.04 ± SD 0.41<br>全測定値を保持、除外なし</div></details></td><td><b>1,043.52</b><small>［1,026.19–1,066.30］</small><small>IQR 40.11（3.8%）</small><small>範囲 1,008.86–1,089.08</small><details><summary>全3値・平均</summary><div class="raw">1,089.08 / 1,008.86 / 1,043.52<br>平均 1,047.15 ± SD 40.24<br>全測定値を保持、除外なし</div></details></td><td><b>2.028</b><small>［1.999–2.062］</small><small>IQR 0.063（3.1%）</small><small>範囲 1.969–2.096</small><details><summary>全3値・平均</summary><div class="raw">1.969 / 2.096 / 2.028<br>平均 2.031 ± SD 0.063<br>全測定値を保持、除外なし</div></details></td><td><b>31.83</b><small>［31.71–32.23］</small><small>IQR 0.52（1.6%）</small><small>範囲 31.59–32.63</small><details><summary>全3値・平均</summary><div class="raw">32.63 / 31.83 / 31.59<br>平均 32.02 ± SD 0.55<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>16K</td><td><b>1,062.46</b><small>［1,051.52–1,062.92］</small><small>IQR 11.39（1.1%）</small><small>範囲 1,040.58–1,063.37</small><details><summary>全3値・平均</summary><div class="raw">1,063.37 / 1,040.58 / 1,062.46<br>平均 1,055.47 ± SD 12.90<br>全測定値を保持、除外なし</div></details></td><td><b>2.024</b><small>［2.009–2.032］</small><small>IQR 0.022（1.1%）</small><small>範囲 1.995–2.039</small><details><summary>全3値・平均</summary><div class="raw">2.024 / 2.039 / 1.995<br>平均 2.019 ± SD 0.022<br>全測定値を保持、除外なし</div></details></td><td><b>31.93</b><small>［31.60–31.95］</small><small>IQR 0.35（1.1%）</small><small>範囲 31.28–31.97</small><details><summary>全3値・平均</summary><div class="raw">31.93 / 31.97 / 31.28<br>平均 31.72 ± SD 0.39<br>全測定値を保持、除外なし</div></details></td><td><b>1,024.53</b><small>［918.79–1,039.21］</small><small>IQR 120.42（11.8%）</small><small>範囲 813.04–1,053.89</small><details><summary>全3値・平均</summary><div class="raw">813.04 / 1,053.89 / 1,024.53<br>平均 963.82 ± SD 131.40<br>全測定値を保持、除外なし</div></details></td><td><b>2.070</b><small>［2.042–2.332］</small><small>IQR 0.290（14.0%）</small><small>範囲 2.014–2.595</small><details><summary>全3値・平均</summary><div class="raw">2.595 / 2.014 / 2.070<br>平均 2.226 ± SD 0.320<br>全測定値を保持、除外なし</div></details></td><td><b>32.49</b><small>［31.59–32.93］</small><small>IQR 1.35（4.2%）</small><small>範囲 30.68–33.38</small><details><summary>全3値・平均</summary><div class="raw">30.68 / 33.38 / 32.49<br>平均 32.18 ± SD 1.37<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>32K</td><td><b>1,046.71</b><small>［1,030.61–1,058.69］</small><small>IQR 28.08（2.7%）</small><small>範囲 1,014.50–1,070.67</small><details><summary>全3値・平均</summary><div class="raw">1,014.50 / 1,046.71 / 1,070.67<br>平均 1,043.96 ± SD 28.19<br>全測定値を保持、除外なし</div></details></td><td><b>2.023</b><small>［2.000–2.051］</small><small>IQR 0.051（2.5%）</small><small>範囲 1.977–2.079</small><details><summary>全3値・平均</summary><div class="raw">2.079 / 2.023 / 1.977<br>平均 2.026 ± SD 0.051<br>全測定値を保持、除外なし</div></details></td><td><b>32.59</b><small>［32.28–32.77］</small><small>IQR 0.48（1.5%）</small><small>範囲 31.97–32.94</small><details><summary>全3値・平均</summary><div class="raw">31.97 / 32.94 / 32.59<br>平均 32.50 ± SD 0.49<br>全測定値を保持、除外なし</div></details></td><td><b>1,071.62</b><small>［1,068.72–1,089.94］</small><small>IQR 21.22（2.0%）</small><small>範囲 1,065.82–1,108.26</small><details><summary>全3値・平均</summary><div class="raw">1,108.26 / 1,065.82 / 1,071.62<br>平均 1,081.90 ± SD 23.01<br>全測定値を保持、除外なし</div></details></td><td><b>1.974</b><small>［1.942–1.978］</small><small>IQR 0.036（1.8%）</small><small>範囲 1.910–1.982</small><details><summary>全3値・平均</summary><div class="raw">1.910 / 1.982 / 1.974<br>平均 1.955 ± SD 0.040<br>全測定値を保持、除外なし</div></details></td><td><b>32.19</b><small>［32.18–33.27］</small><small>IQR 1.09（3.4%）</small><small>範囲 32.17–34.35</small><details><summary>全3値・平均</summary><div class="raw">34.35 / 32.17 / 32.19<br>平均 32.91 ± SD 1.25<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>64K</td><td><b>1,002.97</b><small>［1,000.46–1,015.68］</small><small>IQR 15.22（1.5%）</small><small>範囲 997.95–1,028.39</small><details><summary>全3値・平均</summary><div class="raw">997.95 / 1,002.97 / 1,028.39<br>平均 1,009.77 ± SD 16.32<br>全測定値を保持、除外なし</div></details></td><td><b>2.167</b><small>［2.141–2.184］</small><small>IQR 0.043（2.0%）</small><small>範囲 2.115–2.202</small><details><summary>全3値・平均</summary><div class="raw">2.202 / 2.167 / 2.115<br>平均 2.161 ± SD 0.043<br>全測定値を保持、除外なし</div></details></td><td><b>35.28</b><small>［35.25–35.36］</small><small>IQR 0.11（0.3%）</small><small>範囲 35.23–35.44</small><details><summary>全3値・平均</summary><div class="raw">35.44 / 35.23 / 35.28<br>平均 35.32 ± SD 0.11<br>全測定値を保持、除外なし</div></details></td><td><b>1,015.15</b><small>［1,014.77–1,038.86］</small><small>IQR 24.09（2.4%）</small><small>範囲 1,014.40–1,062.58</small><details><summary>全3値・平均</summary><div class="raw">1,062.58 / 1,014.40 / 1,015.15<br>平均 1,030.71 ± SD 27.60<br>全測定値を保持、除外なし</div></details></td><td><b>2.129</b><small>［2.085–2.134］</small><small>IQR 0.049（2.3%）</small><small>範囲 2.041–2.138</small><details><summary>全3値・平均</summary><div class="raw">2.041 / 2.138 / 2.129<br>平均 2.103 ± SD 0.054<br>全測定値を保持、除外なし</div></details></td><td><b>34.71</b><small>［34.37–35.24］</small><small>IQR 0.86（2.5%）</small><small>範囲 34.04–35.76</small><details><summary>全3値・平均</summary><div class="raw">35.76 / 34.71 / 34.04<br>平均 34.84 ± SD 0.87<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>128K</td><td><b>983.89</b><small>［938.13–985.62］</small><small>IQR 47.49（4.8%）</small><small>範囲 892.37–987.35</small><details><summary>全3値・平均</summary><div class="raw">892.37 / 987.35 / 983.89<br>平均 954.54 ± SD 53.86<br>全測定値を保持、除外なし</div></details></td><td><b>2.250</b><small>［2.243–2.366］</small><small>IQR 0.123（5.5%）</small><small>範囲 2.236–2.482</small><details><summary>全3値・平均</summary><div class="raw">2.482 / 2.250 / 2.236<br>平均 2.323 ± SD 0.138<br>全測定値を保持、除外なし</div></details></td><td><b>37.65</b><small>［37.38–37.74］</small><small>IQR 0.37（1.0%）</small><small>範囲 37.10–37.84</small><details><summary>全3値・平均</summary><div class="raw">37.10 / 37.84 / 37.65<br>平均 37.53 ± SD 0.38<br>全測定値を保持、除外なし</div></details></td><td><b>945.18</b><small>［834.70–960.58］</small><small>IQR 125.88（13.3%）</small><small>範囲 724.22–975.98</small><details><summary>全3値・平均</summary><div class="raw">724.22 / 945.18 / 975.98<br>平均 881.79 ± SD 137.33<br>全測定値を保持、除外なし</div></details></td><td><b>2.333</b><small>［2.295–2.669］</small><small>IQR 0.374（16.0%）</small><small>範囲 2.256–3.004</small><details><summary>全3値・平均</summary><div class="raw">3.004 / 2.333 / 2.256<br>平均 2.531 ± SD 0.411<br>全測定値を保持、除外なし</div></details></td><td><b>33.61</b><small>［31.52–33.79］</small><small>IQR 2.27（6.8%）</small><small>範囲 29.44–33.97</small><details><summary>全3値・平均</summary><div class="raw">29.44 / 33.97 / 33.61<br>平均 32.34 ± SD 2.52<br>全測定値を保持、除外なし</div></details></td></tr></tbody></table></div><h3>MTP 反復</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">IQ4_XS・履歴</th><th colspan="3">内蔵PLE</th><th colspan="3">外部Q8_0 PLE</th></tr><tr><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th><th>Prefill (tok/s)</th><th>TTFT (秒)</th><th>Decode (tok/s)</th></tr></thead><tbody><tr><td>0</td><td><b>1,113.66</b><small>［976.66–1,118.07］</small><small>IQR 141.42（12.7%）</small><small>範囲 839.66–1,122.49</small><details><summary>全3値・平均</summary><div class="raw">1,113.66 / 1,122.49 / 839.66<br>平均 1,025.27 ± SD 160.80<br>全測定値を保持、除外なし</div></details></td><td><b>1.880</b><small>［1.869–2.177］</small><small>IQR 0.308（16.4%）</small><small>範囲 1.857–2.474</small><details><summary>全3値・平均</summary><div class="raw">1.880 / 1.857 / 2.474<br>平均 2.070 ± SD 0.350<br>全測定値を保持、除外なし</div></details></td><td><b>89.92</b><small>［88.71–91.79］</small><small>IQR 3.08（3.4%）</small><small>範囲 87.49–93.66</small><details><summary>全3値・平均</summary><div class="raw">87.49 / 93.66 / 89.92<br>平均 90.36 ± SD 3.11<br>全測定値を保持、除外なし</div></details></td><td><b>1,135.72</b><small>［1,131.80–1,144.23］</small><small>IQR 12.43（1.1%）</small><small>範囲 1,127.88–1,152.74</small><details><summary>全3値・平均</summary><div class="raw">1,127.88 / 1,135.72 / 1,152.74<br>平均 1,138.78 ± SD 12.71<br>全測定値を保持、除外なし</div></details></td><td><b>1.836</b><small>［1.824–1.846］</small><small>IQR 0.021（1.2%）</small><small>範囲 1.812–1.855</small><details><summary>全3値・平均</summary><div class="raw">1.855 / 1.836 / 1.812<br>平均 1.835 ± SD 0.022<br>全測定値を保持、除外なし</div></details></td><td><b>89.59</b><small>［78.97–90.74］</small><small>IQR 11.77（13.1%）</small><small>範囲 68.36–91.90</small><details><summary>全3値・平均</summary><div class="raw">89.59 / 91.90 / 68.36<br>平均 83.28 ± SD 12.97<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>4K</td><td><b>1,087.51</b><small>［1,076.33–1,091.16］</small><small>IQR 14.83（1.4%）</small><small>範囲 1,065.15–1,094.80</small><details><summary>全3値・平均</summary><div class="raw">1,094.80 / 1,065.15 / 1,087.51<br>平均 1,082.49 ± SD 15.45<br>全測定値を保持、除外なし</div></details></td><td><b>1.913</b><small>［1.908–1.934］</small><small>IQR 0.027（1.4%）</small><small>範囲 1.902–1.956</small><details><summary>全3値・平均</summary><div class="raw">1.902 / 1.956 / 1.913<br>平均 1.924 ± SD 0.028<br>全測定値を保持、除外なし</div></details></td><td><b>26.41</b><small>［26.29–27.81］</small><small>IQR 1.51（5.7%）</small><small>範囲 26.17–29.20</small><details><summary>全3値・平均</summary><div class="raw">26.17 / 26.41 / 29.20<br>平均 27.26 ± SD 1.68<br>全測定値を保持、除外なし</div></details></td><td><b>1,102.90</b><small>［1,100.28–1,106.14］</small><small>IQR 5.86（0.5%）</small><small>範囲 1,097.67–1,109.38</small><details><summary>全3値・平均</summary><div class="raw">1,102.90 / 1,097.67 / 1,109.38<br>平均 1,103.31 ± SD 5.87<br>全測定値を保持、除外なし</div></details></td><td><b>1.890</b><small>［1.884–1.903］</small><small>IQR 0.019（1.0%）</small><small>範囲 1.878–1.916</small><details><summary>全3値・平均</summary><div class="raw">1.890 / 1.916 / 1.878<br>平均 1.895 ± SD 0.019<br>全測定値を保持、除外なし</div></details></td><td><b>26.93</b><small>［26.61–27.48］</small><small>IQR 0.86（3.2%）</small><small>範囲 26.29–28.02</small><details><summary>全3値・平均</summary><div class="raw">26.29 / 26.93 / 28.02<br>平均 27.08 ± SD 0.87<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>8K</td><td><b>804.07</b><small>［772.34–868.83］</small><small>IQR 96.49（12.0%）</small><small>範囲 740.60–933.58</small><details><summary>全3値・平均</summary><div class="raw">740.60 / 804.07 / 933.58<br>平均 826.09 ± SD 98.36<br>全測定値を保持、除外なし</div></details></td><td><b>2.618</b><small>［2.438–2.738］</small><small>IQR 0.300（11.5%）</small><small>範囲 2.259–2.859</small><details><summary>全3値・平均</summary><div class="raw">2.859 / 2.618 / 2.259<br>平均 2.579 ± SD 0.302<br>全測定値を保持、除外なし</div></details></td><td><b>26.60</b><small>［26.09–27.09］</small><small>IQR 1.00（3.8%）</small><small>範囲 25.57–27.57</small><details><summary>全3値・平均</summary><div class="raw">25.57 / 26.60 / 27.57<br>平均 26.58 ± SD 1.00<br>全測定値を保持、除外なし</div></details></td><td><b>903.03</b><small>［899.22–912.77］</small><small>IQR 13.55（1.5%）</small><small>範囲 895.42–922.52</small><details><summary>全3値・平均</summary><div class="raw">903.03 / 895.42 / 922.52<br>平均 906.99 ± SD 13.98<br>全測定値を保持、除外なし</div></details></td><td><b>2.340</b><small>［2.312–2.349］</small><small>IQR 0.037（1.6%）</small><small>範囲 2.284–2.358</small><details><summary>全3値・平均</summary><div class="raw">2.340 / 2.358 / 2.284<br>平均 2.328 ± SD 0.039<br>全測定値を保持、除外なし</div></details></td><td><b>26.02</b><small>［25.60–26.46］</small><small>IQR 0.86（3.3%）</small><small>範囲 25.18–26.90</small><details><summary>全3値・平均</summary><div class="raw">25.18 / 26.02 / 26.90<br>平均 26.03 ± SD 0.86<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>12K</td><td><b>1,072.40</b><small>［1,065.91–1,094.72］</small><small>IQR 28.81（2.7%）</small><small>範囲 1,059.42–1,117.04</small><details><summary>全3値・平均</summary><div class="raw">1,072.40 / 1,059.42 / 1,117.04<br>平均 1,082.95 ± SD 30.23<br>全測定値を保持、除外なし</div></details></td><td><b>1.968</b><small>［1.928–1.979］</small><small>IQR 0.051（2.6%）</small><small>範囲 1.888–1.989</small><details><summary>全3値・平均</summary><div class="raw">1.968 / 1.989 / 1.888<br>平均 1.948 ± SD 0.053<br>全測定値を保持、除外なし</div></details></td><td><b>27.26</b><small>［27.02–28.17］</small><small>IQR 1.15（4.2%）</small><small>範囲 26.78–29.08</small><details><summary>全3値・平均</summary><div class="raw">26.78 / 27.26 / 29.08<br>平均 27.71 ± SD 1.21<br>全測定値を保持、除外なし</div></details></td><td><b>1,084.83</b><small>［1,072.66–1,098.56］</small><small>IQR 25.90（2.4%）</small><small>範囲 1,060.49–1,112.29</small><details><summary>全3値・平均</summary><div class="raw">1,060.49 / 1,084.83 / 1,112.29<br>平均 1,085.87 ± SD 25.91<br>全測定値を保持、除外なし</div></details></td><td><b>1.947</b><small>［1.921–1.967］</small><small>IQR 0.046（2.4%）</small><small>範囲 1.895–1.988</small><details><summary>全3値・平均</summary><div class="raw">1.988 / 1.947 / 1.895<br>平均 1.943 ± SD 0.046<br>全測定値を保持、除外なし</div></details></td><td><b>28.31</b><small>［28.11–29.02］</small><small>IQR 0.91（3.2%）</small><small>範囲 27.90–29.73</small><details><summary>全3値・平均</summary><div class="raw">27.90 / 29.73 / 28.31<br>平均 28.65 ± SD 0.96<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>16K</td><td><b>1,044.74</b><small>［929.59–1,045.28］</small><small>IQR 115.69（11.1%）</small><small>範囲 814.43–1,045.81</small><details><summary>全3値・平均</summary><div class="raw">1,044.74 / 1,045.81 / 814.43<br>平均 968.33 ± SD 133.28<br>全測定値を保持、除外なし</div></details></td><td><b>2.037</b><small>［2.030–2.304］</small><small>IQR 0.273（13.4%）</small><small>範囲 2.023–2.570</small><details><summary>全3値・平均</summary><div class="raw">2.023 / 2.037 / 2.570<br>平均 2.210 ± SD 0.312<br>全測定値を保持、除外なし</div></details></td><td><b>25.46</b><small>［25.34–26.43］</small><small>IQR 1.10（4.3%）</small><small>範囲 25.21–27.40</small><details><summary>全3値・平均</summary><div class="raw">25.21 / 25.46 / 27.40<br>平均 26.03 ± SD 1.20<br>全測定値を保持、除外なし</div></details></td><td><b>1,070.48</b><small>［1,056.75–1,089.64］</small><small>IQR 32.89（3.1%）</small><small>範囲 1,043.02–1,108.79</small><details><summary>全3値・平均</summary><div class="raw">1,070.48 / 1,043.02 / 1,108.79<br>平均 1,074.10 ± SD 33.04<br>全測定値を保持、除外なし</div></details></td><td><b>1.972</b><small>［1.938–1.996］</small><small>IQR 0.058（2.9%）</small><small>範囲 1.905–2.021</small><details><summary>全3値・平均</summary><div class="raw">1.972 / 2.021 / 1.905<br>平均 1.966 ± SD 0.058<br>全測定値を保持、除外なし</div></details></td><td><b>74.72</b><small>［72.77–76.51］</small><small>IQR 3.74（5.0%）</small><small>範囲 70.81–78.29</small><details><summary>全3値・平均</summary><div class="raw">78.29 / 70.81 / 74.72<br>平均 74.61 ± SD 3.74<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>32K</td><td><b>1,042.54</b><small>［912.83–1,052.83］</small><small>IQR 140.00（13.4%）</small><small>範囲 783.11–1,063.12</small><details><summary>全3値・平均</summary><div class="raw">1,063.12 / 1,042.54 / 783.11<br>平均 962.92 ± SD 156.06<br>全測定値を保持、除外なし</div></details></td><td><b>2.026</b><small>［2.008–2.350］</small><small>IQR 0.342（16.9%）</small><small>範囲 1.990–2.674</small><details><summary>全3値・平均</summary><div class="raw">1.990 / 2.026 / 2.674<br>平均 2.230 ± SD 0.385<br>全測定値を保持、除外なし</div></details></td><td><b>26.03</b><small>［25.85–26.62］</small><small>IQR 0.77（3.0%）</small><small>範囲 25.67–27.21</small><details><summary>全3値・平均</summary><div class="raw">26.03 / 25.67 / 27.21<br>平均 26.30 ± SD 0.81<br>全測定値を保持、除外なし</div></details></td><td><b>1,060.46</b><small>［1,051.14–1,065.00］</small><small>IQR 13.87（1.3%）</small><small>範囲 1,041.81–1,069.55</small><details><summary>全3値・平均</summary><div class="raw">1,060.46 / 1,069.55 / 1,041.81<br>平均 1,057.27 ± SD 14.14<br>全測定値を保持、除外なし</div></details></td><td><b>1.991</b><small>［1.984–2.011］</small><small>IQR 0.027（1.4%）</small><small>範囲 1.978–2.032</small><details><summary>全3値・平均</summary><div class="raw">1.991 / 1.978 / 2.032<br>平均 2.000 ± SD 0.028<br>全測定値を保持、除外なし</div></details></td><td><b>25.56</b><small>［25.38–25.84］</small><small>IQR 0.46（1.8%）</small><small>範囲 25.21–26.12</small><details><summary>全3値・平均</summary><div class="raw">26.12 / 25.56 / 25.21<br>平均 25.63 ± SD 0.46<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>64K</td><td><b>1,021.94</b><small>［1,020.30–1,026.47］</small><small>IQR 6.17（0.6%）</small><small>範囲 1,018.66–1,030.99</small><details><summary>全3値・平均</summary><div class="raw">1,021.94 / 1,030.99 / 1,018.66<br>平均 1,023.87 ± SD 6.39<br>全測定値を保持、除外なし</div></details></td><td><b>2.123</b><small>［2.117–2.124］</small><small>IQR 0.007（0.3%）</small><small>範囲 2.111–2.125</small><details><summary>全3値・平均</summary><div class="raw">2.123 / 2.111 / 2.125<br>平均 2.120 ± SD 0.007<br>全測定値を保持、除外なし</div></details></td><td><b>27.33</b><small>［27.29–27.37］</small><small>IQR 0.09（0.3%）</small><small>範囲 27.24–27.41</small><details><summary>全3値・平均</summary><div class="raw">27.24 / 27.33 / 27.41<br>平均 27.33 ± SD 0.09<br>全測定値を保持、除外なし</div></details></td><td><b>1,013.67</b><small>［1,011.12–1,023.75］</small><small>IQR 12.63（1.2%）</small><small>範囲 1,008.57–1,033.82</small><details><summary>全3値・平均</summary><div class="raw">1,033.82 / 1,008.57 / 1,013.67<br>平均 1,018.69 ± SD 13.35<br>全測定値を保持、除外なし</div></details></td><td><b>2.134</b><small>［2.115–2.140］</small><small>IQR 0.025（1.2%）</small><small>範囲 2.096–2.146</small><details><summary>全3値・平均</summary><div class="raw">2.096 / 2.146 / 2.134<br>平均 2.125 ± SD 0.026<br>全測定値を保持、除外なし</div></details></td><td><b>27.17</b><small>［27.06–27.22］</small><small>IQR 0.16（0.6%）</small><small>範囲 26.94–27.26</small><details><summary>全3値・平均</summary><div class="raw">26.94 / 27.17 / 27.26<br>平均 27.13 ± SD 0.16<br>全測定値を保持、除外なし</div></details></td></tr><tr><td>128K</td><td><b>993.36</b><small>［982.74–996.23］</small><small>IQR 13.49（1.4%）</small><small>範囲 972.12–999.11</small><details><summary>全3値・平均</summary><div class="raw">993.36 / 972.12 / 999.11<br>平均 988.20 ± SD 14.22<br>全測定値を保持、除外なし</div></details></td><td><b>2.219</b><small>［2.209–2.260］</small><small>IQR 0.052（2.3%）</small><small>範囲 2.199–2.302</small><details><summary>全3値・平均</summary><div class="raw">2.219 / 2.302 / 2.199<br>平均 2.240 ± SD 0.055<br>全測定値を保持、除外なし</div></details></td><td><b>80.75</b><small>［79.77–81.15］</small><small>IQR 1.38（1.7%）</small><small>範囲 78.78–81.55</small><details><summary>全3値・平均</summary><div class="raw">80.75 / 81.55 / 78.78<br>平均 80.36 ± SD 1.42<br>全測定値を保持、除外なし</div></details></td><td><b>973.38</b><small>［971.25–974.38］</small><small>IQR 3.13（0.3%）</small><small>範囲 969.13–975.38</small><details><summary>全3値・平均</summary><div class="raw">975.38 / 973.38 / 969.13<br>平均 972.63 ± SD 3.19<br>全測定値を保持、除外なし</div></details></td><td><b>2.265</b><small>［2.261–2.272］</small><small>IQR 0.011（0.5%）</small><small>範囲 2.257–2.279</small><details><summary>全3値・平均</summary><div class="raw">2.265 / 2.257 / 2.279<br>平均 2.267 ± SD 0.011<br>全測定値を保持、除外なし</div></details></td><td><b>81.90</b><small>［80.61–82.06］</small><small>IQR 1.45（1.8%）</small><small>範囲 79.32–82.22</small><details><summary>全3値・平均</summary><div class="raw">81.90 / 82.22 / 79.32<br>平均 81.14 ± SD 1.59<br>全測定値を保持、除外なし</div></details></td></tr></tbody></table></div><p>16K履歴・MTP反復文のDecode中央値は、内蔵PLE 25.46 tok/s（25.21–27.40）、外部Q8_0 PLE 74.72 tok/s（70.81–78.29）でした。3回の範囲は重ならず、この条件の差を単発の外れ値として除外していません。この測定だけでは速度差の原因までは特定していません。履歴深度や処理の違う行へ一般化せず、各行の値を参照してください。</p><h2>AR同士・MTP同士の回答一致</h2><p>同じ入力を繰り返した3回答のうち、最も多かった回答の件数／測定数、異なる回答の種類数、全3組中の一致組数です。回答本文を一切正規化せずSHA-256で比較。これは再現性であり、回答の正答率ではありません。</p><h3>AR</h3><div class="scroll"><table class="compact"><tr><th>履歴</th><th>内蔵PLE</th><th>外部Q8_0 PLE</th></tr><tr><td>0</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>4K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>8K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>12K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>16K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>32K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>64K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>128K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr></table></div><h3>MTP 文章</h3><div class="scroll"><table class="compact"><tr><th>履歴</th><th>内蔵PLE</th><th>外部Q8_0 PLE</th></tr><tr><td>0</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>4K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>8K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>12K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>16K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>32K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>64K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>128K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr></table></div><h3>MTP 反復</h3><div class="scroll"><table class="compact"><tr><th>履歴</th><th>内蔵PLE</th><th>外部Q8_0 PLE</th></tr><tr><td>0</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>4K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>8K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>12K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>16K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>32K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>64K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr><tr><td>128K</td><td>3/3、1種類<small>ペア一致 3/3</small></td><td>3/3、1種類<small>ペア一致 3/3</small></td></tr></table></div><h2>同一入力でのAR／MTP比較</h2><p>文章生成を同じ反復番号で対にした比較です。同じ入力の繰り返しなので、24件を24種類の独立した問題とは扱いません。</p><div class="scroll"><table class="compact"><tr><th>履歴</th><th>内蔵PLE</th><th>外部Q8_0 PLE</th></tr><tr><td>0</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>4K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>8K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>12K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>16K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>32K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>64K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr><tr><td>128K</td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td><td>3/3<small>入力一致 3/3、キャッシュ量一致 3/3</small></td></tr></table></div><h2>前回3回との比較</h2><p>代表値は今回の固定条件3回の中央値を採用します。前回は反復ごとに入力と生成履歴が変わり、継続キャッシュ容量・再利用経路も今回と異なります。前回3回と今回3回は別に集計しています。前回の平均と中央値を並べ、極端な1回の影響も確認できます。</p><details><summary>前回と今回の速度を併記（条件差あり）</summary><div class="scroll"><table class="all-samples"><tr><th>構成・処理</th><th>履歴</th><th>前回Prefill中央値</th><th>今回Prefill中央値<br>(tok/s)</th><th>前回TTFT中央値</th><th>今回TTFT中央値<br>(秒)</th><th>前回Decode平均</th><th>前回Decode中央値</th><th>今回Decode中央値<br>(tok/s)</th></tr><tr><td>内蔵PLE AR 文章</td><td>0</td><td><span title="1218.842 / 1206.708 / 1165.065">1206.71</span></td><td><span title="1170.705 / 1168.082 / 613.367">1168.08</span></td><td><span title="1.725 / 1.734 / 1.834">1.734</span></td><td><span title="1.782 / 1.788 / 3.370">1.788</span></td><td><span title="28.921 / 29.272 / 29.187">29.13</span></td><td><span title="28.921 / 29.272 / 29.187">29.19</span></td><td><span title="29.240 / 28.633 / 27.903">28.63</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>4K</td><td><span title="1129.312 / 1167.578 / 1154.599">1154.60</span></td><td><span title="1144.883 / 1134.546 / 1150.808">1144.88</span></td><td><span title="1.811 / 1.737 / 1.758">1.758</span></td><td><span title="1.825 / 1.842 / 1.814">1.825</span></td><td><span title="28.995 / 29.177 / 29.192">29.12</span></td><td><span title="28.995 / 29.177 / 29.192">29.18</span></td><td><span title="29.127 / 28.671 / 29.037">29.04</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>8K</td><td><span title="1157.928 / 1142.759 / 1162.118">1157.93</span></td><td><span title="1132.208 / 1097.562 / 1124.148">1124.15</span></td><td><span title="1.771 / 1.800 / 1.759">1.771</span></td><td><span title="1.868 / 1.924 / 1.880">1.880</span></td><td><span title="29.069 / 29.109 / 29.517">29.23</span></td><td><span title="29.069 / 29.109 / 29.517">29.11</span></td><td><span title="28.420 / 28.028 / 28.874">28.42</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>12K</td><td><span title="1162.905 / 1199.857 / 1150.485">1162.91</span></td><td><span title="1086.314 / 1094.668 / 1149.552">1094.67</span></td><td><span title="1.763 / 1.709 / 1.786">1.763</span></td><td><span title="1.948 / 1.936 / 1.844">1.936</span></td><td><span title="28.958 / 29.503 / 29.606">29.36</span></td><td><span title="28.958 / 29.503 / 29.606">29.50</span></td><td><span title="28.352 / 27.553 / 29.301">28.35</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>16K</td><td><span title="1158.282 / 1181.496 / 1169.398">1169.40</span></td><td><span title="1103.309 / 1085.363 / 1167.735">1103.31</span></td><td><span title="1.772 / 1.735 / 1.755">1.755</span></td><td><span title="1.920 / 1.953 / 1.818">1.920</span></td><td><span title="28.828 / 29.456 / 29.117">29.13</span></td><td><span title="28.828 / 29.456 / 29.117">29.12</span></td><td><span title="28.557 / 28.040 / 28.821">28.56</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>32K</td><td><span title="1154.573 / 1106.669 / 1161.293">1154.57</span></td><td><span title="1138.034 / 1100.840 / 1160.967">1138.03</span></td><td><span title="1.763 / 1.873 / 1.764">1.764</span></td><td><span title="1.860 / 1.931 / 1.825">1.860</span></td><td><span title="28.667 / 29.292 / 29.136">29.03</span></td><td><span title="28.667 / 29.292 / 29.136">29.14</span></td><td><span title="27.396 / 27.515 / 28.813">27.51</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>64K</td><td><span title="1114.490 / 1119.177 / 1093.585">1114.49</span></td><td><span title="1076.130 / 1088.220 / 1068.279">1076.13</span></td><td><span title="1.854 / 1.840 / 1.901">1.854</span></td><td><span title="2.016 / 1.999 / 2.030">2.016</span></td><td><span title="28.903 / 29.040 / 28.902">28.95</span></td><td><span title="28.903 / 29.040 / 28.902">28.90</span></td><td><span title="27.240 / 27.008 / 27.324">27.24</span></td></tr><tr><td>内蔵PLE AR 文章</td><td>128K</td><td><span title="1034.273 / 1035.722 / 1032.480">1034.27</span></td><td><span title="1006.633 / 1017.099 / 1034.637">1017.10</span></td><td><span title="1.992 / 2.004 / 1.993">1.993</span></td><td><span title="2.186 / 2.175 / 2.128">2.175</span></td><td><span title="27.069 / 27.193 / 27.935">27.40</span></td><td><span title="27.069 / 27.193 / 27.935">27.19</span></td><td><span title="27.635 / 27.561 / 27.752">27.63</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>0</td><td><span title="1110.655 / 1133.310 / 1083.948">1110.65</span></td><td><span title="1103.553 / 1136.990 / 1095.651">1103.55</span></td><td><span title="1.899 / 1.845 / 1.943">1.899</span></td><td><span title="1.894 / 1.839 / 1.903">1.894</span></td><td><span title="30.969 / 33.910 / 34.244">33.04</span></td><td><span title="30.969 / 33.910 / 34.244">33.91</span></td><td><span title="31.320 / 31.141 / 31.436">31.32</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>4K</td><td><span title="1078.276 / 887.247 / 873.439">887.25</span></td><td><span title="1084.928 / 1069.006 / 1077.845">1077.84</span></td><td><span title="1.896 / 2.284 / 2.323">2.284</span></td><td><span title="1.925 / 1.955 / 1.937">1.937</span></td><td><span title="40.477 / 28.780 / 29.618">32.96</span></td><td><span title="40.477 / 28.780 / 29.618">29.62</span></td><td><span title="28.200 / 28.494 / 28.547">28.49</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>8K</td><td><span title="971.482 / 1052.960 / 1026.618">1026.62</span></td><td><span title="892.878 / 837.377 / 899.163">892.88</span></td><td><span title="2.110 / 1.954 / 1.990">1.990</span></td><td><span title="2.368 / 2.518 / 2.356">2.368</span></td><td><span title="33.555 / 35.410 / 36.632">35.20</span></td><td><span title="33.555 / 35.410 / 36.632">35.41</span></td><td><span title="30.825 / 29.841 / 29.179">29.84</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>12K</td><td><span title="1031.027 / 1064.080 / 881.939">1031.03</span></td><td><span title="999.452 / 1015.080 / 1048.956">1015.08</span></td><td><span title="1.988 / 1.926 / 2.328">1.988</span></td><td><span title="2.117 / 2.105 / 2.018">2.105</span></td><td><span title="33.507 / 29.986 / 35.348">32.95</span></td><td><span title="33.507 / 29.986 / 35.348">33.51</span></td><td><span title="34.563 / 35.248 / 35.302">35.25</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>16K</td><td><span title="1022.176 / 897.173 / 909.361">909.36</span></td><td><span title="1063.367 / 1040.582 / 1062.464">1062.46</span></td><td><span title="2.006 / 2.283 / 2.254">2.254</span></td><td><span title="2.024 / 2.039 / 1.995">2.024</span></td><td><span title="41.990 / 32.578 / 34.987">36.52</span></td><td><span title="41.990 / 32.578 / 34.987">34.99</span></td><td><span title="31.927 / 31.972 / 31.276">31.93</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>32K</td><td><span title="1025.402 / 1032.621 / 1048.773">1032.62</span></td><td><span title="1014.500 / 1046.713 / 1070.668">1046.71</span></td><td><span title="1.985 / 2.006 / 1.951">1.985</span></td><td><span title="2.079 / 2.023 / 1.977">2.023</span></td><td><span title="36.187 / 37.284 / 36.295">36.59</span></td><td><span title="36.187 / 37.284 / 36.295">36.30</span></td><td><span title="31.973 / 32.943 / 32.590">32.59</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>64K</td><td><span title="978.216 / 1021.961 / 974.513">978.22</span></td><td><span title="997.946 / 1002.967 / 1028.386">1002.97</span></td><td><span title="2.110 / 2.014 / 2.132">2.110</span></td><td><span title="2.202 / 2.167 / 2.115">2.167</span></td><td><span title="35.853 / 36.732 / 33.229">35.27</span></td><td><span title="35.853 / 36.732 / 33.229">35.85</span></td><td><span title="35.442 / 35.225 / 35.281">35.28</span></td></tr><tr><td>内蔵PLE MTP 文章</td><td>128K</td><td><span title="970.844 / 978.905 / 979.696">978.91</span></td><td><span title="892.374 / 987.348 / 983.893">983.89</span></td><td><span title="2.121 / 2.119 / 2.101">2.119</span></td><td><span title="2.482 / 2.250 / 2.236">2.250</span></td><td><span title="37.693 / 37.048 / 34.753">36.50</span></td><td><span title="37.693 / 37.048 / 34.753">37.05</span></td><td><span title="37.105 / 37.837 / 37.649">37.65</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>0</td><td><span title="1135.928 / 1076.908 / 1127.411">1127.41</span></td><td><span title="1113.656 / 1122.492 / 839.660">1113.66</span></td><td><span title="1.842 / 1.925 / 1.855">1.855</span></td><td><span title="1.880 / 1.857 / 2.474">1.880</span></td><td><span title="89.554 / 93.054 / 95.100">92.57</span></td><td><span title="89.554 / 93.054 / 95.100">93.05</span></td><td><span title="87.491 / 93.661 / 89.923">89.92</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>4K</td><td><span title="901.721 / 966.737 / 975.608">966.74</span></td><td><span title="1094.804 / 1065.151 / 1087.513">1087.51</span></td><td><span title="2.262 / 2.093 / 2.074">2.093</span></td><td><span title="1.902 / 1.956 / 1.913">1.913</span></td><td><span title="30.684 / 30.234 / 28.540">29.82</span></td><td><span title="30.684 / 30.234 / 28.540">30.23</span></td><td><span title="26.173 / 26.415 / 29.201">26.41</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>8K</td><td><span title="937.396 / 952.237 / 953.598">952.24</span></td><td><span title="740.600 / 804.073 / 933.583">804.07</span></td><td><span title="2.181 / 2.154 / 2.137">2.154</span></td><td><span title="2.859 / 2.618 / 2.259">2.618</span></td><td><span title="30.945 / 27.423 / 29.207">29.19</span></td><td><span title="30.945 / 27.423 / 29.207">29.21</span></td><td><span title="25.571 / 26.604 / 27.571">26.60</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>12K</td><td><span title="1045.270 / 1083.696 / 1063.672">1063.67</span></td><td><span title="1072.403 / 1059.415 / 1117.043">1072.40</span></td><td><span title="1.959 / 1.886 / 1.926">1.926</span></td><td><span title="1.968 / 1.989 / 1.888">1.968</span></td><td><span title="91.516 / 83.739 / 30.857">68.70</span></td><td><span title="91.516 / 83.739 / 30.857">83.74</span></td><td><span title="26.781 / 27.259 / 29.078">27.26</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>16K</td><td><span title="895.253 / 931.193 / 901.988">901.99</span></td><td><span title="1044.742 / 1045.810 / 814.433">1044.74</span></td><td><span title="2.283 / 2.195 / 2.266">2.266</span></td><td><span title="2.023 / 2.037 / 2.570">2.037</span></td><td><span title="28.139 / 29.091 / 29.859">29.03</span></td><td><span title="28.139 / 29.091 / 29.859">29.09</span></td><td><span title="25.214 / 25.459 / 27.404">25.46</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>32K</td><td><span title="1026.228 / 1010.868 / 1026.168">1026.17</span></td><td><span title="1063.119 / 1042.544 / 783.111">1042.54</span></td><td><span title="1.977 / 2.045 / 1.988">1.988</span></td><td><span title="1.990 / 2.026 / 2.674">2.026</span></td><td><span title="80.375 / 86.314 / 76.426">81.04</span></td><td><span title="80.375 / 86.314 / 76.426">80.37</span></td><td><span title="26.026 / 25.666 / 27.207">26.03</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>64K</td><td><span title="955.419 / 1033.355 / 1001.024">1001.02</span></td><td><span title="1021.943 / 1030.995 / 1018.658">1021.94</span></td><td><span title="2.157 / 1.988 / 2.068">2.068</span></td><td><span title="2.123 / 2.111 / 2.125">2.123</span></td><td><span title="75.728 / 78.068 / 78.788">77.53</span></td><td><span title="75.728 / 78.068 / 78.788">78.07</span></td><td><span title="27.240 / 27.333 / 27.414">27.33</span></td></tr><tr><td>内蔵PLE MTP 反復</td><td>128K</td><td><span title="935.915 / 962.234 / 980.059">962.23</span></td><td><span title="993.356 / 972.120 / 999.110">993.36</span></td><td><span title="2.194 / 2.148 / 2.094">2.148</span></td><td><span title="2.219 / 2.302 / 2.199">2.219</span></td><td><span title="82.604 / 76.637 / 28.810">62.68</span></td><td><span title="82.604 / 76.637 / 28.810">76.64</span></td><td><span title="80.751 / 81.546 / 78.785">80.75</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>0</td><td><span title="1226.711 / 1184.878 / 1155.206">1184.88</span></td><td><span title="1178.667 / 1206.331 / 1202.359">1202.36</span></td><td><span title="1.689 / 1.755 / 1.823">1.755</span></td><td><span title="1.781 / 1.729 / 1.740">1.740</span></td><td><span title="28.618 / 29.457 / 29.274">29.12</span></td><td><span title="28.618 / 29.457 / 29.274">29.27</span></td><td><span title="29.371 / 29.106 / 29.087">29.11</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>4K</td><td><span title="1159.033 / 1179.828 / 1022.185">1159.03</span></td><td><span title="1159.079 / 1144.813 / 1160.525">1159.08</span></td><td><span title="1.764 / 1.719 / 1.986">1.764</span></td><td><span title="1.801 / 1.825 / 1.800">1.801</span></td><td><span title="28.704 / 29.665 / 29.134">29.17</span></td><td><span title="28.704 / 29.665 / 29.134">29.13</span></td><td><span title="29.022 / 28.842 / 29.178">29.02</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>8K</td><td><span title="1025.072 / 1161.860 / 1175.056">1161.86</span></td><td><span title="761.733 / 1116.166 / 1164.442">1116.17</span></td><td><span title="2.000 / 1.771 / 1.740">1.771</span></td><td><span title="2.752 / 1.895 / 1.815">1.895</span></td><td><span title="29.293 / 28.992 / 29.330">29.20</span></td><td><span title="29.293 / 28.992 / 29.330">29.29</span></td><td><span title="25.054 / 28.062 / 28.871">28.06</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>12K</td><td><span title="1182.200 / 1179.041 / 1161.080">1179.04</span></td><td><span title="1155.657 / 1080.978 / 1156.765">1155.66</span></td><td><span title="1.734 / 1.739 / 1.770">1.739</span></td><td><span title="1.834 / 1.958 / 1.833">1.834</span></td><td><span title="28.991 / 29.620 / 29.160">29.26</span></td><td><span title="28.991 / 29.620 / 29.160">29.16</span></td><td><span title="29.009 / 28.003 / 29.053">29.01</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>16K</td><td><span title="1134.266 / 1159.994 / 1181.460">1159.99</span></td><td><span title="1135.594 / 1091.247 / 1132.240">1132.24</span></td><td><span title="1.807 / 1.767 / 1.736">1.767</span></td><td><span title="1.865 / 1.941 / 1.877">1.877</span></td><td><span title="29.394 / 29.326 / 28.976">29.23</span></td><td><span title="29.394 / 29.326 / 28.976">29.33</span></td><td><span title="28.491 / 27.978 / 28.510">28.49</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>32K</td><td><span title="817.031 / 828.975 / 677.719">817.03</span></td><td><span title="1116.560 / 1119.862 / 1143.450">1119.86</span></td><td><span title="2.489 / 2.499 / 3.018">2.499</span></td><td><span title="1.896 / 1.892 / 1.850">1.892</span></td><td><span title="24.870 / 25.657 / 28.200">26.24</span></td><td><span title="24.870 / 25.657 / 28.200">25.66</span></td><td><span title="27.604 / 27.440 / 27.979">27.60</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>64K</td><td><span title="1095.514 / 1124.116 / 1105.934">1105.93</span></td><td><span title="1069.502 / 1081.044 / 1068.291">1069.50</span></td><td><span title="1.886 / 1.838 / 1.879">1.879</span></td><td><span title="2.029 / 2.013 / 2.033">2.029</span></td><td><span title="28.903 / 29.575 / 29.081">29.19</span></td><td><span title="28.903 / 29.575 / 29.081">29.08</span></td><td><span title="27.152 / 27.673 / 27.837">27.67</span></td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>128K</td><td><span title="1015.918 / 1006.868 / 921.942">1006.87</span></td><td><span title="1009.717 / 1017.939 / 1034.449">1017.94</span></td><td><span title="2.027 / 2.061 / 2.232">2.061</span></td><td><span title="2.180 / 2.166 / 2.135">2.166</span></td><td><span title="27.204 / 27.631 / 27.248">27.36</span></td><td><span title="27.204 / 27.631 / 27.248">27.25</span></td><td><span title="27.443 / 26.911 / 26.993">26.99</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>0</td><td><span title="1147.473 / 1130.737 / 1113.986">1130.74</span></td><td><span title="1114.913 / 1134.565 / 1136.445">1134.56</span></td><td><span title="1.837 / 1.853 / 1.895">1.853</span></td><td><span title="1.878 / 1.845 / 1.836">1.845</span></td><td><span title="29.784 / 33.933 / 36.128">33.28</span></td><td><span title="29.784 / 33.933 / 36.128">33.93</span></td><td><span title="29.882 / 30.236 / 29.879">29.88</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>4K</td><td><span title="1102.311 / 910.575 / 850.864">910.57</span></td><td><span title="937.800 / 843.479 / 939.289">937.80</span></td><td><span title="1.854 / 2.226 / 2.384">2.226</span></td><td><span title="2.248 / 2.472 / 2.225">2.248</span></td><td><span title="29.318 / 34.709 / 33.878">32.64</span></td><td><span title="29.318 / 34.709 / 33.878">33.88</span></td><td><span title="32.473 / 30.225 / 31.360">31.36</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>8K</td><td><span title="990.040 / 888.307 / 880.671">888.31</span></td><td><span title="923.623 / 880.104 / 833.326">880.10</span></td><td><span title="2.070 / 2.315 / 2.320">2.315</span></td><td><span title="2.312 / 2.404 / 2.537">2.404</span></td><td><span title="30.112 / 27.680 / 30.315">29.37</span></td><td><span title="30.112 / 27.680 / 30.315">30.11</span></td><td><span title="30.568 / 30.571 / 30.966">30.57</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>12K</td><td><span title="1036.868 / 908.996 / 885.896">909.00</span></td><td><span title="1089.084 / 1008.859 / 1043.521">1043.52</span></td><td><span title="1.978 / 2.254 / 2.318">2.254</span></td><td><span title="1.969 / 2.096 / 2.028">2.028</span></td><td><span title="29.688 / 28.772 / 31.696">30.05</span></td><td><span title="29.688 / 28.772 / 31.696">29.69</span></td><td><span title="32.631 / 31.826 / 31.589">31.83</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>16K</td><td><span title="1029.950 / 877.383 / 896.641">896.64</span></td><td><span title="813.044 / 1053.889 / 1024.535">1024.53</span></td><td><span title="1.991 / 2.335 / 2.286">2.286</span></td><td><span title="2.595 / 2.014 / 2.070">2.070</span></td><td><span title="34.908 / 34.546 / 30.292">33.25</span></td><td><span title="34.908 / 34.546 / 30.292">34.55</span></td><td><span title="30.685 / 33.383 / 32.487">32.49</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>32K</td><td><span title="1028.056 / 1018.111 / 1001.965">1018.11</span></td><td><span title="1108.255 / 1065.819 / 1071.622">1071.62</span></td><td><span title="1.979 / 2.034 / 2.041">2.034</span></td><td><span title="1.910 / 1.982 / 1.974">1.974</span></td><td><span title="36.971 / 38.455 / 38.452">37.96</span></td><td><span title="36.971 / 38.455 / 38.452">38.45</span></td><td><span title="34.351 / 32.175 / 32.193">32.19</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>64K</td><td><span title="968.702 / 1013.015 / 999.230">999.23</span></td><td><span title="1062.580 / 1014.402 / 1015.147">1015.15</span></td><td><span title="2.131 / 2.032 / 2.081">2.081</span></td><td><span title="2.041 / 2.138 / 2.129">2.129</span></td><td><span title="35.218 / 37.572 / 34.062">35.62</span></td><td><span title="35.218 / 37.572 / 34.062">35.22</span></td><td><span title="35.759 / 34.713 / 34.035">34.71</span></td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>128K</td><td><span title="945.814 / 951.518 / 734.751">945.81</span></td><td><span title="724.219 / 945.183 / 975.976">945.18</span></td><td><span title="2.177 / 2.180 / 2.793">2.180</span></td><td><span title="3.004 / 2.333 / 2.256">2.333</span></td><td><span title="33.536 / 34.287 / 33.346">33.72</span></td><td><span title="33.536 / 34.287 / 33.346">33.54</span></td><td><span title="29.435 / 33.972 / 33.605">33.61</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>0</td><td><span title="1161.207 / 1132.274 / 1140.683">1140.68</span></td><td><span title="1127.877 / 1135.720 / 1152.738">1135.72</span></td><td><span title="1.811 / 1.840 / 1.848">1.840</span></td><td><span title="1.855 / 1.836 / 1.812">1.836</span></td><td><span title="88.915 / 94.710 / 93.373">92.33</span></td><td><span title="88.915 / 94.710 / 93.373">93.37</span></td><td><span title="89.587 / 91.897 / 68.359">89.59</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>4K</td><td><span title="921.020 / 972.808 / 941.658">941.66</span></td><td><span title="1102.896 / 1097.666 / 1109.384">1102.90</span></td><td><span title="2.217 / 2.080 / 2.149">2.149</span></td><td><span title="1.890 / 1.916 / 1.878">1.890</span></td><td><span title="32.252 / 30.799 / 30.889">31.31</span></td><td><span title="32.252 / 30.799 / 30.889">30.89</span></td><td><span title="26.293 / 26.929 / 28.022">26.93</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>8K</td><td><span title="942.540 / 951.567 / 935.425">942.54</span></td><td><span title="903.027 / 895.418 / 922.520">903.03</span></td><td><span title="2.169 / 2.155 / 2.179">2.169</span></td><td><span title="2.340 / 2.358 / 2.284">2.340</span></td><td><span title="29.648 / 28.340 / 27.637">28.54</span></td><td><span title="29.648 / 28.340 / 27.637">28.34</span></td><td><span title="25.182 / 26.018 / 26.897">26.02</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>12K</td><td><span title="1078.136 / 988.246 / 999.441">999.44</span></td><td><span title="1060.493 / 1084.826 / 1112.289">1084.83</span></td><td><span title="1.898 / 2.068 / 2.049">2.049</span></td><td><span title="1.988 / 1.947 / 1.895">1.947</span></td><td><span title="30.946 / 29.019 / 30.733">30.23</span></td><td><span title="30.946 / 29.019 / 30.733">30.73</span></td><td><span title="27.902 / 29.727 / 28.310">28.31</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>16K</td><td><span title="1098.651 / 1106.069 / 1082.977">1098.65</span></td><td><span title="1070.482 / 1043.017 / 1108.791">1070.48</span></td><td><span title="1.861 / 1.848 / 1.889">1.861</span></td><td><span title="1.972 / 2.021 / 1.905">1.972</span></td><td><span title="85.516 / 82.425 / 81.208">83.05</span></td><td><span title="85.516 / 82.425 / 81.208">82.43</span></td><td><span title="78.293 / 70.809 / 74.723">74.72</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>32K</td><td><span title="1039.822 / 1038.969 / 902.171">1038.97</span></td><td><span title="1060.457 / 1069.552 / 1041.814">1060.46</span></td><td><span title="1.950 / 1.990 / 2.261">1.990</span></td><td><span title="1.991 / 1.978 / 2.032">1.991</span></td><td><span title="81.761 / 28.612 / 27.506">45.96</span></td><td><span title="81.761 / 28.612 / 27.506">28.61</span></td><td><span title="26.123 / 25.559 / 25.207">25.56</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>64K</td><td><span title="995.093 / 1020.148 / 1006.600">1006.60</span></td><td><span title="1033.824 / 1008.571 / 1013.670">1013.67</span></td><td><span title="2.070 / 2.014 / 2.057">2.057</span></td><td><span title="2.096 / 2.146 / 2.134">2.134</span></td><td><span title="79.758 / 78.147 / 84.579">80.83</span></td><td><span title="79.758 / 78.147 / 84.579">79.76</span></td><td><span title="26.944 / 27.173 / 27.259">27.17</span></td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>128K</td><td><span title="956.269 / 956.070 / 970.057">956.27</span></td><td><span title="975.384 / 973.375 / 969.129">973.38</span></td><td><span title="2.148 / 2.161 / 2.116">2.148</span></td><td><span title="2.265 / 2.257 / 2.279">2.265</span></td><td><span title="81.312 / 78.632 / 81.850">80.60</span></td><td><span title="81.312 / 78.632 / 81.850">81.31</span></td><td><span title="81.897 / 82.218 / 79.319">81.90</span></td></tr></table></div></details><h2>入力とキャッシュ条件の監査</h2><details><summary>各条件の実トークン数・入力SHA・出力SHA</summary><pre>[
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2040,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;de6f13e9449f7146c6bf0e040545e787f3060aa51158587d64adac34d39465c3&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;dd328490187a67a80604e439c0b13a4e58a3a65dfe1c7ed4815abec1bb2843cd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2045,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;7099271711997e5cd1abda015fd86c8319b550a914466ee06283b4ff209f1515&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;2f87b513503c6af034b16d9307428a9f0f2492188b1d8cd69fc845f62b89c82f&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8168,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;3b1fbbb4675fe43ac30b51232774effb9425f1b30bfe377eb16766d815de2d6e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;db4ec19759da20020bfb66c7284da4c32c90ddad5b944984647731c19ddf11d5&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12232,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;87216daeeac52dc8f112ce9a98e4e2b6f1aeeb976254eb63313dfde86a9698f8&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;542fe111f3df9f587fd873544bf23e0c07d251069c690a5591c983d44844c71e&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16308,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;1f9968547b3113f2e148d6f81c25f2528d89d1666ddd3e76eef4e980329ad228&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;10c5240d636e04c405fb1ea27fe7b5d0440318cdef792878f774d51e35c809e6&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32704,
+        &quot;prefill&quot;: 2038,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;b3a32ee508e254caa9c7165c25e877645224151b0604f79db69e799668176ed9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc7c824154b07faaf6e216aa49b8a6f98244d9712a86fe311f5984ef8f5ad0f8&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65432,
+        &quot;prefill&quot;: 2068,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;6aea2b998ab1e32a06d69323cc84147f4177748cba3f54cb6e77c3fe0615591a&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;52fd5b28ea14467148415ed3ac368ce39f7245cffa58aa934a744f1b5ba42ce1&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130916,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8116d27c43e26ad37902b60c7a3cf2b503a2a21a6bbb5f2bbd5aa145b2383bc9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;2f38bc0d8bcd92b7e60d86c080be4e1d347dac8e5e4b39c34740ae2fc3cdaf01&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2040,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;de6f13e9449f7146c6bf0e040545e787f3060aa51158587d64adac34d39465c3&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;dd328490187a67a80604e439c0b13a4e58a3a65dfe1c7ed4815abec1bb2843cd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2045,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;7099271711997e5cd1abda015fd86c8319b550a914466ee06283b4ff209f1515&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;2f87b513503c6af034b16d9307428a9f0f2492188b1d8cd69fc845f62b89c82f&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8168,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;3b1fbbb4675fe43ac30b51232774effb9425f1b30bfe377eb16766d815de2d6e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;db4ec19759da20020bfb66c7284da4c32c90ddad5b944984647731c19ddf11d5&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12232,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;87216daeeac52dc8f112ce9a98e4e2b6f1aeeb976254eb63313dfde86a9698f8&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;542fe111f3df9f587fd873544bf23e0c07d251069c690a5591c983d44844c71e&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16308,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;1f9968547b3113f2e148d6f81c25f2528d89d1666ddd3e76eef4e980329ad228&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;10c5240d636e04c405fb1ea27fe7b5d0440318cdef792878f774d51e35c809e6&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32704,
+        &quot;prefill&quot;: 2038,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;b3a32ee508e254caa9c7165c25e877645224151b0604f79db69e799668176ed9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc7c824154b07faaf6e216aa49b8a6f98244d9712a86fe311f5984ef8f5ad0f8&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65432,
+        &quot;prefill&quot;: 2068,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;6aea2b998ab1e32a06d69323cc84147f4177748cba3f54cb6e77c3fe0615591a&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;52fd5b28ea14467148415ed3ac368ce39f7245cffa58aa934a744f1b5ba42ce1&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130916,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8116d27c43e26ad37902b60c7a3cf2b503a2a21a6bbb5f2bbd5aa145b2383bc9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;2f38bc0d8bcd92b7e60d86c080be4e1d347dac8e5e4b39c34740ae2fc3cdaf01&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2034,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;034b12259e6adc3df8325a2b00fa6070be8103d28cf27a60f9a395f5dcc602bf&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;82fd84fded8d257a194ac1eca43b70a866a79bac1e97e45d19f0292d6a7118bd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2041,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;f50a0cebe5c9154926642fea36d25fac5c07644f51a27f828adead0332f72fe4&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;8ddd067c8205a20751b56c3ac48d2daad70e29da600a6ec2ce3cf4ee007c77f3&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8172,
+        &quot;prefill&quot;: 2054,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;a2aecbab90b5350ff7bd5c9bd62eda7a425aa9abe52cdd9b0d2bff4db02279ce&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;d41deb81970acd64ba9ad9f5e72a070a0c979e8f4a94cca94acae44c9f5e61f9&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12248,
+        &quot;prefill&quot;: 2046,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;e9a8954aff1c5959edeb2002f683b7b56a464603caf04621402ffac8ed3514e6&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;7436c885335ec9d98c541d8ca85c0f343694b9ba0702a28073d90d6e1e9f6aed&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16324,
+        &quot;prefill&quot;: 2044,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;43e3e9ee5f380b5c7355ef341f9f084f4818fa1e90a11360506acd53c6d4bb2b&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;feabbf7a97b0f534ff3ea683bfe7f0eaf7bca76e05d20289c9381767883b6c0b&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32716,
+        &quot;prefill&quot;: 2035,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;9c0645f43d08c9df380b5406143a9eeeb209f3eac6ba112fd2e997064924c34e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;c6100761990cae0e50e5871ed0f97077d858aaa224b4cca19cf5bcfb45dad358&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65464,
+        &quot;prefill&quot;: 2064,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8859497cd3305e53e07d0f00a3732816358ab4fc8e716712b216a2f21d660121&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;262ee2e28900a107ea493604f21b4c2ce682b1054b98c27593a2f6aa694a96f5&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;builtin&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130984,
+        &quot;prefill&quot;: 2051,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;2ef317fe328e5698d13921e45cc472d745b7602dfe5a691bbfa646ac9408df7f&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;863825807579c48004a4978cdc2c7427fb6f2b4962ed1d230b2914f4d7df4c39&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2040,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;de6f13e9449f7146c6bf0e040545e787f3060aa51158587d64adac34d39465c3&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;dd328490187a67a80604e439c0b13a4e58a3a65dfe1c7ed4815abec1bb2843cd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2045,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;7099271711997e5cd1abda015fd86c8319b550a914466ee06283b4ff209f1515&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;21be9bcc6f76c1648570439c20abfea3735db671425be45e0fe1391896f68df3&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8168,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;3b1fbbb4675fe43ac30b51232774effb9425f1b30bfe377eb16766d815de2d6e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc16b2ddc2f190c50a57bb3e598be8554c8cb79127494f1fe5e346efa8b0abbf&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12232,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;87216daeeac52dc8f112ce9a98e4e2b6f1aeeb976254eb63313dfde86a9698f8&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;f5a495744043f1add96830822c3242ab5690d417d0ca3e4dea26bce02692af41&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16308,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;1f9968547b3113f2e148d6f81c25f2528d89d1666ddd3e76eef4e980329ad228&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;3f920fb6a2bde10e5e9bd84ba2a5496d7401c182c7b18d7accbe9035a7784fe2&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32704,
+        &quot;prefill&quot;: 2038,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;b3a32ee508e254caa9c7165c25e877645224151b0604f79db69e799668176ed9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc7c824154b07faaf6e216aa49b8a6f98244d9712a86fe311f5984ef8f5ad0f8&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65432,
+        &quot;prefill&quot;: 2068,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;6aea2b998ab1e32a06d69323cc84147f4177748cba3f54cb6e77c3fe0615591a&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;88e38e4f73e52bac3b497fb2254e32cc4e298aa171344c0ab120c24d7fb622dc&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;ar&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130916,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8116d27c43e26ad37902b60c7a3cf2b503a2a21a6bbb5f2bbd5aa145b2383bc9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;a7172f014328adee0b47f9ead0b2cb114f71b3695b89ebef3b0a3ce73f36172d&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2040,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;de6f13e9449f7146c6bf0e040545e787f3060aa51158587d64adac34d39465c3&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;dd328490187a67a80604e439c0b13a4e58a3a65dfe1c7ed4815abec1bb2843cd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2045,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;7099271711997e5cd1abda015fd86c8319b550a914466ee06283b4ff209f1515&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;21be9bcc6f76c1648570439c20abfea3735db671425be45e0fe1391896f68df3&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8168,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;3b1fbbb4675fe43ac30b51232774effb9425f1b30bfe377eb16766d815de2d6e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc16b2ddc2f190c50a57bb3e598be8554c8cb79127494f1fe5e346efa8b0abbf&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12232,
+        &quot;prefill&quot;: 2059,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;87216daeeac52dc8f112ce9a98e4e2b6f1aeeb976254eb63313dfde86a9698f8&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;f5a495744043f1add96830822c3242ab5690d417d0ca3e4dea26bce02692af41&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16308,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;1f9968547b3113f2e148d6f81c25f2528d89d1666ddd3e76eef4e980329ad228&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;3f920fb6a2bde10e5e9bd84ba2a5496d7401c182c7b18d7accbe9035a7784fe2&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32704,
+        &quot;prefill&quot;: 2038,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;b3a32ee508e254caa9c7165c25e877645224151b0604f79db69e799668176ed9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;fc7c824154b07faaf6e216aa49b8a6f98244d9712a86fe311f5984ef8f5ad0f8&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65432,
+        &quot;prefill&quot;: 2068,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;6aea2b998ab1e32a06d69323cc84147f4177748cba3f54cb6e77c3fe0615591a&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;88e38e4f73e52bac3b497fb2254e32cc4e298aa171344c0ab120c24d7fb622dc&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;prose&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130916,
+        &quot;prefill&quot;: 2058,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8116d27c43e26ad37902b60c7a3cf2b503a2a21a6bbb5f2bbd5aa145b2383bc9&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;a7172f014328adee0b47f9ead0b2cb114f71b3695b89ebef3b0a3ce73f36172d&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 0,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 0,
+        &quot;prefill&quot;: 2034,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;034b12259e6adc3df8325a2b00fa6070be8103d28cf27a60f9a395f5dcc602bf&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;82fd84fded8d257a194ac1eca43b70a866a79bac1e97e45d19f0292d6a7118bd&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 4096,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 4088,
+        &quot;prefill&quot;: 2041,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;f50a0cebe5c9154926642fea36d25fac5c07644f51a27f828adead0332f72fe4&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;8ddd067c8205a20751b56c3ac48d2daad70e29da600a6ec2ce3cf4ee007c77f3&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 8192,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 8172,
+        &quot;prefill&quot;: 2054,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;a2aecbab90b5350ff7bd5c9bd62eda7a425aa9abe52cdd9b0d2bff4db02279ce&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;d41deb81970acd64ba9ad9f5e72a070a0c979e8f4a94cca94acae44c9f5e61f9&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 12288,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 12248,
+        &quot;prefill&quot;: 2046,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;e9a8954aff1c5959edeb2002f683b7b56a464603caf04621402ffac8ed3514e6&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;7436c885335ec9d98c541d8ca85c0f343694b9ba0702a28073d90d6e1e9f6aed&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 16384,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 16324,
+        &quot;prefill&quot;: 2044,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;43e3e9ee5f380b5c7355ef341f9f084f4818fa1e90a11360506acd53c6d4bb2b&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;feabbf7a97b0f534ff3ea683bfe7f0eaf7bca76e05d20289c9381767883b6c0b&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 32768,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 32716,
+        &quot;prefill&quot;: 2035,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;9c0645f43d08c9df380b5406143a9eeeb209f3eac6ba112fd2e997064924c34e&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;c6100761990cae0e50e5871ed0f97077d858aaa224b4cca19cf5bcfb45dad358&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 65536,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 65464,
+        &quot;prefill&quot;: 2064,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;8859497cd3305e53e07d0f00a3732816358ab4fc8e716712b216a2f21d660121&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;262ee2e28900a107ea493604f21b4c2ce682b1054b98c27593a2f6aa694a96f5&quot;: 3
+    }
+  },
+  {
+    &quot;condition&quot;: &quot;external-q8&quot;,
+    &quot;mode&quot;: &quot;mtp&quot;,
+    &quot;task&quot;: &quot;repetition&quot;,
+    &quot;depth&quot;: 131072,
+    &quot;n&quot;: 3,
+    &quot;fixed_input&quot;: true,
+    &quot;fixed_counts&quot;: true,
+    &quot;token_counts&quot;: [
+      {
+        &quot;cache&quot;: 130984,
+        &quot;prefill&quot;: 2051,
+        &quot;output&quot;: 128,
+        &quot;n&quot;: 3
+      }
+    ],
+    &quot;request_hashes&quot;: {
+      &quot;2ef317fe328e5698d13921e45cc472d745b7602dfe5a691bbfa646ac9408df7f&quot;: 3
+    },
+    &quot;output_hashes&quot;: {
+      &quot;863825807579c48004a4978cdc2c7427fb6f2b4962ed1d230b2914f4d7df4c39&quot;: 3
+    }
+  }
+]</pre></details><h2>メモリと実行環境</h2><p>Windows、WSL、Docker、プロセスRSS、HIPの使用量と空きを記録しています。UMA上で重なる指標を加算していません。固定対象は会話の継続キャッシュで、OSのファイルキャッシュやドライバー内のキャッシュは全消去していません。温度・ファームウェアの性能モードはWSLから未取得です。</p><p class="note">要求の実行中に監視サンプルがなかった件数：windows 2件。これらのメモリ値は補間せず欠測として保持しています。速度・回答の記録欠損ではありません。</p><details><summary>観測範囲ごとのメモリ（GiB）と電源プラン</summary><pre>{
+  &quot;units&quot;: &quot;GiB; binary 1024^3 bytes&quot;,
+  &quot;scope&quot;: &quot;Samples timestamped inside formal measured HTTP requests only. Preparation and startup not included. Counters overlap and must not be added. Global HIP includes other system GPU allocations. WSL used is MemTotal minus MemAvailable. Server RSS excludes some device mappings. No interpolation across missing intervals.&quot;,
+  &quot;per_condition&quot;: {
+    &quot;builtin&quot;: {
+      &quot;HIP_global_used&quot;: {
+        &quot;samples&quot;: 892,
+        &quot;min_GiB&quot;: 69.81928253173828,
+        &quot;max_GiB&quot;: 78.70283508300781
+      },
+      &quot;HIP_global_free&quot;: {
+        &quot;samples&quot;: 892,
+        &quot;min_GiB&quot;: 32.773258209228516,
+        &quot;max_GiB&quot;: 41.65681076049805
+      },
+      &quot;server_RSS&quot;: {
+        &quot;samples&quot;: 892,
+        &quot;min_GiB&quot;: 3.3325042724609375,
+        &quot;max_GiB&quot;: 8.471920013427734
+      },
+      &quot;test_container_cgroup_current&quot;: {
+        &quot;samples&quot;: 892,
+        &quot;min_GiB&quot;: 3.2727508544921875,
+        &quot;max_GiB&quot;: 8.407093048095703
+      },
+      &quot;WSL_used_derived&quot;: {
+        &quot;samples&quot;: 137,
+        &quot;min_GiB&quot;: 6.21148681640625,
+        &quot;max_GiB&quot;: 11.534061431884766
+      },
+      &quot;WSL_available&quot;: {
+        &quot;samples&quot;: 137,
+        &quot;min_GiB&quot;: 11.931930541992188,
+        &quot;max_GiB&quot;: 17.254505157470703
+      },
+      &quot;WSL_swap_used&quot;: {
+        &quot;samples&quot;: 137,
+        &quot;min_GiB&quot;: 4.714923858642578,
+        &quot;max_GiB&quot;: 4.7291412353515625
+      },
+      &quot;Windows_physical_used&quot;: {
+        &quot;samples&quot;: 134,
+        &quot;min_GiB&quot;: 50.35750198364258,
+        &quot;max_GiB&quot;: 58.8724250793457
+      },
+      &quot;Windows_physical_free&quot;: {
+        &quot;samples&quot;: 134,
+        &quot;min_GiB&quot;: 4.7748565673828125,
+        &quot;max_GiB&quot;: 13.289779663085938
+      },
+      &quot;Windows_available&quot;: {
+        &quot;samples&quot;: 134,
+        &quot;min_GiB&quot;: 4.83038330078125,
+        &quot;max_GiB&quot;: 13.28396987915039
+      }
+    },
+    &quot;external-q8&quot;: {
+      &quot;HIP_global_used&quot;: {
+        &quot;samples&quot;: 881,
+        &quot;min_GiB&quot;: 69.71576690673828,
+        &quot;max_GiB&quot;: 78.68274307250977
+      },
+      &quot;HIP_global_free&quot;: {
+        &quot;samples&quot;: 881,
+        &quot;min_GiB&quot;: 32.79335021972656,
+        &quot;max_GiB&quot;: 41.76032638549805
+      },
+      &quot;server_RSS&quot;: {
+        &quot;samples&quot;: 881,
+        &quot;min_GiB&quot;: 3.2986068725585938,
+        &quot;max_GiB&quot;: 8.463642120361328
+      },
+      &quot;test_container_cgroup_current&quot;: {
+        &quot;samples&quot;: 881,
+        &quot;min_GiB&quot;: 3.1892967224121094,
+        &quot;max_GiB&quot;: 8.396476745605469
+      },
+      &quot;WSL_used_derived&quot;: {
+        &quot;samples&quot;: 132,
+        &quot;min_GiB&quot;: 6.336017608642578,
+        &quot;max_GiB&quot;: 11.541297912597656
+      },
+      &quot;WSL_available&quot;: {
+        &quot;samples&quot;: 132,
+        &quot;min_GiB&quot;: 11.924694061279297,
+        &quot;max_GiB&quot;: 17.129974365234375
+      },
+      &quot;WSL_swap_used&quot;: {
+        &quot;samples&quot;: 132,
+        &quot;min_GiB&quot;: 4.714931488037109,
+        &quot;max_GiB&quot;: 4.729377746582031
+      },
+      &quot;Windows_physical_used&quot;: {
+        &quot;samples&quot;: 129,
+        &quot;min_GiB&quot;: 51.63304901123047,
+        &quot;max_GiB&quot;: 58.85098648071289
+      },
+      &quot;Windows_physical_free&quot;: {
+        &quot;samples&quot;: 129,
+        &quot;min_GiB&quot;: 4.796295166015625,
+        &quot;max_GiB&quot;: 12.014232635498047
+      },
+      &quot;Windows_available&quot;: {
+        &quot;samples&quot;: 129,
+        &quot;min_GiB&quot;: 4.76873779296875,
+        &quot;max_GiB&quot;: 13.817874908447266
+      }
+    }
+  },
+  &quot;formal_request_count&quot;: 144,
+  &quot;requests_without_telemetry&quot;: {
+    &quot;windows&quot;: 2
+  },
+  &quot;power_plans&quot;: {
+    &quot;電源設定の GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (バランス)&quot;: 2188
+  },
+  &quot;firmware_platform_profiles&quot;: [],
+  &quot;temperatures_available&quot;: false,
+  &quot;before&quot;: {
+    &quot;at&quot;: &quot;2026-11-08T01:49:33.163038+00:00&quot;,
+    &quot;scope&quot;: &quot;Normal Gufo stopped before formal measurement&quot;,
+    &quot;HIP&quot;: {
+      &quot;total_bytes&quot;: 111.47609329223633,
+      &quot;free_bytes&quot;: 110.56666946411133,
+      &quot;used_bytes&quot;: 0.909423828125
+    },
+    &quot;WSL_available_GiB&quot;: 20.691516876220703,
+    &quot;normal_running&quot;: false,
+    &quot;Windows_observation_window&quot;: {
+      &quot;start_unix&quot;: 1794102573.163066,
+      &quot;end_unix&quot;: 1794102594.0067897,
+      &quot;samples&quot;: 7,
+      &quot;used&quot;: {
+        &quot;samples&quot;: 7,
+        &quot;min_GiB&quot;: 47.26251220703125,
+        &quot;max_GiB&quot;: 47.384639739990234
+      },
+      &quot;free&quot;: {
+        &quot;samples&quot;: 7,
+        &quot;min_GiB&quot;: 16.26264190673828,
+        &quot;max_GiB&quot;: 16.384769439697266
+      },
+      &quot;available&quot;: {
+        &quot;samples&quot;: 7,
+        &quot;min_GiB&quot;: 16.242694854736328,
+        &quot;max_GiB&quot;: 16.378978729248047
+      }
+    }
+  },
+  &quot;after&quot;: {
+    &quot;at&quot;: &quot;2026-11-08T03:55:14.183827+00:00&quot;,
+    &quot;scope&quot;: &quot;Normal built-in PLE after startup, a short response and configuration verification&quot;,
+    &quot;HIP&quot;: {
+      &quot;total_bytes&quot;: 111.47609329223633,
+      &quot;free_bytes&quot;: 34.164791107177734,
+      &quot;used_bytes&quot;: 77.3113021850586
+    },
+    &quot;WSL_available_GiB&quot;: 17.082462310791016,
+    &quot;normal_running&quot;: true,
+    &quot;Windows_observation_window&quot;: {
+      &quot;start_unix&quot;: 1794110114.1838534,
+      &quot;end_unix&quot;: null,
+      &quot;samples&quot;: 1,
+      &quot;used&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;min_GiB&quot;: 58.74687194824219,
+        &quot;max_GiB&quot;: 58.74687194824219
+      },
+      &quot;free&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;min_GiB&quot;: 4.900409698486328,
+        &quot;max_GiB&quot;: 4.900409698486328
+      },
+      &quot;available&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;min_GiB&quot;: 4.889980316162109,
+        &quot;max_GiB&quot;: 4.889980316162109
+      }
+    }
+  }
+}</pre></details><h2>所要時間と次回の測定回数</h2><p>正式測定の完了分：1.66時間（99.9分）。予備確認：0.08時間（5.0分）。起動・履歴作成を含む実際の経過時間です。開始記録より前の調査時間は含めません。</p><p>容量調整前の4GiB試行：0.28時間（17.0分）（正式値には含めず別保存）。</p><p>正式測定開始から通常復帰まで：1.68時間（100.5分）。</p><p>記録開始（予備確認前の準備）から通常復帰まで：2.11時間（126.7分）。上記の正式測定・予備確認・容量調整前の試行と、その間の準備・調査を含みます。</p><div class="scroll"><table class="compact"><tr><th>工程</th><th>実測所要時間</th></tr><tr><td>サーバー起動</td><td>0.14時間（8.5分）</td></tr><tr><td>ウォームアップ</td><td>0.01時間（0.7分）</td></tr><tr><td>測定対象の要求</td><td>0.25時間（14.9分）</td></tr><tr><td>固定履歴の作成</td><td>1.21時間（72.7分）</td></tr><tr><td>再利用経路を揃える短い要求</td><td>0.04時間（2.2分）</td></tr><tr><td>サーバー終了</td><td>0.01時間（0.7分）</td></tr><tr><td>その他の準備・記録</td><td>0.00時間（0.2分）</td></tr></table></div><div class="scroll"><table class="compact"><tr><th>回数</th><th>今回の先頭N回にかかった時間</th><th>完了組数</th></tr><tr><td>1回</td><td>0.55時間（33.1分）</td><td>6/6</td></tr><tr><td>2回</td><td>1.10時間（66.0分）</td><td>12/12</td></tr><tr><td>3回</td><td>1.66時間（99.9分）</td><td>18/18</td></tr></table></div><p class="note">同じ手順で回数を増やす場合の単純換算：5回は約2.77時間、10回は約5.55時間。5回・10回は未実測で、予備調査と通常復帰の時間を含まない推計です。</p><p>次表は同じ3回のうち先頭1回・2回で集計した値が、3回の中央値からどれだけ異なるかを示します。3回値も真の性能を保証する値ではありません。全組合せによる1回／2回の中央値範囲もJSONに保存しています。</p><div class="scroll"><table class="compact"><tr><th>条件</th><th>履歴</th><th>Decode 1回</th><th>2回中央値</th><th>3回中央値 (tok/s)</th><th>1回と3回の差</th><th>2回と3回の差</th></tr><tr><td>内蔵PLE AR 文章</td><td>0</td><td>29.24</td><td>28.94</td><td>28.63</td><td>+2.1%</td><td>+1.1%</td></tr><tr><td>内蔵PLE AR 文章</td><td>4K</td><td>29.13</td><td>28.90</td><td>29.04</td><td>+0.3%</td><td>-0.5%</td></tr><tr><td>内蔵PLE AR 文章</td><td>8K</td><td>28.42</td><td>28.22</td><td>28.42</td><td>+0.0%</td><td>-0.7%</td></tr><tr><td>内蔵PLE AR 文章</td><td>12K</td><td>28.35</td><td>27.95</td><td>28.35</td><td>+0.0%</td><td>-1.4%</td></tr><tr><td>内蔵PLE AR 文章</td><td>16K</td><td>28.56</td><td>28.30</td><td>28.56</td><td>+0.0%</td><td>-0.9%</td></tr><tr><td>内蔵PLE AR 文章</td><td>32K</td><td>27.40</td><td>27.46</td><td>27.51</td><td>-0.4%</td><td>-0.2%</td></tr><tr><td>内蔵PLE AR 文章</td><td>64K</td><td>27.24</td><td>27.12</td><td>27.24</td><td>+0.0%</td><td>-0.4%</td></tr><tr><td>内蔵PLE AR 文章</td><td>128K</td><td>27.63</td><td>27.60</td><td>27.63</td><td>+0.0%</td><td>-0.1%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>0</td><td>31.32</td><td>31.23</td><td>31.32</td><td>+0.0%</td><td>-0.3%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>4K</td><td>28.20</td><td>28.35</td><td>28.49</td><td>-1.0%</td><td>-0.5%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>8K</td><td>30.83</td><td>30.33</td><td>29.84</td><td>+3.3%</td><td>+1.6%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>12K</td><td>34.56</td><td>34.91</td><td>35.25</td><td>-1.9%</td><td>-1.0%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>16K</td><td>31.93</td><td>31.95</td><td>31.93</td><td>+0.0%</td><td>+0.1%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>32K</td><td>31.97</td><td>32.46</td><td>32.59</td><td>-1.9%</td><td>-0.4%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>64K</td><td>35.44</td><td>35.33</td><td>35.28</td><td>+0.5%</td><td>+0.1%</td></tr><tr><td>内蔵PLE MTP 文章</td><td>128K</td><td>37.10</td><td>37.47</td><td>37.65</td><td>-1.4%</td><td>-0.5%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>0</td><td>87.49</td><td>90.58</td><td>89.92</td><td>-2.7%</td><td>+0.7%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>4K</td><td>26.17</td><td>26.29</td><td>26.41</td><td>-0.9%</td><td>-0.5%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>8K</td><td>25.57</td><td>26.09</td><td>26.60</td><td>-3.9%</td><td>-1.9%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>12K</td><td>26.78</td><td>27.02</td><td>27.26</td><td>-1.8%</td><td>-0.9%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>16K</td><td>25.21</td><td>25.34</td><td>25.46</td><td>-1.0%</td><td>-0.5%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>32K</td><td>26.03</td><td>25.85</td><td>26.03</td><td>+0.0%</td><td>-0.7%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>64K</td><td>27.24</td><td>27.29</td><td>27.33</td><td>-0.3%</td><td>-0.2%</td></tr><tr><td>内蔵PLE MTP 反復</td><td>128K</td><td>80.75</td><td>81.15</td><td>80.75</td><td>+0.0%</td><td>+0.5%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>0</td><td>29.37</td><td>29.24</td><td>29.11</td><td>+0.9%</td><td>+0.5%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>4K</td><td>29.02</td><td>28.93</td><td>29.02</td><td>+0.0%</td><td>-0.3%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>8K</td><td>25.05</td><td>26.56</td><td>28.06</td><td>-10.7%</td><td>-5.4%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>12K</td><td>29.01</td><td>28.51</td><td>29.01</td><td>+0.0%</td><td>-1.7%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>16K</td><td>28.49</td><td>28.23</td><td>28.49</td><td>+0.0%</td><td>-0.9%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>32K</td><td>27.60</td><td>27.52</td><td>27.60</td><td>+0.0%</td><td>-0.3%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>64K</td><td>27.15</td><td>27.41</td><td>27.67</td><td>-1.9%</td><td>-0.9%</td></tr><tr><td>外部Q8_0 PLE AR 文章</td><td>128K</td><td>27.44</td><td>27.18</td><td>26.99</td><td>+1.7%</td><td>+0.7%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>0</td><td>29.88</td><td>30.06</td><td>29.88</td><td>+0.0%</td><td>+0.6%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>4K</td><td>32.47</td><td>31.35</td><td>31.36</td><td>+3.6%</td><td>-0.0%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>8K</td><td>30.57</td><td>30.57</td><td>30.57</td><td>-0.0%</td><td>-0.0%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>12K</td><td>32.63</td><td>32.23</td><td>31.83</td><td>+2.5%</td><td>+1.3%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>16K</td><td>30.68</td><td>32.03</td><td>32.49</td><td>-5.5%</td><td>-1.4%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>32K</td><td>34.35</td><td>33.26</td><td>32.19</td><td>+6.7%</td><td>+3.3%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>64K</td><td>35.76</td><td>35.24</td><td>34.71</td><td>+3.0%</td><td>+1.5%</td></tr><tr><td>外部Q8_0 PLE MTP 文章</td><td>128K</td><td>29.44</td><td>31.70</td><td>33.61</td><td>-12.4%</td><td>-5.7%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>0</td><td>89.59</td><td>90.74</td><td>89.59</td><td>+0.0%</td><td>+1.3%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>4K</td><td>26.29</td><td>26.61</td><td>26.93</td><td>-2.4%</td><td>-1.2%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>8K</td><td>25.18</td><td>25.60</td><td>26.02</td><td>-3.2%</td><td>-1.6%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>12K</td><td>27.90</td><td>28.81</td><td>28.31</td><td>-1.4%</td><td>+1.8%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>16K</td><td>78.29</td><td>74.55</td><td>74.72</td><td>+4.8%</td><td>-0.2%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>32K</td><td>26.12</td><td>25.84</td><td>25.56</td><td>+2.2%</td><td>+1.1%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>64K</td><td>26.94</td><td>27.06</td><td>27.17</td><td>-0.8%</td><td>-0.4%</td></tr><tr><td>外部Q8_0 PLE MTP 反復</td><td>128K</td><td>81.90</td><td>82.06</td><td>81.90</td><td>+0.0%</td><td>+0.2%</td></tr></table></div><h2>条件と原記録</h2><ul><li><span title="参照先はローカル保管">回答再現性・速度変動の要点</span></li><li><span title="参照先はローカル保管">測定条件・原応答・復帰・リンクの検証</span></li><li><span title="参照先はローカル保管">指定された3回での測定終了記録</span></li><li><a href="../../../../evidence/benchmark/runs/fixed-input-ple-20261108/historical-comparison.json">前回3回との別集計比較</a></li><li><a href="../../../../evidence/benchmark/runs/fixed-input-ple-20261108/duration-summary.json">全体・各組・各工程の所要時間</a></li><li><a href="../../../../evidence/benchmark/runs/fixed-input-ple-20261108/repetition-comparison.json">1回・2回・3回での集計比較</a></li><li><span title="参照先はローカル保管">同じ回答・draft件数でまとめた速度</span></li><li><span title="参照先はローカル保管">測定条件・版・実行ファイルSHA</span></li><li><a href="../../../../evidence/benchmark/runs/fixed-input-ple-20261108/summary.json">中央値・四分位・全測定値・回答一致</a></li><li><span title="参照先はローカル保管">全測定CSV</span></li><li><span title="参照先はローカル保管">要求IDと全指標</span></li><li><span title="参照先はローカル保管">回答本文と各回の対応</span></li><li><span title="参照先はローカル保管">固定入力と履歴</span></li><li><span title="参照先はローカル保管">各測定組の開始・終了・実行コマンド</span></li><li><span title="参照先はローカル保管">通常設定への復帰確認</span></li><li><span title="参照先はローカル保管">メモリ監視の集計</span></li></ul><p>正式測定の各フォルダに要求JSON、SSE回答本文、サーバーログ、キャッシュ準備の記録、HIP監視を保存。pilotは予備確認で正式測定に含めません。回答不一致と速度測定の完了を分け、値の大きさだけで測定を破棄していません。</p></body></html>

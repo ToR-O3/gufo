@@ -1,0 +1,314 @@
+{
+  "schema": "sc117-v070-upstream-audit-v1",
+  "recorded_utc": "2026-10-04T13:41:17.391085+00:00",
+  "status": "read_only_audit_complete_migration_qualification_pending",
+  "official": {
+    "repository": "https://github.com/gufo-org/gufo",
+    "release": "https://github.com/gufo-org/gufo/releases/tag/v0.7.0",
+    "release_date": "2026-10-04",
+    "tag": "v0.7.0",
+    "commit": "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d",
+    "local_tag_commit": "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d",
+    "tag_object_type": "commit",
+    "version_txt": "0.7.0",
+    "remote_tag_confirmation": "Parent verified official origin ls-remote and fetched tag; this agent did not fetch or mutate refs"
+  },
+  "previous_baseline": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+  "previous_custom": "e1383c37049853e0104f2ea728bf4b6eb59f4c35",
+  "commits": [
+    "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d chore(main): release 0.7.0",
+    "6a9ea9f263de4598a4c49954f10c5d285bcf7635 fix(server): detect idle GPU loss and defer streaming success (#406)",
+    "ea064189976242f33f54bac92be6e0cdbd33fc48 fix(server): reuse replayed tool turns with union and typed arguments (#404)"
+  ],
+  "upstream_changed_files": [
+    ".release-please-manifest.json",
+    "CHANGELOG.md",
+    "docs/SERVER.md",
+    "src/cli/serve/generation_metrics.hpp",
+    "src/cli/serve/http_server.cpp",
+    "src/cli/serve/http_server.hpp",
+    "src/cli/serve/inference_backend.cpp",
+    "src/cli/serve/openai_chat.cpp",
+    "src/cli/serve/text_generation_backend.hpp",
+    "src/cli/serve/text_generation_scheduler.cpp",
+    "src/cli/serve/text_generation_scheduler.hpp",
+    "src/cli/serve/text_model_runner.hpp",
+    "src/core/json.hpp",
+    "src/core/json_constraint.cpp",
+    "tests/cli/http_server_test.cpp",
+    "tests/cli/openai_chat_test.cpp",
+    "tests/cli/text_generation_scheduler_test.cpp",
+    "tests/core/json_constraint_test.cpp",
+    "tests/core/json_test.cpp",
+    "tests/functional/README.md",
+    "tests/functional/device_loss.py",
+    "tests/functional/device_loss_faults.cpp",
+    "tests/functional/openai_sdk.py",
+    "tests/functional/run.py",
+    "tests/functional/stream_start.py",
+    "tests/functional/tool_agent.py",
+    "version.txt"
+  ],
+  "upstream_changed_file_count": 27,
+  "custom_changed_files": [
+    "THIRD_PARTY_NOTICES.md",
+    "docs/models/qwen3.8-flash-next/SC117.md",
+    "src/cli/bench/bench.cpp",
+    "src/cli/bench/bench.hpp",
+    "src/cli/prompt/prompt.cpp",
+    "src/cli/prompt/prompt.hpp",
+    "src/cli/serve/inference_backend.cpp",
+    "src/cli/serve/inference_backend.hpp",
+    "src/cli/serve/serve.cpp",
+    "src/core/gguf_reader.hpp",
+    "src/core/hip/weight_upload.cpp",
+    "src/core/hip/weight_upload.hpp",
+    "src/core/quant/ggml_dequant.cpp",
+    "src/core/quant/ggml_dequant.hpp",
+    "src/core/quant/iq_codebooks.hpp",
+    "src/models/qwen/gemm_route.hpp",
+    "src/models/qwen38_flash_next/CMakeLists.txt",
+    "src/models/qwen38_flash_next/cpu_ops.cpp",
+    "src/models/qwen38_flash_next/cpu_ops.hpp",
+    "src/models/qwen38_flash_next/engine.cpp",
+    "src/models/qwen38_flash_next/engine.hpp",
+    "src/models/qwen38_flash_next/kernels/rocm/compat_upload.hpp",
+    "src/models/qwen38_flash_next/kernels/rocm/device_model.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/executor.hpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/VENDOR.md",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/common.hpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/mmvq.hip.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_ggml_stubs.h",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/vecdotq.hpp",
+    "src/models/qwen38_flash_next/reference.cpp",
+    "src/models/qwen38_flash_next/reference.hpp",
+    "src/models/qwen38_flash_next/sc117_q8_allowlist.inc",
+    "src/models/qwen38_flash_next/weight_compat.cpp",
+    "src/models/qwen38_flash_next/weight_compat.hpp",
+    "src/models/qwen38_flash_next/weights.cpp",
+    "src/models/qwen38_flash_next/weights.hpp",
+    "tests/cli/text_generation_scheduler_test.cpp",
+    "tests/core/gguf_reader_test.cpp",
+    "tests/functional/README.md",
+    "tests/functional/sc117_continuation.py",
+    "tests/models/qwen38_flash_next/CMakeLists.txt",
+    "tests/models/qwen38_flash_next/compat_upload_test.cpp",
+    "tests/models/qwen38_flash_next/fixtures/generate_sc117_quant.py",
+    "tests/models/qwen38_flash_next/fixtures/sc117_continuation/manifest.json",
+    "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn1.reply.txt",
+    "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn1.request.json",
+    "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn2.request.json",
+    "tests/models/qwen38_flash_next/fixtures/sc117_q8.bin",
+    "tests/models/qwen38_flash_next/fixtures/sc117_quant.bin",
+    "tests/models/qwen38_flash_next/fixtures/sc117_quant.json",
+    "tests/models/qwen38_flash_next/gpu_probe.cpp",
+    "tests/models/qwen38_flash_next/reference_probe.cpp",
+    "tests/models/qwen38_flash_next/sc117_bind_probe.cpp",
+    "tests/models/qwen38_flash_next/sc117_continuation_replay.cpp",
+    "tests/models/qwen38_flash_next/sc117_expert_ops_test.cpp",
+    "tests/models/qwen38_flash_next/sc117_ffn_replay.cpp",
+    "tests/models/qwen38_flash_next/sc117_quality_probe.cpp",
+    "tests/models/qwen38_flash_next/sc117_quant_test.cpp",
+    "tests/models/qwen38_flash_next/session_sc117.cpp",
+    "tests/models/qwen38_flash_next/session_test.cpp",
+    "tests/models/qwen38_flash_next/trunk_trace_audit.cpp"
+  ],
+  "overlap_files": [
+    "src/cli/serve/inference_backend.cpp",
+    "tests/cli/text_generation_scheduler_test.cpp",
+    "tests/functional/README.md"
+  ],
+  "upstream_patch": {
+    "path": "upstream-baseline-to-v070.patch",
+    "sha256": "e6d5481c0ea0b5597d73ad83baff9e666b59f7fc57ea212a0b8226c56f00457d"
+  },
+  "file_identity": [
+    {
+      "path": "flake.nix",
+      "baseline_sha256": "a0eeb35dc76908b63ccbb8489017df02ccf98d3c1882c99059610a64d7fc4f4c",
+      "v070_sha256": "a0eeb35dc76908b63ccbb8489017df02ccf98d3c1882c99059610a64d7fc4f4c",
+      "custom_sha256": "a0eeb35dc76908b63ccbb8489017df02ccf98d3c1882c99059610a64d7fc4f4c",
+      "upstream_unchanged": true,
+      "custom_change": false
+    },
+    {
+      "path": "flake.lock",
+      "baseline_sha256": "faabad820ec09caab7351bf48910cec895a38cf1766e098e3065aea86f405ed6",
+      "v070_sha256": "faabad820ec09caab7351bf48910cec895a38cf1766e098e3065aea86f405ed6",
+      "custom_sha256": "faabad820ec09caab7351bf48910cec895a38cf1766e098e3065aea86f405ed6",
+      "upstream_unchanged": true,
+      "custom_change": false
+    },
+    {
+      "path": "AGENTS.md",
+      "baseline_sha256": "c825b6c19bdb17e8288d08e4fa5cdeadf583daa44dda5f6fdf2204cf9e5b2afc",
+      "v070_sha256": "c825b6c19bdb17e8288d08e4fa5cdeadf583daa44dda5f6fdf2204cf9e5b2afc",
+      "custom_sha256": "c825b6c19bdb17e8288d08e4fa5cdeadf583daa44dda5f6fdf2204cf9e5b2afc",
+      "upstream_unchanged": true,
+      "custom_change": false
+    },
+    {
+      "path": "CMakeLists.txt",
+      "baseline_sha256": "f64ec4e1262a438c05c9f294bf2a207976561454e410d0d6ed0df5bdbd46c6c8",
+      "v070_sha256": "f64ec4e1262a438c05c9f294bf2a207976561454e410d0d6ed0df5bdbd46c6c8",
+      "custom_sha256": "f64ec4e1262a438c05c9f294bf2a207976561454e410d0d6ed0df5bdbd46c6c8",
+      "upstream_unchanged": true,
+      "custom_change": false
+    },
+    {
+      "path": "CMakePresets.json",
+      "baseline_sha256": "96dc827a51670b28e6a9359c28f7d14eb95e950b78869d045d2013dfe0043456",
+      "v070_sha256": "96dc827a51670b28e6a9359c28f7d14eb95e950b78869d045d2013dfe0043456",
+      "custom_sha256": "96dc827a51670b28e6a9359c28f7d14eb95e950b78869d045d2013dfe0043456",
+      "upstream_unchanged": true,
+      "custom_change": false
+    },
+    {
+      "path": "src/core/gguf_reader.hpp",
+      "baseline_sha256": "7e86d8b011a27a5dd4dd517bf5d39f55f3498873dd7cb7e916f8483fceb86262",
+      "v070_sha256": "7e86d8b011a27a5dd4dd517bf5d39f55f3498873dd7cb7e916f8483fceb86262",
+      "custom_sha256": "82b6df04d1de76b7120b331f65d668b7228ffb33020aba1a2e08f3469d15f9a0",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/core/quant/ggml_dequant.cpp",
+      "baseline_sha256": "4e657ab6edb267bf3fe7e6759b40ef54026745888b1decb05bc1b31f941f27e1",
+      "v070_sha256": "4e657ab6edb267bf3fe7e6759b40ef54026745888b1decb05bc1b31f941f27e1",
+      "custom_sha256": "c0d43b7dba07a13f9729f76973c3fbde6e89882001ad83e3170341a305238426",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/core/hip/weight_upload.cpp",
+      "baseline_sha256": "24bd67bc72035e308914f90ad4428af512e27efc0aca6350f38e1aa650d2955b",
+      "v070_sha256": "24bd67bc72035e308914f90ad4428af512e27efc0aca6350f38e1aa650d2955b",
+      "custom_sha256": "91718f152018505af5f1f2dc2858b6fc8ef00fdf538cb57d02afba7a947ef485",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/weights.cpp",
+      "baseline_sha256": "0e3bfdb36cdc09e5f7515f96d8efed315d54235e69523e963c5fc8b1c63f3d72",
+      "v070_sha256": "0e3bfdb36cdc09e5f7515f96d8efed315d54235e69523e963c5fc8b1c63f3d72",
+      "custom_sha256": "32f817d6303c04f9b2cb32f63f56ace2c70037aea3a959a45bcef9beabaee671",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/cpu_ops.cpp",
+      "baseline_sha256": "ff8845fb120bc4a38c0f5c41029213995130667d743975b92a97a9d7efc8a093",
+      "v070_sha256": "ff8845fb120bc4a38c0f5c41029213995130667d743975b92a97a9d7efc8a093",
+      "custom_sha256": "8113c78835df31c6648d1a2beb1e38856febcbf57f70fec138be340421156aa2",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/engine.cpp",
+      "baseline_sha256": "743a2d8d3f95fdee166eeea4dabdf6cdba3747b99b1ef9ce1facfe3b9901da4e",
+      "v070_sha256": "743a2d8d3f95fdee166eeea4dabdf6cdba3747b99b1ef9ce1facfe3b9901da4e",
+      "custom_sha256": "d77a96aad616ea753035466dc7e6138fd49b516045b0720954bbc1fd61a48d0f",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+      "baseline_sha256": "5669772b646633d5c8cdcfe6b7bf265eabef5181138cfd449566f969e59f183b",
+      "v070_sha256": "5669772b646633d5c8cdcfe6b7bf265eabef5181138cfd449566f969e59f183b",
+      "custom_sha256": "38ed0ba3357ae10e076dccd321b4965064954beacb521aaeeefa5bc3e2f07653",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp",
+      "baseline_sha256": "492a5c9fe58eb56421a3e81f9b4e55a22c4d97e2d0ba91e503ff33bb23a55648",
+      "v070_sha256": "492a5c9fe58eb56421a3e81f9b4e55a22c4d97e2d0ba91e503ff33bb23a55648",
+      "custom_sha256": "e28e8ad7574d6fcb3662ec8f34868ea059fb2ff06b56a72546858ba4b79cb65a",
+      "upstream_unchanged": true,
+      "custom_change": true
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/mmq/vecdotq.hpp",
+      "baseline_sha256": "ee6c011bff45a4b382628454aee6b2428d63bb8d4a4fd56a3f0f3b79ffaedad0",
+      "v070_sha256": "ee6c011bff45a4b382628454aee6b2428d63bb8d4a4fd56a3f0f3b79ffaedad0",
+      "custom_sha256": "2a885e255a1ddd3c10e57b44b41fb6cb18a8b6c60fd2a73538461c20e5d00f4c",
+      "upstream_unchanged": true,
+      "custom_change": true
+    }
+  ],
+  "source_ranges": [
+    {
+      "path": "src/cli/serve/inference_backend.cpp",
+      "start": 2501,
+      "end": 2519,
+      "purpose": "QFN final_token_advance_required remains false",
+      "text": "  [[nodiscard]] TextRunnerDescriptor Descriptor() const override {\n    return {\n        .model_id = model_->ModelName(),\n        .state_abi = std::string(kQwenFlashNextStateAbi),\n        .max_context = max_context_,\n        .capabilities =\n            TextRunnerCapabilities{\n                .incremental_prefill = true,\n                .snapshot = true,\n                .fork = true,\n                .final_token_advance_required = false,\n                .incremental_text_is_exact = true,\n                .multi_token_decode = use_mtp_,\n                .batched_multi_token_decode = use_mtp_,\n                .batched_multi_token_decode_max_width = use_mtp_ ? 8u : 0u,\n                .prefix_reuse = true,\n            },\n        .persistence = persistence_,\n    };",
+      "official_url": "https://github.com/gufo-org/gufo/blob/aedc129ffa98f00ebb1b1c8b75df60b2d987c48d/src/cli/serve/inference_backend.cpp#L2501"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/weights.cpp",
+      "start": 19,
+      "end": 40,
+      "purpose": "Format geometry remains limited to earlier formats",
+      "text": "[[nodiscard]] Format FormatOf(GgmlType type) noexcept {\n  switch (type) {\n    case GgmlType::kF32:\n      return {1, 4};\n    case GgmlType::kF16:\n    case GgmlType::kBF16:\n      return {1, 2};\n    case GgmlType::kQ8_0:\n      return {32, 34};\n    case GgmlType::kQ5_1:\n      return {32, 24};\n    case GgmlType::kIQ4_NL:\n      return {32, 18};\n    case GgmlType::kQ4_K:\n      return {256, 144};\n    case GgmlType::kQ5_K:\n      return {256, 176};\n    case GgmlType::kQ6_K:\n      return {256, 210};\n    default:\n      return {0, 0};\n  }",
+      "official_url": "https://github.com/gufo-org/gufo/blob/aedc129ffa98f00ebb1b1c8b75df60b2d987c48d/src/models/qwen38_flash_next/weights.cpp#L19"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/weights.cpp",
+      "start": 137,
+      "end": 156,
+      "purpose": "Expert accepted types do not contain the six SC117 formats",
+      "text": "    l.linear = linear;\n    const std::string p = \"blk.\" + std::to_string(il) + \".\";\n    const std::uint64_t hidden = c.hidden_size;\n    const std::uint64_t hc_dim = c.HcDim();\n    const auto dense = {GgmlType::kQ8_0, GgmlType::kBF16, GgmlType::kF16,\n                        GgmlType::kF32};\n    const auto experts = {GgmlType::kQ4_K, GgmlType::kQ5_K, GgmlType::kQ6_K,\n                          GgmlType::kQ5_1, GgmlType::kQ8_0};\n\n    l.hc_attn = Mixer(p + \"hc_attn\", c, true);\n    l.hc_ffn = Mixer(p + \"hc_ffn\", c, true);\n\n    if (linear) {\n      l.ssm_qkv =\n          Get(p + \"attn_qkv.weight\", hidden, c.SsmConvChannels(), 1, dense);\n      l.ssm_gate =\n          Get(p + \"attn_gate.weight\", hidden, c.SsmValueDim(), 1, dense);\n      l.ssm_conv1d = Get(p + \"ssm_conv1d.weight\", c.ssm_conv_kernel,\n                         c.SsmConvChannels(), 1, {GgmlType::kF32});\n      l.ssm_alpha = Get(p + \"ssm_alpha.weight\", hidden, c.ssm_num_v_heads, 1,",
+      "official_url": "https://github.com/gufo-org/gufo/blob/aedc129ffa98f00ebb1b1c8b75df60b2d987c48d/src/models/qwen38_flash_next/weights.cpp#L137"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/cpu_ops.cpp",
+      "start": 40,
+      "end": 84,
+      "purpose": "CPU row decoder has only existing formats including IQ4_NL",
+      "text": "void DequantizeRow(const TensorRef& t, std::uint64_t e, std::uint64_t row,\n                   float* out) {\n  const std::uint8_t* src = t.Expert(e) + row * t.RowBytes();\n  const std::size_t k = t.cols;\n  switch (t.type) {\n    case GgmlType::kF32:\n      std::memcpy(out, src, k * sizeof(float));\n      break;\n    case GgmlType::kF16:\n      for (std::size_t i = 0; i < k; ++i) {\n        std::uint16_t h = 0;\n        std::memcpy(&h, src + 2 * i, 2);\n        out[i] = gufo::quant::Fp16ToFloat(h);\n      }\n      break;\n    case GgmlType::kBF16:\n      for (std::size_t i = 0; i < k; ++i) {\n        std::uint16_t h = 0;\n        std::memcpy(&h, src + 2 * i, 2);\n        const std::uint32_t bits = static_cast<std::uint32_t>(h) << 16;\n        std::memcpy(out + i, &bits, 4);\n      }\n      break;\n    case GgmlType::kQ8_0:\n      gufo::quant::DequantizeQ8_0(src, out, k);\n      break;\n    case GgmlType::kQ5_1:\n      DequantizeQ5_1(src, out, k);\n      break;\n    case GgmlType::kIQ4_NL:\n      gufo::quant::DequantizeIQ4_NL(src, out, k);\n      break;\n    case GgmlType::kQ4_K:\n      gufo::quant::DequantizeQ4_K(src, out, k);\n      break;\n    case GgmlType::kQ5_K:\n      gufo::quant::DequantizeQ5_K(src, out, k);\n      break;\n    case GgmlType::kQ6_K:\n      gufo::quant::DequantizeQ6_K(src, out, k);\n      break;\n    default:\n      std::memset(out, 0, k * sizeof(float));\n      break;\n  }",
+      "official_url": "https://github.com/gufo-org/gufo/blob/aedc129ffa98f00ebb1b1c8b75df60b2d987c48d/src/models/qwen38_flash_next/cpu_ops.cpp#L40"
+    },
+    {
+      "path": "src/cli/serve/text_generation_scheduler.hpp",
+      "start": 35,
+      "end": 47,
+      "purpose": "Idle probe and delayed stream-start default five seconds",
+      "text": "struct TextPrefillPolicy {\n  std::size_t decode_active_tokens{kDefaultDecodeActivePrefillTokens};\n};\n\nstruct TextSchedulerPolicy {\n  /// Internal cadence; idle monitoring performs no work during inference.\n  std::chrono::milliseconds device_probe_interval{std::chrono::seconds(5)};\n  /// Internal bound after which a still-queued stream reports its start, so\n  /// transports can keep the connection alive while it waits.\n  std::chrono::milliseconds stream_start_delay{std::chrono::seconds(5)};\n  std::size_t max_pending_requests{16};\n  std::size_t max_pending_requests_per_client{4};\n  std::size_t max_output_bytes_per_request{kDefaultMaxOutputBytes};",
+      "official_url": "https://github.com/gufo-org/gufo/blob/aedc129ffa98f00ebb1b1c8b75df60b2d987c48d/src/cli/serve/text_generation_scheduler.hpp#L35"
+    }
+  ],
+  "support_findings": {
+    "sc117_weight_compat_search_exit_code": 1,
+    "sc117_weight_compat_search_matches": [],
+    "qfn_quant_core_upload_unchanged_from_baseline": true,
+    "upstream_sc117_conversion_and_full_six_expert_support": false,
+    "upstream_qfn_ar_final_token_fix": false,
+    "upstream_ar_completion_cache_policy_tag": false,
+    "iq4_nl_caveat": "IQ4_NL existed for earlier paths; that alone is not six-format SC117 expert dispatch support"
+  },
+  "overlap_assessment": [
+    {
+      "path": "src/cli/serve/inference_backend.cpp",
+      "finding": "Upstream PollDevice/Wait(StartCallback) regions are distinct from custom compatibility identity/descriptor/weight loading changes. Preserve both; successful textual merge does not validate runtime."
+    },
+    {
+      "path": "tests/cli/text_generation_scheduler_test.cpp",
+      "finding": "Upstream adds idle-device and stream-start regressions; retain custom completed-prefix test and both test-main registrations."
+    },
+    {
+      "path": "tests/functional/README.md",
+      "finding": "Documentation additions only; retain upstream device-loss/stream-start notes and custom SC117 continuation instructions."
+    }
+  ],
+  "new_behavior_requiring_validation": [
+    "GPU idle probing now runs every five seconds when idle; live idle60 must be measured again.",
+    "Streaming success headers and assistant role chunk are delayed until admission or queue timeout; validate raw SSE completeness, errors, and client TTFT on the new version.",
+    "Tool-call schema/replay changes must remain; the plain no-tools formal fixture does not qualify tool support.",
+    "New build/source/image and actual HTTP length1/128 regression, six-format focused tests, complete AR/MTP formal/capacity/telemetry are required; no old PASS is a new release PASS."
+  ],
+  "migration_note": "No repo fetch/edit/checkout, build, model, HTTP, or Docker actions performed by this audit. Old raw results were not modified."
+}

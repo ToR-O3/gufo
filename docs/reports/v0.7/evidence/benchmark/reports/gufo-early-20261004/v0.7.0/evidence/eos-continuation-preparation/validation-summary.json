@@ -1,0 +1,14 @@
+{
+  "scope": "Mocked new control flow only; existing SSE parser not re-tested here. No actual HTTP calls or model execution.",
+  "status": "passed",
+  "checks": [
+    "AR candidate and P+N prefix recorded",
+    "Matching request/reply/count/source/image paired AR/MTP",
+    "No EOS candidate remains inconclusive",
+    "Prefix shortfall remains review-required",
+    "Unknown errors retained with traceback"
+  ],
+  "intercepted_metadata_calls": 5,
+  "real_network_calls": 0,
+  "production_source_changed": false
+}

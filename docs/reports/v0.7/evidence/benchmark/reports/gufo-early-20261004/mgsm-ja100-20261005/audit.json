@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "checks": 8588,
+  "failures": [],
+  "formal_records": 200,
+  "memory_raw_samples": 2121,
+  "memory_phase_boundary_excluded": 17,
+  "memory_interval_median": 1.0118615627288818,
+  "memory_interval_max": 262.34407806396484,
+  "memory_gaps_over_3s": 1,
+  "analysis_script_sha256": "c2c93889ef08d515167a50145425124e572c1c4f37cd906381e2025124f3a0e3",
+  "scope": "Independent raw SSE reconstruction, scoring, model/settings, pairing, timings, provenance, clean unload, and phase-attributed Windows memory; not imported from runner."
+}

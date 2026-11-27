@@ -1,0 +1,3767 @@
+{
+  "schema": "gufo-trunk-trace-analysis-v1",
+  "status": "diagnostic localization, not an acceptance-threshold relaxation",
+  "source_commit": "1c2578261185aa22399f187cb46d43b195dbefd4",
+  "all_trace_values_finite": true,
+  "past_B_bitwise_equality": {
+    "cpu_decode": {
+      "equal": true,
+      "sha256": "aba9d28d704dd9c4f8e331a7cf981c0f15e731d82d88a326fd220555570a7a68",
+      "past_payload": "b-math02-decode/cpu.f32"
+    },
+    "gpu_decode": {
+      "equal": true,
+      "sha256": "ac23cb063bb0233c72c43b72e6ce227aa2c9ec0211da88f45095774e718c8ad4",
+      "past_payload": "b-math02-decode/gpu.f32"
+    },
+    "gpu_prefill": {
+      "equal": true,
+      "sha256": "cb98433f62354335195b66b4825dcbafd1c353ba43be144da413703fb1f5bc3d",
+      "past_payload": "b-math02-prefill-native/gpu.f32"
+    }
+  },
+  "pairs": [
+    {
+      "reference": "cpu_decode",
+      "other": "gpu_decode",
+      "logits": {
+        "elements": 248320,
+        "max_abs": 0.7100522518157959,
+        "relative_l2": 0.062126118516505645,
+        "reference_rms": 2.1455754107901766,
+        "other_rms": 2.12882809521719,
+        "mean_reference_minus_other": -0.02157446497169796,
+        "cosine": 0.9980856935684947
+      },
+      "positions": [
+        {
+          "position": 0,
+          "first_differing_stage": {
+            "position": 0,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 1.430511474609375e-06,
+              "relative_l2": 1.2426441163741886e-07,
+              "reference_rms": 0.8319971489128362,
+              "other_rms": 0.8319970653212806,
+              "mean_reference_minus_other": 4.235726791534944e-09,
+              "cosine": 0.9999999999999968
+            }
+          },
+          "different_route_sets": [],
+          "selected_stages": [
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 1.430511474609375e-06,
+                "relative_l2": 1.2426441163741886e-07,
+                "reference_rms": 0.8319971489128362,
+                "other_rms": 0.8319970653212806,
+                "mean_reference_minus_other": 4.235726791534944e-09,
+                "cosine": 0.9999999999999968
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 5.960464477539063e-08,
+                "relative_l2": 8.68312456599058e-08,
+                "reference_rms": 0.13058619026978419,
+                "other_rms": 0.13058619043625,
+                "mean_reference_minus_other": 1.6587762274866691e-10,
+                "cosine": 0.9999999999999959
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 7.152557373046875e-07,
+                "relative_l2": 2.352253438738275e-07,
+                "reference_rms": 0.5018260855246395,
+                "other_rms": 0.5018261137004739,
+                "mean_reference_minus_other": 5.09470510223764e-10,
+                "cosine": 0.9999999999999706
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 4.76837158203125e-07,
+                "relative_l2": 1.8180423281493612e-07,
+                "reference_rms": 0.0859311325302212,
+                "other_rms": 0.08593113058641197,
+                "mean_reference_minus_other": 1.2124914405831077e-10,
+                "cosine": 0.9999999999999837
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 2.384185791015625e-07,
+                "relative_l2": 2.0515173858216848e-07,
+                "reference_rms": 0.017269406546641875,
+                "other_rms": 0.01726940607018008,
+                "mean_reference_minus_other": 5.4615020839143824e-11,
+                "cosine": 0.999999999999974
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 4.172325134277344e-07,
+                "relative_l2": 2.1985357436175382e-07,
+                "reference_rms": 0.23506178700983546,
+                "other_rms": 0.23506178305186753,
+                "mean_reference_minus_other": 8.895568726074998e-11,
+                "cosine": 0.9999999999999747
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 1.1771917343139648e-05,
+                "relative_l2": 2.5754339588679775e-05,
+                "reference_rms": 0.04140163399626554,
+                "other_rms": 0.04140164914555116,
+                "mean_reference_minus_other": -5.88616533292452e-09,
+                "cosine": 0.9999999996684228
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 8.106231689453125e-06,
+                "relative_l2": 1.6760788308874415e-06,
+                "reference_rms": 0.6861615312954091,
+                "other_rms": 0.6861615845206972,
+                "mean_reference_minus_other": -9.365442110720324e-09,
+                "cosine": 0.9999999999985957
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00012115808203816414,
+                "relative_l2": 0.0013648301603527814,
+                "reference_rms": 0.020523091368598957,
+                "other_rms": 0.02052982810741658,
+                "mean_reference_minus_other": -4.105032886059234e-07,
+                "cosine": 0.9999991227818407
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 6.794929504394531e-05,
+                "relative_l2": 1.6685802690897847e-05,
+                "reference_rms": 0.5032158282377422,
+                "other_rms": 0.5032161076066919,
+                "mean_reference_minus_other": -8.356556238098279e-08,
+                "cosine": 0.99999999986094
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.002735558897256851,
+                "relative_l2": 0.001705372002461031,
+                "reference_rms": 0.25917329214407636,
+                "other_rms": 0.2591874608659974,
+                "mean_reference_minus_other": -3.7501012343454932e-06,
+                "cosine": 0.9999985474269202
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009630032815039158,
+                "relative_l2": 0.016634259029810722,
+                "reference_rms": 0.0962206270174948,
+                "other_rms": 0.09620882227784493,
+                "mean_reference_minus_other": -5.1824198521899236e-06,
+                "cosine": 0.9998616412645425
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0052231550216674805,
+                "relative_l2": 0.0025122803668654885,
+                "reference_rms": 0.5697534229969025,
+                "other_rms": 0.5697728214031632,
+                "mean_reference_minus_other": -7.872748475179491e-06,
+                "cosine": 0.9999968449107004
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0003613922744989395,
+                "relative_l2": 0.012227645789515412,
+                "reference_rms": 0.007832742710358661,
+                "other_rms": 0.00783097647134145,
+                "mean_reference_minus_other": 4.6661339143660995e-07,
+                "cosine": 0.9999252509075712
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.002618752419948578,
+                "relative_l2": 0.0006192517799935947,
+                "reference_rms": 0.5225881652669022,
+                "other_rms": 0.5225736624791901,
+                "mean_reference_minus_other": -2.177253534796364e-06,
+                "cosine": 0.9999998086433866
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0045423805713653564,
+                "relative_l2": 0.0028804238460726256,
+                "reference_rms": 0.13576635952795477,
+                "other_rms": 0.13580691919673718,
+                "mean_reference_minus_other": -1.3970211796276998e-07,
+                "cosine": 0.9999958974294697
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0007629543542861938,
+                "relative_l2": 0.007009302862663709,
+                "reference_rms": 0.024075231882989986,
+                "other_rms": 0.024050682265746033,
+                "mean_reference_minus_other": 1.606315111546408e-06,
+                "cosine": 0.9999759301910222
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.005036413669586182,
+                "relative_l2": 0.002117075640704706,
+                "reference_rms": 0.5939160253516556,
+                "other_rms": 0.5939646922818149,
+                "mean_reference_minus_other": -2.2744399743146458e-06,
+                "cosine": 0.9999977625359913
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00028994353488087654,
+                "relative_l2": 0.00960386985310385,
+                "reference_rms": 0.009115288395152871,
+                "other_rms": 0.009122153190035115,
+                "mean_reference_minus_other": 9.595798028172452e-07,
+                "cosine": 0.999954200919252
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.002714782953262329,
+                "relative_l2": 0.0006257530890130616,
+                "reference_rms": 0.5225340709339936,
+                "other_rms": 0.522520469684807,
+                "mean_reference_minus_other": -1.5493319443393716e-06,
+                "cosine": 0.9999998045502092
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.014928698539733887,
+                "relative_l2": 0.004400794974572147,
+                "reference_rms": 0.3707867427268169,
+                "other_rms": 0.370773927064892,
+                "mean_reference_minus_other": -5.471421618639116e-05,
+                "cosine": 0.999990316764425
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.008929446339607239,
+                "relative_l2": 0.015491386086058101,
+                "reference_rms": 0.1392999559816543,
+                "other_rms": 0.13927431239962496,
+                "mean_reference_minus_other": 3.907756693593001e-05,
+                "cosine": 0.9998800033328742
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.020846351981163025,
+                "relative_l2": 0.005220258981041443,
+                "reference_rms": 1.1755334980813934,
+                "other_rms": 1.1754205954704013,
+                "mean_reference_minus_other": -0.000149619687726954,
+                "cosine": 0.9999863777519516
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.03639411926269531,
+                "relative_l2": 0.0042366586695236136,
+                "reference_rms": 1.4192737729844047,
+                "other_rms": 1.4217467415312421,
+                "mean_reference_minus_other": 0.00011154157082273741,
+                "cosine": 0.9999925563423296
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.06960296630859375,
+                "relative_l2": 0.0042567899194199225,
+                "reference_rms": 3.060220238545869,
+                "other_rms": 3.0641973439014487,
+                "mean_reference_minus_other": 3.658513305992983e-05,
+                "cosine": 0.9999917950314734
+              }
+            },
+            {
+              "position": 0,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0071186868603848995,
+                "other_rms": 0.0071186868603848995,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        },
+        {
+          "position": 40,
+          "first_differing_stage": {
+            "position": 40,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 9.5367431640625e-07,
+              "relative_l2": 7.897199995628949e-08,
+              "reference_rms": 0.6727879916961714,
+              "other_rms": 0.6727879945941748,
+              "mean_reference_minus_other": 1.833439000620274e-09,
+              "cosine": 0.9999999999999949
+            }
+          },
+          "different_route_sets": [
+            {
+              "layer": 11,
+              "set_overlap": 9,
+              "reference_ids": [
+                371,
+                391,
+                273,
+                163,
+                165,
+                500,
+                108,
+                189,
+                234,
+                422
+              ],
+              "other_ids": [
+                371,
+                391,
+                273,
+                163,
+                165,
+                500,
+                108,
+                189,
+                422,
+                84
+              ]
+            },
+            {
+              "layer": 14,
+              "set_overlap": 9,
+              "reference_ids": [
+                138,
+                212,
+                506,
+                117,
+                486,
+                335,
+                214,
+                14,
+                417,
+                314
+              ],
+              "other_ids": [
+                138,
+                212,
+                506,
+                117,
+                486,
+                335,
+                214,
+                14,
+                417,
+                127
+              ]
+            },
+            {
+              "layer": 15,
+              "set_overlap": 9,
+              "reference_ids": [
+                226,
+                6,
+                318,
+                199,
+                169,
+                193,
+                289,
+                375,
+                494,
+                156
+              ],
+              "other_ids": [
+                226,
+                6,
+                318,
+                199,
+                169,
+                289,
+                193,
+                375,
+                494,
+                288
+              ]
+            },
+            {
+              "layer": 19,
+              "set_overlap": 9,
+              "reference_ids": [
+                170,
+                192,
+                377,
+                319,
+                173,
+                145,
+                103,
+                31,
+                225,
+                470
+              ],
+              "other_ids": [
+                170,
+                192,
+                377,
+                319,
+                173,
+                103,
+                145,
+                31,
+                225,
+                26
+              ]
+            },
+            {
+              "layer": 23,
+              "set_overlap": 9,
+              "reference_ids": [
+                68,
+                227,
+                267,
+                224,
+                467,
+                463,
+                233,
+                242,
+                0,
+                365
+              ],
+              "other_ids": [
+                68,
+                227,
+                267,
+                224,
+                233,
+                463,
+                467,
+                0,
+                242,
+                390
+              ]
+            },
+            {
+              "layer": 24,
+              "set_overlap": 9,
+              "reference_ids": [
+                175,
+                283,
+                191,
+                87,
+                262,
+                11,
+                46,
+                490,
+                370,
+                425
+              ],
+              "other_ids": [
+                175,
+                283,
+                191,
+                11,
+                87,
+                262,
+                46,
+                490,
+                425,
+                189
+              ]
+            },
+            {
+              "layer": 28,
+              "set_overlap": 9,
+              "reference_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                220
+              ],
+              "other_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                277
+              ]
+            },
+            {
+              "layer": 30,
+              "set_overlap": 9,
+              "reference_ids": [
+                476,
+                138,
+                460,
+                160,
+                212,
+                506,
+                80,
+                383,
+                314,
+                233
+              ],
+              "other_ids": [
+                476,
+                460,
+                138,
+                160,
+                212,
+                506,
+                80,
+                383,
+                314,
+                14
+              ]
+            },
+            {
+              "layer": 33,
+              "set_overlap": 9,
+              "reference_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                471
+              ],
+              "other_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                84
+              ]
+            },
+            {
+              "layer": 37,
+              "set_overlap": 8,
+              "reference_ids": [
+                118,
+                42,
+                380,
+                170,
+                103,
+                418,
+                255,
+                84,
+                57,
+                392
+              ],
+              "other_ids": [
+                42,
+                380,
+                170,
+                118,
+                103,
+                418,
+                84,
+                255,
+                38,
+                75
+              ]
+            },
+            {
+              "layer": 38,
+              "set_overlap": 9,
+              "reference_ids": [
+                345,
+                223,
+                293,
+                81,
+                57,
+                41,
+                30,
+                338,
+                466,
+                287
+              ],
+              "other_ids": [
+                345,
+                223,
+                293,
+                81,
+                57,
+                41,
+                30,
+                287,
+                338,
+                267
+              ]
+            }
+          ],
+          "selected_stages": [
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 9.5367431640625e-07,
+                "relative_l2": 7.897199995628949e-08,
+                "reference_rms": 0.6727879916961714,
+                "other_rms": 0.6727879945941748,
+                "mean_reference_minus_other": 1.833439000620274e-09,
+                "cosine": 0.9999999999999949
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 3.88268381357193e-06,
+                "relative_l2": 7.70948105356193e-06,
+                "reference_rms": 0.09740110326410299,
+                "other_rms": 0.09740108729589163,
+                "mean_reference_minus_other": -1.314271678154455e-08,
+                "cosine": 0.9999999999702902
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 2.390146255493164e-05,
+                "relative_l2": 8.002719352067856e-06,
+                "reference_rms": 0.4528147204881955,
+                "other_rms": 0.45281467232953787,
+                "mean_reference_minus_other": -8.357449618745516e-08,
+                "cosine": 0.9999999999679822
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 3.2782554626464844e-07,
+                "relative_l2": 1.1579074115977396e-06,
+                "reference_rms": 0.04074098626682445,
+                "other_rms": 0.040741011371199266,
+                "mean_reference_minus_other": -1.6750739462167986e-09,
+                "cosine": 0.9999999999995165
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 3.0547380447387695e-07,
+                "relative_l2": 3.065763909546762e-06,
+                "reference_rms": 0.010106859776959604,
+                "other_rms": 0.010106862570124078,
+                "mean_reference_minus_other": -4.4709366486817005e-10,
+                "cosine": 0.9999999999953405
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0535433292388916,
+                "relative_l2": 0.010679036070474756,
+                "reference_rms": 0.5753558359078838,
+                "other_rms": 0.5756952158786129,
+                "mean_reference_minus_other": -0.00014532059353413728,
+                "cosine": 0.9999431865743301
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.006482154130935669,
+                "relative_l2": 0.018095733642059204,
+                "reference_rms": 0.07524989943304633,
+                "other_rms": 0.07522120948025374,
+                "mean_reference_minus_other": 5.245184908631018e-07,
+                "cosine": 0.9998362824731375
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.021698951721191406,
+                "relative_l2": 0.011610014901790904,
+                "reference_rms": 0.5213898090583652,
+                "other_rms": 0.5215103652987517,
+                "mean_reference_minus_other": -0.00013748693166988347,
+                "cosine": 0.9999326460821869
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00061761774122715,
+                "relative_l2": 0.017163019045696983,
+                "reference_rms": 0.01083848840965451,
+                "other_rms": 0.010852261130551056,
+                "mean_reference_minus_other": -3.5364176326879713e-06,
+                "cosine": 0.9998537086534388
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0009398916736245155,
+                "relative_l2": 0.008527885816782058,
+                "reference_rms": 0.01419394737332024,
+                "other_rms": 0.014218010765993612,
+                "mean_reference_minus_other": -1.8510690832196364e-06,
+                "cosine": 0.9999651337595106
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.017394542694091797,
+                "relative_l2": 0.013125554167332628,
+                "reference_rms": 0.35957904443102684,
+                "other_rms": 0.35977630004135125,
+                "mean_reference_minus_other": -5.054667159924975e-05,
+                "cosine": 0.9999140575262386
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.007732372730970383,
+                "relative_l2": 0.02525419469612018,
+                "reference_rms": 0.08488364006549819,
+                "other_rms": 0.08484480035259345,
+                "mean_reference_minus_other": -9.0205510169028e-06,
+                "cosine": 0.9996810715773901
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.026240020990371704,
+                "relative_l2": 0.014488269135647122,
+                "reference_rms": 0.4950787719074486,
+                "other_rms": 0.4955579340843686,
+                "mean_reference_minus_other": -0.0001319532540264845,
+                "cosine": 0.9998956144255207
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0034805310424417257,
+                "relative_l2": 0.11172723181532099,
+                "reference_rms": 0.008474393348887175,
+                "other_rms": 0.008518972773636295,
+                "mean_reference_minus_other": 1.0938814491012749e-05,
+                "cosine": 0.9938049382238482
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0012497309362515807,
+                "relative_l2": 0.014480005958050933,
+                "reference_rms": 0.017097455279416387,
+                "other_rms": 0.01712319918492237,
+                "mean_reference_minus_other": -1.443539809575789e-07,
+                "cosine": 0.9998964542139943
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.15211519598960876,
+                "relative_l2": 0.06346375309744576,
+                "reference_rms": 0.5868741597670171,
+                "other_rms": 0.5875376307003136,
+                "mean_reference_minus_other": 0.0002683317662331319,
+                "cosine": 0.9979890884239515
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.01428910717368126,
+                "relative_l2": 0.050519723907098364,
+                "reference_rms": 0.07678950509282223,
+                "other_rms": 0.07684141167034982,
+                "mean_reference_minus_other": 4.685354741766901e-05,
+                "cosine": 0.9987249690776094
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.08798350393772125,
+                "relative_l2": 0.04545430464616931,
+                "reference_rms": 0.5299043623739986,
+                "other_rms": 0.5304716709742626,
+                "mean_reference_minus_other": 0.00043571786809479816,
+                "cosine": 0.9989686303432916
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0020963819697499275,
+                "relative_l2": 0.05075648285985682,
+                "reference_rms": 0.010211262188383325,
+                "other_rms": 0.010279876069347191,
+                "mean_reference_minus_other": 2.2220383835147572e-06,
+                "cosine": 0.9987429120234865
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.001707693561911583,
+                "relative_l2": 0.01618931926798509,
+                "reference_rms": 0.018028540564236577,
+                "other_rms": 0.018066063430464022,
+                "mean_reference_minus_other": 1.3617306609536861e-06,
+                "cosine": 0.9998713865667345
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.17063367366790771,
+                "relative_l2": 0.07152957826149604,
+                "reference_rms": 0.5300947955555073,
+                "other_rms": 0.5274538605015333,
+                "mean_reference_minus_other": 0.0003713519785492281,
+                "cosine": 0.9974414230612797
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.04648120701313019,
+                "relative_l2": 0.051679468594301364,
+                "reference_rms": 0.1668236208778635,
+                "other_rms": 0.16642745180264445,
+                "mean_reference_minus_other": 0.00013575412495399065,
+                "cosine": 0.9986642639717105
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.25501948595046997,
+                "relative_l2": 0.06594624654601247,
+                "reference_rms": 1.0584724782053119,
+                "other_rms": 1.0541442222947077,
+                "mean_reference_minus_other": 0.0013570040274032634,
+                "cosine": 0.9978250130148192
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.04950547218322754,
+                "relative_l2": 0.040004085997653864,
+                "reference_rms": 0.12231449207490418,
+                "other_rms": 0.12333178404854406,
+                "mean_reference_minus_other": 0.00020576446636511037,
+                "cosine": 0.9992407377542069
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.3462991714477539,
+                "relative_l2": 0.06807961124142796,
+                "reference_rms": 0.5400131364275849,
+                "other_rms": 0.5452020390114004,
+                "mean_reference_minus_other": 0.0007426894690342855,
+                "cosine": 0.9977503646166939
+              }
+            },
+            {
+              "position": 40,
+              "layer": 48,
+              "stage": "head_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 2.2198486328125,
+                "relative_l2": 0.05108143863547239,
+                "reference_rms": 4.3382523112339815,
+                "other_rms": 4.355282302760139,
+                "mean_reference_minus_other": 0.008262325957704153,
+                "cosine": 0.9987081195841366
+              }
+            },
+            {
+              "position": 40,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0015605325789784968,
+                "other_rms": 0.0015605325789784968,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "reference": "gpu_decode",
+      "other": "gpu_prefill",
+      "logits": {
+        "elements": 248320,
+        "max_abs": 1.5108652114868164,
+        "relative_l2": 0.11351960616247114,
+        "reference_rms": 2.12882809521719,
+        "other_rms": 2.139521754968358,
+        "mean_reference_minus_other": 0.062192162193436554,
+        "cosine": 0.9936014078852269
+      },
+      "positions": [
+        {
+          "position": 0,
+          "first_differing_stage": {
+            "position": 0,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 0.007082939147949219,
+              "relative_l2": 0.0003736490737706594,
+              "reference_rms": 0.8319970653212806,
+              "other_rms": 0.8319290502973057,
+              "mean_reference_minus_other": 2.15441517827486e-05,
+              "cosine": 0.9999999335292072
+            }
+          },
+          "different_route_sets": [],
+          "selected_stages": [
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.007082939147949219,
+                "relative_l2": 0.0003736490737706594,
+                "reference_rms": 0.8319970653212806,
+                "other_rms": 0.8319290502973057,
+                "mean_reference_minus_other": 2.15441517827486e-05,
+                "cosine": 0.9999999335292072
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00474441796541214,
+                "relative_l2": 0.00803673456290964,
+                "reference_rms": 0.13058619043625,
+                "other_rms": 0.13061036635404166,
+                "mean_reference_minus_other": 1.0478542986902539e-05,
+                "cosine": 0.9999677285605749
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.027255162596702576,
+                "relative_l2": 0.00976428600864573,
+                "reference_rms": 0.5018261137004739,
+                "other_rms": 0.5019015200512578,
+                "mean_reference_minus_other": -2.430688675980619e-05,
+                "cosine": 0.9999523478093911
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009287834167480469,
+                "relative_l2": 0.007935017869560905,
+                "reference_rms": 0.08593113058641197,
+                "other_rms": 0.08576192891922996,
+                "mean_reference_minus_other": 2.013214716889422e-06,
+                "cosine": 0.9999703980137176
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0016726255416870117,
+                "relative_l2": 0.006978702246211762,
+                "reference_rms": 0.01726940607018008,
+                "other_rms": 0.01726256769728387,
+                "mean_reference_minus_other": 3.835692700598914e-07,
+                "cosine": 0.9999757176429466
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.006353259086608887,
+                "relative_l2": 0.0027808810637982694,
+                "reference_rms": 0.23506178305186753,
+                "other_rms": 0.23506171607432302,
+                "mean_reference_minus_other": 2.4407405628323887e-05,
+                "cosine": 0.9999961333491935
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.002075526863336563,
+                "relative_l2": 0.01304026374379658,
+                "reference_rms": 0.04140164914555116,
+                "other_rms": 0.04136901240124048,
+                "mean_reference_minus_other": 1.3059844680185505e-05,
+                "cosine": 0.9999152196338398
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.01011347770690918,
+                "relative_l2": 0.0032189350803137205,
+                "reference_rms": 0.6861615845206972,
+                "other_rms": 0.6861786490257462,
+                "mean_reference_minus_other": -1.4093530921854835e-05,
+                "cosine": 0.9999948196665512
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0009317104704678059,
+                "relative_l2": 0.010976246899583743,
+                "reference_rms": 0.02052982810741658,
+                "other_rms": 0.020492888019872552,
+                "mean_reference_minus_other": 3.7313997307109046e-06,
+                "cosine": 0.9999412741419054
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.00986027717590332,
+                "relative_l2": 0.0022954452291337074,
+                "reference_rms": 0.5032161076066919,
+                "other_rms": 0.5023374175152964,
+                "mean_reference_minus_other": 1.457026013503837e-05,
+                "cosine": 0.9999988880413794
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.004319965839385986,
+                "relative_l2": 0.003645497173697134,
+                "reference_rms": 0.2591874608659974,
+                "other_rms": 0.2592861993795004,
+                "mean_reference_minus_other": 6.380407970283387e-05,
+                "cosine": 0.9999934302409477
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.008082430809736252,
+                "relative_l2": 0.018444102424617817,
+                "reference_rms": 0.09620882227784493,
+                "other_rms": 0.09625982274679612,
+                "mean_reference_minus_other": 4.342891089947898e-05,
+                "cosine": 0.999830138090928
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00825798511505127,
+                "relative_l2": 0.003857224352275659,
+                "reference_rms": 0.5697728214031632,
+                "other_rms": 0.5697798245932857,
+                "mean_reference_minus_other": 0.00014503192293524592,
+                "cosine": 0.9999925610771179
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.000385751249268651,
+                "relative_l2": 0.013781808652451892,
+                "reference_rms": 0.00783097647134145,
+                "other_rms": 0.007836831998787673,
+                "mean_reference_minus_other": -2.677388935401481e-06,
+                "cosine": 0.9999053811822197
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.01004171371459961,
+                "relative_l2": 0.0024146678419430475,
+                "reference_rms": 0.5225736624791901,
+                "other_rms": 0.5216963310487065,
+                "mean_reference_minus_other": 3.418101812568963e-05,
+                "cosine": 0.9999984914533631
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.004880070686340332,
+                "relative_l2": 0.004596230212736418,
+                "reference_rms": 0.13580691919673718,
+                "other_rms": 0.13571530861211611,
+                "mean_reference_minus_other": 3.699795425404773e-06,
+                "cosine": 0.9999896578764007
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0015508201904594898,
+                "relative_l2": 0.013753502664927498,
+                "reference_rms": 0.024050682265746033,
+                "other_rms": 0.024107260610309753,
+                "mean_reference_minus_other": 5.507898815437784e-06,
+                "cosine": 0.9999084031020662
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.008808612823486328,
+                "relative_l2": 0.0033473372748610837,
+                "reference_rms": 0.5939646922818149,
+                "other_rms": 0.5939321409045525,
+                "mean_reference_minus_other": 0.00011360401110067641,
+                "cosine": 0.9999943988613361
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00038741622120141983,
+                "relative_l2": 0.01145478375289365,
+                "reference_rms": 0.009122153190035115,
+                "other_rms": 0.009113293095044238,
+                "mean_reference_minus_other": 1.924116655338537e-06,
+                "cosine": 0.9999348023248585
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.010041952133178711,
+                "relative_l2": 0.002418432540901351,
+                "reference_rms": 0.522520469684807,
+                "other_rms": 0.5216425515463641,
+                "mean_reference_minus_other": 3.563301733588986e-05,
+                "cosine": 0.999998484515045
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009196005761623383,
+                "relative_l2": 0.00491297537267386,
+                "reference_rms": 0.370773927064892,
+                "other_rms": 0.37067553643423434,
+                "mean_reference_minus_other": 6.311896787709603e-05,
+                "cosine": 0.9999879633518184
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009245224297046661,
+                "relative_l2": 0.015982659428774467,
+                "reference_rms": 0.13927431239962496,
+                "other_rms": 0.1394673382742868,
+                "mean_reference_minus_other": -1.9692548870864358e-05,
+                "cosine": 0.9998734131557767
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.02870023250579834,
+                "relative_l2": 0.0059632173243602685,
+                "reference_rms": 1.1754205954704013,
+                "other_rms": 1.1758018383067916,
+                "mean_reference_minus_other": 0.0001526518738046434,
+                "cosine": 0.9999822783676356
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.026153087615966797,
+                "relative_l2": 0.00456084725835538,
+                "reference_rms": 1.4217467415312421,
+                "other_rms": 1.4206684302435475,
+                "mean_reference_minus_other": -0.00028603018492958656,
+                "cosine": 0.9999898792766873
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.058609962463378906,
+                "relative_l2": 0.004815128719805651,
+                "reference_rms": 3.0641973439014487,
+                "other_rms": 3.061319029969375,
+                "mean_reference_minus_other": -0.0003499646186270411,
+                "cosine": 0.9999888379597769
+              }
+            },
+            {
+              "position": 0,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0071186868603848995,
+                "other_rms": 0.0071186868603848995,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        },
+        {
+          "position": 40,
+          "first_differing_stage": {
+            "position": 40,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 0.0028541088104248047,
+              "relative_l2": 0.00023598239408924142,
+              "reference_rms": 0.6727879945941748,
+              "other_rms": 0.6727944195696993,
+              "mean_reference_minus_other": -6.6762422562760545e-06,
+              "cosine": 0.999999972202019
+            }
+          },
+          "different_route_sets": [
+            {
+              "layer": 11,
+              "set_overlap": 9,
+              "reference_ids": [
+                371,
+                391,
+                273,
+                163,
+                165,
+                500,
+                108,
+                189,
+                422,
+                84
+              ],
+              "other_ids": [
+                371,
+                391,
+                273,
+                163,
+                165,
+                500,
+                108,
+                189,
+                234,
+                422
+              ]
+            },
+            {
+              "layer": 19,
+              "set_overlap": 9,
+              "reference_ids": [
+                170,
+                192,
+                377,
+                319,
+                173,
+                103,
+                145,
+                31,
+                225,
+                26
+              ],
+              "other_ids": [
+                170,
+                192,
+                377,
+                319,
+                173,
+                145,
+                103,
+                31,
+                225,
+                470
+              ]
+            },
+            {
+              "layer": 20,
+              "set_overlap": 9,
+              "reference_ids": [
+                55,
+                248,
+                15,
+                261,
+                485,
+                99,
+                442,
+                344,
+                210,
+                377
+              ],
+              "other_ids": [
+                55,
+                261,
+                248,
+                15,
+                485,
+                99,
+                344,
+                442,
+                377,
+                109
+              ]
+            },
+            {
+              "layer": 21,
+              "set_overlap": 9,
+              "reference_ids": [
+                70,
+                100,
+                228,
+                406,
+                255,
+                469,
+                131,
+                189,
+                418,
+                230
+              ],
+              "other_ids": [
+                70,
+                100,
+                228,
+                406,
+                255,
+                469,
+                131,
+                189,
+                418,
+                340
+              ]
+            },
+            {
+              "layer": 24,
+              "set_overlap": 9,
+              "reference_ids": [
+                175,
+                283,
+                191,
+                11,
+                87,
+                262,
+                46,
+                490,
+                425,
+                189
+              ],
+              "other_ids": [
+                175,
+                283,
+                191,
+                87,
+                262,
+                11,
+                46,
+                425,
+                490,
+                370
+              ]
+            },
+            {
+              "layer": 28,
+              "set_overlap": 9,
+              "reference_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                277
+              ],
+              "other_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                28
+              ]
+            },
+            {
+              "layer": 31,
+              "set_overlap": 9,
+              "reference_ids": [
+                288,
+                199,
+                318,
+                289,
+                226,
+                265,
+                426,
+                449,
+                346,
+                227
+              ],
+              "other_ids": [
+                288,
+                199,
+                318,
+                289,
+                265,
+                226,
+                426,
+                449,
+                227,
+                389
+              ]
+            },
+            {
+              "layer": 33,
+              "set_overlap": 9,
+              "reference_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                84
+              ],
+              "other_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                381
+              ]
+            },
+            {
+              "layer": 34,
+              "set_overlap": 9,
+              "reference_ids": [
+                264,
+                314,
+                184,
+                211,
+                212,
+                370,
+                49,
+                471,
+                148,
+                31
+              ],
+              "other_ids": [
+                264,
+                314,
+                184,
+                211,
+                212,
+                370,
+                49,
+                471,
+                148,
+                302
+              ]
+            },
+            {
+              "layer": 35,
+              "set_overlap": 9,
+              "reference_ids": [
+                15,
+                264,
+                172,
+                315,
+                335,
+                145,
+                136,
+                30,
+                319,
+                275
+              ],
+              "other_ids": [
+                15,
+                172,
+                264,
+                315,
+                335,
+                145,
+                136,
+                30,
+                319,
+                277
+              ]
+            },
+            {
+              "layer": 38,
+              "set_overlap": 9,
+              "reference_ids": [
+                345,
+                223,
+                293,
+                81,
+                57,
+                41,
+                30,
+                287,
+                338,
+                267
+              ],
+              "other_ids": [
+                345,
+                223,
+                81,
+                293,
+                57,
+                41,
+                30,
+                338,
+                466,
+                287
+              ]
+            },
+            {
+              "layer": 40,
+              "set_overlap": 9,
+              "reference_ids": [
+                359,
+                481,
+                346,
+                141,
+                254,
+                197,
+                148,
+                449,
+                378,
+                174
+              ],
+              "other_ids": [
+                359,
+                481,
+                346,
+                141,
+                254,
+                197,
+                148,
+                449,
+                378,
+                316
+              ]
+            },
+            {
+              "layer": 42,
+              "set_overlap": 9,
+              "reference_ids": [
+                345,
+                360,
+                353,
+                334,
+                350,
+                19,
+                466,
+                176,
+                393,
+                433
+              ],
+              "other_ids": [
+                345,
+                360,
+                353,
+                334,
+                350,
+                466,
+                19,
+                433,
+                487,
+                176
+              ]
+            },
+            {
+              "layer": 46,
+              "set_overlap": 9,
+              "reference_ids": [
+                204,
+                197,
+                399,
+                171,
+                49,
+                304,
+                133,
+                371,
+                105,
+                350
+              ],
+              "other_ids": [
+                204,
+                171,
+                197,
+                399,
+                49,
+                133,
+                304,
+                388,
+                350,
+                371
+              ]
+            },
+            {
+              "layer": 47,
+              "set_overlap": 9,
+              "reference_ids": [
+                283,
+                62,
+                305,
+                274,
+                124,
+                113,
+                451,
+                328,
+                430,
+                177
+              ],
+              "other_ids": [
+                305,
+                283,
+                62,
+                274,
+                124,
+                451,
+                113,
+                430,
+                328,
+                293
+              ]
+            }
+          ],
+          "selected_stages": [
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0028541088104248047,
+                "relative_l2": 0.00023598239408924142,
+                "reference_rms": 0.6727879945941748,
+                "other_rms": 0.6727944195696993,
+                "mean_reference_minus_other": -6.6762422562760545e-06,
+                "cosine": 0.999999972202019
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.005125164985656738,
+                "relative_l2": 0.01017862813089684,
+                "reference_rms": 0.09740108729589163,
+                "other_rms": 0.09737831516898797,
+                "mean_reference_minus_other": 1.3077443480824513e-05,
+                "cosine": 0.9999482129876379
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.036448121070861816,
+                "relative_l2": 0.012095859796936384,
+                "reference_rms": 0.45281467232953787,
+                "other_rms": 0.4526994747670602,
+                "mean_reference_minus_other": 6.284968888484733e-05,
+                "cosine": 0.9999268588410588
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0011353380978107452,
+                "relative_l2": 0.007687019023859879,
+                "reference_rms": 0.040741011371199266,
+                "other_rms": 0.04075333330924032,
+                "mean_reference_minus_other": -1.0015932424778385e-06,
+                "cosine": 0.999970509525182
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0005511604249477386,
+                "relative_l2": 0.007178104478905696,
+                "reference_rms": 0.010106862570124078,
+                "other_rms": 0.010102558231365645,
+                "mean_reference_minus_other": 2.8812216952595235e-07,
+                "cosine": 0.9999743171582437
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.025693655014038086,
+                "relative_l2": 0.012718694197131689,
+                "reference_rms": 0.5756952158786129,
+                "other_rms": 0.5756721939874024,
+                "mean_reference_minus_other": 5.621599822092094e-06,
+                "cosine": 0.9999191149739785
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.007152017205953598,
+                "relative_l2": 0.018166467888534488,
+                "reference_rms": 0.07522120948025374,
+                "other_rms": 0.07526050553768455,
+                "mean_reference_minus_other": 4.3191717423951555e-06,
+                "cosine": 0.9998352122627676
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.03727487148717046,
+                "relative_l2": 0.013869661834041676,
+                "reference_rms": 0.5215103652987517,
+                "other_rms": 0.5207787957768897,
+                "mean_reference_minus_other": 0.00023041315086160807,
+                "cosine": 0.999904666417192
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0006401762366294861,
+                "relative_l2": 0.01813410615367587,
+                "reference_rms": 0.010852261130551056,
+                "other_rms": 0.010848157258142624,
+                "mean_reference_minus_other": -1.0313482963297816e-05,
+                "cosine": 0.9998355864244918
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0008487291634082794,
+                "relative_l2": 0.010307735360026238,
+                "reference_rms": 0.014218010765993612,
+                "other_rms": 0.014205833633207958,
+                "mean_reference_minus_other": -1.0767243151882378e-06,
+                "cosine": 0.9999471968325336
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.017493117600679398,
+                "relative_l2": 0.013848313223316179,
+                "reference_rms": 0.35977630004135125,
+                "other_rms": 0.3595568284548139,
+                "mean_reference_minus_other": 6.310175334505175e-05,
+                "cosine": 0.9999042397581805
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009868457913398743,
+                "relative_l2": 0.026529260793381634,
+                "reference_rms": 0.08484480035259345,
+                "other_rms": 0.08488799770788308,
+                "mean_reference_minus_other": -9.150687305350402e-05,
+                "cosine": 0.9996484077769738
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.025993824005126953,
+                "relative_l2": 0.01529234107348716,
+                "reference_rms": 0.4955579340843686,
+                "other_rms": 0.49525088866112366,
+                "mean_reference_minus_other": -4.8539470805053496e-05,
+                "cosine": 0.9998831917276136
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0032860483042895794,
+                "relative_l2": 0.11132264682733263,
+                "reference_rms": 0.008518972773636295,
+                "other_rms": 0.008500972479055959,
+                "mean_reference_minus_other": -8.65714587096056e-06,
+                "cosine": 0.9937927507602595
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0012608359102159739,
+                "relative_l2": 0.015501783150067852,
+                "reference_rms": 0.01712319918492237,
+                "other_rms": 0.017102342339816362,
+                "mean_reference_minus_other": -3.3109227987354608e-06,
+                "cosine": 0.999880443552408
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.13262861967086792,
+                "relative_l2": 0.06391829166244871,
+                "reference_rms": 0.5875376307003136,
+                "other_rms": 0.5868605846061933,
+                "mean_reference_minus_other": -0.0003056519053416196,
+                "cosine": 0.9979555340147538
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.01700066775083542,
+                "relative_l2": 0.045739178951186434,
+                "reference_rms": 0.07684141167034982,
+                "other_rms": 0.07683921057857276,
+                "mean_reference_minus_other": -1.6907611319538772e-05,
+                "cosine": 0.9989539342005539
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.10186374187469482,
+                "relative_l2": 0.04618572634844394,
+                "reference_rms": 0.5304716709742626,
+                "other_rms": 0.5299313407904509,
+                "mean_reference_minus_other": -0.0006009987487303192,
+                "cosine": 0.9989328711371065
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0019288836047053337,
+                "relative_l2": 0.048561507180570423,
+                "reference_rms": 0.010279876069347191,
+                "other_rms": 0.010227846758554045,
+                "mean_reference_minus_other": 2.9666230697777963e-06,
+                "cosine": 0.9988277652719096
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.001722525805234909,
+                "relative_l2": 0.01685739272025372,
+                "reference_rms": 0.018066063430464022,
+                "other_rms": 0.01803483819082157,
+                "mean_reference_minus_other": -3.014210399754358e-06,
+                "cosine": 0.9998591644056856
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.24820607714354992,
+                "relative_l2": 0.12822476860354448,
+                "reference_rms": 0.5274538605015333,
+                "other_rms": 0.5236451804775486,
+                "mean_reference_minus_other": -0.0008325992640379809,
+                "cosine": 0.9917456713979279
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.08208107948303223,
+                "relative_l2": 0.09195425999124439,
+                "reference_rms": 0.16642745180264445,
+                "other_rms": 0.16274614402699852,
+                "mean_reference_minus_other": -0.0005506711861357871,
+                "cosine": 0.9959267465536717
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.5438026189804077,
+                "relative_l2": 0.11770294139439781,
+                "reference_rms": 1.0541442222947077,
+                "other_rms": 1.0412715738883553,
+                "mean_reference_minus_other": -0.001372492928186375,
+                "cosine": 0.9930628560574826
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.13018041849136353,
+                "relative_l2": 0.10039799852445198,
+                "reference_rms": 0.12333178404854406,
+                "other_rms": 0.1212893930690107,
+                "mean_reference_minus_other": -8.141067637694732e-05,
+                "cosine": 0.9950146824487578
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 1.0647711753845215,
+                "relative_l2": 0.11187618448985913,
+                "reference_rms": 0.5452020390114004,
+                "other_rms": 0.5247496865484128,
+                "mean_reference_minus_other": -0.0004253849839426671,
+                "cosine": 0.9942289955332044
+              }
+            },
+            {
+              "position": 40,
+              "layer": 48,
+              "stage": "head_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 4.2438812255859375,
+                "relative_l2": 0.09696139277031762,
+                "reference_rms": 4.355282302760139,
+                "other_rms": 4.265566000045518,
+                "mean_reference_minus_other": -0.006862528440589077,
+                "cosine": 0.9954170052229766
+              }
+            },
+            {
+              "position": 40,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0015605325789784968,
+                "other_rms": 0.0015605325789784968,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "reference": "cpu_decode",
+      "other": "gpu_prefill",
+      "logits": {
+        "elements": 248320,
+        "max_abs": 1.3519649356603622,
+        "relative_l2": 0.11080717215190983,
+        "reference_rms": 2.1455754107901766,
+        "other_rms": 2.139521754968358,
+        "mean_reference_minus_other": 0.040617697221738594,
+        "cosine": 0.9938475066030126
+      },
+      "positions": [
+        {
+          "position": 0,
+          "first_differing_stage": {
+            "position": 0,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 0.007081508636474609,
+              "relative_l2": 0.00037364199446607185,
+              "reference_rms": 0.8319971489128362,
+              "other_rms": 0.8319290502973057,
+              "mean_reference_minus_other": 2.1548387509540133e-05,
+              "cosine": 0.9999999335400659
+            }
+          },
+          "different_route_sets": [],
+          "selected_stages": [
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.007081508636474609,
+                "relative_l2": 0.00037364199446607185,
+                "reference_rms": 0.8319971489128362,
+                "other_rms": 0.8319290502973057,
+                "mean_reference_minus_other": 2.1548387509540133e-05,
+                "cosine": 0.9999999335400659
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.004744425415992737,
+                "relative_l2": 0.00803673551464259,
+                "reference_rms": 0.13058619026978419,
+                "other_rms": 0.13061036635404166,
+                "mean_reference_minus_other": 1.0478708864525288e-05,
+                "cosine": 0.9999677285532045
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.02725505828857422,
+                "relative_l2": 0.009764290223224672,
+                "reference_rms": 0.5018260855246395,
+                "other_rms": 0.5019015200512578,
+                "mean_reference_minus_other": -2.4306377289295967e-05,
+                "cosine": 0.999952347779361
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.009288311004638672,
+                "relative_l2": 0.007935045961863505,
+                "reference_rms": 0.0859311325302212,
+                "other_rms": 0.08576192891922996,
+                "mean_reference_minus_other": 2.0133359660334803e-06,
+                "cosine": 0.9999703978342366
+              }
+            },
+            {
+              "position": 0,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0016728639602661133,
+                "relative_l2": 0.006978730221769317,
+                "reference_rms": 0.017269406546641875,
+                "other_rms": 0.01726256769728387,
+                "mean_reference_minus_other": 3.8362388508073055e-07,
+                "cosine": 0.9999757174578935
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0063533782958984375,
+                "relative_l2": 0.0027809028609273624,
+                "reference_rms": 0.23506178700983546,
+                "other_rms": 0.23506171607432302,
+                "mean_reference_minus_other": 2.4407494584011148e-05,
+                "cosine": 0.9999961332885172
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0020788609981536865,
+                "relative_l2": 0.013039660346847757,
+                "reference_rms": 0.04140163399626554,
+                "other_rms": 0.04136901240124048,
+                "mean_reference_minus_other": 1.3053958514852581e-05,
+                "cosine": 0.9999152272509603
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.010106801986694336,
+                "relative_l2": 0.0032189422875782106,
+                "reference_rms": 0.6861615312954091,
+                "other_rms": 0.6861786490257462,
+                "mean_reference_minus_other": -1.4102896363965555e-05,
+                "cosine": 0.999994819645689
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0008834092877805233,
+                "relative_l2": 0.010645749912985145,
+                "reference_rms": 0.020523091368598957,
+                "other_rms": 0.020492888019872552,
+                "mean_reference_minus_other": 3.3208964421049815e-06,
+                "cosine": 0.9999443349992062
+              }
+            },
+            {
+              "position": 0,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.00986170768737793,
+                "relative_l2": 0.0022949863089003725,
+                "reference_rms": 0.5032158282377422,
+                "other_rms": 0.5023374175152964,
+                "mean_reference_minus_other": 1.4486694572657388e-05,
+                "cosine": 0.9999988881279122
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0049517154693603516,
+                "relative_l2": 0.0036877025750977578,
+                "reference_rms": 0.25917329214407636,
+                "other_rms": 0.2592861993795004,
+                "mean_reference_minus_other": 6.0053978468488364e-05,
+                "cosine": 0.999993298237194
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.007834449410438538,
+                "relative_l2": 0.018029312021472822,
+                "reference_rms": 0.0962206270174948,
+                "other_rms": 0.09625982274679612,
+                "mean_reference_minus_other": 3.824649104728905e-05,
+                "cosine": 0.9998376210676054
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.008902221918106079,
+                "relative_l2": 0.003835012213032521,
+                "reference_rms": 0.5697534229969025,
+                "other_rms": 0.5697798245932857,
+                "mean_reference_minus_other": 0.00013715917446006644,
+                "cosine": 0.9999926477549909
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00040644888213137165,
+                "relative_l2": 0.013976144234859126,
+                "reference_rms": 0.007832742710358661,
+                "other_rms": 0.007836831998787673,
+                "mean_reference_minus_other": -2.2107755439648713e-06,
+                "cosine": 0.9999025208694655
+              }
+            },
+            {
+              "position": 0,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.009816646575927734,
+                "relative_l2": 0.002414616848021217,
+                "reference_rms": 0.5225881652669022,
+                "other_rms": 0.5216963310487065,
+                "mean_reference_minus_other": 3.200376459089327e-05,
+                "cosine": 0.9999985385122314
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.006843268871307373,
+                "relative_l2": 0.004759138005090686,
+                "reference_rms": 0.13576635952795477,
+                "other_rms": 0.13571530861211611,
+                "mean_reference_minus_other": 3.5600933074420025e-06,
+                "cosine": 0.9999887417650547
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0017978399991989136,
+                "relative_l2": 0.013602210737337136,
+                "reference_rms": 0.024075231882989986,
+                "other_rms": 0.024107260610309753,
+                "mean_reference_minus_other": 7.114213926984192e-06,
+                "cosine": 0.9999084965929701
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.00805819034576416,
+                "relative_l2": 0.0033111115039202543,
+                "reference_rms": 0.5939160253516556,
+                "other_rms": 0.5939321409045525,
+                "mean_reference_minus_other": 0.00011132957112636177,
+                "cosine": 0.9999945187871708
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0003819940611720085,
+                "relative_l2": 0.01112956484893604,
+                "reference_rms": 0.009115288395152871,
+                "other_rms": 0.009113293095044238,
+                "mean_reference_minus_other": 2.883696458155782e-06,
+                "cosine": 0.9999380767961249
+              }
+            },
+            {
+              "position": 0,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.009829998016357422,
+                "relative_l2": 0.0024191532095538936,
+                "reference_rms": 0.5225340709339936,
+                "other_rms": 0.5216425515463641,
+                "mean_reference_minus_other": 3.4083685391550486e-05,
+                "cosine": 0.9999985268023771
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.017163395881652832,
+                "relative_l2": 0.005111598661819303,
+                "reference_rms": 0.3707867427268169,
+                "other_rms": 0.37067553643423434,
+                "mean_reference_minus_other": 8.40475169070487e-06,
+                "cosine": 0.9999869768496076
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.010299140005372465,
+                "relative_l2": 0.01558044559665625,
+                "reference_rms": 0.1392999559816543,
+                "other_rms": 0.1394673382742868,
+                "mean_reference_minus_other": 1.938501806506565e-05,
+                "cosine": 0.9998794915766288
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.028941869735717773,
+                "relative_l2": 0.006040225379037403,
+                "reference_rms": 1.1755334980813934,
+                "other_rms": 1.1758018383067916,
+                "mean_reference_minus_other": 3.032186077689403e-06,
+                "cosine": 0.9999817880497747
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.022978782653808594,
+                "relative_l2": 0.004317256374156426,
+                "reference_rms": 1.4192737729844047,
+                "other_rms": 1.4206684302435475,
+                "mean_reference_minus_other": -0.00017448861410684913,
+                "cosine": 0.9999911721294231
+              }
+            },
+            {
+              "position": 0,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.06510138511657715,
+                "relative_l2": 0.004579756798976847,
+                "reference_rms": 3.060220238545869,
+                "other_rms": 3.061319029969375,
+                "mean_reference_minus_other": -0.0003133794855671113,
+                "cosine": 0.9999895811155073
+              }
+            },
+            {
+              "position": 0,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0071186868603848995,
+                "other_rms": 0.0071186868603848995,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        },
+        {
+          "position": 40,
+          "first_differing_stage": {
+            "position": 40,
+            "layer": 0,
+            "stage": "attn_input",
+            "error": {
+              "elements": 2560,
+              "max_abs": 0.0028541088104248047,
+              "relative_l2": 0.00023596437024972928,
+              "reference_rms": 0.6727879916961714,
+              "other_rms": 0.6727944195696993,
+              "mean_reference_minus_other": -6.674408817275435e-06,
+              "cosine": 0.9999999722063103
+            }
+          },
+          "different_route_sets": [
+            {
+              "layer": 14,
+              "set_overlap": 9,
+              "reference_ids": [
+                138,
+                212,
+                506,
+                117,
+                486,
+                335,
+                214,
+                14,
+                417,
+                314
+              ],
+              "other_ids": [
+                138,
+                212,
+                506,
+                117,
+                486,
+                335,
+                214,
+                14,
+                417,
+                127
+              ]
+            },
+            {
+              "layer": 15,
+              "set_overlap": 9,
+              "reference_ids": [
+                226,
+                6,
+                318,
+                199,
+                169,
+                193,
+                289,
+                375,
+                494,
+                156
+              ],
+              "other_ids": [
+                226,
+                6,
+                318,
+                199,
+                169,
+                193,
+                289,
+                375,
+                494,
+                288
+              ]
+            },
+            {
+              "layer": 20,
+              "set_overlap": 9,
+              "reference_ids": [
+                55,
+                248,
+                261,
+                15,
+                485,
+                99,
+                344,
+                442,
+                377,
+                210
+              ],
+              "other_ids": [
+                55,
+                261,
+                248,
+                15,
+                485,
+                99,
+                344,
+                442,
+                377,
+                109
+              ]
+            },
+            {
+              "layer": 21,
+              "set_overlap": 9,
+              "reference_ids": [
+                70,
+                100,
+                228,
+                406,
+                255,
+                469,
+                131,
+                189,
+                418,
+                230
+              ],
+              "other_ids": [
+                70,
+                100,
+                228,
+                406,
+                255,
+                469,
+                131,
+                189,
+                418,
+                340
+              ]
+            },
+            {
+              "layer": 23,
+              "set_overlap": 9,
+              "reference_ids": [
+                68,
+                227,
+                267,
+                224,
+                467,
+                463,
+                233,
+                242,
+                0,
+                365
+              ],
+              "other_ids": [
+                267,
+                68,
+                224,
+                227,
+                463,
+                233,
+                0,
+                467,
+                242,
+                390
+              ]
+            },
+            {
+              "layer": 28,
+              "set_overlap": 9,
+              "reference_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                220
+              ],
+              "other_ids": [
+                459,
+                390,
+                160,
+                290,
+                37,
+                217,
+                253,
+                421,
+                203,
+                28
+              ]
+            },
+            {
+              "layer": 30,
+              "set_overlap": 9,
+              "reference_ids": [
+                476,
+                138,
+                460,
+                160,
+                212,
+                506,
+                80,
+                383,
+                314,
+                233
+              ],
+              "other_ids": [
+                476,
+                138,
+                460,
+                160,
+                212,
+                506,
+                383,
+                80,
+                314,
+                14
+              ]
+            },
+            {
+              "layer": 31,
+              "set_overlap": 9,
+              "reference_ids": [
+                288,
+                318,
+                289,
+                426,
+                199,
+                265,
+                226,
+                449,
+                346,
+                227
+              ],
+              "other_ids": [
+                288,
+                199,
+                318,
+                289,
+                265,
+                226,
+                426,
+                449,
+                227,
+                389
+              ]
+            },
+            {
+              "layer": 33,
+              "set_overlap": 9,
+              "reference_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                471
+              ],
+              "other_ids": [
+                299,
+                210,
+                347,
+                209,
+                61,
+                305,
+                499,
+                105,
+                422,
+                381
+              ]
+            },
+            {
+              "layer": 34,
+              "set_overlap": 9,
+              "reference_ids": [
+                264,
+                314,
+                211,
+                184,
+                212,
+                370,
+                49,
+                471,
+                148,
+                31
+              ],
+              "other_ids": [
+                264,
+                314,
+                184,
+                211,
+                212,
+                370,
+                49,
+                471,
+                148,
+                302
+              ]
+            },
+            {
+              "layer": 35,
+              "set_overlap": 9,
+              "reference_ids": [
+                15,
+                172,
+                315,
+                264,
+                335,
+                145,
+                136,
+                30,
+                319,
+                275
+              ],
+              "other_ids": [
+                15,
+                172,
+                264,
+                315,
+                335,
+                145,
+                136,
+                30,
+                319,
+                277
+              ]
+            },
+            {
+              "layer": 37,
+              "set_overlap": 8,
+              "reference_ids": [
+                118,
+                42,
+                380,
+                170,
+                103,
+                418,
+                255,
+                84,
+                57,
+                392
+              ],
+              "other_ids": [
+                42,
+                380,
+                170,
+                118,
+                103,
+                418,
+                38,
+                84,
+                255,
+                75
+              ]
+            },
+            {
+              "layer": 40,
+              "set_overlap": 9,
+              "reference_ids": [
+                359,
+                481,
+                346,
+                141,
+                254,
+                197,
+                148,
+                449,
+                378,
+                174
+              ],
+              "other_ids": [
+                359,
+                481,
+                346,
+                141,
+                254,
+                197,
+                148,
+                449,
+                378,
+                316
+              ]
+            },
+            {
+              "layer": 42,
+              "set_overlap": 9,
+              "reference_ids": [
+                345,
+                360,
+                353,
+                334,
+                350,
+                19,
+                466,
+                176,
+                393,
+                433
+              ],
+              "other_ids": [
+                345,
+                360,
+                353,
+                334,
+                350,
+                466,
+                19,
+                433,
+                487,
+                176
+              ]
+            },
+            {
+              "layer": 46,
+              "set_overlap": 9,
+              "reference_ids": [
+                204,
+                197,
+                399,
+                171,
+                49,
+                304,
+                133,
+                371,
+                350,
+                105
+              ],
+              "other_ids": [
+                204,
+                171,
+                197,
+                399,
+                49,
+                133,
+                304,
+                388,
+                350,
+                371
+              ]
+            },
+            {
+              "layer": 47,
+              "set_overlap": 9,
+              "reference_ids": [
+                283,
+                62,
+                305,
+                274,
+                124,
+                113,
+                451,
+                328,
+                430,
+                177
+              ],
+              "other_ids": [
+                305,
+                283,
+                62,
+                274,
+                124,
+                451,
+                113,
+                430,
+                328,
+                293
+              ]
+            }
+          ],
+          "selected_stages": [
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0028541088104248047,
+                "relative_l2": 0.00023596437024972928,
+                "reference_rms": 0.6727879916961714,
+                "other_rms": 0.6727944195696993,
+                "mean_reference_minus_other": -6.674408817275435e-06,
+                "cosine": 0.9999999722063103
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0051250159740448,
+                "relative_l2": 0.010178474779536343,
+                "reference_rms": 0.09740110326410299,
+                "other_rms": 0.09737831516898797,
+                "mean_reference_minus_other": 1.306430076404297e-05,
+                "cosine": 0.9999482145787504
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.03644871711730957,
+                "relative_l2": 0.01209576818953928,
+                "reference_rms": 0.4528147204881955,
+                "other_rms": 0.4526994747670602,
+                "mean_reference_minus_other": 6.276611438865987e-05,
+                "cosine": 0.9999268599686911
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0011353008449077606,
+                "relative_l2": 0.00768694069973256,
+                "reference_rms": 0.04074098626682445,
+                "other_rms": 0.04075333330924032,
+                "mean_reference_minus_other": -1.0032683164240552e-06,
+                "cosine": 0.9999705103318026
+              }
+            },
+            {
+              "position": 40,
+              "layer": 0,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0005510561168193817,
+                "relative_l2": 0.007177950107639407,
+                "reference_rms": 0.010106859776959604,
+                "other_rms": 0.010102558231365645,
+                "mean_reference_minus_other": 2.876750758610842e-07,
+                "cosine": 0.9999743181562243
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0280875563621521,
+                "relative_l2": 0.01227560516216334,
+                "reference_rms": 0.5753558359078838,
+                "other_rms": 0.5756721939874024,
+                "mean_reference_minus_other": -0.0001396989937120452,
+                "cosine": 0.9999248472477646
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.006739184260368347,
+                "relative_l2": 0.014593198244138798,
+                "reference_rms": 0.07524989943304633,
+                "other_rms": 0.07526050553768455,
+                "mean_reference_minus_other": 4.843690233258257e-06,
+                "cosine": 0.9998935442196826
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.03453701734542847,
+                "relative_l2": 0.012515028510319135,
+                "reference_rms": 0.5213898090583652,
+                "other_rms": 0.5207787957768897,
+                "mean_reference_minus_other": 9.292621919172461e-05,
+                "cosine": 0.9999222826212945
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0006509218364953995,
+                "relative_l2": 0.017218720231204868,
+                "reference_rms": 0.01083848840965451,
+                "other_rms": 0.010848157258142624,
+                "mean_reference_minus_other": -1.3849900595985786e-05,
+                "cosine": 0.9998522875162854
+              }
+            },
+            {
+              "position": 40,
+              "layer": 5,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0007752105593681335,
+                "relative_l2": 0.009821152865913058,
+                "reference_rms": 0.01419394737332024,
+                "other_rms": 0.014205833633207958,
+                "mean_reference_minus_other": -2.927793398407874e-06,
+                "cosine": 0.9999521631716178
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.018723607063293457,
+                "relative_l2": 0.012480801168353319,
+                "reference_rms": 0.35957904443102684,
+                "other_rms": 0.3595568284548139,
+                "mean_reference_minus_other": 1.2555081745802e-05,
+                "cosine": 0.9999221118975001
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.010793440043926239,
+                "relative_l2": 0.02612495594191128,
+                "reference_rms": 0.08488364006549819,
+                "other_rms": 0.08488799770788308,
+                "mean_reference_minus_other": -0.00010052742407040682,
+                "cosine": 0.999658762174248
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.025088995695114136,
+                "relative_l2": 0.014239115241449128,
+                "reference_rms": 0.4950787719074486,
+                "other_rms": 0.49525088866112366,
+                "mean_reference_minus_other": -0.000180492724831538,
+                "cosine": 0.9998987194413889
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.0006335005164146423,
+                "relative_l2": 0.02281242841434205,
+                "reference_rms": 0.008474393348887175,
+                "other_rms": 0.008500972479055959,
+                "mean_reference_minus_other": 2.2816686200521906e-06,
+                "cosine": 0.9997455132468075
+              }
+            },
+            {
+              "position": 40,
+              "layer": 11,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0011924896389245987,
+                "relative_l2": 0.010025009478583806,
+                "reference_rms": 0.017097455279416387,
+                "other_rms": 0.017102342339816362,
+                "mean_reference_minus_other": -3.4552767796930393e-06,
+                "cosine": 0.9999498047910258
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.04284948110580444,
+                "relative_l2": 0.0160630634439087,
+                "reference_rms": 0.5868741597670171,
+                "other_rms": 0.5868605846061933,
+                "mean_reference_minus_other": -3.7320139108487636e-05,
+                "cosine": 0.9998709862796737
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.008300527930259705,
+                "relative_l2": 0.025792301859114936,
+                "reference_rms": 0.07678950509282223,
+                "other_rms": 0.07683921057857276,
+                "mean_reference_minus_other": 2.9945936098130233e-05,
+                "cosine": 0.9996678031074933
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.03301304578781128,
+                "relative_l2": 0.015112448391792894,
+                "reference_rms": 0.5299043623739986,
+                "other_rms": 0.5299313407904509,
+                "mean_reference_minus_other": -0.00016528088063552104,
+                "cosine": 0.9998858140612292
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.000799040833953768,
+                "relative_l2": 0.021570311897456666,
+                "reference_rms": 0.010211262188383325,
+                "other_rms": 0.010227846758554045,
+                "mean_reference_minus_other": 5.188661453292553e-06,
+                "cosine": 0.9997690548342034
+              }
+            },
+            {
+              "position": 40,
+              "layer": 12,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.0012276917695999146,
+                "relative_l2": 0.010454414007361124,
+                "reference_rms": 0.018028540564236577,
+                "other_rms": 0.01803483819082157,
+                "mean_reference_minus_other": -1.6524797388006717e-06,
+                "cosine": 0.9999454326852497
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.31809189915657043,
+                "relative_l2": 0.13156079816453664,
+                "reference_rms": 0.5300947955555073,
+                "other_rms": 0.5236451804775486,
+                "mean_reference_minus_other": -0.00046124728548875283,
+                "cosine": 0.9913142158851409
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "attn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.07512307167053223,
+                "relative_l2": 0.08314503468539892,
+                "reference_rms": 0.1668236208778635,
+                "other_rms": 0.16274614402699852,
+                "mean_reference_minus_other": -0.0004149170611817965,
+                "cosine": 0.9967630360974948
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.5187013149261475,
+                "relative_l2": 0.11849896707591114,
+                "reference_rms": 1.0584724782053119,
+                "other_rms": 1.0412715738883553,
+                "mean_reference_minus_other": -1.5488900783111603e-05,
+                "cosine": 0.9929972401510587
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_output",
+              "error": {
+                "elements": 2560,
+                "max_abs": 0.10199441760778427,
+                "relative_l2": 0.09434009788011251,
+                "reference_rms": 0.12231449207490418,
+                "other_rms": 0.1212893930690107,
+                "mean_reference_minus_other": 0.00012435378998816305,
+                "cosine": 0.995547778878953
+              }
+            },
+            {
+              "position": 40,
+              "layer": 47,
+              "stage": "ffn_res",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0.7452940940856934,
+                "relative_l2": 0.10736962031614719,
+                "reference_rms": 0.5400131364275849,
+                "other_rms": 0.5247496865484128,
+                "mean_reference_minus_other": 0.0003173044850916185,
+                "cosine": 0.9944792937650906
+              }
+            },
+            {
+              "position": 40,
+              "layer": 48,
+              "stage": "head_input",
+              "error": {
+                "elements": 2560,
+                "max_abs": 4.178073406219482,
+                "relative_l2": 0.09454379189384521,
+                "reference_rms": 4.3382523112339815,
+                "other_rms": 4.265566000045518,
+                "mean_reference_minus_other": 0.0013997975171150755,
+                "cosine": 0.9955973308481209
+              }
+            },
+            {
+              "position": 40,
+              "layer": -1,
+              "stage": "embedding",
+              "error": {
+                "elements": 10240,
+                "max_abs": 0,
+                "relative_l2": 0,
+                "reference_rms": 0.0015605325789784968,
+                "other_rms": 0.0015605325789784968,
+                "mean_reference_minus_other": 0,
+                "cosine": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "layer5_pos0_ffn_input_q8_recalculation": {
+    "method": "CPU-only emulation of ReferenceModel::QuantizedInput: float32 divide, round half away from zero, float16 stored scale. These are recalculated bytes, not yet directly downloaded GPU quantizer bytes.",
+    "input_error": {
+      "max_abs": 8.106231689453125e-06,
+      "relative_l2": 1.6760788308874426e-06
+    },
+    "reconstructed_quantized_input_error": {
+      "max_abs": 0.01203155517578125,
+      "relative_l2": 0.00034654053929258303
+    },
+    "different_codes": [
+      {
+        "index": 2439,
+        "block_index": 76,
+        "cpu_input": 0.05413353070616722,
+        "gpu_input": 0.05413508415222168,
+        "cpu_code": 4,
+        "gpu_code": 5,
+        "half_integer_boundary": 4.5,
+        "cpu_ratio": 4.499949932098389,
+        "gpu_ratio": 4.5000786781311035,
+        "cpu_signed_distance_to_boundary": -5.0067901611328125e-05,
+        "gpu_signed_distance_to_boundary": 7.867813110351562e-05,
+        "cpu_f32_scale": 0.012029807083308697,
+        "gpu_f32_scale": 0.012029808945953846,
+        "cpu_stored_f16_scale": 0.01203155517578125,
+        "gpu_stored_f16_scale": 0.01203155517578125
+      }
+    ],
+    "different_stored_scales": 0,
+    "route_ids_cpu": [
+      484,
+      314,
+      169,
+      308,
+      378,
+      510,
+      251,
+      422,
+      69,
+      202
+    ],
+    "route_ids_gpu": [
+      484,
+      314,
+      169,
+      308,
+      378,
+      510,
+      251,
+      422,
+      69,
+      202
+    ]
+  },
+  "layer11_pos40_routing": {
+    "cpu_decode": {
+      "boundary": {
+        "k": 10,
+        "kth_id": 422,
+        "next_id": 84,
+        "kth_logit": -3.7778470516204834,
+        "next_logit": -3.790648937225342,
+        "boundary_logit_margin": 0.012801885604858398,
+        "shared_gate_logit": -2.469036817550659
+      },
+      "ids": [
+        371,
+        391,
+        273,
+        163,
+        165,
+        500,
+        108,
+        189,
+        234,
+        422
+      ],
+      "competing_logits": {
+        "84": -3.790648937225342,
+        "234": -3.7744951248168945,
+        "422": -3.7778470516204834
+      }
+    },
+    "gpu_decode": {
+      "boundary": {
+        "k": 10,
+        "kth_id": 84,
+        "next_id": 234,
+        "kth_logit": -3.7732443809509277,
+        "next_logit": -3.7753100395202637,
+        "boundary_logit_margin": 0.0020656585693359375,
+        "shared_gate_logit": -2.466059684753418
+      },
+      "ids": [
+        371,
+        391,
+        273,
+        163,
+        165,
+        500,
+        108,
+        189,
+        422,
+        84
+      ],
+      "competing_logits": {
+        "84": -3.7732443809509277,
+        "234": -3.7753100395202637,
+        "422": -3.770576000213623
+      }
+    },
+    "gpu_prefill": {
+      "boundary": {
+        "k": 10,
+        "kth_id": 422,
+        "next_id": 84,
+        "kth_logit": -3.769901752471924,
+        "next_logit": -3.7765088081359863,
+        "boundary_logit_margin": 0.0066070556640625,
+        "shared_gate_logit": -2.4657068252563477
+      },
+      "ids": [
+        371,
+        391,
+        273,
+        163,
+        165,
+        500,
+        108,
+        189,
+        234,
+        422
+      ],
+      "competing_logits": {
+        "84": -3.7765088081359863,
+        "234": -3.765071153640747,
+        "422": -3.769901752471924
+      }
+    }
+  },
+  "source_evidence": [
+    {
+      "file": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+      "symbols": [
+        "Dense",
+        "HcMix",
+        "ForwardBody"
+      ],
+      "fact": "HC down/up retain BF16; prefill Dense narrows activations to BF16 for hipBLASLt, while decode SmallGemm consumes float32 activations. Output head uses decode phase for both runs."
+    },
+    {
+      "file": "src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp",
+      "symbol": "SmallGemmKernel",
+      "fact": "Float32 lane accumulation and wave reduction differ from CPU float64 accumulation order."
+    },
+    {
+      "file": "src/models/qwen38_flash_next/reference.cpp",
+      "symbol": "MatVec",
+      "fact": "Decode reference explicitly reconstructs Q8 activation inputs then accumulates dequantized weights in float64."
+    }
+  ],
+  "limitations": [
+    "Traces only cover positions 0 and 40, not all intervening recurrent states.",
+    "Initial CPU/GPU differences are consistent with reduction/nonlinearity rounding, but exact first primitive is not isolated by stage-level trace.",
+    "One observed quantization-bin crossing and route-set crossings localize discontinuous amplification, but do not by themselves prove every residual is benign."
+  ],
+  "layer5_local_replay": {
+    "directory": "../b-layer5-ffn-replay",
+    "summary": "Direct GPU Q8 bytes confirm the one-code boundary crossing. Same-input CPU/GPU local FFN error ~1e-7; forcing code4 removes 99.96% of local CPU/GPU L2 distance.",
+    "counterfactual_l2_distance_reduction_fraction": 0.9996155629349305
+  }
+}

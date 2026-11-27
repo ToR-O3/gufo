@@ -1,0 +1,340 @@
+{
+  "status": "validated_iq4_only_refresh",
+  "finished_utc": "2026-10-07T18:40:04.811586+00:00",
+  "formal_requests": 18,
+  "warmups": 2,
+  "historical_requests": 36,
+  "source": {
+    "image_id": "sha256:b4c6f641cd9608866db470d95d10da13631abaac7de7fd7bae12fb485599f1b7",
+    "binary_sha256": "1b5d4fb042c91c7f65eb7b8c5aceaa897ae4ec8765c18fa6ffb8365fd891750d",
+    "source_commit": "5e0870cad4f5c2f1c4d3337e0b7ca2b41a8697e8",
+    "source_base": "e03bb9115abc6be469927fed76fddaf1ef0682b3",
+    "qualification_namespace": "iq3-iq4-v080",
+    "weight_compat_contract": "q8_0",
+    "adopted_stages": [
+      1,
+      2,
+      4
+    ],
+    "note": "Existing adopted runtime reused without rebuilding."
+  },
+  "all_request_bodies_identical_to_previous_iq4": true,
+  "all_formal_cache_zero": true,
+  "all_formal_natural_stop": true,
+  "all_mtp_requests_drafted": true,
+  "all_telemetry_qualified": true,
+  "iq3_q4_cells_and_raw_rows_unchanged": true,
+  "original_report_unchanged": true,
+  "html_csv_agreement": {
+    "ar": {
+      "rows": 3,
+      "columns": 17
+    },
+    "mtp": {
+      "rows": 3,
+      "columns": 17
+    },
+    "iq4-before-after": {
+      "rows": 6,
+      "columns": 9
+    },
+    "iq4-means": {
+      "rows": 6,
+      "columns": 5
+    },
+    "windows-free": {
+      "rows": 6,
+      "columns": 5
+    },
+    "windows-phases": {
+      "rows": 36,
+      "columns": 6
+    },
+    "distributions": {
+      "rows": 18,
+      "columns": 10
+    }
+  },
+  "model_stat_identity": [
+    {
+      "path": "/home/user/gufo-wsl/models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/Qwen3.8-Flash-Next-Uncensored-IQ4_XS-00001-of-00003.gguf",
+      "sha256": "28a99b125cb905fc3bdc06baf6266a56b0cbd1b27e833b9142acc2017b673704",
+      "stat_unchanged": true
+    },
+    {
+      "path": "/home/user/gufo-wsl/models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/Qwen3.8-Flash-Next-Uncensored-IQ4_XS-00002-of-00003.gguf",
+      "sha256": "2a309e0b112fde96ba3bcba5a6b58cc05e5df7bb7fad5a990eaa51df335b0e43",
+      "stat_unchanged": true
+    },
+    {
+      "path": "/home/user/gufo-wsl/models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/Qwen3.8-Flash-Next-Uncensored-IQ4_XS-00003-of-00003.gguf",
+      "sha256": "ebc43c58e2eaeba1d5bdf62c8cb1f0eac198c4dc01941f771921edeebf574bc3",
+      "stat_unchanged": true
+    },
+    {
+      "path": "/home/user/gufo-wsl/models/MTP/mtp-Qwen3.8-Flash-Next-shared-Q8_0.gguf",
+      "sha256": "5ff54097406a905cf3a724c709124ceb0e3e10235ee862298969e91c96fa96e6",
+      "stat_unchanged": true
+    }
+  ],
+  "all_benchmark_containers_removed": true,
+  "normal_runtime_restored": true,
+  "strata_stopped": true,
+  "ar_mtp_output_checks": [
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    }
+  ],
+  "warnings": [],
+  "files": [
+    {
+      "name": "ar.csv",
+      "sha256": "415f9641de16aa9a99e400aa6c29681bc85837745c44d361d4149d7dc1f29fe8"
+    },
+    {
+      "name": "cases.json",
+      "sha256": "e684082d30805252a0593b9346e9cbcba28b151a91f68b1dde8d57ec049b1cee"
+    },
+    {
+      "name": "console.log",
+      "sha256": "1b4ccd021665f60249a03f91b5b4053d171da1867c4ceea8fc31b19aab506ae1"
+    },
+    {
+      "name": "distributions.csv",
+      "sha256": "72dda24763b103863084c3a0f4cd8f843141c4ab10f17f53e100cae1f6c989bc"
+    },
+    {
+      "name": "execution.json",
+      "sha256": "b865d95c9c501ef4049b3986f81c24f578e6af52b3244b7427e68d0142b5fd61"
+    },
+    {
+      "name": "fresh-ar.csv",
+      "sha256": "8bda5df9df3e8d1d2e8311b29b5829f8fb9e894e40f77dcc8a8493ca4449c85b"
+    },
+    {
+      "name": "fresh-distributions.csv",
+      "sha256": "08eda3f6cd4ef1bc4319ac8d3a9f2acd6a7f0efecf9ee58fece0dad1d301ac74"
+    },
+    {
+      "name": "fresh-manual-text-review.json",
+      "sha256": "00456d229f448043c32dabf109f043ef57f849676b18db7580adbdb977b6ce30"
+    },
+    {
+      "name": "fresh-mtp.csv",
+      "sha256": "8fd8e946f9f1dac8fc8cf3a0ae32914f30af8351401411ad06c4976d6bd96884"
+    },
+    {
+      "name": "fresh-raw-results.csv",
+      "sha256": "8889423e0a6161a5e1715afe0a55a9bcedf7cf8655150cf371ae33e25ca09d7a"
+    },
+    {
+      "name": "fresh-structure-review.json",
+      "sha256": "5ae9b46c136f1862bf4778d26ebdbc81c0ea04abcbdd3242b59e8275ad7c24af"
+    },
+    {
+      "name": "fresh-summary.json",
+      "sha256": "132b9c6cac34ca5008339988930b6f81e9b93bbd299004f0fea8fc960ec9c25b"
+    },
+    {
+      "name": "fresh-windows-free.csv",
+      "sha256": "069cab256fbb828d720478c065bbf1855d57e46e5021cc0fb063d0e12a9081a6"
+    },
+    {
+      "name": "fresh-windows-phases.csv",
+      "sha256": "7f8b818eccec3294da3c8c7c79bd8907ccad204c218445467ea0616f0953e01c"
+    },
+    {
+      "name": "harness-files.json",
+      "sha256": "478db2d2debcdf4bdb414fd8ea65d186ded23123ec3ddf963b19f85544998be6"
+    },
+    {
+      "name": "image-manifest.json",
+      "sha256": "b9d6a1308f02dde46424a02e0bd731d230c07d8bbd58b0e526727ee4f2515e6d"
+    },
+    {
+      "name": "iq4-before-after.csv",
+      "sha256": "14438a160c0e35dcf4052c76002a4842ea45d6ed19c0e51f74e3d53d8d4dcb0c"
+    },
+    {
+      "name": "iq4-means.csv",
+      "sha256": "2a86a2ecec5767ddad121d0030424ce649eb1d219ce34e976c8ef1269af987ad"
+    },
+    {
+      "name": "manual-review-work.json",
+      "sha256": "74d98eb2fa972f42afa576005c8ec730490b1522a1e09eb563298f6f58a7658b"
+    },
+    {
+      "name": "manual-text-review.json",
+      "sha256": "d1b5815bcfd5f7ec037e7a7bd9e8af2516f9e79b9307418a6a0356b1e3d9b413"
+    },
+    {
+      "name": "mtp.csv",
+      "sha256": "517c2378bce492ab0aad8720a63ee6e9997d32e31b5f11c9bf55926670fa318c"
+    },
+    {
+      "name": "original-runtime.json",
+      "sha256": "9eda9b91f98372fb7930d386d3b3dd9cab857c60c3a92f3af1866260dbeb2d1c"
+    },
+    {
+      "name": "preflight.json",
+      "sha256": "0d4365c61fba69e79ed1d19cdb675e1b80689304d1a60776f89533923a3e07f1"
+    },
+    {
+      "name": "production-restored.json",
+      "sha256": "45883e25b479d6e79db59449cd121d1b2ac4ec611faf0817cac50ab322a403e3"
+    },
+    {
+      "name": "protocol.json",
+      "sha256": "9ca17c9f29db340f70e6b8f9574ecd2c40ab7042a8fc40bbc7e84b04cd8f4fc9"
+    },
+    {
+      "name": "raw-results.csv",
+      "sha256": "3daffda900fed3eef3c733674211b6b361662a981134a4d69685a8ab4d907732"
+    },
+    {
+      "name": "report-build.json",
+      "sha256": "11b3171285df7103ed1d4ecba2a3e5098f1d733d9eb0567219bb4fab853b90c0"
+    },
+    {
+      "name": "report.html",
+      "sha256": "05a49ac607c23d23c5eac2c41a0ebaefed340d125b6ef2df722ff9beb43eb29b"
+    },
+    {
+      "name": "structure-review.json",
+      "sha256": "48efbdf074d739111fbd1b3e9caf0c7b84a97ab4867e50b7b17ab86acd27170d"
+    },
+    {
+      "name": "summary.json",
+      "sha256": "a5bdb489c86e3b8d6b2015ae59de1c29c246f8b3be20dee6da35ba740f016812"
+    },
+    {
+      "name": "windows-free.csv",
+      "sha256": "355939dc42b6a5ee3116c9cbe62a917ea582b5ffeaccba379d5053f718a4f986"
+    },
+    {
+      "name": "windows-phases.csv",
+      "sha256": "9b9fe2bb6f76126800eb118f4e80498ed799080e6514ecc005f7f02c5d0663ce"
+    }
+  ],
+  "harness": [
+    {
+      "name": "audit.py",
+      "sha256": "a62535114675a331ad2a6f2c5fdb9486144ad9d22e94d55f3e09b8a154f5ab3f"
+    },
+    {
+      "name": "finalize.py",
+      "sha256": "736f8180622005d5a624fdd69990977fec6bb8a5c192b5e9092fa327d5ca96a7"
+    },
+    {
+      "name": "finalize_manual.py",
+      "sha256": "26f7e0bfa1cb8eeff564ed88df24475a8541ba5a04ffa1fed849e79391155e7e"
+    },
+    {
+      "name": "prepare.py",
+      "sha256": "a674decc59f5df36e976df50b2ef943031744e2fb0c56fc3cecb9e940f6712e7"
+    },
+    {
+      "name": "prepare_report.py",
+      "sha256": "c35f191a428246566ed3394d4c3f62f86a885fe8e0173e1eecde940eae28cf4f"
+    },
+    {
+      "name": "progress.py",
+      "sha256": "ae9508ced10f8d905634d3921f98747fc740d0119a36ea3061b820314a6312ab"
+    },
+    {
+      "name": "report.py",
+      "sha256": "a034809abbc6fd18a1bc654bacc42b3faed6da5f351af621f204f661988bdca4"
+    },
+    {
+      "name": "restore.py",
+      "sha256": "6c6dbb0feb08e0927c2f86a31162d3d85963bcc8746ee20ebd89e7c33bc618c1"
+    },
+    {
+      "name": "review_structure.py",
+      "sha256": "827ccfe00694e7e7719c052df40d1b16bbe736ff64b8b98b352b0307cc1e4c45"
+    },
+    {
+      "name": "run.py",
+      "sha256": "2f2fe78a2feae09ce63192870f86ef7be96d44a1568bcc95a77a9c21affa5e31"
+    },
+    {
+      "name": "runtime-benchmark.py",
+      "sha256": "de1e491d720446a07256ebf2a0d6cd961a147f5c3f189495aa8fe71b0d8d3c56"
+    },
+    {
+      "name": "runtime-collect_memory.py",
+      "sha256": "98c4a5fcf784d24522796e8807790f14f0d75018558a842b258afcda9db5edc5"
+    },
+    {
+      "name": "runtime-runtime.py",
+      "sha256": "f42d753435be21f9428143bf8c7be02ca494c7a1682ca7a83a355cf46fa5f9de"
+    },
+    {
+      "name": "runtime-summarize_memory.py",
+      "sha256": "413c1b454f88b66782ab3e3db2668c37a5ea69ac7b45c2f152d0791838e806b2"
+    },
+    {
+      "name": "runtime-telemetry_health.py",
+      "sha256": "9bfabff7c99462a992f10f66c1f9e82e6f75672c9cc65c38ff2d9b76ee72acba"
+    },
+    {
+      "name": "runtime-windows_memory.ps1",
+      "sha256": "c5e641ca3f88858aa7b1c7658f76724a8af4f0cabb66740c5b5d71b85ce698bc"
+    },
+    {
+      "name": "run_and_restore.py",
+      "sha256": "7d3e5e1eff3d95d4f2c41c65689b79b0b308cf4d7a2a492c13aeb3e0aa72e658"
+    }
+  ]
+}

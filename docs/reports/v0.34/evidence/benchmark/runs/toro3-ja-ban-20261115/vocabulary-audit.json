@@ -1,0 +1,45 @@
+{
+  "complete_hangul_token_gaps": [],
+  "byte_fallback_examples": [
+    {
+      "text": "한",
+      "byte_ids": [
+        169,
+        243,
+        250
+      ],
+      "all_byte_ids_unbanned": true,
+      "direct_complete_token_ids": [
+        22836
+      ],
+      "all_direct_tokens_banned": true
+    },
+    {
+      "text": "㈜",
+      "byte_ids": [
+        159,
+        230,
+        250
+      ],
+      "all_byte_ids_unbanned": true,
+      "direct_complete_token_ids": [
+        158983
+      ],
+      "all_direct_tokens_banned": true
+    },
+    {
+      "text": "汉",
+      "byte_ids": [
+        162,
+        109,
+        231
+      ],
+      "all_byte_ids_unbanned": true,
+      "direct_complete_token_ids": [
+        97165
+      ],
+      "all_direct_tokens_banned": true
+    }
+  ],
+  "scope": "Vocabulary audit only; no claim that sampling used these fallback paths."
+}

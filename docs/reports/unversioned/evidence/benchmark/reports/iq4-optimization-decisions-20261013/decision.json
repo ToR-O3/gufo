@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-13",
+  "authority": "explicit user decision",
+  "scope": "The October 13 A/B1/B2/C optimization candidates only; earlier adopted Orca IQ4 support remains in place.",
+  "A": "adopted",
+  "B1": "not adopted at present",
+  "B2": "not adopted at present",
+  "B1+B2": "not adopted at present",
+  "C": "not adopted at present",
+  "runtime": "A only; no deployment or restart required",
+  "reason": "No consistent demonstrated end-to-end speed gain sufficient to justify maintaining B1/B2/C; preserve numerical checks and all timing flags.",
+  "reconsideration": "Reconsider only when relevant upstream or local processing changes, using a matched current baseline, unchanged precision criteria, and reproducible benefit in the affected stage. No scheduled monitoring or automatic adoption.",
+  "retention": "Keep independent candidate branches, code, binaries, patches, test records and reports; exclude candidates from the adopted branch.",
+  "preserved_refs": {
+    "A": {
+      "branch": "codex/iq4-shared-expert-direct-f16",
+      "revision": "a65fc181645d855cb7354c36d9ce939ec9616ca4"
+    },
+    "B1": {
+      "branch": "codex/iq4-prequantized-input",
+      "revision": "3bc7c5cb2256b9830f9d9519b3803bec740a7e4e"
+    },
+    "B2": {
+      "branch": "codex/iq4-gated-experts",
+      "revision": "13da1f26fce12f3a1ef8cc7753e3fa746a929076"
+    },
+    "B1+B2": {
+      "branch": "codex/iq4-gated-prequantized",
+      "revision": "7a1cd10fe26e79bfa2e268bf858eb906e27dccb1"
+    },
+    "C": {
+      "branch": "codex/iq4-down-by-expert",
+      "revision": "5685074f876db523f12f1f6c94504893dc7551f4"
+    }
+  },
+  "evidence": {
+    "B1": "../iq4-prequantized-input-20261013/report.html",
+    "B2_and_combination": "../iq4-gated-experts-20261013/report.html",
+    "C": "../iq4-down-by-expert-model-20261013/report.html"
+  }
+}

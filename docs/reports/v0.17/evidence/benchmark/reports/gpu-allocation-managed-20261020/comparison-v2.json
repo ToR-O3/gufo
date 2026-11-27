@@ -1,0 +1,930 @@
+[
+  {
+    "time": "2026-10-20T11:39:06.6768392+09:00",
+    "freePhysicalBytes": 36335116288,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 85646749696,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 763904000,
+        "SharedUsage": 1012969472,
+        "TotalCommitted": 2001850368
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5177683968,
+        "SharedUsage": 242626560,
+        "TotalCommitted": 6404833280
+      }
+    ],
+    "mode": "malloc",
+    "label": "before",
+    "probe": null,
+    "summary": {
+      "windows_free_gib": 33.84,
+      "windows_used_gib": 29.808,
+      "committed_gib": 79.765,
+      "dedicated_gib": 0.711,
+      "shared_gib": 0.943
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:10.9622257+09:00",
+    "freePhysicalBytes": 36306812928,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 94306578432,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 9410949120,
+        "SharedUsage": 1035567104,
+        "TotalCommitted": 10671493120
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5153959936,
+        "SharedUsage": 243380224,
+        "TotalCommitted": 6380208128
+      }
+    ],
+    "mode": "malloc",
+    "label": "8GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 50125312000,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 8,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.5232357580098324
+    },
+    "summary": {
+      "windows_free_gib": 33.813,
+      "windows_used_gib": 29.834,
+      "committed_gib": 87.83,
+      "dedicated_gib": 8.765,
+      "shared_gib": 0.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:13.9186704+09:00",
+    "freePhysicalBytes": 36280418304,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 102937083904,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 18018713600,
+        "SharedUsage": 1035567104,
+        "TotalCommitted": 19279257600
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5145247744,
+        "SharedUsage": 243560448,
+        "TotalCommitted": 6371397632
+      }
+    ],
+    "mode": "malloc",
+    "label": "16GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 50125312000,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 16,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.28668881504563615
+    },
+    "summary": {
+      "windows_free_gib": 33.789,
+      "windows_used_gib": 29.859,
+      "committed_gib": 95.868,
+      "dedicated_gib": 16.781,
+      "shared_gib": 0.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:16.7748680+09:00",
+    "freePhysicalBytes": 36229734400,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 111584239616,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 26626473984,
+        "SharedUsage": 1035567104,
+        "TotalCommitted": 27887017984
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5145513984,
+        "SharedUsage": 243593216,
+        "TotalCommitted": 6371663872
+      }
+    ],
+    "mode": "malloc",
+    "label": "24GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 50125312000,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 24,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.2910671179997735
+    },
+    "summary": {
+      "windows_free_gib": 33.742,
+      "windows_used_gib": 29.906,
+      "committed_gib": 103.921,
+      "dedicated_gib": 24.798,
+      "shared_gib": 0.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:19.8570123+09:00",
+    "freePhysicalBytes": 36210032640,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 120238714880,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 35234238464,
+        "SharedUsage": 1035567104,
+        "TotalCommitted": 36494782464
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5146439680,
+        "SharedUsage": 243793920,
+        "TotalCommitted": 6372704256
+      }
+    ],
+    "mode": "malloc",
+    "label": "32GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 50125312000,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 32,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.287358416011557
+    },
+    "summary": {
+      "windows_free_gib": 33.723,
+      "windows_used_gib": 29.924,
+      "committed_gib": 111.981,
+      "dedicated_gib": 32.814,
+      "shared_gib": 0.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:22.6470507+09:00",
+    "freePhysicalBytes": 36154507264,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 124602986496,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 39538118656,
+        "SharedUsage": 1035567104,
+        "TotalCommitted": 40798662656
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5147230208,
+        "SharedUsage": 243810304,
+        "TotalCommitted": 6373494784
+      }
+    ],
+    "mode": "malloc",
+    "label": "36GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 50125312000,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 36,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.14724910503719002
+    },
+    "summary": {
+      "windows_free_gib": 33.672,
+      "windows_used_gib": 29.976,
+      "committed_gib": 116.046,
+      "dedicated_gib": 36.823,
+      "shared_gib": 0.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:25.5756243+09:00",
+    "freePhysicalBytes": 33960103936,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 128931962880,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41694515200,
+        "SharedUsage": 3183050752,
+        "TotalCommitted": 45102542848
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5147430912,
+        "SharedUsage": 243712000,
+        "TotalCommitted": 6373597184
+      }
+    ],
+    "mode": "malloc",
+    "label": "40GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 47977828352,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 40,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.25159211101708934
+    },
+    "summary": {
+      "windows_free_gib": 31.628,
+      "windows_used_gib": 32.019,
+      "committed_gib": 120.077,
+      "dedicated_gib": 38.831,
+      "shared_gib": 2.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:28.7876636+09:00",
+    "freePhysicalBytes": 29660528640,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 133296578560,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41703428096,
+        "SharedUsage": 7478018048,
+        "TotalCommitted": 49406423040
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5146554368,
+        "SharedUsage": 243970048,
+        "TotalCommitted": 6372655104
+      }
+    ],
+    "mode": "malloc",
+    "label": "44GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 43682861056,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 44,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.34308850002707914
+    },
+    "summary": {
+      "windows_free_gib": 27.624,
+      "windows_used_gib": 36.024,
+      "committed_gib": 124.142,
+      "dedicated_gib": 38.839,
+      "shared_gib": 6.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:32.3391865+09:00",
+    "freePhysicalBytes": 25358053376,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 137623654400,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41712345088,
+        "SharedUsage": 11772985344,
+        "TotalCommitted": 53710307328
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5148200960,
+        "SharedUsage": 242286592,
+        "TotalCommitted": 6372237312
+      }
+    ],
+    "mode": "malloc",
+    "label": "48GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 39387893760,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 48,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.6461964030168019
+    },
+    "summary": {
+      "windows_free_gib": 23.617,
+      "windows_used_gib": 40.031,
+      "committed_gib": 128.172,
+      "dedicated_gib": 38.848,
+      "shared_gib": 10.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:35.8205794+09:00",
+    "freePhysicalBytes": 21097558016,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 141932498944,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41721257984,
+        "SharedUsage": 16067952640,
+        "TotalCommitted": 58014187520
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5148463104,
+        "SharedUsage": 242319360,
+        "TotalCommitted": 6372499456
+      }
+    ],
+    "mode": "malloc",
+    "label": "52GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 35092926464,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 52,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.6277579359593801
+    },
+    "summary": {
+      "windows_free_gib": 19.649,
+      "windows_used_gib": 43.999,
+      "committed_gib": 132.185,
+      "dedicated_gib": 38.856,
+      "shared_gib": 14.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:39.2826364+09:00",
+    "freePhysicalBytes": 16794234880,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 146330836992,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41730170880,
+        "SharedUsage": 20362919936,
+        "TotalCommitted": 62318067712
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5150048256,
+        "SharedUsage": 242417664,
+        "TotalCommitted": 6374182912
+      }
+    ],
+    "mode": "malloc",
+    "label": "56GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 30797959168,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 56,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.5950279980315827
+    },
+    "summary": {
+      "windows_free_gib": 15.641,
+      "windows_used_gib": 48.006,
+      "committed_gib": 136.281,
+      "dedicated_gib": 38.864,
+      "shared_gib": 18.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:42.6053428+09:00",
+    "freePhysicalBytes": 12597100544,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 150668431360,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 41739083776,
+        "SharedUsage": 24657887232,
+        "TotalCommitted": 66621947904
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5151096832,
+        "SharedUsage": 242556928,
+        "TotalCommitted": 6375018496
+      }
+    ],
+    "mode": "malloc",
+    "label": "60GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "malloc",
+      "hip_info_status": 0,
+      "hip_free_bytes": 26502991872,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 4,
+      "total_gib": 60,
+      "advise_status": null,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 0.544708355970215
+    },
+    "summary": {
+      "windows_free_gib": 11.732,
+      "windows_used_gib": 51.915,
+      "committed_gib": 140.321,
+      "dedicated_gib": 38.873,
+      "shared_gib": 22.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:47.0423262+09:00",
+    "freePhysicalBytes": 36777746432,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 85632520192,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 763904000,
+        "SharedUsage": 1012969472,
+        "TotalCommitted": 2001850368
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5152088064,
+        "SharedUsage": 242655232,
+        "TotalCommitted": 6376108032
+      }
+    ],
+    "mode": "malloc",
+    "label": "released",
+    "probe": null,
+    "summary": {
+      "windows_free_gib": 34.252,
+      "windows_used_gib": 29.395,
+      "committed_gib": 79.751,
+      "dedicated_gib": 0.711,
+      "shared_gib": 0.943
+    }
+  },
+  {
+    "time": "2026-10-20T11:39:49.5876067+09:00",
+    "freePhysicalBytes": 36797231104,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 85613166592,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 763904000,
+        "SharedUsage": 1012969472,
+        "TotalCommitted": 2001850368
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5151174656,
+        "SharedUsage": 242491392,
+        "TotalCommitted": 6375030784
+      }
+    ],
+    "mode": "managed_coarse",
+    "label": "before",
+    "probe": null,
+    "summary": {
+      "windows_free_gib": 34.27,
+      "windows_used_gib": 29.377,
+      "committed_gib": 79.733,
+      "dedicated_gib": 0.711,
+      "shared_gib": 0.943
+    }
+  },
+  {
+    "time": "2026-10-20T11:40:01.7405686+09:00",
+    "freePhysicalBytes": 28441120768,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 94040989696,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 821010432,
+        "SharedUsage": 9625501696,
+        "TotalCommitted": 10671489024
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5152296960,
+        "SharedUsage": 242782208,
+        "TotalCommitted": 6376230912
+      }
+    ],
+    "mode": "managed_coarse",
+    "label": "8GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "managed_coarse",
+      "hip_info_status": 0,
+      "hip_free_bytes": 41535377408,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 8,
+      "advise_status": 0,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 8.612915887031704
+    },
+    "summary": {
+      "windows_free_gib": 26.488,
+      "windows_used_gib": 37.159,
+      "committed_gib": 87.582,
+      "dedicated_gib": 0.765,
+      "shared_gib": 8.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:40:31.3660472+09:00",
+    "freePhysicalBytes": 18900922368,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 101027663872,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 838840320,
+        "SharedUsage": 18215436288,
+        "TotalCommitted": 19279253504
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5054050304,
+        "SharedUsage": 203329536,
+        "TotalCommitted": 6285033472
+      }
+    ],
+    "mode": "managed_coarse",
+    "label": "16GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "managed_coarse",
+      "hip_info_status": 0,
+      "hip_free_bytes": 32945442816,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 16,
+      "advise_status": 0,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 26.53015518002212
+    },
+    "summary": {
+      "windows_free_gib": 17.603,
+      "windows_used_gib": 46.044,
+      "committed_gib": 94.089,
+      "dedicated_gib": 0.781,
+      "shared_gib": 16.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:41:50.9057169+09:00",
+    "freePhysicalBytes": 9376452608,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 101507031040,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 856666112,
+        "SharedUsage": 26805370880,
+        "TotalCommitted": 27887013888
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193093632
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5035442176,
+        "SharedUsage": 361869312,
+        "TotalCommitted": 6384164864
+      }
+    ],
+    "mode": "managed_coarse",
+    "label": "24GiB",
+    "probe": {
+      "label": "allocated",
+      "mode": "managed_coarse",
+      "hip_info_status": 0,
+      "hip_free_bytes": 24355508224,
+      "hip_total_bytes": 119696519168,
+      "added_gib": 8,
+      "total_gib": 24,
+      "advise_status": 0,
+      "sample_readback_ok": true,
+      "elapsed_seconds": 76.10906728997361
+    },
+    "summary": {
+      "windows_free_gib": 8.733,
+      "windows_used_gib": 54.915,
+      "committed_gib": 94.536,
+      "dedicated_gib": 0.798,
+      "shared_gib": 24.964
+    }
+  },
+  {
+    "time": "2026-10-20T11:41:58.6642983+09:00",
+    "freePhysicalBytes": 15937298432,
+    "totalVisibleBytes": 68340748288,
+    "committedBytes": 99291467776,
+    "commitLimit": 222959570944,
+    "gpu": [
+      {
+        "Name": "luid_0x00000000_0x0001C5CB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 3607625728,
+        "TotalCommitted": 4496887808
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A635_phys_0",
+        "DedicatedUsage": 763904000,
+        "SharedUsage": 1012969472,
+        "TotalCommitted": 2001850368
+      },
+      {
+        "Name": "luid_0x00000000_0x0001A5EB_phys_0",
+        "DedicatedUsage": 0,
+        "SharedUsage": 8192,
+        "TotalCommitted": 193134592
+      },
+      {
+        "Name": "luid_0x00000000_0x000190BB_phys_0",
+        "DedicatedUsage": 5045833728,
+        "SharedUsage": 353796096,
+        "TotalCommitted": 6394372096
+      }
+    ],
+    "mode": "managed_coarse",
+    "label": "released",
+    "probe": null,
+    "summary": {
+      "windows_free_gib": 14.843,
+      "windows_used_gib": 48.805,
+      "committed_gib": 92.472,
+      "dedicated_gib": 0.711,
+      "shared_gib": 0.943
+    }
+  }
+]

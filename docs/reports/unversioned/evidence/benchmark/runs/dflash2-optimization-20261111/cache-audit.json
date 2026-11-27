@@ -1,0 +1,1234 @@
+{
+  "state": {
+    "ar": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13549,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 27,
+        "ttft_ms": 245.0985399991623,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13489,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 27,
+        "ttft_ms": 240.95784300152445,
+        "vs_AR": null
+      }
+    ],
+    "auto": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 468.89390100113815,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        }
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 558.5570210023434,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        }
+      }
+    ],
+    "auto-skip": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 493.264567998267,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        }
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 507.4201509996783,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        }
+      }
+    ]
+  },
+  "context-state": {
+    "ar": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13549,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 27,
+        "ttft_ms": 239.8203509983432,
+        "vs_AR": null,
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19261,
+            391
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 10443.712895998033,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13489,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 27,
+        "ttft_ms": 242.03376399964327,
+        "vs_AR": null,
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            888,
+            279,
+            14367,
+            11,
+            12680
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 10458.326323998335,
+        "vs_AR": null
+      }
+    ],
+    "auto-direct": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 446.51867799984757,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19177,
+            715
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 12893.115954000677,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 458.1397299989476,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            2394,
+            3851,
+            4897,
+            23562,
+            8366
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 12708.008124001935,
+        "vs_AR": null
+      }
+    ],
+    "auto": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 460.65397200072766,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19177,
+            715
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 12924.337095002556,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 453.6913199990522,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            2394,
+            3851,
+            4897,
+            23562,
+            8366
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 13038.49817200171,
+        "vs_AR": null
+      }
+    ],
+    "auto-window-skip": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 427.1776179994049,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19177,
+            715
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 11803.652749000321,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 475.6797780028137,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            2394,
+            3851,
+            4897,
+            23562,
+            8366
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 11766.752248000557,
+        "vs_AR": null
+      }
+    ],
+    "mtp": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 246.4940520003438,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19177,
+            715
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 10753.013216999534,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 241.87775799873634,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            2394,
+            3851,
+            4897,
+            23562,
+            8366
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 10996.903381997981,
+        "vs_AR": null
+      }
+    ]
+  },
+  "cache-align": {
+    "ar-align": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13508,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 68,
+        "ttft_ms": 336.2320489977719,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19261,
+            391
+          ],
+          "right": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": null
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 10159.713902998192,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13448,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 68,
+        "ttft_ms": 348.5997679999855,
+        "vs_AR": {
+          "offset_zero_based": 2,
+          "left": [
+            995,
+            11702,
+            6546,
+            888,
+            279,
+            14367,
+            11,
+            12680
+          ],
+          "right": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": null
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 10317.4090959983,
+        "vs_AR": null
+      }
+    ],
+    "ar": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13549,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 27,
+        "ttft_ms": 234.28789900208358,
+        "vs_AR": null,
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19261,
+            391
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 10175.250074997166,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13489,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 27,
+        "ttft_ms": 245.1378570003726,
+        "vs_AR": null,
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            888,
+            279,
+            14367,
+            11,
+            12680
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 10023.024376001558,
+        "vs_AR": null
+      }
+    ],
+    "auto-align": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13508,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 68,
+        "ttft_ms": 647.7644779988623,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19261,
+            391
+          ],
+          "right": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": null
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 12140.689318999648,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13448,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 68,
+        "ttft_ms": 619.1527340015455,
+        "vs_AR": {
+          "offset_zero_based": 2,
+          "left": [
+            995,
+            11702,
+            6546,
+            888,
+            279,
+            14367,
+            11,
+            12680
+          ],
+          "right": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": null
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 12206.805580997752,
+        "vs_AR": null
+      }
+    ],
+    "auto": [
+      {
+        "case": "cache-followup",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13550,
+        "AR_cached_tokens": 13549,
+        "prefill_tokens": 26,
+        "ttft_ms": 432.0562879984209,
+        "vs_AR": {
+          "offset_zero_based": 11,
+          "left": [
+            19261,
+            391,
+            44350,
+            314,
+            19177,
+            321,
+            4022,
+            13
+          ],
+          "right": [
+            19177,
+            715,
+            1332,
+            279,
+            2919,
+            321,
+            12515,
+            25170
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            11,
+            12680,
+            279,
+            14367,
+            1083,
+            264,
+            19177,
+            715
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 0,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13576,
+        "ttft_ms": 12154.092763001245,
+        "vs_AR": null
+      },
+      {
+        "case": "cache-followup",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 13490,
+        "AR_cached_tokens": 13489,
+        "prefill_tokens": 26,
+        "ttft_ms": 499.2952430002333,
+        "vs_AR": {
+          "offset_zero_based": 5,
+          "left": [
+            888,
+            279,
+            14367,
+            11,
+            12680,
+            279,
+            2919,
+            1083
+          ],
+          "right": [
+            2394,
+            3851,
+            4897,
+            23562,
+            8366,
+            279,
+            26655,
+            11
+          ]
+        },
+        "same_tokenized_prompt_as_own_cold": true,
+        "vs_own_cold": {
+          "offset_zero_based": 2,
+          "left": [
+            1145,
+            2116,
+            310,
+            279,
+            14367,
+            1040,
+            264,
+            8545
+          ],
+          "right": [
+            995,
+            11702,
+            6546,
+            2394,
+            3851,
+            4897,
+            23562,
+            8366
+          ]
+        }
+      },
+      {
+        "case": "cache-followup-cold",
+        "rep": 1,
+        "same_prompt_as_AR": true,
+        "same_payload_as_AR": true,
+        "cached_tokens": 0,
+        "AR_cached_tokens": 0,
+        "prefill_tokens": 13516,
+        "ttft_ms": 12260.570308997558,
+        "vs_AR": null
+      }
+    ]
+  }
+}

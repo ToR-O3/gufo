@@ -1,0 +1,314 @@
+{
+  "completed": true,
+  "normal_restored": true,
+  "normal_configuration_unchanged": true,
+  "source_revision": "fbf0a9f889464dace805e446219bb8e34969dca9",
+  "image": "gufo:v0.27.0-iq-performance-fbf0a9f8-rocm101",
+  "modes": {
+    "bf16": {
+      "observation": {
+        "concurrency": 1,
+        "repetition": 1,
+        "request_index": 1,
+        "prompt_tokens": 133106,
+        "cached_prompt_tokens": 131052,
+        "completion_tokens": 128,
+        "prefill_tokens": 2054,
+        "wall_ms": 6183.550264977384,
+        "client_ttft_ms": 2203.5225959843956,
+        "client_event_inter_token_ms": 31.31561719685954,
+        "queue_ms": 16.28724,
+        "prefill_ms": 2175.988685,
+        "decode_ms": 3957.120325,
+        "server_ttft_ms": 2192.375873,
+        "server_inter_token_ms": 31.31324904724408,
+        "server_max_inter_token_ms": 110.703614,
+        "requested_logical_concurrency": 1,
+        "physical_execution_width": 1,
+        "execution_plan": "serial-c1",
+        "metrics_source": "gufo",
+        "cache_hit": true,
+        "draft_tokens": 100,
+        "draft_accepted_tokens": 54,
+        "draft_acceptance": 0.54,
+        "case_id": null,
+        "category": null,
+        "completion_sha256": "347538132f02381bb9a69ec546b277976027e96bfaacb4552a5ba890c8a52c04",
+        "prefill_tokens_per_second": 943.9387319240587,
+        "decode_tokens_per_second": 32.346754580933805,
+        "whole_request_tokens_per_second": 352.8717171361072,
+        "started_at": 225892.743073632,
+        "finished_at": 225898.926623897,
+        "run": 1
+      },
+      "memory": {
+        "window": "ready through final measured response, including calibration, warmup and prefix preparation",
+        "start_epoch": 1793463709.443353,
+        "end_epoch": 1793463845.394279,
+        "samples": {
+          "windows": 135,
+          "wsl": 271,
+          "hip": 271
+        },
+        "windows_total_bytes": 68340748288,
+        "windows_used_peak_bytes": 48870223872,
+        "windows_available_min_bytes": 19470524416,
+        "wsl_available_min_bytes": 11827712000,
+        "wsl_swap_used_peak_bytes": 6130688000,
+        "gpu_used_peak_bytes": 85396025344,
+        "gpu_free_min_bytes": 34300518400,
+        "gpu_total_bytes": 119696543744,
+        "process_rss_peak_bytes": 10285228032,
+        "container_memory_peak_bytes": 10308816896,
+        "hip_monitor_start_gap_seconds": 0.20905065536499023
+      },
+      "cache_log_lines": [
+        "2026-10-31 16:21:49 [INFO] [cache] schema=component-cache-v1 event=configured sessions=1 snapshot_entries=128 capacity_bytes=10484686848 staging_capacity_bytes=0 automatic_bytes=10484686848 max_bytes=16674406400 disk_capacity_bytes=0 slot_pinned_bytes=0 ram_cache=on disk_backing_bytes=0",
+        "2026-10-31 16:21:49 [INFO] [http] request=r2 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=412.7 outcome=completed prompt_tokens=13 prefill_tokens=13 generated_tokens=1 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=23.9 shared_prefix_wait_ms=0.0 ttft_ms=356.0 prefill_tps=39.2 decode_tps=25.8 batch_width=1 plan=serial-c1 draft_accepted=0 draft_proposed=0 draft_rounds=0 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=2401300551 ngram_rows=224 ngram_dedup_rows=0 ngram_cache_hits=0 ngram_disk_reads=224 cache_snapshot_bytes=266566028 cache_miss_reason=no_checkpoint common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=3357 host_available_mib=17774",
+        "2026-10-31 16:21:53 [INFO] [http] request=r3 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3449.9 outcome=completed prompt_tokens=3513 prefill_tokens=3513 generated_tokens=1 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=16.8 shared_prefix_wait_ms=0.0 ttft_ms=3388.2 prefill_tps=1042.0 decode_tps=23.0 batch_width=1 plan=serial-c1 draft_accepted=0 draft_proposed=0 draft_rounds=0 cache_schema=component-cache-v1 cache_reuse=none cache_captures=3 cache_captured_capacity_bytes=505085952 cache_global_ledger_bytes=2799864988 ngram_rows=56224 ngram_dedup_rows=7139 ngram_cache_hits=3212 ngram_disk_reads=45873 cache_snapshot_bytes=501179788 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=3753 host_available_mib=17368",
+        "2026-10-31 16:21:55 [INFO] [http] request=r4 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2474.5 outcome=completed prompt_tokens=2055 prefill_tokens=2055 generated_tokens=16 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=96.8 shared_prefix_wait_ms=0.0 ttft_ms=1950.8 prefill_tps=1108.5 decode_tps=32.0 batch_width=1 plan=serial-c1 draft_accepted=9 draft_proposed=17 draft_rounds=7 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=326893568 cache_global_ledger_bytes=3198197994 acceptance_pct=52.9 ngram_rows=33264 ngram_dedup_rows=4465 ngram_cache_hits=4980 ngram_disk_reads=23819 cache_snapshot_bytes=323012188 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=4135 host_available_mib=16984",
+        "2026-10-31 16:23:46 [INFO] [http] request=r5 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=111024.0 outcome=completed prompt_tokens=130261 prefill_tokens=130261 generated_tokens=8 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=28.7 shared_prefix_wait_ms=0.0 ttft_ms=110641.7 prefill_tps=1177.6 decode_tps=29.9 batch_width=1 plan=serial-c1 draft_accepted=5 draft_proposed=7 draft_rounds=3 cache_schema=component-cache-v1 cache_reuse=none cache_captures=6 cache_captured_capacity_bytes=4422696960 cache_global_ledger_bytes=7857734536 acceptance_pct=71.4 ngram_rows=2084336 ngram_dedup_rows=397333 ngram_cache_hits=526597 ngram_disk_reads=1160406 cache_snapshot_bytes=4383159884 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=8607 host_available_mib=12515",
+        "2026-10-31 16:23:53 [INFO] [http] request=r6 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=6418.7 outcome=completed prompt_tokens=132305 prefill_tokens=2036 generated_tokens=128 finish=length cache=memory cached_tokens=130269 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=19.3 shared_prefix_wait_ms=0.0 ttft_ms=2200.6 prefill_tps=933.4 decode_tps=30.7 batch_width=1 plan=serial-c1 draft_accepted=53 draft_proposed=105 draft_rounds=74 cache_schema=component-cache-v1 cache_reuse=live cache_captures=3 cache_captured_capacity_bytes=480444416 cache_global_ledger_bytes=7993041001 acceptance_pct=50.5 ngram_rows=35456 ngram_dedup_rows=4248 ngram_cache_hits=10428 ngram_disk_reads=20780 cache_snapshot_bytes=472677312 rss_mib=8775 host_available_mib=12350",
+        "2026-10-31 16:23:59 [INFO] [http] request=r7 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=5895.7 outcome=completed prompt_tokens=131044 prefill_tokens=2020 generated_tokens=8 finish=length cache=memory cached_tokens=129024 cache_restore_ms=111.8 queue_depth=1 resident_at_admission=1 queue_ms=3323.1 shared_prefix_wait_ms=0.0 ttft_ms=5673.8 prefill_tps=859.4 decode_tps=41.6 batch_width=1 plan=serial-c1 draft_accepted=5 draft_proposed=7 draft_rounds=3 cache_schema=component-cache-v1 cache_reuse=ram cache_captures=3 cache_captured_capacity_bytes=473300992 cache_global_ledger_bytes=8526378362 acceptance_pct=71.4 ngram_rows=32480 ngram_dedup_rows=2787 ngram_cache_hits=20013 ngram_disk_reads=9680 cache_snapshot_bytes=467427600 rss_mib=9292 host_available_mib=11831",
+        "2026-10-31 16:24:05 [INFO] [http] request=r8 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=6178.7 outcome=completed prompt_tokens=133106 prefill_tokens=2054 generated_tokens=128 finish=length cache=memory cached_tokens=131052 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=16.3 shared_prefix_wait_ms=0.0 ttft_ms=2192.4 prefill_tps=943.9 decode_tps=32.3 batch_width=1 plan=serial-c1 draft_accepted=54 draft_proposed=100 draft_rounds=73 cache_schema=component-cache-v1 cache_reuse=live cache_captures=3 cache_captured_capacity_bytes=480444416 cache_global_ledger_bytes=9059829743 acceptance_pct=54.0 ngram_rows=35648 ngram_dedup_rows=4153 ngram_cache_hits=12161 ngram_disk_reads=19334 cache_snapshot_bytes=476817668 rss_mib=9808 host_available_mib=11303"
+      ],
+      "automatic_cache_bytes": 10484686848,
+      "http_requests": [
+        {
+          "file": "001.request.json",
+          "sha256": "fd40f94e480290642bb5ba613de70d6c8e7c7bec7664f366b56d2f4f1885080f",
+          "max_tokens": 1,
+          "message_count": 1
+        },
+        {
+          "file": "002.request.json",
+          "sha256": "68f40d865abe14f8916b1a284608fcb264f6426018cbd95da9b0db26f7392512",
+          "max_tokens": 1,
+          "message_count": 1
+        },
+        {
+          "file": "003.request.json",
+          "sha256": "9acb8fb9e0a2c266e360fbd7f7911ef10c2c9a91d25502b3f3083a94cb0d8129",
+          "max_tokens": 16,
+          "message_count": 1
+        },
+        {
+          "file": "004.request.json",
+          "sha256": "81b7d7f5a5aa03187b8eaa720b201e8c7199740bfdd366a5c31451b6ca63d6d7",
+          "max_tokens": 8,
+          "message_count": 1
+        },
+        {
+          "file": "005.request.json",
+          "sha256": "a5b421bdbd9ed8d22d688fe1780e44b7b34a5529f935a58c057b5217717bec48",
+          "max_tokens": 128,
+          "message_count": 3
+        },
+        {
+          "file": "006.request.json",
+          "sha256": "3d2d87652341e8550778265b01377ce4a5ebe2341a43fafc58e8179caf1a734e",
+          "max_tokens": 8,
+          "message_count": 1
+        },
+        {
+          "file": "007.request.json",
+          "sha256": "8e5af177f7c4eef79e111e5bc79a273176a537f8bbe51ac282b5df955b2a1dc5",
+          "max_tokens": 128,
+          "message_count": 3
+        }
+      ],
+      "formal_samples": 1,
+      "log_errors": []
+    },
+    "builtin": {
+      "observation": {
+        "concurrency": 1,
+        "repetition": 1,
+        "request_index": 1,
+        "prompt_tokens": 133106,
+        "cached_prompt_tokens": 131052,
+        "completion_tokens": 128,
+        "prefill_tokens": 2054,
+        "wall_ms": 6218.850877980003,
+        "client_ttft_ms": 2066.773654980352,
+        "client_event_inter_token_ms": 32.664154637898285,
+        "queue_ms": 12.472273,
+        "prefill_ms": 2044.388579,
+        "decode_ms": 4127.833966,
+        "server_ttft_ms": 2056.967995,
+        "server_inter_token_ms": 32.66632155905511,
+        "server_max_inter_token_ms": 116.117596,
+        "requested_logical_concurrency": 1,
+        "physical_execution_width": 1,
+        "execution_plan": "serial-c1",
+        "metrics_source": "gufo",
+        "cache_hit": true,
+        "draft_tokens": 125,
+        "draft_accepted_tokens": 60,
+        "draft_acceptance": 0.48,
+        "case_id": null,
+        "category": null,
+        "completion_sha256": "b0ae8181d2f4e742b2e3370f3099047c626e2cc1d4e3c7ca91b5eba89ec087d9",
+        "prefill_tokens_per_second": 1004.7013669997616,
+        "decode_tokens_per_second": 31.008999163800183,
+        "whole_request_tokens_per_second": 350.86868021327336,
+        "started_at": 226059.333800493,
+        "finished_at": 226065.552651371,
+        "run": 1
+      },
+      "memory": {
+        "window": "ready through final measured response, including calibration, warmup and prefix preparation",
+        "start_epoch": 1793463877.116352,
+        "end_epoch": 1793464011.996707,
+        "samples": {
+          "windows": 133,
+          "wsl": 269,
+          "hip": 268
+        },
+        "windows_total_bytes": 68340748288,
+        "windows_used_peak_bytes": 49370722304,
+        "windows_available_min_bytes": 18970025984,
+        "wsl_available_min_bytes": 11826032640,
+        "wsl_swap_used_peak_bytes": 6129242112,
+        "gpu_used_peak_bytes": 85458939904,
+        "gpu_free_min_bytes": 34237603840,
+        "gpu_total_bytes": 119696543744,
+        "process_rss_peak_bytes": 10306920448,
+        "container_memory_peak_bytes": 10148261888,
+        "hip_monitor_start_gap_seconds": 0.35637426376342773
+      },
+      "cache_log_lines": [
+        "2026-10-31 16:24:36 [INFO] [cache] schema=component-cache-v1 event=configured sessions=1 snapshot_entries=128 capacity_bytes=10483191808 staging_capacity_bytes=0 automatic_bytes=10483191808 max_bytes=16671416320 disk_capacity_bytes=0 slot_pinned_bytes=0 ram_cache=on disk_backing_bytes=0",
+        "2026-10-31 16:24:37 [INFO] [http] request=r2 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=565.4 outcome=completed prompt_tokens=13 prefill_tokens=13 generated_tokens=1 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=19.4 shared_prefix_wait_ms=0.0 ttft_ms=510.9 prefill_tps=26.5 decode_tps=24.8 batch_width=1 plan=serial-c1 draft_accepted=0 draft_proposed=0 draft_rounds=0 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=270532608 cache_global_ledger_bytes=2401280071 ngram_rows=224 ngram_dedup_rows=0 ngram_cache_hits=0 ngram_disk_reads=224 cache_snapshot_bytes=266566028 cache_miss_reason=no_checkpoint common_prefix_tokens=0 nearest_checkpoint_tokens=0 rss_mib=3378 host_available_mib=17769",
+        "2026-10-31 16:24:40 [INFO] [http] request=r3 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=3284.3 outcome=completed prompt_tokens=3513 prefill_tokens=3513 generated_tokens=1 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=18.3 shared_prefix_wait_ms=0.0 ttft_ms=3225.8 prefill_tps=1095.3 decode_tps=24.1 batch_width=1 plan=serial-c1 draft_accepted=0 draft_proposed=0 draft_rounds=0 cache_schema=component-cache-v1 cache_reuse=none cache_captures=3 cache_captured_capacity_bytes=505085952 cache_global_ledger_bytes=2799844508 ngram_rows=56224 ngram_dedup_rows=7139 ngram_cache_hits=3438 ngram_disk_reads=45647 cache_snapshot_bytes=501179788 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=3774 host_available_mib=17370",
+        "2026-10-31 16:24:43 [INFO] [http] request=r4 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=2399.6 outcome=completed prompt_tokens=2055 prefill_tokens=2055 generated_tokens=16 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=88.2 shared_prefix_wait_ms=0.0 ttft_ms=1891.9 prefill_tps=1139.4 decode_tps=32.8 batch_width=1 plan=serial-c1 draft_accepted=9 draft_proposed=17 draft_rounds=7 cache_schema=component-cache-v1 cache_reuse=none cache_captures=2 cache_captured_capacity_bytes=326893568 cache_global_ledger_bytes=3198177514 acceptance_pct=52.9 ngram_rows=33264 ngram_dedup_rows=4465 ngram_cache_hits=5435 ngram_disk_reads=23364 cache_snapshot_bytes=323012188 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=4156 host_available_mib=16985",
+        "2026-10-31 16:26:33 [INFO] [http] request=r5 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=110327.1 outcome=completed prompt_tokens=130261 prefill_tokens=130261 generated_tokens=8 finish=length cache=miss cached_tokens=0 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=28.5 shared_prefix_wait_ms=0.0 ttft_ms=110084.0 prefill_tps=1183.6 decode_tps=37.2 batch_width=1 plan=serial-c1 draft_accepted=5 draft_proposed=7 draft_rounds=3 cache_schema=component-cache-v1 cache_reuse=none cache_captures=6 cache_captured_capacity_bytes=4422696960 cache_global_ledger_bytes=7592293256 acceptance_pct=71.4 ngram_rows=2084336 ngram_dedup_rows=397333 ngram_cache_hits=756546 ngram_disk_reads=930457 cache_snapshot_bytes=4383159884 cache_miss_reason=no_compatible_boundary common_prefix_tokens=3 nearest_checkpoint_tokens=0 rss_mib=8400 host_available_mib=12712",
+        "2026-10-31 16:26:39 [INFO] [http] request=r6 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=6248.4 outcome=completed prompt_tokens=132305 prefill_tokens=2036 generated_tokens=128 finish=length cache=memory cached_tokens=130269 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=15.7 shared_prefix_wait_ms=0.0 ttft_ms=2099.4 prefill_tps=977.1 decode_tps=31.1 batch_width=1 plan=serial-c1 draft_accepted=61 draft_proposed=123 draft_rounds=67 cache_schema=component-cache-v1 cache_reuse=live cache_captures=3 cache_captured_capacity_bytes=480444416 cache_global_ledger_bytes=7993020521 acceptance_pct=49.6 ngram_rows=35616 ngram_dedup_rows=4248 ngram_cache_hits=15350 ngram_disk_reads=16018 cache_snapshot_bytes=472677312 rss_mib=8794 host_available_mib=12319",
+        "2026-10-31 16:26:45 [INFO] [http] request=r7 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=5758.8 outcome=completed prompt_tokens=131044 prefill_tokens=2020 generated_tokens=8 finish=length cache=memory cached_tokens=129024 cache_restore_ms=103.8 queue_depth=1 resident_at_admission=1 queue_ms=3263.9 shared_prefix_wait_ms=0.0 ttft_ms=5546.6 prefill_tps=885.0 decode_tps=43.2 batch_width=1 plan=serial-c1 draft_accepted=5 draft_proposed=7 draft_rounds=3 cache_schema=component-cache-v1 cache_reuse=ram cache_captures=3 cache_captured_capacity_bytes=473300992 cache_global_ledger_bytes=8526357882 acceptance_pct=71.4 ngram_rows=32480 ngram_dedup_rows=2787 ngram_cache_hits=23883 ngram_disk_reads=5810 cache_snapshot_bytes=467427600 rss_mib=9311 host_available_mib=11799",
+        "2026-10-31 16:26:51 [INFO] [http] request=r8 event=completed method=POST path=/v1/chat/completions status=200 duration_ms=6214.9 outcome=completed prompt_tokens=133106 prefill_tokens=2054 generated_tokens=128 finish=length cache=memory cached_tokens=131052 cache_restore_ms=0.0 queue_depth=1 resident_at_admission=1 queue_ms=12.5 shared_prefix_wait_ms=0.0 ttft_ms=2057.0 prefill_tps=1004.7 decode_tps=31.0 batch_width=1 plan=serial-c1 draft_accepted=60 draft_proposed=125 draft_rounds=67 cache_schema=component-cache-v1 cache_reuse=live cache_captures=3 cache_captured_capacity_bytes=480444416 cache_global_ledger_bytes=9059809263 acceptance_pct=48.0 ngram_rows=35952 ngram_dedup_rows=4153 ngram_cache_hits=16996 ngram_disk_reads=14803 cache_snapshot_bytes=476817668 rss_mib=9831 host_available_mib=11288"
+      ],
+      "automatic_cache_bytes": 10483191808,
+      "http_requests": [
+        {
+          "file": "001.request.json",
+          "sha256": "fd40f94e480290642bb5ba613de70d6c8e7c7bec7664f366b56d2f4f1885080f",
+          "max_tokens": 1,
+          "message_count": 1
+        },
+        {
+          "file": "002.request.json",
+          "sha256": "68f40d865abe14f8916b1a284608fcb264f6426018cbd95da9b0db26f7392512",
+          "max_tokens": 1,
+          "message_count": 1
+        },
+        {
+          "file": "003.request.json",
+          "sha256": "9acb8fb9e0a2c266e360fbd7f7911ef10c2c9a91d25502b3f3083a94cb0d8129",
+          "max_tokens": 16,
+          "message_count": 1
+        },
+        {
+          "file": "004.request.json",
+          "sha256": "81b7d7f5a5aa03187b8eaa720b201e8c7199740bfdd366a5c31451b6ca63d6d7",
+          "max_tokens": 8,
+          "message_count": 1
+        },
+        {
+          "file": "005.request.json",
+          "sha256": "a5b421bdbd9ed8d22d688fe1780e44b7b34a5529f935a58c057b5217717bec48",
+          "max_tokens": 128,
+          "message_count": 3
+        },
+        {
+          "file": "006.request.json",
+          "sha256": "3d2d87652341e8550778265b01377ce4a5ebe2341a43fafc58e8179caf1a734e",
+          "max_tokens": 8,
+          "message_count": 1
+        },
+        {
+          "file": "007.request.json",
+          "sha256": "8e5af177f7c4eef79e111e5bc79a273176a537f8bbe51ac282b5df955b2a1dc5",
+          "max_tokens": 128,
+          "message_count": 3
+        }
+      ],
+      "formal_samples": 1,
+      "log_errors": []
+    }
+  },
+  "command_difference_only_external_ple_name_port": true,
+  "bf16_change_percent_vs_builtin": {
+    "prefill_tokens_per_second": -6.047830437132995,
+    "server_ttft_ms": 6.5828869641697985,
+    "decode_tokens_per_second": 4.314087694566138
+  },
+  "previous_values": {
+    "date": "2026-10-31",
+    "image": "gufo:v0.27.0-ud-iq4xs-ple-bf16-rocm101-20261031",
+    "bf16_three_run_mean": {
+      "prefill_tokens_per_second": 695.6647712462039,
+      "server_ttft_ms": 2968.4900949999997,
+      "decode_tokens_per_second": 32.15592318225076
+    },
+    "builtin_one_run": {
+      "concurrency": 1,
+      "repetition": 1,
+      "request_index": 1,
+      "prompt_tokens": 133106,
+      "cached_prompt_tokens": 131052,
+      "completion_tokens": 128,
+      "prefill_tokens": 2054,
+      "wall_ms": 7562.7253930142615,
+      "client_ttft_ms": 3555.864838999696,
+      "client_event_inter_token_ms": 31.511251952849314,
+      "queue_ms": 14.38175,
+      "prefill_ms": 3531.8877,
+      "decode_ms": 3981.7520449999993,
+      "server_ttft_ms": 3546.370439,
+      "server_inter_token_ms": 31.51097927559054,
+      "server_max_inter_token_ms": 118.214375,
+      "requested_logical_concurrency": 1,
+      "physical_execution_width": 1,
+      "execution_plan": "serial-c1",
+      "metrics_source": "gufo",
+      "cache_hit": true,
+      "draft_tokens": 92,
+      "draft_accepted_tokens": 56,
+      "draft_acceptance": 0.6086956521739131,
+      "case_id": null,
+      "category": null,
+      "completion_sha256": "16e1e7681441ca8a4cd5ed605f7c58429f297ed6da4a40a9919b65cb4338dc8f",
+      "prefill_tokens_per_second": 581.5586945190811,
+      "decode_tokens_per_second": 32.14665266782076,
+      "whole_request_tokens_per_second": 288.52032654994025,
+      "started_at": 213318.456479058,
+      "finished_at": 213326.019204451,
+      "run": 1
+    }
+  },
+  "change_percent_vs_previous": {
+    "bf16": {
+      "prefill_tokens_per_second": 35.68873557203427,
+      "server_ttft_ms": -26.145083768588417,
+      "decode_tokens_per_second": 0.5934564453381252
+    },
+    "builtin": {
+      "prefill_tokens_per_second": 72.76009738459805,
+      "server_ttft_ms": -41.997937598983015,
+      "decode_tokens_per_second": -3.538948567293243
+    }
+  },
+  "limitations": [
+    "One formal sample per condition; sequential BF16 then built-in, without randomization.",
+    "No cold-file loading comparison; file caches not flushed.",
+    "Automatic official RAM cache budget depends on free memory at each startup.",
+    "Windows power profile was Balanced; WSL CPU/GPU temperatures unavailable.",
+    "No full model numerical or response quality evaluation in this limited benchmark.",
+    "HIP reports device-wide allocations including shared memory, not dedicated VRAM alone."
+  ],
+  "power_profile": {
+    "at": "2026-10-31T16:22:09.467583+00:00",
+    "output": "電源設定の GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (バランス)",
+    "note": "Windows profile; WSL thermal and platform profile interfaces unavailable"
+  }
+}

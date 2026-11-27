@@ -1,0 +1,125 @@
+{
+  "schema": "sc117-model-logit-comparison-v1",
+  "label": "cpu-decode-vs-gpu-decode",
+  "reference": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/b-math02-decode/cpu.f32",
+  "candidate": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/b-math02-decode/gpu.f32",
+  "assessment": "Measured differences; no automatic acceptance threshold",
+  "metrics": {
+    "max_abs": 0.7100522518157959,
+    "mean_candidate_minus_reference": 0.02157446497169796,
+    "relative_l2": 0.06212611851651607,
+    "shift_removed_max_abs": 0.7316267167874939,
+    "kl_reference_to_candidate": 0.00946104852172078,
+    "reference_top10": [
+      {
+        "id": 18,
+        "logit": 16.503982543945312,
+        "probability": 0.36301120050468183
+      },
+      {
+        "id": 19,
+        "logit": 16.107004165649414,
+        "probability": 0.24407005893860012
+      },
+      {
+        "id": 17,
+        "logit": 15.919870376586914,
+        "probability": 0.2024152988611195
+      },
+      {
+        "id": 16,
+        "logit": 14.199776649475098,
+        "probability": 0.03624233079722794
+      },
+      {
+        "id": 21,
+        "logit": 14.190071105957031,
+        "probability": 0.03589228073933239
+      },
+      {
+        "id": 20,
+        "logit": 14.056499481201172,
+        "probability": 0.031404482152248954
+      },
+      {
+        "id": 159481,
+        "logit": 13.186360359191895,
+        "probability": 0.013155126156107195
+      },
+      {
+        "id": 99516,
+        "logit": 12.747201919555664,
+        "probability": 0.008479513388994078
+      },
+      {
+        "id": 48543,
+        "logit": 12.192371368408203,
+        "probability": 0.004868678347131565
+      },
+      {
+        "id": 26312,
+        "logit": 11.917203903198242,
+        "probability": 0.0036974930961222365
+      }
+    ],
+    "candidate_top10": [
+      {
+        "id": 18,
+        "logit": 16.513235092163086,
+        "probability": 0.38251280708268204
+      },
+      {
+        "id": 19,
+        "logit": 16.12462615966797,
+        "probability": 0.2593434390421873
+      },
+      {
+        "id": 17,
+        "logit": 15.600919723510742,
+        "probability": 0.1536145843840136
+      },
+      {
+        "id": 21,
+        "logit": 14.314406394958496,
+        "probability": 0.042433300285219126
+      },
+      {
+        "id": 16,
+        "logit": 14.244497299194336,
+        "probability": 0.039568143692535286
+      },
+      {
+        "id": 20,
+        "logit": 14.06556510925293,
+        "probability": 0.033085401816489134
+      },
+      {
+        "id": 159481,
+        "logit": 13.079553604125977,
+        "probability": 0.012342895658597556
+      },
+      {
+        "id": 99516,
+        "logit": 12.720651626586914,
+        "probability": 0.008620806740650468
+      },
+      {
+        "id": 48543,
+        "logit": 12.15505599975586,
+        "probability": 0.004896805446778383
+      },
+      {
+        "id": 26312,
+        "logit": 11.796356201171875,
+        "probability": 0.0034208301115034243
+      }
+    ],
+    "top1_matches": true,
+    "top10_overlap": 10,
+    "reference_margin": 0.39697837829589844,
+    "candidate_margin": 0.3886089324951172,
+    "target_id": 19,
+    "reference_target_nll": 1.410299968104404,
+    "candidate_target_nll": 1.349602076202089
+  }
+}

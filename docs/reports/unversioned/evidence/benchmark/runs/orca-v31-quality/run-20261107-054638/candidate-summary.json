@@ -1,0 +1,244 @@
+{
+  "request": {
+    "model": "Qwen3.8-FN-UD-Orca-IQ4_XS",
+    "messages": [
+      {
+        "role": "user",
+        "content": "次の内容を日本語の二文に要約してください。「町の図書館は来月から毎週水曜日も開館する。開館時間は午前9時から午後6時まで。これまで水曜日が休館日だったが、利用者の要望を受けて変更した。祝日の扱いは変わらない。」"
+      }
+    ],
+    "temperature": 0,
+    "seed": 1,
+    "max_tokens": 192,
+    "cache_prompt": false,
+    "chat_template_kwargs": {
+      "enable_thinking": false
+    }
+  },
+  "response": {
+    "id": "chatcmpl-wfg7h6r47nn4u92zh83p",
+    "object": "chat.completion",
+    "created": 1794030966,
+    "model": "Qwen3.8-FN-UD-Orca-IQ4_XS",
+    "choices": [
+      {
+        "index": 0,
+        "message": {
+          "role": "assistant",
+          "content": "町の図書館は利用者の要望を受け、来月から毎週水曜日も午前9時から午後6時まで開館する。祝日の休館については従来通り変更はない。"
+        },
+        "finish_reason": "stop"
+      }
+    ],
+    "usage": {
+      "prompt_tokens": 69,
+      "completion_tokens": 36,
+      "total_tokens": 105,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 0
+      },
+      "cached_tokens": 0,
+      "prompt_tokens_per_second": 199.161014311113,
+      "completion_tokens_per_second": 30.35207475923756,
+      "draft_tokens": 0,
+      "draft_tokens_accepted": 0,
+      "gufo": {
+        "component_cache": {
+          "schema": "component-cache-v1",
+          "reuse": "none",
+          "selection_reason": 4,
+          "deepest_live_tokens": 0,
+          "deepest_ram_tokens": 0,
+          "deepest_disk_tokens": 0,
+          "selected_tokens": 0,
+          "restored_bytes": 0,
+          "prefilled_tokens": 69,
+          "captures": 2,
+          "captured_capacity_bytes": 268959744,
+          "borrowed_capacity_bytes": 0,
+          "copied_payload_bytes": 266400580,
+          "captured_checkpoint_ids": [
+            78,
+            79
+          ],
+          "global_spill": {
+            "idle_bytes": 6291456,
+            "foreground_bytes": 0,
+            "idle_copy_ms": 6.194705,
+            "foreground_copy_ms": 0,
+            "stream_wait_ms": 0.014086,
+            "residual_wait_ms": 282.30593,
+            "reassignments": 18,
+            "idle_failures": 0
+          },
+          "global_ledger_bytes": 3862590189,
+          "global_ram_bytes": 3862590189,
+          "global_peak_ledger_bytes": 3862639897,
+          "global_peak_ram_bytes": 3862639897,
+          "global_persistence_pinned_bytes": 0,
+          "global_peak_persistence_pinned_bytes": 0,
+          "global_categories": {
+            "backing_free": {
+              "bytes": 49348608,
+              "reserved_bytes": 0,
+              "peak_bytes": 2229338112
+            },
+            "backing_assigned": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 6356992
+            },
+            "backing_materialized": {
+              "bytes": 6356992,
+              "reserved_bytes": 0,
+              "peak_bytes": 6356992
+            },
+            "private_state": {
+              "bytes": 3697541120,
+              "reserved_bytes": 0,
+              "peak_bytes": 3697541120
+            },
+            "private_tail": {
+              "bytes": 49020928,
+              "reserved_bytes": 0,
+              "peak_bytes": 49020928
+            },
+            "metadata": {
+              "bytes": 60322541,
+              "reserved_bytes": 0,
+              "peak_bytes": 60372249
+            },
+            "transfer_staging": {
+              "bytes": 0,
+              "reserved_bytes": 0,
+              "peak_bytes": 0
+            }
+          }
+        },
+        "cache_hit": false,
+        "cache_miss_reason": "disabled",
+        "cache_common_prefix_tokens": 0,
+        "cache_checkpoint_tokens": 0,
+        "cache_restore_bytes": 0,
+        "cache_snapshot_bytes": 266400580,
+        "cache_disk_queued_bytes": 0,
+        "cache_shared_bytes": 0,
+        "cache_restore_ms": 0,
+        "cache_snapshot_ms": 25.279713,
+        "cache_disk_enqueue_ms": 0.0016549999999999998,
+        "cache_disk_hit": false,
+        "draft_rounds": 0,
+        "prefill_tokens": 69,
+        "prefill_chunks": 1,
+        "active_decode_prefill_chunks": 0,
+        "max_prefill_chunk_tokens": 69,
+        "queue_depth_at_submit": 1,
+        "client_queue_depth_at_submit": 1,
+        "resident_requests_at_admission": 1,
+        "requested_logical_concurrency": 2,
+        "physical_execution_width": 1,
+        "queue_ms": 18.866407,
+        "shared_prefix_wait_ms": 0,
+        "prefill_ms": 346.453347,
+        "decode_ms": 1186.0803680000001,
+        "ttft_ms": 365.383844,
+        "mean_inter_token_ms": 33.338918857142865,
+        "max_inter_token_ms": 50.013157,
+        "execution_plan": "serial-fallback"
+      }
+    },
+    "timings": {
+      "prompt_n": 69,
+      "prompt_ms": 346.453347,
+      "prompt_per_token_ms": 5.021063,
+      "prompt_per_second": 199.161014311113,
+      "predicted_n": 36,
+      "predicted_ms": 1186.0803680000001,
+      "predicted_per_token_ms": 32.946676888888895,
+      "predicted_per_second": 30.35207475923756,
+      "cache_n": 0,
+      "cache_restore_ms": 0,
+      "cache_snapshot_ms": 25.279713,
+      "cache_disk_enqueue_ms": 0.0016549999999999998,
+      "draft_rounds": 0,
+      "draft_n": 0,
+      "draft_n_accepted": 0,
+      "component_cache": {
+        "schema": "component-cache-v1",
+        "reuse": "none",
+        "selection_reason": 4,
+        "deepest_live_tokens": 0,
+        "deepest_ram_tokens": 0,
+        "deepest_disk_tokens": 0,
+        "selected_tokens": 0,
+        "restored_bytes": 0,
+        "prefilled_tokens": 69,
+        "captures": 2,
+        "captured_capacity_bytes": 268959744,
+        "borrowed_capacity_bytes": 0,
+        "copied_payload_bytes": 266400580,
+        "captured_checkpoint_ids": [
+          78,
+          79
+        ],
+        "global_spill": {
+          "idle_bytes": 6291456,
+          "foreground_bytes": 0,
+          "idle_copy_ms": 6.194705,
+          "foreground_copy_ms": 0,
+          "stream_wait_ms": 0.014086,
+          "residual_wait_ms": 282.30593,
+          "reassignments": 18,
+          "idle_failures": 0
+        },
+        "global_ledger_bytes": 3862590189,
+        "global_ram_bytes": 3862590189,
+        "global_peak_ledger_bytes": 3862639897,
+        "global_peak_ram_bytes": 3862639897,
+        "global_persistence_pinned_bytes": 0,
+        "global_peak_persistence_pinned_bytes": 0,
+        "global_categories": {
+          "backing_free": {
+            "bytes": 49348608,
+            "reserved_bytes": 0,
+            "peak_bytes": 2229338112
+          },
+          "backing_assigned": {
+            "bytes": 0,
+            "reserved_bytes": 0,
+            "peak_bytes": 6356992
+          },
+          "backing_materialized": {
+            "bytes": 6356992,
+            "reserved_bytes": 0,
+            "peak_bytes": 6356992
+          },
+          "private_state": {
+            "bytes": 3697541120,
+            "reserved_bytes": 0,
+            "peak_bytes": 3697541120
+          },
+          "private_tail": {
+            "bytes": 49020928,
+            "reserved_bytes": 0,
+            "peak_bytes": 49020928
+          },
+          "metadata": {
+            "bytes": 60322541,
+            "reserved_bytes": 0,
+            "peak_bytes": 60372249
+          },
+          "transfer_staging": {
+            "bytes": 0,
+            "reserved_bytes": 0,
+            "peak_bytes": 0
+          }
+        }
+      }
+    },
+    "cache_persist": true
+  }
+}

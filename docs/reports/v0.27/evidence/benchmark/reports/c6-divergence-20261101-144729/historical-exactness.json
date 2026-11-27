@@ -1,0 +1,986 @@
+[
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/huihui-v0260-rocm723-20261029-151346/huihui/official/corpus-reports/multi-mixed-c4-multi-mixed-gufo-mtp-c4.json",
+    "concurrency": "c4",
+    "exactness": {
+      "comparedRequests": 12,
+      "exactRequests": 12,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 60.66108698079568
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/huihui-v0260-rocm723-20261029-151346/huihui/official/corpus-reports/multi-mixed-c1-multi-mixed-gufo-mtp-c1.json",
+    "concurrency": "c1",
+    "exactness": {
+      "comparedRequests": 3,
+      "exactRequests": 3,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 27.69814609463068
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/huihui-v0260-rocm723-20261029-151346/huihui/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 6,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 39.821942689588866
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/huihui-v0260-rocm723-20261029-151346/huihui/official/corpus-reports/multi-mixed-c6-multi-mixed-gufo-mtp-c6.json",
+    "concurrency": "c6",
+    "exactness": {
+      "comparedRequests": 18,
+      "exactRequests": 18,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 62.99763125485022
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/huihui-v0260-rocm723-20261029-151346/huihui/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 74.72421875010592
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/huihui/official/corpus-reports/multi-mixed-c4-multi-mixed-gufo-mtp-c4.json",
+    "concurrency": "c4",
+    "exactness": {
+      "comparedRequests": 12,
+      "exactRequests": 12,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 65.77682600233217
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/huihui/official/corpus-reports/multi-mixed-c1-multi-mixed-gufo-mtp-c1.json",
+    "concurrency": "c1",
+    "exactness": {
+      "comparedRequests": 3,
+      "exactRequests": 3,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 36.216210681568796
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/huihui/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 6,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 51.62839055635456
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/huihui/official/corpus-reports/multi-mixed-c6-multi-mixed-gufo-mtp-c6.json",
+    "concurrency": "c6",
+    "exactness": {
+      "comparedRequests": 18,
+      "exactRequests": 18,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 71.71893842890074
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/huihui/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 81.53769898518509
+    },
+    "hashes_by_round": {
+      "1": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "2": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ],
+      "3": [
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d",
+        "41cbb2c3bd56aadf91f52fdd5969c33475bf28e3837b6b8978cc12dac961216d"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/sc117/official/corpus-reports/multi-mixed-c4-multi-mixed-gufo-mtp-c4.json",
+    "concurrency": "c4",
+    "exactness": {
+      "comparedRequests": 12,
+      "exactRequests": 12,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 59.568270237955915
+    },
+    "hashes_by_round": {
+      "1": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "2": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "3": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/sc117/official/corpus-reports/multi-mixed-c1-multi-mixed-gufo-mtp-c1.json",
+    "concurrency": "c1",
+    "exactness": {
+      "comparedRequests": 3,
+      "exactRequests": 0,
+      "exactRate": 0.0,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 0,
+      "matchedRoundOutputTokensPerSecond": null
+    },
+    "hashes_by_round": {
+      "1": [
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04"
+      ],
+      "2": [
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04"
+      ],
+      "3": [
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/sc117/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 4,
+      "exactRate": 0.6666666666666666,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 2,
+      "matchedRoundOutputTokensPerSecond": 47.65571607752915
+    },
+    "hashes_by_round": {
+      "1": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "2": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "3": [
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/sc117/official/corpus-reports/multi-mixed-c6-multi-mixed-gufo-mtp-c6.json",
+    "concurrency": "c6",
+    "exactness": {
+      "comparedRequests": 18,
+      "exactRequests": 12,
+      "exactRate": 0.6666666666666666,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 2,
+      "matchedRoundOutputTokensPerSecond": 62.36353018328786
+    },
+    "hashes_by_round": {
+      "1": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "2": [
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04",
+        "77f9ff058ea479d6bec1710d50246c3a5a4475d38f4ee832eaaebc8286ae8e04"
+      ],
+      "3": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/sc117/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 71.51065110217108
+    },
+    "hashes_by_round": {
+      "1": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "2": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ],
+      "3": [
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9",
+        "334f957b7ae70b7c2c28fcebab9541a8ee84bb8630a139cb456cc9b9eb8efbf9"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/orca/official/corpus-reports/multi-mixed-c4-multi-mixed-gufo-mtp-c4.json",
+    "concurrency": "c4",
+    "exactness": {
+      "comparedRequests": 12,
+      "exactRequests": 12,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 76.69331061264886
+    },
+    "hashes_by_round": {
+      "1": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "2": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "3": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/orca/official/corpus-reports/multi-mixed-c1-multi-mixed-gufo-mtp-c1.json",
+    "concurrency": "c1",
+    "exactness": {
+      "comparedRequests": 3,
+      "exactRequests": 3,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 37.49097218122086
+    },
+    "hashes_by_round": {
+      "1": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "2": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "3": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/orca/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 2,
+      "exactRate": 0.3333333333333333,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 1,
+      "matchedRoundOutputTokensPerSecond": 50.31045397080994
+    },
+    "hashes_by_round": {
+      "1": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "2": [
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995"
+      ],
+      "3": [
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/orca/official/corpus-reports/multi-mixed-c6-multi-mixed-gufo-mtp-c6.json",
+    "concurrency": "c6",
+    "exactness": {
+      "comparedRequests": 18,
+      "exactRequests": 18,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 81.19595523036806
+    },
+    "hashes_by_round": {
+      "1": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "2": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "3": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/v0260-all-models-restart-20261029-105259/orca/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 88.78627072425252
+    },
+    "hashes_by_round": {
+      "1": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "2": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ],
+      "3": [
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f",
+        "bda0ee5db472ee8319a89882ce7f6d4fa915829a427dd6caa4a1cdf7869d833f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/diagnostics/matched-c2-c8/before/orca/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 6,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 54.44876845588558
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/diagnostics/matched-c2-c8/before/orca/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 91.36008458110032
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/diagnostics/matched-c2-c8/after/orca/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 6,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 55.50190298534641
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/diagnostics/matched-c2-c8/after/orca/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 24,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 90.80004883433277
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/orca/official/corpus-reports/multi-mixed-c4-multi-mixed-gufo-mtp-c4.json",
+    "concurrency": "c4",
+    "exactness": {
+      "comparedRequests": 12,
+      "exactRequests": 12,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 69.68913689119309
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/orca/official/corpus-reports/multi-mixed-c1-multi-mixed-gufo-mtp-c1.json",
+    "concurrency": "c1",
+    "exactness": {
+      "comparedRequests": 3,
+      "exactRequests": 3,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 36.02682657036925
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/orca/official/corpus-reports/multi-mixed-c2-multi-mixed-gufo-mtp-c2.json",
+    "concurrency": "c2",
+    "exactness": {
+      "comparedRequests": 6,
+      "exactRequests": 4,
+      "exactRate": 0.6666666666666666,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 2,
+      "matchedRoundOutputTokensPerSecond": 52.87643630910964
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/orca/official/corpus-reports/multi-mixed-c6-multi-mixed-gufo-mtp-c6.json",
+    "concurrency": "c6",
+    "exactness": {
+      "comparedRequests": 18,
+      "exactRequests": 18,
+      "exactRate": 1.0,
+      "comparedCases": 1,
+      "matchedCases": 1,
+      "matchedRounds": 3,
+      "matchedRoundOutputTokensPerSecond": 74.90672045080584
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ]
+    }
+  },
+  {
+    "file": "/home/user/Apps/Gufo/benchmarks/orca-sc117-v0250-3runs-20261027/orca/official/corpus-reports/multi-mixed-c8-multi-mixed-gufo-mtp-c8.json",
+    "concurrency": "c8",
+    "exactness": {
+      "comparedRequests": 24,
+      "exactRequests": 16,
+      "exactRate": 0.6666666666666666,
+      "comparedCases": 1,
+      "matchedCases": 0,
+      "matchedRounds": 2,
+      "matchedRoundOutputTokensPerSecond": 80.28422566228693
+    },
+    "hashes_by_round": {
+      "1": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "2": [
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f",
+        "2eb670fd2e42729cd0ada13f3680764df19c5ff747bf76b7a7196919f83cf80f"
+      ],
+      "3": [
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995",
+        "ff93da7a57b68e50ae67d691214cca66e4f0f14f7e727724c4a73dde85566995"
+      ]
+    }
+  }
+]

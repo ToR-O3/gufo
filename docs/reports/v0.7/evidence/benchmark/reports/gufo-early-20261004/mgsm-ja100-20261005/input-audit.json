@@ -1,0 +1,44 @@
+{
+  "status": "passed",
+  "plans": 100,
+  "measured_input_counts_matched": 198,
+  "input_token_range": [
+    929,
+    1061
+  ],
+  "timed_out_request_input_plans": [
+    {
+      "model": "iq3",
+      "id": "mgsm-ja-063",
+      "planned_input_tokens": 961,
+      "status": "timeout"
+    },
+    {
+      "model": "q4",
+      "id": "mgsm-ja-142",
+      "planned_input_tokens": 945,
+      "status": "timeout"
+    }
+  ],
+  "memory_gaps_over_3seconds": [
+    {
+      "start_utc": "2026-10-05T09:54:40.8646633Z",
+      "end_utc": "2026-10-05T09:59:03.2087417Z",
+      "seconds": 262.34407806396484,
+      "prior_request_tail_under_one_second": [
+        {
+          "model": "q4",
+          "id": "mgsm-ja-231",
+          "seconds": 0.7606232166290283
+        }
+      ],
+      "new_formal_requests_started": 0
+    }
+  ],
+  "helper_container_removed": true,
+  "model_forward_performed": false,
+  "probe_binary_sha256": "f52c9e5f342b7978e6da30273520cb8b5628c757c3ece5b729a62942986c4c03",
+  "probe_source_sha256": "c337406ac1b9e0114daff5428d47050030de1995c5bb7ab4130f1103b688089c",
+  "input_cases_sha256": "ee20ac2e4a28651fb10b9ac7dd506402f5b21d8319bf1c1d0600002475fc6bd1",
+  "note": "Input counts obtained from the same native tokenizer/template with Q4 metadata only. No generated tokens inferred; timeout output/decode remain missing."
+}

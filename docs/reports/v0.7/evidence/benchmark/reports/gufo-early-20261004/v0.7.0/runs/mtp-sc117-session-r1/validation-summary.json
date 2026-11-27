@@ -1,0 +1,139 @@
+{
+  "schema": "sc117-v070-native-MTP-summary-v1",
+  "source_commit": "8c95dce5a906841709013cbcaf32f838ba9bd04b",
+  "official_base": "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d",
+  "qualification_namespace": "v0.7.0",
+  "binary_sha256": "49c993c239f82e1b9cf2cd6088bd653088e0b8d5c5f6be03eff2bec60c8c8f27",
+  "image_id": "sha256:2ca5708b963bd09bde1eb944f00fa73ad4897b2e0f9c3963e5a209b032c73871",
+  "exit_code": 0,
+  "oom_killed": false,
+  "started_utc": "2026-10-04T15:41:03.516498697Z",
+  "finished_utc": "2026-10-04T15:41:48.369624038Z",
+  "container_duration_seconds": 44.853126,
+  "omp_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OMP_WAIT_POLICY": "PASSIVE"
+  },
+  "legacy_results_reused": false,
+  "status": "passed",
+  "greedy_generated_tokens": 64,
+  "drafted": 51,
+  "accepted": 34,
+  "rejection_cycles": 8,
+  "all_greedy_tokens_and_completed_frontiers_bitwise_equal": true,
+  "requests": [
+    {
+      "name": "greedy",
+      "prompt_tokens": 10,
+      "generated_tokens": 32,
+      "cycles": 10,
+      "drafted": 25,
+      "accepted": 18,
+      "committed_widths": [
+        1,
+        1,
+        2,
+        1,
+        3,
+        4,
+        1,
+        1,
+        5,
+        4,
+        2,
+        1,
+        5,
+        1
+      ],
+      "tokens_and_frontiers_bitwise_exact": true
+    },
+    {
+      "name": "live_prefix_followup",
+      "prompt_tokens": 49,
+      "generated_tokens": 16,
+      "cycles": 6,
+      "drafted": 14,
+      "accepted": 9,
+      "committed_widths": [
+        1,
+        3,
+        2,
+        1,
+        5,
+        2,
+        2
+      ],
+      "tokens_and_frontiers_bitwise_exact": true
+    },
+    {
+      "name": "new_request",
+      "prompt_tokens": 15,
+      "generated_tokens": 16,
+      "cycles": 6,
+      "drafted": 12,
+      "accepted": 7,
+      "committed_widths": [
+        1,
+        1,
+        2,
+        1,
+        3,
+        4,
+        2,
+        1,
+        1
+      ],
+      "tokens_and_frontiers_bitwise_exact": true
+    }
+  ],
+  "greedy_context_tokens": 512,
+  "rollback_context_boundary": {
+    "passed": true,
+    "context_tokens": 14,
+    "prompt_tokens": 10,
+    "warm_decode_requested_budget": 2,
+    "boundary_decode_requested_budget": 8,
+    "reason": "Prompt+4 context; warm step commits at least1, so at most3slots remain before budget8 request.",
+    "checks": [
+      "Bounded reusable rollback allocation",
+      "Restored snapshot reproduces committed tokens/RNG/logits exactly",
+      "Full context restore releases unusable rollback",
+      "Explicit reset releases rollback"
+    ],
+    "limitations": [
+      "Actual committed token count in the boundary check is not separately logged."
+    ]
+  },
+  "limitations": [
+    "64tokens and completed frontiers are compared bitwise at runtime; success output retains counts/committed widths/assertion outcome, not every frontier vector.",
+    "Failure path dumps first failure target/frontier payload; completed cycle frontier is distinct from private per-draft verification rows.",
+    "Native session equivalence does not validate serving final-token advancement. HTTP length1/128 and formal continuation remain separate."
+  ],
+  "raw_artifacts": [
+    {
+      "path": "greedy_summary.json",
+      "bytes": 734,
+      "sha256": "c713374d918a52f42bc103f7506e1e8661aa6895392a64f681db977ef5e5d0fe"
+    },
+    {
+      "path": "launch-console.json",
+      "bytes": 4215,
+      "sha256": "c31e6630af4d190eebf50a3e3e0cd0bae55d29b30891c38fcbee30eb276659df"
+    },
+    {
+      "path": "run.log",
+      "bytes": 78282,
+      "sha256": "bc9f1a774abaeb73332d6befdeb17d85a2169d1636fa52cb07ed398f01008d0b"
+    },
+    {
+      "path": "source.json",
+      "bytes": 601,
+      "sha256": "57ea6073754a3a764eaec349979e28b83990f4d9f84876fdc9a54ab1a19e2a7c"
+    },
+    {
+      "path": "state.json",
+      "bytes": 4593,
+      "sha256": "adf2fb7a0d4210338f865cabb150b6d0e5a3eedeb0d3143cd8f5708ada14602a"
+    }
+  ]
+}

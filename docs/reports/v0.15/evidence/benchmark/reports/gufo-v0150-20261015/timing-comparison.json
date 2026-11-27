@@ -1,0 +1,673 @@
+{
+  "rows": [
+    {
+      "case": "cache-a-cold",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 1638.44333,
+          "candidate": 1715.600928,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 445.442249,
+          "candidate": 442.06956400000007,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 1662.545709,
+          "candidate": 1731.911282,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 797.138761,
+          "candidate": 960.94421,
+          "flag": true
+        }
+      }
+    },
+    {
+      "case": "cache-a-return",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 437.03885299999996,
+          "candidate": 416.411071,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 30.260322,
+          "candidate": 24.356869,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 13.478844,
+          "candidate": 10.478135,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "cache-b",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 1815.032165,
+          "candidate": 1618.166878,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 427.543811,
+          "candidate": 436.372271,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 1834.039436,
+          "candidate": 1634.780542,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 18.996372,
+          "candidate": 22.356203,
+          "flag": true
+        }
+      }
+    },
+    {
+      "case": "cache-c",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 1648.41662,
+          "candidate": 1566.495843,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 425.82276900000005,
+          "candidate": 434.944096,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 1665.75841,
+          "candidate": 1726.901984,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 25.261696,
+          "candidate": 24.573842,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "concurrent-0",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 186.833085,
+          "candidate": 184.25727,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 2570.923256,
+          "candidate": 2590.7439709999994,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 399.813163,
+          "candidate": 392.992542,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 20.12956,
+          "candidate": 19.380121000000003,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "concurrent-1",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 174.964875,
+          "candidate": 175.262069,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 2480.2088559999997,
+          "candidate": 2410.174405000001,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 399.032206,
+          "candidate": 390.613414,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 19.375184,
+          "candidate": 18.950898000000002,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "continuation",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 223.405352,
+          "candidate": 197.577933,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 618.857939,
+          "candidate": 600.214086,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 224.238345,
+          "candidate": 198.36622,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 3067.272774,
+          "candidate": 732.1099889999999,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "continuation-replay",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 575.55004,
+          "candidate": 561.5023070000001,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 28.09972,
+          "candidate": 28.426537,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 10.755023,
+          "candidate": 11.423821,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "long-32k-cold",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 33718.245259999996,
+          "candidate": 32351.957314,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 529.000262,
+          "candidate": 575.232165,
+          "flag": true
+        },
+        "ttft_ms": {
+          "baseline": 33785.628506,
+          "candidate": 32404.322624,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 69.422962,
+          "candidate": 63.071718,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "long-32k-continuation",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 224.186539,
+          "candidate": 205.565183,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 572.384719,
+          "candidate": 553.493328,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 227.958864,
+          "candidate": 208.499523,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 27.189186,
+          "candidate": 24.852062,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "long-32k-replay",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 517.487182,
+          "candidate": 505.852857,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 50.365649,
+          "candidate": 41.604964,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 26.368573,
+          "candidate": 22.638314,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "sampled-first",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 220.66397,
+          "candidate": 248.069734,
+          "flag": true
+        },
+        "decode_ms": {
+          "baseline": 1972.5777040000007,
+          "candidate": 2296.849046,
+          "flag": true
+        },
+        "ttft_ms": {
+          "baseline": 237.694352,
+          "candidate": 258.952383,
+          "flag": true
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 14.99305,
+          "candidate": 14.928979,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "sampled-replay",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 205.143232,
+          "candidate": 206.913845,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 2030.2973659999998,
+          "candidate": 1933.0654729999997,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 216.271696,
+          "candidate": 215.552077,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 15.092839,
+          "candidate": 15.436814,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "speed-2k",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 2198.976061,
+          "candidate": 1984.794676,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 2723.7997599999994,
+          "candidate": 2731.567498000001,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 2221.313369,
+          "candidate": 2005.42913,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 25.683311,
+          "candidate": 30.568756999999998,
+          "flag": true
+        }
+      }
+    },
+    {
+      "case": "speed-2k-warmup",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 2237.431237,
+          "candidate": 1982.315853,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 2872.5052330000003,
+          "candidate": 2864.095959000001,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 2262.231755,
+          "candidate": 2004.333129,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 31.54004,
+          "candidate": 33.158432000000005,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "text-0",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 2693.2136,
+          "candidate": 643.315448,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 1773.6473980000005,
+          "candidate": 1889.174889,
+          "flag": true
+        },
+        "ttft_ms": {
+          "baseline": 2700.69434,
+          "candidate": 690.869157,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 2225.126267,
+          "candidate": 638.066086,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "text-1",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 188.184745,
+          "candidate": 309.796989,
+          "flag": true
+        },
+        "decode_ms": {
+          "baseline": 1764.7486650000003,
+          "candidate": 2007.286528,
+          "flag": true
+        },
+        "ttft_ms": {
+          "baseline": 192.876796,
+          "candidate": 315.321599,
+          "flag": true
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 15.842067,
+          "candidate": 14.09572,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "vision-cold",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 2185.572317,
+          "candidate": 2037.4412610000002,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 781.9758929999999,
+          "candidate": 758.9124750000001,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 17171.632579,
+          "candidate": 2978.332093,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 27.772599,
+          "candidate": 24.201942000000003,
+          "flag": false
+        }
+      }
+    },
+    {
+      "case": "vision-replay",
+      "mtp_work_equal": true,
+      "phases": {
+        "prefill_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        },
+        "decode_ms": {
+          "baseline": 737.08384,
+          "candidate": 717.0008619999999,
+          "flag": false
+        },
+        "ttft_ms": {
+          "baseline": 44.990014,
+          "candidate": 41.732936,
+          "flag": false
+        },
+        "cache_restore_ms": {
+          "baseline": 8.743726,
+          "candidate": 7.806827,
+          "flag": false
+        },
+        "cache_snapshot_ms": {
+          "baseline": 0,
+          "candidate": 0,
+          "flag": false
+        }
+      }
+    }
+  ],
+  "flags": [
+    {
+      "case": "cache-a-cold",
+      "phase": "cache_snapshot_ms",
+      "baseline_ms": 797.138761,
+      "candidate_ms": 960.94421,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "cache-b",
+      "phase": "cache_snapshot_ms",
+      "baseline_ms": 18.996372,
+      "candidate_ms": 22.356203,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "long-32k-cold",
+      "phase": "decode_ms",
+      "baseline_ms": 529.000262,
+      "candidate_ms": 575.232165,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "sampled-first",
+      "phase": "prefill_ms",
+      "baseline_ms": 220.66397,
+      "candidate_ms": 248.069734,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "sampled-first",
+      "phase": "decode_ms",
+      "baseline_ms": 1972.5777040000007,
+      "candidate_ms": 2296.849046,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "sampled-first",
+      "phase": "ttft_ms",
+      "baseline_ms": 237.694352,
+      "candidate_ms": 258.952383,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "speed-2k",
+      "phase": "cache_snapshot_ms",
+      "baseline_ms": 25.683311,
+      "candidate_ms": 30.568756999999998,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "text-0",
+      "phase": "decode_ms",
+      "baseline_ms": 1773.6473980000005,
+      "candidate_ms": 1889.174889,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "text-1",
+      "phase": "prefill_ms",
+      "baseline_ms": 188.184745,
+      "candidate_ms": 309.796989,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "text-1",
+      "phase": "decode_ms",
+      "baseline_ms": 1764.7486650000003,
+      "candidate_ms": 2007.286528,
+      "mtp_work_equal": true
+    },
+    {
+      "case": "text-1",
+      "phase": "ttft_ms",
+      "baseline_ms": 192.876796,
+      "candidate_ms": 315.321599,
+      "mtp_work_equal": true
+    }
+  ],
+  "qualification": "one functional pass; includes first allocation/cache histories; not a repeated speed benchmark"
+}

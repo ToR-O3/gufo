@@ -1,0 +1,29 @@
+{
+  "reference_hash": "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+  "users": 6,
+  "hashes": [
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0"
+  ],
+  "all_equal": true,
+  "prompt_tokens": [
+    2040,
+    2040,
+    2040,
+    2040,
+    2040,
+    2040
+  ],
+  "completion_tokens": [
+    128,
+    128,
+    128,
+    128,
+    128,
+    128
+  ]
+}

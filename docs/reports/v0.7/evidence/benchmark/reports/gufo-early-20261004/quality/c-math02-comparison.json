@@ -1,0 +1,101 @@
+{
+  "schema": "sc117-logit-comparison-v1",
+  "quality_threshold": "unspecified; no automatic quality pass",
+  "cases": [
+    {
+      "id": "math02_union",
+      "category": "math",
+      "prompt_tokens": 41,
+      "input_ids_sha256": "850118702ab7383885ed5e30afbfd3d78dbc6c82177db6e4af83b69e3ea4eb8c",
+      "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+      "storage": "float32",
+      "targets": [
+        19,
+        22
+      ],
+      "scored_tokens": 2,
+      "answer_total_tokens": 2,
+      "complete_answer_scored": true,
+      "mean_nll_delta": -0.04658060184937263,
+      "rows": [
+        {
+          "max_abs": 0.4665215015411377,
+          "relative_l2": 0.04444487594956682,
+          "kl_original_to_converted": 0.004079137095894282,
+          "top1_original": 18,
+          "top1_converted": 18,
+          "top1_match": true,
+          "top10_original": [
+            18,
+            19,
+            17,
+            21,
+            16,
+            20,
+            159481,
+            99516,
+            48543,
+            26312
+          ],
+          "top10_converted": [
+            18,
+            19,
+            17,
+            21,
+            20,
+            16,
+            159481,
+            99516,
+            48543,
+            26312
+          ],
+          "top10_overlap": 10,
+          "nll_original": 1.3732439286713713,
+          "nll_converted": 1.2799429448706405,
+          "nll_delta": -0.09330098380073082,
+          "top1_margin_original": 0.415618896484375,
+          "top1_margin_converted": 0.21614837646484375
+        },
+        {
+          "max_abs": 0.28382760286331177,
+          "relative_l2": 0.026702975327127062,
+          "kl_original_to_converted": 0.0002365970884005639,
+          "top1_original": 22,
+          "top1_converted": 22,
+          "top1_match": true,
+          "top10_original": [
+            22,
+            20,
+            21,
+            23,
+            19,
+            18,
+            24,
+            17,
+            15,
+            248046
+          ],
+          "top10_converted": [
+            22,
+            20,
+            21,
+            23,
+            18,
+            19,
+            24,
+            17,
+            15,
+            248046
+          ],
+          "top10_overlap": 10,
+          "nll_original": 0.16796557844261883,
+          "nll_converted": 0.1681053585446044,
+          "nll_delta": 0.0001397801019855649,
+          "top1_margin_original": 2.6888179779052734,
+          "top1_margin_converted": 2.641590118408203
+        }
+      ]
+    }
+  ],
+  "skipped_unpaired_original_cases": []
+}

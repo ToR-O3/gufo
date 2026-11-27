@@ -1,0 +1,655 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Gufo v0.31.0：内蔵PLE・外部Q8_0 PLE比較</title><style>
+:root{color-scheme:dark}body{background:#111923;color:#eaf0f7;font:15px/1.7 system-ui,"Yu Gothic",sans-serif;margin:auto;max-width:2200px;padding:24px}h1{font-size:28px}h2{color:#abd8ff;margin-top:38px}h3{margin-top:25px}.scroll{overflow:auto;border:1px solid #34465a;border-radius:8px;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #34465a;text-align:right;white-space:nowrap}th{background:#213145;text-align:center}td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:#1a2838;z-index:1}.current,.perf td:nth-child(6n+5),.perf td:nth-child(6n+6),.perf td:nth-child(6n+7){background:#173438}.perf td:nth-child(6n+2){border-left:2px solid #5b718a}.perf{min-width:2900px}.good{color:#9cd8c0}.lower,.warning{color:#f1c88a}.muted,.note{color:#b9c7d8}small{display:block;font-size:12px}.callout{border-left:4px solid #7fb6d9;background:#1d2c3d;padding:12px 16px}a{color:#9dd9ff}p{max-width:1600px}details{margin:20px 0}summary{cursor:pointer;color:#b4d9ff}pre{white-space:pre-wrap;overflow-wrap:anywhere}footer{margin-top:30px;color:#b9c7d8} .perf{min-width:3500px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:4300px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:1100px}.compact{min-width:1100px}.perf td.current{background:#173438}small{display:block}.summary{max-width:1100px}details pre{max-height:32em;overflow:auto} </style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><h1>Gufo v0.31.0：内蔵PLE／外部Q8_0 PLEの比較</h1><p>対象はUnsloth v3.1系 IQ4_XS（Orca重み移植版）。同じ実行ファイル・本体重み・MTPでPLEだけを切り替え、公式の各条件をウォームアップを除いて3回ずつ測定しました。</p><p class="note">平均 ± 標準偏差。数値にカーソルを合わせると個別値と最小・最大を確認できます。外部PLEなしは、モデルに内蔵されたPLEを使用する意味です。</p><p class="note">両PLEの72比較中、入力全文が一致したのは63組です。公式手順が履歴準備に使うassistant応答はPLEごとに生成されるため、履歴とMTP採用率が変わる場合があります。ユーザー入力とサンプリング設定は同じで、速度は各構成での一連の処理結果として読みます。<a href="../../../../evidence/benchmark/runs/quant-refactor-20261108/ple-output-comparison.json">PLE間の入力・回答・draft比較</a></p><div class="callout">†はAR／MTP、または同時利用と単独ARで回答が一致しなかった条件です。失敗した回を除外せず参考値として残しています。速度測定の完了と、回答一致の合格は区別しています。</div><p class="summary">履歴0のMTP文章は内蔵PLE 33.04 tok/s、外部Q8_0 PLE 33.28 tok/sでした。16K反復文では内蔵 29.03 tok/s、外部 83.05 tok/sです。後者は各回の入力・出力・draft数と採用数も一致しています。この速度差の内部原因は今回の測定では特定していません。通常起動は指定どおり内蔵PLEに戻しています。</p><p>HTTP経由の公式ベンチ設定を使用。thinking off、greedy、seed=1、ペナルティなし。単独は1セッション・context133760、同時利用は1～8セッション・context4096。通常起動の2セッション・context131072・thinking auto・RAMキャッシュ4GiBとは測定条件が異なります。</p><p>電源プランはWindows側で継続記録しています。WSLで取得できない温度・ファームウェアプロファイルを推定値で補っていません。メモリは観測範囲を分け、重複する指標を加算しません。</p><h2>単独利用：Prefill・TTFT・Decode</h2><p>履歴を再利用した後、約2,048 tokenを追加して128 tokenを生成します。128K欄は128K全文のPrefill速度ではありません。TTFTはGufoのサーバー計測値です。</p><h3>AR（MTPなし）</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">履歴</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1165.0653432771342, &quot;max&quot;: 1218.8424197907273, &quot;values&quot;: [1218.8424197907273, 1206.7075953378103, 1165.0653432771342]}">1,196.87 ± 28.21</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.7249741269999999, &quot;max&quot;: 1.833900443, &quot;values&quot;: [1.7249741269999999, 1.733892327, 1.833900443]}">1.764 ± 0.060</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.9208185596199, &quot;max&quot;: 29.27238683898479, &quot;values&quot;: [28.9208185596199, 29.27238683898479, 29.186565119531906]}">29.13 ± 0.18</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1155.2063152478977, &quot;max&quot;: 1226.7113038206685, &quot;values&quot;: [1226.7113038206685, 1184.8779503755436, 1155.2063152478977]}">1,188.93 ± 35.92</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.689320082, &quot;max&quot;: 1.8227361249999998, &quot;values&quot;: [1.689320082, 1.754674093, 1.8227361249999998]}">1.756 ± 0.067</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.617595652100096, &quot;max&quot;: 29.457444341809573, &quot;values&quot;: [28.617595652100096, 29.457444341809573, 29.273945506347825]}">29.12 ± 0.44</span></td></tr><tr><td>4K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1129.31234323505, &quot;max&quot;: 1167.578239546058, &quot;values&quot;: [1129.31234323505, 1167.578239546058, 1154.5985374461209]}">1,150.50 ± 19.46 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.736787578, &quot;max&quot;: 1.8107971840000001, &quot;values&quot;: [1.8107971840000001, 1.736787578, 1.758264193]}">1.769 ± 0.038 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.9948163946155, &quot;max&quot;: 29.19154252184957, &quot;values&quot;: [28.9948163946155, 29.17709458116502, 29.19154252184957]}">29.12 ± 0.11 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1022.1848368926899, &quot;max&quot;: 1179.8281409802455, &quot;values&quot;: [1159.0329973596786, 1179.8281409802455, 1022.1848368926899]}">1,120.35 ± 85.65 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.71879337, &quot;max&quot;: 1.98567203, &quot;values&quot;: [1.76448424, 1.71879337, 1.98567203]}">1.823 ± 0.143 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.704265588664395, &quot;max&quot;: 29.664941986879054, &quot;values&quot;: [28.704265588664395, 29.664941986879054, 29.133529093426702]}">29.17 ± 0.48 †</span></td></tr><tr><td>8K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1142.7589493183275, &quot;max&quot;: 1162.117930311628, &quot;values&quot;: [1157.928157436422, 1142.7589493183275, 1162.117930311628]}">1,154.27 ± 10.19 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.7593284790000001, &quot;max&quot;: 1.800399862, &quot;values&quot;: [1.771067008, 1.800399862, 1.7593284790000001]}">1.777 ± 0.021 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.068719437680627, &quot;max&quot;: 29.516582001960042, &quot;values&quot;: [29.068719437680627, 29.109024490273047, 29.516582001960042]}">29.23 ± 0.25 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1025.0720146750512, &quot;max&quot;: 1175.055724874225, &quot;values&quot;: [1025.0720146750512, 1161.859632158972, 1175.055724874225]}">1,120.66 ± 83.05 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.7397636159999998, &quot;max&quot;: 2.0003767089999998, &quot;values&quot;: [2.0003767089999998, 1.77112143, 1.7397636159999998]}">1.837 ± 0.142 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.99154947000214, &quot;max&quot;: 29.330156504035486, &quot;values&quot;: [29.29286956571139, 28.99154947000214, 29.330156504035486]}">29.20 ± 0.19 †</span></td></tr><tr><td>12K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1150.48529673231, &quot;max&quot;: 1199.8574609175448, &quot;values&quot;: [1162.9051478023923, 1199.8574609175448, 1150.48529673231]}">1,171.08 ± 25.68 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.709413519, &quot;max&quot;: 1.786258988, &quot;values&quot;: [1.762975418, 1.709413519, 1.786258988]}">1.753 ± 0.039 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.95770816785081, &quot;max&quot;: 29.605695028840643, &quot;values&quot;: [28.95770816785081, 29.503022000075287, 29.605695028840643]}">29.36 ± 0.35 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1161.0803063485491, &quot;max&quot;: 1182.2002770121062, &quot;values&quot;: [1182.2002770121062, 1179.0409035006103, 1161.0803063485491]}">1,174.11 ± 11.39 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.734420216, &quot;max&quot;: 1.7702057740000001, &quot;values&quot;: [1.734420216, 1.7392860209999998, 1.7702057740000001]}">1.748 ± 0.019 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.991456357559287, &quot;max&quot;: 29.62045735332035, &quot;values&quot;: [28.991456357559287, 29.62045735332035, 29.15959437629165]}">29.26 ± 0.33 †</span></td></tr><tr><td>16K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1158.2821245413754, &quot;max&quot;: 1181.4960550019878, &quot;values&quot;: [1158.2821245413754, 1181.4960550019878, 1169.398133751694]}">1,169.73 ± 11.61 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.735384179, &quot;max&quot;: 1.772100336, &quot;values&quot;: [1.772100336, 1.735384179, 1.7547330079999999]}">1.754 ± 0.018 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.827645940916447, &quot;max&quot;: 29.455610437872807, &quot;values&quot;: [28.827645940916447, 29.455610437872807, 29.11738258868837]}">29.13 ± 0.31 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1134.2661218012022, &quot;max&quot;: 1181.4597997177925, &quot;values&quot;: [1134.2661218012022, 1159.994004593371, 1181.4597997177925]}">1,158.57 ± 23.63 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.7362095240000002, &quot;max&quot;: 1.807496686, &quot;values&quot;: [1.807496686, 1.767160067, 1.7362095240000002]}">1.770 ± 0.036 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.975956689688264, &quot;max&quot;: 29.394089051327274, &quot;values&quot;: [29.394089051327274, 29.325686538378072, 28.975956689688264]}">29.23 ± 0.22 †</span></td></tr><tr><td>32K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1106.668828152857, &quot;max&quot;: 1161.29288101332, &quot;values&quot;: [1154.5726348737624, 1106.668828152857, 1161.29288101332]}">1,140.84 ± 29.79 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.762964929, &quot;max&quot;: 1.872754961, &quot;values&quot;: [1.762964929, 1.872754961, 1.763747229]}">1.800 ± 0.063 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.666544607953742, &quot;max&quot;: 29.291978511644405, &quot;values&quot;: [28.666544607953742, 29.291978511644405, 29.136386752610047]}">29.03 ± 0.33 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 677.71944034992, &quot;max&quot;: 828.9749889775688, &quot;values&quot;: [817.0312479016762, 828.9749889775688, 677.71944034992]}">774.58 ± 84.09 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.4892101440000003, &quot;max&quot;: 3.017605094, &quot;values&quot;: [2.4892101440000003, 2.499025202, 3.017605094]}">2.669 ± 0.302 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 24.869679377903754, &quot;max&quot;: 28.200008736450823, &quot;values&quot;: [24.869679377903754, 25.657313198462017, 28.200008736450823]}">26.24 ± 1.74 †</span></td></tr><tr><td>64K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1093.5848771323015, &quot;max&quot;: 1119.1766685427529, &quot;values&quot;: [1114.4900799237987, 1119.1766685427529, 1093.5848771323015]}">1,109.08 ± 13.63 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.839868818, &quot;max&quot;: 1.900866264, &quot;values&quot;: [1.8535566300000001, 1.839868818, 1.900866264]}">1.865 ± 0.032 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.902189205195203, &quot;max&quot;: 29.039690936613255, &quot;values&quot;: [28.90287573761773, 29.039690936613255, 28.902189205195203]}">28.95 ± 0.08 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1095.5140238594681, &quot;max&quot;: 1124.1157677021845, &quot;values&quot;: [1095.5140238594681, 1124.1157677021845, 1105.933642328167]}">1,108.52 ± 14.48 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.8376403499999998, &quot;max&quot;: 1.886473119, &quot;values&quot;: [1.886473119, 1.8376403499999998, 1.8789692199999999]}">1.868 ± 0.026 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.90349439263942, &quot;max&quot;: 29.574788039036413, &quot;values&quot;: [28.90349439263942, 29.574788039036413, 29.081167084997595]}">29.19 ± 0.35 †</span></td></tr><tr><td>128K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1032.4797114202545, &quot;max&quot;: 1035.722194612814, &quot;values&quot;: [1034.2731024046884, 1035.722194612814, 1032.4797114202545]}">1,034.16 ± 1.62 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.991746216, &quot;max&quot;: 2.004212045, &quot;values&quot;: [1.991746216, 2.004212045, 1.992896246]}">1.996 ± 0.007 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.069415204911586, &quot;max&quot;: 27.93484880048119, &quot;values&quot;: [27.069415204911586, 27.19328169274897, 27.93484880048119]}">27.40 ± 0.47 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 921.9416527607885, &quot;max&quot;: 1015.9182407739969, &quot;values&quot;: [1015.9182407739969, 1006.8675840167887, 921.9416527607885]}">981.58 ± 51.84 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.027298859, &quot;max&quot;: 2.231697604, &quot;values&quot;: [2.027298859, 2.060740164, 2.231697604]}">2.107 ± 0.110 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.20364847240225, &quot;max&quot;: 27.631406392814398, &quot;values&quot;: [27.20364847240225, 27.631406392814398, 27.247700932872114]}">27.36 ± 0.24 †</span></td></tr></tbody></table></div><h3>MTP・文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">履歴</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1083.948484349866, &quot;max&quot;: 1133.309926504868, &quot;values&quot;: [1110.654719131722, 1133.309926504868, 1083.948484349866]}">1,109.30 ± 24.71</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.8445175950000001, &quot;max&quot;: 1.943061127, &quot;values&quot;: [1.899216118, 1.8445175950000001, 1.943061127]}">1.896 ± 0.049</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 30.969394542297675, &quot;max&quot;: 34.24382781034379, &quot;values&quot;: [30.969394542297675, 33.91033145204696, 34.24382781034379]}">33.04 ± 1.80</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1113.9863081445908, &quot;max&quot;: 1147.47304248753, &quot;values&quot;: [1147.47304248753, 1130.7370012504043, 1113.9863081445908]}">1,130.73 ± 16.74</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.837440718, &quot;max&quot;: 1.894630759, &quot;values&quot;: [1.837440718, 1.853281143, 1.894630759]}">1.862 ± 0.030</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.784075303734696, &quot;max&quot;: 36.12825166931082, &quot;values&quot;: [29.784075303734696, 33.93258545223973, 36.12825166931082]}">33.28 ± 3.22</span></td></tr><tr><td>4K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 873.4387109603458, &quot;max&quot;: 1078.2761000968942, &quot;values&quot;: [1078.2761000968942, 887.2470492509417, 873.4387109603458]}">946.32 ± 114.49 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.896416946, &quot;max&quot;: 2.322830797, &quot;values&quot;: [1.896416946, 2.284323339, 2.322830797]}">2.168 ± 0.236 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.780259748630073, &quot;max&quot;: 40.476842630706486, &quot;values&quot;: [40.476842630706486, 28.780259748630073, 29.61767014468811]}">32.96 ± 6.52 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 850.8635854652454, &quot;max&quot;: 1102.3107498409927, &quot;values&quot;: [1102.3107498409927, 910.5747465421264, 850.8635854652454]}">954.58 ± 131.37 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.854451714, &quot;max&quot;: 2.384257892, &quot;values&quot;: [1.854451714, 2.225557561, 2.384257892]}">2.155 ± 0.272 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.317881674233877, &quot;max&quot;: 34.7089005349326, &quot;values&quot;: [29.317881674233877, 34.7089005349326, 33.878361550053384]}">32.64 ± 2.90 †</span></td></tr><tr><td>8K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 971.4817240147792, &quot;max&quot;: 1052.9600978571696, &quot;values&quot;: [971.4817240147792, 1052.9600978571696, 1026.6183094199557]}">1,017.02 ± 41.58 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.9536262309999999, &quot;max&quot;: 2.110150341, &quot;values&quot;: [2.110150341, 1.9536262309999999, 1.990304371]}">2.018 ± 0.082 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 33.555055730455635, &quot;max&quot;: 36.632120501213855, &quot;values&quot;: [33.555055730455635, 35.40972783080652, 36.632120501213855]}">35.20 ± 1.55 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 880.6709255742908, &quot;max&quot;: 990.0398633190914, &quot;values&quot;: [990.0398633190914, 888.306525779118, 880.6709255742908]}">919.67 ± 61.06 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.070405856, &quot;max&quot;: 2.320064401, &quot;values&quot;: [2.070405856, 2.314904602, 2.320064401]}">2.235 ± 0.143 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.680335865202704, &quot;max&quot;: 30.314906828048045, &quot;values&quot;: [30.111998635949057, 27.680335865202704, 30.314906828048045]}">29.37 ± 1.47 †</span></td></tr><tr><td>12K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 881.9387896312815, &quot;max&quot;: 1064.0804421110245, &quot;values&quot;: [1031.0271188558575, 1064.0804421110245, 881.9387896312815]}">992.35 ± 97.04 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.92634303, &quot;max&quot;: 2.328423372, &quot;values&quot;: [1.988182224, 1.92634303, 2.328423372]}">2.081 ± 0.217 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.986195346612483, &quot;max&quot;: 35.34788766793562, &quot;values&quot;: [33.5073611957942, 29.986195346612483, 35.34788766793562]}">32.95 ± 2.72 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 885.8961469328846, &quot;max&quot;: 1036.8676322886542, &quot;values&quot;: [1036.8676322886542, 908.9958442006665, 885.8961469328846]}">943.92 ± 81.32 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.977815941, &quot;max&quot;: 2.317963277, &quot;values&quot;: [1.977815941, 2.2544959319999998, 2.317963277]}">2.183 ± 0.181 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.772277047896033, &quot;max&quot;: 31.695670681977656, &quot;values&quot;: [29.688361062857492, 28.772277047896033, 31.695670681977656]}">30.05 ± 1.50 †</span></td></tr><tr><td>16K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 897.1733708398459, &quot;max&quot;: 1022.1763441013038, &quot;values&quot;: [1022.1763441013038, 897.1733708398459, 909.3605344691865]}">942.90 ± 68.92 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.005557524, &quot;max&quot;: 2.283018439, &quot;values&quot;: [2.005557524, 2.283018439, 2.25360626]}">2.181 ± 0.152 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 32.57763383826488, &quot;max&quot;: 41.99007992103787, &quot;values&quot;: [41.99007992103787, 32.57763383826488, 34.98729469467089]}">36.52 ± 4.89 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 877.3833059908718, &quot;max&quot;: 1029.9502095841704, &quot;values&quot;: [1029.9502095841704, 877.3833059908718, 896.6406280884987]}">934.66 ± 83.09 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.990554612, &quot;max&quot;: 2.33486033, &quot;values&quot;: [1.990554612, 2.33486033, 2.285883507]}">2.204 ± 0.186 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 30.29225505961283, &quot;max&quot;: 34.90768269508988, &quot;values&quot;: [34.90768269508988, 34.54622691713926, 30.29225505961283]}">33.25 ± 2.57 †</span></td></tr><tr><td>32K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1025.401806187944, &quot;max&quot;: 1048.7730488116845, &quot;values&quot;: [1025.401806187944, 1032.6212821426798, 1048.7730488116845]}">1,035.60 ± 11.97 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.950537367, &quot;max&quot;: 2.00612748, &quot;values&quot;: [1.985353185, 2.00612748, 1.950537367]}">1.981 ± 0.028 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 36.18707910096218, &quot;max&quot;: 37.284431821352115, &quot;values&quot;: [36.18707910096218, 37.284431821352115, 36.2950938831044]}">36.59 ± 0.60 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1001.9654954767265, &quot;max&quot;: 1028.0557702228884, &quot;values&quot;: [1028.0557702228884, 1018.11135980688, 1001.9654954767265]}">1,016.04 ± 13.17 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.979480038, &quot;max&quot;: 2.04113237, &quot;values&quot;: [1.979480038, 2.034286236, 2.04113237]}">2.018 ± 0.034 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 36.97070656162055, &quot;max&quot;: 38.45459901254328, &quot;values&quot;: [36.97070656162055, 38.45459901254328, 38.45196697203863]}">37.96 ± 0.86 †</span></td></tr><tr><td>64K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 974.5129264697895, &quot;max&quot;: 1021.9609349747294, &quot;values&quot;: [978.2157910736777, 1021.9609349747294, 974.5129264697895]}">991.56 ± 26.39 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.014061774, &quot;max&quot;: 2.132187354, &quot;values&quot;: [2.110254048, 2.014061774, 2.132187354]}">2.086 ± 0.063 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 33.228932906640196, &quot;max&quot;: 36.731946843298836, &quot;values&quot;: [35.853098779055905, 36.731946843298836, 33.228932906640196]}">35.27 ± 1.82 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 968.7016778067053, &quot;max&quot;: 1013.0151064635561, &quot;values&quot;: [968.7016778067053, 1013.0151064635561, 999.2301236011168]}">993.65 ± 22.68 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.031750821, &quot;max&quot;: 2.131314616, &quot;values&quot;: [2.131314616, 2.031750821, 2.080547607]}">2.081 ± 0.050 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 34.06150155044841, &quot;max&quot;: 37.57238335798299, &quot;values&quot;: [35.218076197955675, 37.57238335798299, 34.06150155044841]}">35.62 ± 1.79 †</span></td></tr><tr><td>128K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 970.8440421065121, &quot;max&quot;: 979.695571545376, &quot;values&quot;: [970.8440421065121, 978.905218545715, 979.695571545376]}">976.48 ± 4.90 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.100816778, &quot;max&quot;: 2.120645503, &quot;values&quot;: [2.120645503, 2.118938802, 2.100816778]}">2.113 ± 0.011 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 34.753330997493165, &quot;max&quot;: 37.692522113604205, &quot;values&quot;: [37.692522113604205, 37.04793443610603, 34.753330997493165]}">36.50 ± 1.54 †</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 734.75061353851, &quot;max&quot;: 951.5184379940542, &quot;values&quot;: [945.8141969468893, 951.5184379940542, 734.75061353851]}">877.36 ± 123.54 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.177329235, &quot;max&quot;: 2.793491048, &quot;values&quot;: [2.177329235, 2.179766627, 2.793491048]}">2.384 ± 0.355 †</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 33.34561691207452, &quot;max&quot;: 34.28731159686143, &quot;values&quot;: [33.53575681203884, 34.28731159686143, 33.34561691207452]}">33.72 ± 0.50 †</span></td></tr></tbody></table></div><h3>MTP・反復文</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">履歴</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>0</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1076.9080587618655, &quot;max&quot;: 1135.928025303888, &quot;values&quot;: [1135.928025303888, 1076.9080587618655, 1127.4105277068804]}">1,113.42 ± 31.90</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.841736383, &quot;max&quot;: 1.924778756, &quot;values&quot;: [1.841736383, 1.924778756, 1.854550387]}">1.874 ± 0.045</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 89.55377755205748, &quot;max&quot;: 95.09974414446562, &quot;values&quot;: [89.55377755205748, 93.05393175939786, 95.09974414446562]}">92.57 ± 2.80</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1132.2743602690803, &quot;max&quot;: 1161.2070073866948, &quot;values&quot;: [1161.2070073866948, 1132.2743602690803, 1140.682644001267]}">1,144.72 ± 14.88</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.811291816, &quot;max&quot;: 1.848164401, &quot;values&quot;: [1.811291816, 1.839863514, 1.848164401]}">1.833 ± 0.019</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 88.91502725179942, &quot;max&quot;: 94.71043192218185, &quot;values&quot;: [88.91502725179942, 94.71043192218185, 93.37337339206674]}">92.33 ± 3.03</span></td></tr><tr><td>4K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 901.7212740154762, &quot;max&quot;: 975.6075700361607, &quot;values&quot;: [901.7212740154762, 966.7374335679981, 975.6075700361607]}">948.02 ± 40.34</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.074216345, &quot;max&quot;: 2.261960683, &quot;values&quot;: [2.261960683, 2.0934114989999997, 2.074216345]}">2.143 ± 0.103</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.540018840952083, &quot;max&quot;: 30.683682177646197, &quot;values&quot;: [30.683682177646197, 30.233861012405065, 28.540018840952083]}">29.82 ± 1.13</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 921.0200234575124, &quot;max&quot;: 972.8083885234626, &quot;values&quot;: [921.0200234575124, 972.8083885234626, 941.6575253779894]}">945.16 ± 26.07</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.080233565, &quot;max&quot;: 2.216587594, &quot;values&quot;: [2.216587594, 2.080233565, 2.148875094]}">2.149 ± 0.068</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 30.799036240407847, &quot;max&quot;: 32.25201823807285, &quot;values&quot;: [32.25201823807285, 30.799036240407847, 30.88887068665656]}">31.31 ± 0.81</span></td></tr><tr><td>8K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 937.3961711516292, &quot;max&quot;: 953.5984533404959, &quot;values&quot;: [937.3961711516292, 952.2367565292494, 953.5984533404959]}">947.74 ± 8.99</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.137262305, &quot;max&quot;: 2.1805366509999997, &quot;values&quot;: [2.1805366509999997, 2.15388686, 2.137262305]}">2.157 ± 0.022</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.423124629928278, &quot;max&quot;: 30.94500879618523, &quot;values&quot;: [30.94500879618523, 27.423124629928278, 29.207490130596838]}">29.19 ± 1.76</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 935.4246659345021, &quot;max&quot;: 951.567382945647, &quot;values&quot;: [942.5404093729576, 951.567382945647, 935.4246659345021]}">943.18 ± 8.09</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.155147978, &quot;max&quot;: 2.178871573, &quot;values&quot;: [2.1693182259999997, 2.155147978, 2.178871573]}">2.168 ± 0.012</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.637430258701766, &quot;max&quot;: 29.64776030567011, &quot;values&quot;: [29.64776030567011, 28.33974963789295, 27.637430258701766]}">28.54 ± 1.02</span></td></tr><tr><td>12K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1045.2695968297749, &quot;max&quot;: 1083.6963957847581, &quot;values&quot;: [1045.2695968297749, 1083.6963957847581, 1063.6720629768927]}">1,064.21 ± 19.22</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.885911964, &quot;max&quot;: 1.958620039, &quot;values&quot;: [1.958620039, 1.885911964, 1.9256676640000001]}">1.923 ± 0.036</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 30.85704627348598, &quot;max&quot;: 91.51598880845253, &quot;values&quot;: [91.51598880845253, 83.73923096071431, 30.85704627348598]}">68.70 ± 33.01</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 988.246474310622, &quot;max&quot;: 1078.1364642041924, &quot;values&quot;: [1078.1364642041924, 988.246474310622, 999.4408570700036]}">1,021.94 ± 48.99</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.897801675, &quot;max&quot;: 2.067867095, &quot;values&quot;: [1.897801675, 2.067867095, 2.0491191480000004]}">2.005 ± 0.093</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.019407993480314, &quot;max&quot;: 30.9457218981353, &quot;values&quot;: [30.9457218981353, 29.019407993480314, 30.73253696228752]}">30.23 ± 1.06</span></td></tr><tr><td>16K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 895.2526670966328, &quot;max&quot;: 931.1928440356612, &quot;values&quot;: [895.2526670966328, 931.1928440356612, 901.9884953902877]}">909.48 ± 19.10</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.19456759, &quot;max&quot;: 2.283057765, &quot;values&quot;: [2.283057765, 2.19456759, 2.266419704]}">2.248 ± 0.047</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.138892619887436, &quot;max&quot;: 29.85888568390971, &quot;values&quot;: [28.138892619887436, 29.090959206697903, 29.85888568390971]}">29.03 ± 0.86</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1082.9769796786175, &quot;max&quot;: 1106.0685224981253, &quot;values&quot;: [1098.6514591629543, 1106.0685224981253, 1082.9769796786175]}">1,095.90 ± 11.79</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.8482086979999999, &quot;max&quot;: 1.889080627, &quot;values&quot;: [1.8610333940000001, 1.8482086979999999, 1.889080627]}">1.866 ± 0.021</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 81.20750963374678, &quot;max&quot;: 85.51642588250917, &quot;values&quot;: [85.51642588250917, 82.4252413557243, 81.20750963374678]}">83.05 ± 2.22</span></td></tr><tr><td>32K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1010.8681561663745, &quot;max&quot;: 1026.2280518235118, &quot;values&quot;: [1026.2280518235118, 1010.8681561663745, 1026.1681000257618]}">1,021.09 ± 8.85</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.977483199, &quot;max&quot;: 2.044793191, &quot;values&quot;: [1.977483199, 2.044793191, 1.988389597]}">2.004 ± 0.036</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 76.4260930587455, &quot;max&quot;: 86.31407418162901, &quot;values&quot;: [80.37494146632095, 86.31407418162901, 76.4260930587455]}">81.04 ± 4.98</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 902.1711200418696, &quot;max&quot;: 1039.8218239489106, &quot;values&quot;: [1039.8218239489106, 1038.969244967759, 902.1711200418696]}">993.65 ± 79.23</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.949670117, &quot;max&quot;: 2.2605086070000002, &quot;values&quot;: [1.949670117, 1.9898052179999999, 2.2605086070000002]}">2.067 ± 0.169</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 27.505787153687667, &quot;max&quot;: 81.76147342484121, &quot;values&quot;: [81.76147342484121, 28.612232488954387, 27.505787153687667]}">45.96 ± 31.01</span></td></tr><tr><td>64K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 955.4187876975394, &quot;max&quot;: 1033.3552560222743, &quot;values&quot;: [955.4187876975394, 1033.3552560222743, 1001.0243835591453]}">996.60 ± 39.16</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 1.988485727, &quot;max&quot;: 2.1572342119999997, &quot;values&quot;: [2.1572342119999997, 1.988485727, 2.068385634]}">2.071 ± 0.084</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 75.72824267197718, &quot;max&quot;: 78.78824108695065, &quot;values&quot;: [75.72824267197718, 78.06813591122084, 78.78824108695065]}">77.53 ± 1.60</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 995.0926491970632, &quot;max&quot;: 1020.1480810093574, &quot;values&quot;: [995.0926491970632, 1020.1480810093574, 1006.599826874291]}">1,007.28 ± 12.54</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.0140055279999998, &quot;max&quot;: 2.0696994220000002, &quot;values&quot;: [2.0696994220000002, 2.0140055279999998, 2.057102175]}">2.047 ± 0.029</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 78.14726944383416, &quot;max&quot;: 84.57879256144348, &quot;values&quot;: [79.75775207870291, 78.14726944383416, 84.57879256144348]}">80.83 ± 3.35</span></td></tr><tr><td>128K</td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 935.9152533252529, &quot;max&quot;: 980.058652436379, &quot;values&quot;: [935.9152533252529, 962.2339710605278, 980.058652436379]}">959.40 ± 22.21</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.093563421, &quot;max&quot;: 2.1942878599999998, &quot;values&quot;: [2.1942878599999998, 2.1477204889999997, 2.093563421]}">2.145 ± 0.050</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 28.810414580972246, &quot;max&quot;: 82.60414662722874, &quot;values&quot;: [82.60414662722874, 76.63667388252043, 28.810414580972246]}">62.68 ± 29.49</span></td><td class="current group-start"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 956.0695122261833, &quot;max&quot;: 970.0568343840691, &quot;values&quot;: [956.2690597871149, 956.0695122261833, 970.0568343840691]}">960.80 ± 8.02</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 2.1161304380000003, &quot;max&quot;: 2.161457359, &quot;values&quot;: [2.1483835680000003, 2.161457359, 2.1161304380000003]}">2.142 ± 0.023</span></td><td class="current "><span title="{&quot;n&quot;: 3, &quot;min&quot;: 78.63177376709358, &quot;max&quot;: 81.85026750090206, &quot;values&quot;: [81.31249574002723, 78.63177376709358, 81.85026750090206]}">80.60 ± 1.72</span></td></tr></tbody></table></div><h2>同時利用：1・2・4・6・8要求</h2><p>入力を事前処理してキャッシュから生成する公式試験のためPrefillは対象外です。TTFTは各組の要求平均を3組で平均。Decodeは各要求の生成速度の合計で、単独1要求の速度とは異なります。</p><h3>AR文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時要求</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0010255160000000002, &quot;max&quot;: 0.001144578, &quot;values&quot;: [0.001054618, 0.0010255160000000002, 0.001144578]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.200518140107757, &quot;max&quot;: 30.253127697271665, &quot;values&quot;: [29.200518140107757, 30.253127697271665, 30.050626955632726]}">29.83 ± 0.56</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0010053780000000001, &quot;max&quot;: 0.001668631, &quot;values&quot;: [0.001668631, 0.0010053780000000001, 0.001067889]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.00382939757483, &quot;max&quot;: 30.25704900089798, &quot;values&quot;: [29.00382939757483, 30.25704900089798, 30.235901619383284]}">29.83 ± 0.72</span></td></tr><tr><td>2</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0009501004999999999, &quot;max&quot;: 0.0011581984999999998, &quot;values&quot;: [0.0011581984999999998, 0.0009804009999999999, 0.0009501004999999999]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 48.13037912028835, &quot;max&quot;: 48.7394850889554, &quot;values&quot;: [48.13037912028835, 48.7394850889554, 48.512535423232265]}">48.46 ± 0.31</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0010402525, &quot;max&quot;: 0.0013312645000000001, &quot;values&quot;: [0.0013312645000000001, 0.0010905005, 0.0010402525]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 42.46158681208868, &quot;max&quot;: 48.245860718748126, &quot;values&quot;: [42.46158681208868, 48.245860718748126, 48.05567956441517]}">46.25 ± 3.29</span></td></tr><tr><td>4</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.00105801175, &quot;max&quot;: 0.0014449545, &quot;values&quot;: [0.00105801175, 0.0010646750000000002, 0.0014449545]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 67.25687270026816, &quot;max&quot;: 73.5886449958884, &quot;values&quot;: [67.25687270026816, 73.5886449958884, 71.56091053031405]}">70.80 ± 3.23</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0009015842500000001, &quot;max&quot;: 0.00117356075, &quot;values&quot;: [0.0009015842500000001, 0.00117356075, 0.0010790075]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 66.51912051999906, &quot;max&quot;: 73.06475207895062, &quot;values&quot;: [66.51912051999906, 73.06475207895062, 70.65148682317492]}">70.08 ± 3.31</span></td></tr><tr><td>6</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.001276697, &quot;max&quot;: 0.0014085635000000002, &quot;values&quot;: [0.0014085635000000002, 0.001276697, 0.001303324]}">0.001 ± 0.000</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 83.10576255850485, &quot;max&quot;: 86.5495434577594, &quot;values&quot;: [86.5495434577594, 84.00747479591445, 83.10576255850485]}">84.55 ± 1.79</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.001207069, &quot;max&quot;: 0.031164913333333336, &quot;values&quot;: [0.031164913333333336, 0.001207069, 0.030702364166666666]}">0.021 ± 0.017</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 83.61562847878356, &quot;max&quot;: 87.03497211825459, &quot;values&quot;: [87.03497211825459, 84.74455747703477, 83.61562847878356]}">85.13 ± 1.74</span></td></tr><tr><td>8</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.027919231375, &quot;max&quot;: 0.037197044125, &quot;values&quot;: [0.034430479624999996, 0.027919231375, 0.037197044125]}">0.033 ± 0.005</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 90.95299032371634, &quot;max&quot;: 94.21193444926642, &quot;values&quot;: [94.21193444926642, 90.95299032371634, 91.06481090611997]}">92.08 ± 1.85</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.001339818, &quot;max&quot;: 0.04241443825, &quot;values&quot;: [0.04241443825, 0.001339818, 0.017871414875]}">0.021 ± 0.021</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 91.19645533444734, &quot;max&quot;: 94.45397026015367, &quot;values&quot;: [94.45397026015367, 91.19645533444734, 91.90631844654467]}">92.52 ± 1.71</span></td></tr></tbody></table></div><h3>MTP文章</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時要求</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.03175473, &quot;max&quot;: 0.22609748600000001, &quot;values&quot;: [0.22609748600000001, 0.03175473, 0.041608440999999996]}">0.100 ± 0.109</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 31.069558917115852, &quot;max&quot;: 33.20791035940112, &quot;values&quot;: [31.069558917115852, 32.6178160849236, 33.20791035940112]}">32.30 ± 1.10</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.029982524, &quot;max&quot;: 0.066822722, &quot;values&quot;: [0.066822722, 0.030707388000000002, 0.029982524]}">0.043 ± 0.021</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 29.29877080518361, &quot;max&quot;: 31.559711218336137, &quot;values&quot;: [29.29877080518361, 31.389815811007995, 31.559711218336137]}">30.75 ± 1.26</span></td></tr><tr><td>2</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0609616255, &quot;max&quot;: 0.0947712895, &quot;values&quot;: [0.0947712895, 0.0609616255, 0.064117898]}">0.073 ± 0.019</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 46.794019592327516, &quot;max&quot;: 52.180817416008196, &quot;values&quot;: [47.237030262606844, 52.180817416008196, 46.794019592327516]}">48.74 ± 2.99</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.057892381, &quot;max&quot;: 0.084551081, &quot;values&quot;: [0.084551081, 0.057892381, 0.059779509499999994]}">0.067 ± 0.015</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 46.40809723257843, &quot;max&quot;: 51.212786767653014, &quot;values&quot;: [47.90567999128305, 46.40809723257843, 51.212786767653014]}">48.51 ± 2.46</span></td></tr><tr><td>4</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.12101707825, &quot;max&quot;: 0.156831542, &quot;values&quot;: [0.156831542, 0.1216672255, 0.12101707825]}">0.133 ± 0.020</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 62.044247599794346, &quot;max&quot;: 65.24945969875795, &quot;values&quot;: [65.24945969875795, 64.78429001149678, 62.044247599794346]}">64.03 ± 1.73</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.1211299145, &quot;max&quot;: 0.16612378, &quot;values&quot;: [0.16612378, 0.1211299145, 0.1317644975]}">0.140 ± 0.024 †</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 59.12522216111941, &quot;max&quot;: 65.32822104846059, &quot;values&quot;: [65.32822104846059, 61.94576745265894, 59.12522216111941]}">62.13 ± 3.11 †</span></td></tr><tr><td>6</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.17892138683333333, &quot;max&quot;: 0.21692532133333334, &quot;values&quot;: [0.21692532133333334, 0.18029910116666667, 0.17892138683333333]}">0.192 ± 0.022</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 65.40647438344286, &quot;max&quot;: 70.79931694278815, &quot;values&quot;: [70.79931694278815, 69.22157477411734, 65.40647438344286]}">68.48 ± 2.77</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.18082948583333333, &quot;max&quot;: 0.21922896699999997, &quot;values&quot;: [0.21922896699999997, 0.18082948583333333, 0.1811509208333333]}">0.194 ± 0.022</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 67.95258988030173, &quot;max&quot;: 70.28015492468813, &quot;values&quot;: [70.28015492468813, 69.1661311526608, 67.95258988030173]}">69.13 ± 1.16</span></td></tr><tr><td>8</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.246723911375, &quot;max&quot;: 0.270227828875, &quot;values&quot;: [0.270227828875, 0.25155803325000003, 0.246723911375]}">0.256 ± 0.012</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 82.5462428357645, &quot;max&quot;: 82.90590516736226, &quot;values&quot;: [82.6371334688397, 82.90590516736226, 82.5462428357645]}">82.70 ± 0.19</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.23320911175, &quot;max&quot;: 0.306497994625, &quot;values&quot;: [0.306497994625, 0.233298680375, 0.23320911175]}">0.258 ± 0.042</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 82.60649566756788, &quot;max&quot;: 83.4511118123361, &quot;values&quot;: [82.68766255275186, 83.4511118123361, 82.60649566756788]}">82.92 ± 0.47</span></td></tr></tbody></table></div><h3>MTP反復文</h3><div class="scroll"><table class="perf"><thead><tr><th rowspan="2">同時要求</th><th colspan="3">Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th colspan="3">Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th><th>Prefill<br>(tok/s)</th><th>TTFT<br>(秒)</th><th>Decode<br>(tok/s)</th></tr></thead><tbody><tr><td>1</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.028387117, &quot;max&quot;: 0.063273247, &quot;values&quot;: [0.063273247, 0.028387117, 0.031358301]}">0.041 ± 0.019</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 82.42411241269359, &quot;max&quot;: 102.05426293568539, &quot;values&quot;: [82.42411241269359, 100.69810637926854, 102.05426293568539]}">95.06 ± 10.96</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.02862131, &quot;max&quot;: 0.065683495, &quot;values&quot;: [0.065683495, 0.02862131, 0.032587052]}">0.042 ± 0.020</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 81.48406121121637, &quot;max&quot;: 98.2357805472832, &quot;values&quot;: [81.48406121121637, 98.11036651738834, 98.2357805472832]}">92.61 ± 9.64</span></td></tr><tr><td>2</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.060092941999999996, &quot;max&quot;: 0.09556744, &quot;values&quot;: [0.09556744, 0.060092941999999996, 0.062533993]}">0.073 ± 0.020</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 102.84079724551091, &quot;max&quot;: 107.23448204080995, &quot;values&quot;: [102.84079724551091, 106.61370671563631, 107.23448204080995]}">105.56 ± 2.38</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.0582112235, &quot;max&quot;: 0.09999113800000001, &quot;values&quot;: [0.09999113800000001, 0.0582112235, 0.06398542900000001]}">0.074 ± 0.023</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 99.62315658874806, &quot;max&quot;: 107.82957540195132, &quot;values&quot;: [99.62315658874806, 106.11049345708119, 107.82957540195132]}">104.52 ± 4.33</span></td></tr><tr><td>4</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.119192006, &quot;max&quot;: 0.15968855475, &quot;values&quot;: [0.15968855475, 0.122700913, 0.119192006]}">0.134 ± 0.022</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 107.2216692595471, &quot;max&quot;: 111.97353045982581, &quot;values&quot;: [107.2216692595471, 111.97353045982581, 109.85052921671986]}">109.68 ± 2.38</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.1255038755, &quot;max&quot;: 0.1673039275, &quot;values&quot;: [0.1673039275, 0.1255038755, 0.12557386075000002]}">0.139 ± 0.024</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 105.05762887767185, &quot;max&quot;: 111.91580884708428, &quot;values&quot;: [105.05762887767185, 111.91580884708428, 109.9233316015473]}">108.97 ± 3.53</span></td></tr><tr><td>6</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.17711527133333335, &quot;max&quot;: 0.21673457166666665, &quot;values&quot;: [0.21673457166666665, 0.18451191, 0.17711527133333335]}">0.193 ± 0.021</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 107.91540352348531, &quot;max&quot;: 110.92131825523762, &quot;values&quot;: [107.91540352348531, 110.13072862499496, 110.92131825523762]}">109.66 ± 1.56</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.18091281150000002, &quot;max&quot;: 0.21698597683333334, &quot;values&quot;: [0.21698597683333334, 0.18091281150000002, 0.2016582193333333]}">0.200 ± 0.018</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 106.4556207405332, &quot;max&quot;: 111.21160624482468, &quot;values&quot;: [106.4556207405332, 108.33094103334929, 111.21160624482468]}">108.67 ± 2.40</span></td></tr><tr><td>8</td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.230193960375, &quot;max&quot;: 0.281668141625, &quot;values&quot;: [0.281668141625, 0.230193960375, 0.2462818285]}">0.253 ± 0.026</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 113.96389597253432, &quot;max&quot;: 117.01954567222222, &quot;values&quot;: [113.96389597253432, 117.01954567222222, 114.5252346822138]}">115.17 ± 1.63</span></td><td class="current group-start">対象外</td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.24707097525, &quot;max&quot;: 0.285836132625, &quot;values&quot;: [0.281510453625, 0.285836132625, 0.24707097525]}">0.271 ± 0.021</span></td><td class="current"><span title="{&quot;n&quot;: 3, &quot;min&quot;: 114.07399794966277, &quot;max&quot;: 116.05925076291402, &quot;values&quot;: [115.0267328981394, 116.05925076291402, 114.07399794966277]}">115.05 ± 0.99</span></td></tr></tbody></table></div><h2>読み込み時間</h2><p>1セッション×262144・MTP込み。gufo serve起動直前からHTTP /readyまでを測ります。対象shard・MTP・外部PLEのWSLページキャッシュを解放し、mincoreで常駐0ページを確認します。Windows側のストレージキャッシュはリセットしていません。</p><div class="scroll"><table class="compact"><tr><th>項目</th><th>Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</th><th>Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</th></tr><tr><td>読み込み（秒）</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 24.298356697006966, &quot;max&quot;: 39.91098191999481, &quot;values&quot;: [24.298356697006966, 39.91098191999481, 25.307472594009596]}">29.84 ± 8.74 秒</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 25.640537935993052, &quot;max&quot;: 47.804899763010326, &quot;values&quot;: [47.804899763010326, 25.640537935993052, 30.049588648995268]}">34.50 ± 11.73 秒</span></td></tr></table></div><h2>公式メモリ試験</h2><p>1セッション・AR・context133121。HIPが報告する全体の使用量です。モデルファイルの容量やWindows RAM使用量とは異なり、加算できません。各負荷を独立した3回で測定します。</p><div class="scroll"><table class="compact"><tr><th>負荷・指標</th><th>Unsloth v3.1系 IQ4_XS・内蔵PLE</th><th>Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE</th></tr><tr><td>pp2048 + tg128：HIP使用ピーク</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 69.6, &quot;max&quot;: 69.72, &quot;values&quot;: [69.71, 69.6, 69.72]}">69.68 ± 0.07 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 69.7, &quot;max&quot;: 69.72, &quot;values&quot;: [69.71, 69.72, 69.7]}">69.71 ± 0.01 GiB</span></td></tr><tr><td>pp2048 + tg128：起動前使用</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.76, &quot;max&quot;: 0.76, &quot;values&quot;: [0.76, 0.76, 0.76]}">0.76 ± 0.00 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.76, &quot;max&quot;: 0.76, &quot;values&quot;: [0.76, 0.76, 0.76]}">0.76 ± 0.00 GiB</span></td></tr><tr><td>pp2048 + tg128：起動前からの増加</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 68.83999999999999, &quot;max&quot;: 68.96, &quot;values&quot;: [68.94999999999999, 68.83999999999999, 68.96]}">68.92 ± 0.07 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 68.94, &quot;max&quot;: 68.96, &quot;values&quot;: [68.94999999999999, 68.96, 68.94]}">68.95 ± 0.01 GiB</span></td></tr><tr><td>16K prefix, pp4096 + tg128：HIP使用ピーク</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 71.33, &quot;max&quot;: 71.36, &quot;values&quot;: [71.33, 71.36, 71.34]}">71.34 ± 0.02 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 71.31, &quot;max&quot;: 71.35, &quot;values&quot;: [71.33, 71.35, 71.31]}">71.33 ± 0.02 GiB</span></td></tr><tr><td>16K prefix, pp4096 + tg128：起動前使用</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.76, &quot;max&quot;: 0.76, &quot;values&quot;: [0.76, 0.76, 0.76]}">0.76 ± 0.00 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 0.76, &quot;max&quot;: 0.76, &quot;values&quot;: [0.76, 0.76, 0.76]}">0.76 ± 0.00 GiB</span></td></tr><tr><td>16K prefix, pp4096 + tg128：起動前からの増加</td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 70.57, &quot;max&quot;: 70.6, &quot;values&quot;: [70.57, 70.6, 70.58]}">70.58 ± 0.02 GiB</span></td><td><span title="{&quot;n&quot;: 3, &quot;min&quot;: 70.55, &quot;max&quot;: 70.58999999999999, &quot;values&quot;: [70.57, 70.58999999999999, 70.55]}">70.57 ± 0.02 GiB</span></td></tr></table></div><h2>今回の実行前・実行中・実行後のメモリ</h2><p>構成全体を定期監視した最大使用量と最小空きです。上の固定負荷試験とは観測範囲が違います。Windowsは利用可能RAM、WSLはMemAvailable。各列のピークは同一時刻とは限りません。</p><div class="scroll"><table class="compact"><tr><th>条件</th><th>Windows使用 最大 (GiB)</th><th>Windows空き 最小 (GiB)</th><th>WSL空き 最小 (GiB)</th><th>HIP使用 最大 (GiB)</th><th>HIP空き 最小 (GiB)</th><th>WSL swap 最大 (GiB)</th><th>プロセスRSS 最大 (GiB)</th><th>Docker cgroup 最大 (GiB)</th><th>GPU専用使用 最大 (GiB)</th><th>GPU共有使用 最大 (GiB)</th></tr><tr><td>Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE</td><td>62.25</td><td>1.35</td><td>10.53</td><td>80.33</td><td>31.15</td><td>4.78</td><td>10.12</td><td>11.12</td><td>63.82</td><td>16.71</td></tr><tr><td>Unsloth v3.1系 IQ4_XS・内蔵PLE</td><td>60.16</td><td>3.48</td><td>10.62</td><td>80.34</td><td>31.14</td><td>4.78</td><td>10.14</td><td>11.35</td><td>63.82</td><td>16.72</td></tr></table></div><div class="scroll"><table class="compact"><tr><th>時点</th><th>Windows観測日時</th><th>Windows使用 (GiB)</th><th>Windows空き (GiB)</th><th>WSL空き (GiB)</th><th>HIP使用 (GiB)</th><th>HIP空き (GiB)</th></tr><tr><td>測定前：Gufo停止中</td><td>2026-11-08T08:24:27.1992243+09:00</td><td>52.91</td><td>10.73</td><td>20.21</td><td>0.76</td><td>110.71</td></tr><tr><td>測定後：内蔵PLE・通常設定で起動</td><td>2026-11-08T10:04:25.3496316+09:00</td><td>61.64</td><td>1.99</td><td>17.55</td><td>77.21</td><td>34.27</td></tr></table></div><p class="note">境界スナップショットのWindows値は10秒以内の別時刻サンプルで、時刻を併記しています。短い測定区間にWindowsサンプルがない場合は未測定です。GPU専用予約・共有RAM・HIP・WSL・RSSは重複するため足し合わせません。通常復帰後の値は長文利用時のピークを示しません。</p><h2>動作確認と回答一致</h2><p>測定回数・出力長・HTTP原記録と集計値を照合します。回答一致は同じモデルの実行モード間の確認で、モデル同士の回答全文一致を要求しません。</p><p>改修前の保存済みベンチにもAR／MTP・同時利用の回答不一致があります。今回の不一致を合格へ変更したり、全件が同じ原因と断定したりせず、原記録を残しています。<a href="../../../../evidence/benchmark/runs/quant-refactor-20261108/quality-history-audit.json">改修前との確認記録</a> ／ <span title="参照先はローカル保管">4ユーザーMTPの再確認</span></p><div class="scroll"><table class="compact"><tr><th>条件</th><th>単独測定</th><th>同時利用応答</th><th>AR／MTPの同一入力</th><th>AR／MTP回答一致</th><th>同時利用一致</th><th>読み込み</th><th>メモリ</th></tr><tr><td>Unsloth v3.1系 IQ4_XS・内蔵PLE<br>今回測定</td><td>72/72</td><td>189/189</td><td>24/24</td><td>5/24</td><td>15/15条件</td><td>3回</td><td>2負荷×3回</td></tr><tr><td>Unsloth v3.1系 IQ4_XS・外部Q8_0 PLE<br>今回測定</td><td>72/72</td><td>189/189</td><td>24/24</td><td>8/24</td><td>14/15条件</td><td>3回</td><td>2負荷×3回</td></tr></table></div><p>MTP反復文の単独表には、対応する単独AR反復文の深さ別試験がありません。†なしを全深さでのAR一致合格とは扱いません。改修の数値・動作検証は別の実施記録にまとめています。</p><details><summary>検証・不一致・実行条件の詳細</summary><pre>{
+  &quot;checks&quot;: {
+    &quot;external-q8&quot;: {
+      &quot;single_72_samples&quot;: true,
+      &quot;single_24_conditions_three_each&quot;: true,
+      &quot;single_output_128&quot;: true,
+      &quot;single_trace_hashes&quot;: true,
+      &quot;single_payload_metrics_match&quot;: true,
+      &quot;official_greedy_payload&quot;: true,
+      &quot;multi_189_responses&quot;: true,
+      &quot;multi_15_cells_three_each&quot;: true,
+      &quot;cold_loads_3&quot;: true,
+      &quot;memory_two_workloads_three_each&quot;: true,
+      &quot;jobs_23_completed&quot;: true,
+      &quot;runtime_no_failures&quot;: true,
+      &quot;hip_counter_valid&quot;: true
+    },
+    &quot;builtin&quot;: {
+      &quot;single_72_samples&quot;: true,
+      &quot;single_24_conditions_three_each&quot;: true,
+      &quot;single_output_128&quot;: true,
+      &quot;single_trace_hashes&quot;: true,
+      &quot;single_payload_metrics_match&quot;: true,
+      &quot;official_greedy_payload&quot;: true,
+      &quot;multi_189_responses&quot;: true,
+      &quot;multi_15_cells_three_each&quot;: true,
+      &quot;cold_loads_3&quot;: true,
+      &quot;memory_two_workloads_three_each&quot;: true,
+      &quot;jobs_23_completed&quot;: true,
+      &quot;runtime_no_failures&quot;: true,
+      &quot;hip_counter_valid&quot;: true
+    }
+  },
+  &quot;quality_flags&quot;: [
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;job&quot;: &quot;multi-mixed-c4&quot;,
+      &quot;ok&quot;: false,
+      &quot;at&quot;: &quot;2026-11-07T23:59:08.155938+00:00&quot;,
+      &quot;error&quot;: &quot;RuntimeError(&#x27;multi-mixed: C4 output differs from its isolated AR reference&#x27;)&quot;,
+      &quot;traceback&quot;: &quot;Traceback (most recent call last):\n  File \&quot;/work/docs/benchmark/runs/quant-refactor-20261108/harness/official_bench.py\&quot;, line 148, in job\n    fn();result={&#x27;job&#x27;:name,&#x27;ok&#x27;:True,&#x27;at&#x27;:now()};event(&#x27;job_complete&#x27;)\n    ~~^^\n  File \&quot;/work/docs/benchmark/runs/quant-refactor-20261108/harness/official_bench.py\&quot;, line 175, in &lt;lambda&gt;\n    jobs.append((table.id+&#x27;-c&#x27;+str(users),lambda t=table,c=users:multi_cell(t,c)))\n                                                                 ~~~~~~~~~~^^^^^\n  File \&quot;/work/docs/benchmark/runs/quant-refactor-20261108/harness/official_bench.py\&quot;, line 166, in multi_cell\n    llm.run_multi(session,TableSpec(table.id,table.base,table.variant,spec))\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \&quot;/work/tools/gufo/model_bench/llm.py\&quot;, line 686, in run_multi\n    raise RuntimeError(f\&quot;{table.id}: C{users} output differs from its isolated AR reference\&quot;)\nRuntimeError: multi-mixed: C4 output differs from its isolated AR reference\n&quot;
+    }
+  ],
+  &quot;single_quality_flags&quot;: [
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 4096,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 4095,
+      &quot;mtp_cached&quot;: 4096
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 4096,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 4095,
+      &quot;mtp_cached&quot;: 4096
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 8192,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 8184,
+      &quot;mtp_cached&quot;: 8185
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 8192,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 8184,
+      &quot;mtp_cached&quot;: 8185
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 12288,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 12249,
+      &quot;mtp_cached&quot;: 12250
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 12288,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 12249,
+      &quot;mtp_cached&quot;: 12250
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 32768,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 32718,
+      &quot;mtp_cached&quot;: 32719
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 32768,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 32718,
+      &quot;mtp_cached&quot;: 32719
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 65536,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 65447,
+      &quot;mtp_cached&quot;: 65448
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 65536,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 65447,
+      &quot;mtp_cached&quot;: 65448
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    },
+    {
+      &quot;condition&quot;: &quot;external-q8&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 4096,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 4095,
+      &quot;mtp_cached&quot;: 4096
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 4096,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 4095,
+      &quot;mtp_cached&quot;: 4096
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 8192,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 8184,
+      &quot;mtp_cached&quot;: 8185
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 8192,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 8184,
+      &quot;mtp_cached&quot;: 8185
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 8192,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 8184,
+      &quot;mtp_cached&quot;: 8185
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 12288,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 12249,
+      &quot;mtp_cached&quot;: 12250
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 12288,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 12249,
+      &quot;mtp_cached&quot;: 12250
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 12288,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 12249,
+      &quot;mtp_cached&quot;: 12250
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 16384,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 16324,
+      &quot;mtp_cached&quot;: 16325
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 32768,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 32718,
+      &quot;mtp_cached&quot;: 32719
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 32768,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 32718,
+      &quot;mtp_cached&quot;: 32719
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 32768,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 32718,
+      &quot;mtp_cached&quot;: 32719
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 65536,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 65447,
+      &quot;mtp_cached&quot;: 65448
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 65536,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 65447,
+      &quot;mtp_cached&quot;: 65448
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 1,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 2,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    },
+    {
+      &quot;condition&quot;: &quot;builtin&quot;,
+      &quot;depth&quot;: 131072,
+      &quot;run&quot;: 3,
+      &quot;same_payload&quot;: true,
+      &quot;same_output&quot;: false,
+      &quot;ar_cached&quot;: 130932,
+      &quot;mtp_cached&quot;: 130933
+    }
+  ],
+  &quot;memory_sampling_limitations&quot;: {
+    &quot;interval_count&quot;: 298,
+    &quot;windows_missing_intervals&quot;: [
+      {
+        &quot;condition&quot;: &quot;external-q8&quot;,
+        &quot;table&quot;: &quot;multi-repetition-gufo-mtp&quot;,
+        &quot;users&quot;: 1,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 1,
+        &quot;start&quot;: 1794096198.608877,
+        &quot;end&quot;: 1794096200.24315
+      },
+      {
+        &quot;condition&quot;: &quot;external-q8&quot;,
+        &quot;table&quot;: &quot;multi-repetition-gufo-mtp&quot;,
+        &quot;users&quot;: 1,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 3,
+        &quot;start&quot;: 1794096201.726827,
+        &quot;end&quot;: 1794096203.064343
+      },
+      {
+        &quot;condition&quot;: &quot;external-q8&quot;,
+        &quot;table&quot;: &quot;multi-repetition-gufo-mtp&quot;,
+        &quot;users&quot;: 2,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 3,
+        &quot;start&quot;: 1794096238.541331,
+        &quot;end&quot;: 1794096240.982211
+      },
+      {
+        &quot;condition&quot;: &quot;builtin&quot;,
+        &quot;table&quot;: &quot;multi-mixed-gufo-mtp&quot;,
+        &quot;users&quot;: 1,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 1,
+        &quot;start&quot;: 1794098828.941039,
+        &quot;end&quot;: 1794098833.289351
+      },
+      {
+        &quot;condition&quot;: &quot;builtin&quot;,
+        &quot;table&quot;: &quot;multi-repetition-gufo-mtp&quot;,
+        &quot;users&quot;: 1,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 1,
+        &quot;start&quot;: 1794099133.731854,
+        &quot;end&quot;: 1794099135.350107
+      },
+      {
+        &quot;condition&quot;: &quot;builtin&quot;,
+        &quot;table&quot;: &quot;multi-repetition-gufo-mtp&quot;,
+        &quot;users&quot;: 1,
+        &quot;depth&quot;: null,
+        &quot;repetition&quot;: 3,
+        &quot;start&quot;: 1794099136.802843,
+        &quot;end&quot;: 1794099138.090174
+      }
+    ],
+    &quot;hip_missing_intervals&quot;: 0,
+    &quot;note&quot;: &quot;Windows samples are several seconds apart. An interval with zero Windows samples has no measured Windows peak; do not interpolate it or use a nearby sample as an interval peak.&quot;
+  },
+  &quot;automatic_cache_budgets&quot;: {
+    &quot;external-q8&quot;: [
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-0.log&quot;,
+        &quot;capacity_bytes&quot;: 10393892864
+      },
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-1.log&quot;,
+        &quot;capacity_bytes&quot;: 10415314944
+      },
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-2.log&quot;,
+        &quot;capacity_bytes&quot;: 10399197184
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10521169920
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10430334976
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10455388160
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10512519168
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10525456384
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10502774784
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10461499392
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10492524544
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10559006720
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10474614784
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10482808832
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10443685888
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10459631616
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10465378304
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10484881408
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10452273152
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10497058816
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10504222720
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10484813824
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10461038592
+      },
+      {
+        &quot;log&quot;: &quot;single-ar-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10398251008
+      },
+      {
+        &quot;log&quot;: &quot;single-mtp-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10515099648
+      },
+      {
+        &quot;log&quot;: &quot;single-mtp-repetition-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10551560192
+      }
+    ],
+    &quot;builtin&quot;: [
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-0.log&quot;,
+        &quot;capacity_bytes&quot;: 10490195968
+      },
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-1.log&quot;,
+        &quot;capacity_bytes&quot;: 10527213568
+      },
+      {
+        &quot;log&quot;: &quot;loading-gufo-default-2.log&quot;,
+        &quot;capacity_bytes&quot;: 10501718016
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10522058752
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10450139136
+      },
+      {
+        &quot;log&quot;: &quot;memory-gufo-memory.log&quot;,
+        &quot;capacity_bytes&quot;: 10416513024
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10539943936
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10519552000
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10506774528
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10502766592
+      },
+      {
+        &quot;log&quot;: &quot;multi-ar-gufo-ar-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10490517504
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10564464640
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10500466688
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10477928448
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10481612800
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10502672384
+      },
+      {
+        &quot;log&quot;: &quot;multi-mixed-gufo-mtp-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10483963904
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-ar-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10577952768
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c1.log&quot;,
+        &quot;capacity_bytes&quot;: 10472337408
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c2.log&quot;,
+        &quot;capacity_bytes&quot;: 10500106240
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c4.log&quot;,
+        &quot;capacity_bytes&quot;: 10487093248
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c6.log&quot;,
+        &quot;capacity_bytes&quot;: 10497198080
+      },
+      {
+        &quot;log&quot;: &quot;multi-repetition-gufo-mtp-c8.log&quot;,
+        &quot;capacity_bytes&quot;: 10507173888
+      },
+      {
+        &quot;log&quot;: &quot;single-ar-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10483509248
+      },
+      {
+        &quot;log&quot;: &quot;single-mtp-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10546210816
+      },
+      {
+        &quot;log&quot;: &quot;single-mtp-repetition-gufo-single.log&quot;,
+        &quot;capacity_bytes&quot;: 10562396160
+      }
+    ]
+  },
+  &quot;power_plans&quot;: [
+    &quot;電源設定の GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (バランス)&quot;
+  ],
+  &quot;manifest&quot;: {
+    &quot;source&quot;: &quot;/home/user/workspace/Gufo&quot;,
+    &quot;revision&quot;: &quot;96f1aa8c3d49c0febebd4a42e84d7340ceb65baf&quot;,
+    &quot;conditions&quot;: [
+      &quot;external-q8&quot;,
+      &quot;builtin&quot;
+    ],
+    &quot;binary&quot;: &quot;/home/user/workspace/Gufo/local/v0300/gpu-build/gufo&quot;,
+    &quot;binary_sha256&quot;: &quot;9adfc5cab53c6baedff09b165fa1e98beea691aa804e336880f95e0a7eb820e1&quot;,
+    &quot;started_at&quot;: &quot;2026-11-07T23:24:26.239436+00:00&quot;,
+    &quot;method&quot;: &quot;Official HTTP benchmark, three formal repetitions per condition, warmups excluded&quot;,
+    &quot;model&quot;: &quot;Unsloth v3.1 IQ4_XS with transplanted weights&quot;,
+    &quot;reference&quot;: &quot;PLE comparison only; no new reference-engine sweep&quot;
+  }
+}</pre></details><footer>通常Gufoは改修済み版・内蔵PLEで起動しました。2セッション、context131072、thinking auto、MTP、RAMキャッシュ4GiB等の通常パラメータを維持し、readyと短い応答を確認済みです。<span title="参照先はローカル保管">起動確認</span></footer><p><a href="../../../../evidence/benchmark/runs/quant-refactor-20261108/summary.json">集計JSON</a> ／ <span title="参照先はローカル保管">3回の個別測定CSV</span> ／ <span title="参照先はローカル保管">メモリ個別CSV</span> ／ <a href="../../../../investigations/local/updates/v0310-20261108/implementation/README.ja.md">改修・検証の記録</a></p></body></html>

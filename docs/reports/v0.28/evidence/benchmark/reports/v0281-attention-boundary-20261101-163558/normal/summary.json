@@ -1,0 +1,21 @@
+{
+  "adopted_at_jst": "2026-11-01T17:08:50.365766+09:00",
+  "status": "adopted",
+  "image": "gufo:v0.28.1-attention-8f4a7e77-rocm101",
+  "image_id": "sha256:1c981240f95a7766beee15e98afb76bcb92956ab14e67c0f90e22b4e5c6fb4d0",
+  "container_id": "c8f74c480c1eb3c261112ae10867814f82a5b1fdf60ea9a470a4619710cda953",
+  "source_revision": "8f4a7e77f91c466bfe5fbf0703385c9a17b6f4c2",
+  "binary_sha256": "445cdac8dfc8bc4b94cc6752d33d0a0c39a75ef2bb1a30db34365b5ed70dfbf5",
+  "normal_options_unchanged": true,
+  "docker_host_configuration_unchanged": true,
+  "restart_policy": {
+    "Name": "on-failure",
+    "MaximumRetryCount": 3
+  },
+  "runtime_rocm": "10.1",
+  "external_ple": "/models/PLE/Qwen3.8-Flash-Next-PLE-BF16.gguf",
+  "thinking_auto_resolved_on": true,
+  "short_response": "OK",
+  "future_docker_start_uses_adopted_image": true,
+  "replaced_container_removed": true
+}

@@ -1,0 +1,350 @@
+{
+  "original_oracle_verified": true,
+  "calculations": [
+    {
+      "id": "C01",
+      "revision": 2,
+      "baseline": [
+        99,
+        104,
+        100
+      ],
+      "candidate": [
+        92,
+        88,
+        93
+      ],
+      "gain_pct": "9.90",
+      "memory_two_sessions_mib": 768,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": []
+    },
+    {
+      "id": "C02",
+      "revision": 2,
+      "baseline": [
+        118,
+        123,
+        119
+      ],
+      "candidate": [
+        111,
+        107,
+        112
+      ],
+      "gain_pct": "8.33",
+      "memory_two_sessions_mib": 256,
+      "mismatches": 1,
+      "control_pct": 2,
+      "failures": [
+        "quality"
+      ]
+    },
+    {
+      "id": "C03",
+      "revision": 2,
+      "baseline": [
+        78,
+        83,
+        79
+      ],
+      "candidate": [
+        78,
+        74,
+        79
+      ],
+      "gain_pct": "3.75",
+      "memory_two_sessions_mib": 128,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": [
+        "speed"
+      ]
+    },
+    {
+      "id": "C04",
+      "revision": 1,
+      "baseline": [
+        138,
+        143,
+        139
+      ],
+      "candidate": [
+        131,
+        127,
+        132
+      ],
+      "gain_pct": "7.14",
+      "memory_two_sessions_mib": 1280,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": [
+        "memory"
+      ]
+    },
+    {
+      "id": "C05",
+      "revision": 2,
+      "baseline": [
+        93,
+        98,
+        94
+      ],
+      "candidate": [
+        90,
+        86,
+        91
+      ],
+      "gain_pct": "6.32",
+      "memory_two_sessions_mib": 256,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": []
+    },
+    {
+      "id": "C06",
+      "revision": 2,
+      "baseline": [
+        158,
+        163,
+        159
+      ],
+      "candidate": [
+        145,
+        141,
+        146
+      ],
+      "gain_pct": "10.00",
+      "memory_two_sessions_mib": 512,
+      "mismatches": 0,
+      "control_pct": 6,
+      "failures": [
+        "control"
+      ]
+    },
+    {
+      "id": "C07",
+      "revision": 1,
+      "baseline": [
+        73,
+        78,
+        74
+      ],
+      "candidate": [
+        71,
+        67,
+        72
+      ],
+      "gain_pct": "6.67",
+      "memory_two_sessions_mib": 512,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": []
+    },
+    {
+      "id": "C08",
+      "revision": 2,
+      "baseline": [
+        208,
+        213,
+        209
+      ],
+      "candidate": [
+        196,
+        192,
+        197
+      ],
+      "gain_pct": "7.14",
+      "memory_two_sessions_mib": 256,
+      "mismatches": 0,
+      "control_pct": 2,
+      "failures": [
+        "compat"
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "case": "8k",
+      "review_documents_inside_source_blocks": [
+        "C04-r2-lab",
+        "C07-r1-lab",
+        "C02-r1-lab",
+        "C08-r1-lab",
+        "C07-disposition",
+        "C04-r1-lab",
+        "C06-r1-lab",
+        "C05-r2-lab",
+        "C04-disposition",
+        "C01-r1-lab",
+        "C01-disposition",
+        "C03-disposition",
+        "C08-disposition",
+        "C06-disposition",
+        "C07-r2-lab",
+        "C05-disposition",
+        "C02-disposition",
+        "C05-r1-lab",
+        "C03-r1-lab",
+        "C02-r2-lab",
+        "C01-r2-lab",
+        "C08-r2-lab",
+        "C03-r2-lab",
+        "C06-r2-lab"
+      ],
+      "review_documents_inside_source_opening_tag": [],
+      "review_document_count": 24,
+      "source_open_count": 5,
+      "source_close_count": 4
+    },
+    {
+      "case": "32k",
+      "review_documents_inside_source_blocks": [
+        "C04-r2-lab",
+        "C07-r1-lab",
+        "C02-r1-lab",
+        "C08-r1-lab",
+        "C07-disposition",
+        "C04-r1-lab",
+        "C06-r1-lab",
+        "C05-r2-lab",
+        "C04-disposition",
+        "C01-r1-lab",
+        "C01-disposition",
+        "C03-disposition",
+        "C08-disposition",
+        "C06-disposition",
+        "C07-r2-lab",
+        "C05-disposition",
+        "C02-disposition",
+        "C05-r1-lab",
+        "C03-r1-lab",
+        "C02-r2-lab",
+        "C01-r2-lab",
+        "C08-r2-lab",
+        "C03-r2-lab",
+        "C06-r2-lab"
+      ],
+      "review_documents_inside_source_opening_tag": [],
+      "review_document_count": 24,
+      "source_open_count": 28,
+      "source_close_count": 27
+    },
+    {
+      "case": "64k",
+      "review_documents_inside_source_blocks": [
+        "C04-r2-lab",
+        "C07-r1-lab",
+        "C02-r1-lab",
+        "C08-r1-lab",
+        "C07-disposition",
+        "C04-r1-lab",
+        "C06-r1-lab",
+        "C05-r2-lab",
+        "C04-disposition",
+        "C01-r1-lab",
+        "C01-disposition",
+        "C03-disposition",
+        "C08-disposition",
+        "C06-disposition",
+        "C07-r2-lab",
+        "C05-disposition",
+        "C02-disposition",
+        "C05-r1-lab",
+        "C03-r1-lab",
+        "C02-r2-lab",
+        "C01-r2-lab",
+        "C08-r2-lab",
+        "C03-r2-lab",
+        "C06-r2-lab"
+      ],
+      "review_documents_inside_source_opening_tag": [],
+      "review_document_count": 24,
+      "source_open_count": 70,
+      "source_close_count": 69
+    },
+    {
+      "case": "128k",
+      "review_documents_inside_source_blocks": [
+        "C04-r2-lab",
+        "C07-r1-lab",
+        "C02-r1-lab",
+        "C08-r1-lab",
+        "C07-disposition",
+        "C04-r1-lab",
+        "C06-r1-lab",
+        "C05-r2-lab",
+        "C04-disposition",
+        "C01-r1-lab",
+        "C01-disposition",
+        "C03-disposition",
+        "C08-disposition",
+        "C06-disposition",
+        "C07-r2-lab",
+        "C05-disposition",
+        "C02-disposition",
+        "C05-r1-lab",
+        "C03-r1-lab",
+        "C02-r2-lab",
+        "C01-r2-lab",
+        "C08-r2-lab",
+        "C03-r2-lab",
+        "C06-r2-lab"
+      ],
+      "review_documents_inside_source_opening_tag": [
+        "C02-disposition"
+      ],
+      "review_document_count": 24,
+      "source_open_count": 150,
+      "source_close_count": 149
+    },
+    {
+      "case": "256k",
+      "review_documents_inside_source_blocks": [
+        "C04-r2-lab",
+        "C07-r1-lab",
+        "C02-r1-lab",
+        "C08-r1-lab",
+        "C07-disposition",
+        "C04-r1-lab",
+        "C06-r1-lab",
+        "C05-r2-lab",
+        "C04-disposition",
+        "C01-r1-lab",
+        "C01-disposition",
+        "C03-disposition",
+        "C08-disposition",
+        "C06-disposition",
+        "C07-r2-lab",
+        "C05-disposition",
+        "C02-disposition",
+        "C05-r1-lab",
+        "C03-r1-lab",
+        "C02-r2-lab",
+        "C01-r2-lab",
+        "C08-r2-lab",
+        "C03-r2-lab",
+        "C06-r2-lab"
+      ],
+      "review_documents_inside_source_opening_tag": [
+        "C01-r1-lab",
+        "C02-r2-lab"
+      ],
+      "review_document_count": 24,
+      "source_open_count": 319,
+      "source_close_count": 318
+    }
+  ],
+  "unique_cases": 5,
+  "repeat_count_each": 5,
+  "fixed_seed_and_temperature": true,
+  "limitations": [
+    "First JSON committed before visible calculations in non-thinking mode",
+    "1000 words requested but only 1024 output tokens allowed",
+    "Source corpus is distractor/context; decision facts are 24 fictional documents",
+    "Source excerpts were split by character and review documents inserted inside source wrappers",
+    "A single wrong exact field fails the full case; component scores retained",
+    "This fixture is not a general model-quality benchmark"
+  ]
+}

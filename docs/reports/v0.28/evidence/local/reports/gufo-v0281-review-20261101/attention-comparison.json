@@ -1,0 +1,38 @@
+[
+  {
+    "function": "__global__ void CompactSelectionKernel",
+    "unchanged_from_v027": true,
+    "v027_line": 2900,
+    "v0281_line": 2928,
+    "sha256_v027": "1abf285e3ec90a67bc3d19b160b70f4516786c472a4393f3c893cb0a98d95225",
+    "sha256_v0281": "1abf285e3ec90a67bc3d19b160b70f4516786c472a4393f3c893cb0a98d95225"
+  },
+  {
+    "function": "__global__ void AttentionKernel",
+    "unchanged_from_v027": true,
+    "v027_line": 2986,
+    "v0281_line": 3014,
+    "sha256_v027": "e7a6d188fa9a7b79c44688a8806e1a0dbbc4c14c7cff2fd97df388dc33e8701e",
+    "sha256_v0281": "e7a6d188fa9a7b79c44688a8806e1a0dbbc4c14c7cff2fd97df388dc33e8701e"
+  },
+  {
+    "function": "__global__ void AttentionMergeKernel",
+    "unchanged_from_v027": true,
+    "v027_line": 3385,
+    "v0281_line": 3413,
+    "sha256_v027": "99749fc017dbb26eb8fce8cd31534e8b41381efed727fae1330d2627fd6fa8eb",
+    "sha256_v0281": "99749fc017dbb26eb8fce8cd31534e8b41381efed727fae1330d2627fd6fa8eb"
+  },
+  {
+    "function": "void Attention(",
+    "unchanged_from_v027": true,
+    "v027_line": 7814,
+    "v0281_line": 7832,
+    "sha256_v027": "63f34cd804da4a395932ebad4bc462f36c7ff146707768f1d41b7c0885451796",
+    "sha256_v0281": "63f34cd804da4a395932ebad4bc462f36c7ff146707768f1d41b7c0885451796"
+  },
+  {
+    "function": "bool Executor::Attention(",
+    "unchanged_from_v027": true
+  }
+]

@@ -1,0 +1,35 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>IQ4 SwiGLU直接FP16出力 — 原因と対策</title><style>
+:root{color-scheme:light}body{max-width:1060px;margin:40px auto;padding:0 24px;font:16px/1.8 system-ui,sans-serif;color:#172c3b;background:#f6f8fa}h1{font-size:30px;line-height:1.4}h2{font-size:22px;margin-top:38px}article{background:white;border:1px solid #dbe4e9;border-radius:12px;padding:24px;margin:20px 0}.result{background:#eaf5ef;border-left:6px solid #26714c;padding:18px}table{border-collapse:collapse;width:100%;font-size:14px}th,td{border:1px solid #ced8df;padding:9px;text-align:left}th{background:#edf3f6}pre{background:#122736;color:#eef6fb;overflow:auto;padding:18px;font:13px/1.65 ui-monospace,monospace;border-radius:8px}code{font-family:ui-monospace,monospace}a{color:#126587}.muted{color:#53697a;font-size:14px}.flow{font-size:17px;padding:12px;background:#eef3f6;margin:10px 0}details{margin-top:18px}summary{cursor:pointer;font-weight:bold}</style>
+<h1>IQ4 SwiGLU直接FP16出力<br>−0の原因と、同じ値を保つ対策</h1><p class="muted">2026年10月13日 / Gufo v0.13.0系ローカル改修 / Strix Halo gfx1151</p>
+<div class="result"><strong>対策は可能。実際のGufoカーネルを使った検査で、1,556,811組すべてが旧処理とビット一致しました。</strong><br>公式で既に使われている <code>Materialize</code> をFP16変換の直前に使い、FP32の丸めをレジスタ内に残します。通常稼働には未適用で、速度・実モデル全体の評価は未実施です。</div>
+<article><h2>何が原因だったか</h2>
+<p>今回の本番相当HIPコンパイル条件は <code>-O3 -ffast-math -fno-finite-math-only</code> です。FP32でSwiGLUを計算して保存する旧処理と、直ちにFP16へ変換する <code>SwigluHalf</code> は、ソースの式が同じでも最終的なGPU命令が異なりました。</p>
+<table><tr><th>経路</th><th>実際の最後の処理</th><th>違い</th></tr><tr><td>旧処理：Swiglu → NarrowActivations</td><td>FP32掛け算 → FP32保存 → 別カーネルでFP16変換</td><td>FP32で一度丸める</td></tr><tr><td>対策前の直接出力</td><td><code>v_fma_mixlo/hi_f16</code>：掛け算＋正の0、FP16結果</td><td>FP32の中間丸めが省略され、−0の符号も変わる</td></tr><tr><td>対策後の直接出力</td><td><code>v_mul_f32</code> → <code>v_cvt_f16_f32</code></td><td>旧処理の丸めを残し、FP32のメモリ保存を省く</td></tr></table>
+<p>たとえば <code>gate = −0</code>、<code>up = 0.217899</code> では旧処理のFP16値は <code>0x8000</code>（−0）、対策前の直接出力は <code>0x0000</code>（＋0）でした。融合命令に含まれる <code>＋0</code> が符号を変えます。</p>
+<p><strong>追加調査では、−0以外に14組の丸め差も見つかりました。</strong>一例では旧処理のFP32値が34.515625になり、FP16への偶数丸めで34.5（<code>0x5050</code>）になる一方、直接出力は34.53125（<code>0x5051</code>）になります。したがって、最後にゼロの符号だけを戻す処置では不十分です。「−0だけの問題」という前の説明を、この調査結果で補足します。</p>
+<p>単独のFP32→FP16変換では不一致が0件だったこと、実Gufoカーネルでも再現したこと、実際の生成命令、修正後の一致を合わせて原因を特定しました。<span title="参照先はローカル保管">生成命令の抜粋</span> / <span title="参照先はローカル保管">対象カーネルの全アセンブリ</span></p></article>
+<article><h2>対策の内容と範囲</h2>
+<p>Gufoには既に <code>Materialize(float)</code> という補助関数があります。コンパイラによる前後の計算のまとめ直しを抑え、FP32の値を確定させる目的の処理です。同じ補助関数を、SwiGLUの<strong>最終積だけ</strong>に適用しました。</p>
+<pre>float value = SiluF(gate) * up;
+value = Materialize(value);  // 既存のFP32丸めを残す
+out = __float2half(value);  // FP16へ直接出力</pre>
+<p><code>Materialize</code> 自体はレジスタを対象とする空のインラインアセンブリで、GPU全体の同期やメモリへの書き戻しを追加するものではありません。生成命令でも、修正経路の <code>v_fma_mix</code> が消え、FP32積とFP16変換が分かれていることを確認しました。</p>
+<p>SiluFの途中まで強制的に確定させる方法も試しましたが、それでは旧処理の最適化済みの計算順序と変わり、6組で非ゼロ値の不一致が残りました。採用候補は最後のFP32値だけを確定させる方法です。</p>
+<table><tr><th>変更点</th><th>今回の試作</th></tr><tr><td>内部カーネル</td><td><code>SwigluHalfKernel&lt;PreserveF32&gt;</code> と <code>SwigluValue</code> を使用。テンプレートで処理を分け、要素ごとの実行時条件分岐を追加しない。</td></tr><tr><td>呼び出し口</td><td>従来の5引数 <code>SwigluHalf</code> は従来処理を選ぶ。6引数版の <code>preserve_f32=true</code> を試験から呼び、IQ4向けの丸め維持処理を検証。</td></tr><tr><td>共通部分への影響</td><td>共通カーネルファイルには拡張が入る。既存Q8呼び出しの出力は155万組全体で変更前後が同一。コンパイル設定、重み形式、精度基準は変更しない。</td></tr><tr><td>実行経路への接続</td><td>未接続。A案の実行部分も今回変更していない。検証用の独立ブランチに保存。</td></tr></table>
+<p><span title="参照先はローカル保管">変更差分</span> / <span title="参照先はローカル保管">検証したカーネルのソース</span></p></article>
+<article><h2>検証結果</h2>
+<p>同じ固定ツールチェーンの実Gufoライブラリを呼び出して比較しました。元の不合格入力、符号付きゼロ、極小値、飽和領域、全ての有限FP16 gate値×8種のup値、乱数1,048,576組、4要素に揃わない末尾を含みます。比較は許容差なしのビット一致です。</p>
+<table><tr><th>実Gufoによる比較</th><th>−0 / ＋0の差</th><th>その他の差</th></tr><tr><td>対策前の直接出力 vs 旧処理</td><td>126,390</td><td>14</td></tr><tr><td>対策後の直接出力 vs 旧処理</td><td><strong>0</strong></td><td><strong>0</strong></td></tr></table>
+<p class="muted">この入力集合はゼロや極小値を意図的に多く含みます。不一致件数は実際の会話での失敗率ではなく、回答品質の低下率でもありません。全てのFP32入力を網羅した検査ではありません。</p>
+<p>Orca IQ4_XSファイル内の共有エキスパートdown重みはIQ4_NLです。その実寸に合わせた合成重み（入力640、出力2560）でも、直接出力の直後の行列計算まで検査しました。</p>
+<table><tr><th>入力行数</th><th>FP16中間値</th><th>最終FP32値</th><th>独立CPU FP64基準の相対RMS</th></tr><tr><td>1</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>8</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>9</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>32</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>33</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>129</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>257</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr><tr><td>4096</td><td>完全一致</td><td>完全一致</td><td>2.0255e-06</td></tr></table><p>独立誤差上限は従来の <code>2e-5</code> のままで、緩和していません。既存native IQ4演算テストも合格しました（3.59秒）。Q8から使われる従来呼び出しは、変更前後の3,113,622バイトすべてが一致しています。</p>
+<p><span title="参照先はローカル保管">変更前の再現</span> / <span title="参照先はローカル保管">変更後・行列計算の結果</span> / <span title="参照先はローカル保管">原因切り分けの試行結果</span> / <a href="../../../../evidence/benchmark/reports/iq4-swiglu-half-20261013/original-output-comparison.json">従来呼び出しの同一性</a> / <span title="参照先はローカル保管">結果JSON</span></p></article>
+<article><h2>本体に近づくか、採用する合理性はあるか</h2>
+<p><strong>データの流れは、公式のQ8向け処理に近づきます。</strong>参考元はAと同じ、Gufo公式の <a href="https://github.com/gufo-org/gufo/commit/62a1eb69724dfc861c293b3d4ce0a2eed85faf69">共有エキスパート用のFP16バッファを分離した変更</a>です。既存の関数・補助処理・専用バッファを再利用できます。</p>
+<div class="flow">現在のA候補：SwiGLU → FP32を保存 → 別処理でFP16変換 → shexp_half</div>
+<div class="flow">今回の対策案：SwiGLU → レジスタ内でFP32値を確定 → FP16を直接shexp_halfへ</div>
+<p>実行経路に接続できれば、Aが既に省いた再変換に加えて、共有エキスパートのFP32中間値の書き込み・読み込みと変換カーネル1回を省けます。4096行×640要素なら1層につき書き込み10 MiB＋読み込み10 MiBという論理上の転送量です。実際のDRAM転送量や処理時間を計測した値ではありません。</p>
+<p>一方、融合命令を避ける分だけ演算命令は増えます。転送と起動回数の削減がどこまで上回るかは実モデルで測る必要があります。また、Aのバッファ接続だけの変更と比べると共通カーネルへの拡張が増えるため、公式更新時には既存呼び出しの一致検査を継続する必要があります。</p>
+<p><strong>判断：この修正を次の採用候補として優先して検証する合理性があります。</strong>ただし、ここで確認したのは演算単位の同一性と原因の解消です。実モデルの生成結果・MTP・Prefill/TTFT/Decodeの速度は未評価のため、本採用済みとは扱いません。以前のAの速度表をこの案の実績として流用もしません。</p>
+<p class="muted">通常運転のGufoはbaseline 9bbd97fのまま、正常応答を確認。Aも今回の対策案も未採用。Strataは起動していません。</p></article>
+</html>

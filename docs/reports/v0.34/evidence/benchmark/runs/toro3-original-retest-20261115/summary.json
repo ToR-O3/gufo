@@ -1,0 +1,1083 @@
+{
+  "counts": {
+    "previous_original": {
+      "language_complete": 58,
+      "language_incomplete": 2,
+      "language_issues": 8,
+      "unexpected_mixing": 0,
+      "reasoning_hangul": 9,
+      "language_duration_s": 1843.4698254507966,
+      "mtp_drafts": 41642,
+      "mtp_accepted": 28260,
+      "preserve": {
+        "passed": 6,
+        "total": 6
+      },
+      "word": {
+        "passed": 6,
+        "total": 6
+      },
+      "quote": {
+        "passed": 1,
+        "total": 1
+      },
+      "tool": {
+        "passed": 5,
+        "total": 5
+      },
+      "grounded": {
+        "passed": 6,
+        "total": 6
+      },
+      "exact": {
+        "passed": 6,
+        "total": 6
+      },
+      "code": {
+        "passed": 1,
+        "total": 1
+      },
+      "terms": {
+        "passed": 36,
+        "total": 36
+      },
+      "tool_followup": {
+        "passed": 5,
+        "total": 5
+      }
+    },
+    "previous_edited": {
+      "language_complete": 59,
+      "language_incomplete": 1,
+      "language_issues": 14,
+      "unexpected_mixing": 0,
+      "reasoning_hangul": 3,
+      "language_duration_s": 1779.491005130054,
+      "mtp_drafts": 41844,
+      "mtp_accepted": 29051,
+      "preserve": {
+        "passed": 3,
+        "total": 6
+      },
+      "word": {
+        "passed": 5,
+        "total": 6
+      },
+      "quote": {
+        "passed": 0,
+        "total": 1
+      },
+      "tool": {
+        "passed": 4,
+        "total": 5
+      },
+      "grounded": {
+        "passed": 6,
+        "total": 6
+      },
+      "exact": {
+        "passed": 6,
+        "total": 6
+      },
+      "code": {
+        "passed": 1,
+        "total": 1
+      },
+      "terms": {
+        "passed": 32,
+        "total": 36
+      },
+      "tool_followup": {
+        "passed": 4,
+        "total": 5
+      }
+    },
+    "retest": {
+      "language_complete": 58,
+      "language_incomplete": 2,
+      "language_issues": 8,
+      "unexpected_mixing": 0,
+      "reasoning_hangul": 9,
+      "language_duration_s": 1823.2952155832318,
+      "mtp_drafts": 41642,
+      "mtp_accepted": 28260,
+      "preserve": {
+        "passed": 6,
+        "total": 6
+      },
+      "word": {
+        "passed": 6,
+        "total": 6
+      },
+      "quote": {
+        "passed": 1,
+        "total": 1
+      },
+      "tool": {
+        "passed": 5,
+        "total": 5
+      },
+      "grounded": {
+        "passed": 6,
+        "total": 6
+      },
+      "exact": {
+        "passed": 6,
+        "total": 6
+      },
+      "code": {
+        "passed": 1,
+        "total": 1
+      },
+      "terms": {
+        "passed": 36,
+        "total": 36
+      },
+      "tool_followup": {
+        "passed": 5,
+        "total": 5
+      }
+    }
+  },
+  "speed": {
+    "previous_original": {
+      "mixed": {
+        "prefill": {
+          "values": [
+            1314.8684831127448,
+            1331.8147963615875,
+            1295.7335993975769
+          ],
+          "median": 1314.8684831127448,
+          "mean": 1314.1389596239696,
+          "stddev": 18.051657734940513,
+          "minimum": 1295.7335993975769,
+          "maximum": 1331.8147963615875
+        },
+        "ttft": {
+          "values": [
+            1.570874517026823,
+            1.5526549849892035,
+            1.5971158589818515
+          ],
+          "median": 1.570874517026823,
+          "mean": 1.5735484536659594,
+          "stddev": 0.022350722178715324,
+          "minimum": 1.5526549849892035,
+          "maximum": 1.5971158589818515
+        },
+        "decode": {
+          "values": [
+            29.623844058598134,
+            30.64823544775347,
+            30.015064987894128
+          ],
+          "median": 30.015064987894128,
+          "mean": 30.095714831415243,
+          "stddev": 0.5169359026889946,
+          "minimum": 29.623844058598134,
+          "maximum": 30.64823544775347
+        }
+      },
+      "repetition": {
+        "prefill": {
+          "values": [
+            1254.7841189265882,
+            1299.286302736569,
+            1273.943918435812
+          ],
+          "median": 1273.943918435812,
+          "mean": 1276.0047800329899,
+          "stddev": 22.322554823683845,
+          "minimum": 1254.7841189265882,
+          "maximum": 1299.286302736569
+        },
+        "ttft": {
+          "values": [
+            1.6432083990075625,
+            1.6172905009589158,
+            1.6354188290424645
+          ],
+          "median": 1.6354188290424645,
+          "mean": 1.6319725763363142,
+          "stddev": 0.013298189843019894,
+          "minimum": 1.6172905009589158,
+          "maximum": 1.6432083990075625
+        },
+        "decode": {
+          "values": [
+            77.31771051352538,
+            94.22879192819325,
+            95.80711594060412
+          ],
+          "median": 94.22879192819325,
+          "mean": 89.11787279410758,
+          "stddev": 10.249665802263719,
+          "minimum": 77.31771051352538,
+          "maximum": 95.80711594060412
+        }
+      }
+    },
+    "previous_edited": {
+      "mixed": {
+        "prefill": {
+          "values": [
+            1296.3977127032376,
+            1293.7030389601866,
+            1246.530123765208
+          ],
+          "median": 1293.7030389601866,
+          "mean": 1278.8769584762108,
+          "stddev": 28.045562991515684,
+          "minimum": 1246.530123765208,
+          "maximum": 1296.3977127032376
+        },
+        "ttft": {
+          "values": [
+            1.5948254220420495,
+            1.5980116170248948,
+            1.6580172819667496
+          ],
+          "median": 1.5980116170248948,
+          "mean": 1.6169514403445646,
+          "stddev": 0.03559972571131639,
+          "minimum": 1.5948254220420495,
+          "maximum": 1.6580172819667496
+        },
+        "decode": {
+          "values": [
+            30.014217134372213,
+            28.763770097917238,
+            29.121404217949003
+          ],
+          "median": 29.121404217949003,
+          "mean": 29.299797150079485,
+          "stddev": 0.6440283195794582,
+          "minimum": 28.763770097917238,
+          "maximum": 30.014217134372213
+        }
+      },
+      "repetition": {
+        "prefill": {
+          "values": [
+            1258.2297699245767,
+            1215.5223487585436,
+            1236.7931402271774
+          ],
+          "median": 1236.7931402271774,
+          "mean": 1236.8484196367658,
+          "stddev": 21.353764247155027,
+          "minimum": 1215.5223487585436,
+          "maximum": 1258.2297699245767
+        },
+        "ttft": {
+          "values": [
+            1.6362510939943604,
+            1.7454529739916325,
+            1.6658316879766062
+          ],
+          "median": 1.6658316879766062,
+          "mean": 1.6825119186541997,
+          "stddev": 0.056479511509289364,
+          "minimum": 1.6362510939943604,
+          "maximum": 1.7454529739916325
+        },
+        "decode": {
+          "values": [
+            82.4930695606607,
+            93.12059112695165,
+            91.6179457223796
+          ],
+          "median": 91.6179457223796,
+          "mean": 89.07720213666398,
+          "stddev": 5.751311775304927,
+          "minimum": 82.4930695606607,
+          "maximum": 93.12059112695165
+        }
+      }
+    },
+    "retest": {
+      "mixed": {
+        "prefill": {
+          "values": [
+            1190.423119529519,
+            1192.6712735582394,
+            1304.315434197072
+          ],
+          "median": 1192.6712735582394,
+          "mean": 1229.1366090949434,
+          "stddev": 65.11647531106495,
+          "minimum": 1190.423119529519,
+          "maximum": 1304.315434197072
+        },
+        "ttft": {
+          "values": [
+            1.7339984099962749,
+            1.7309950169874355,
+            1.5830459309509024
+          ],
+          "median": 1.7309950169874355,
+          "mean": 1.6826797859782043,
+          "stddev": 0.0862985161697027,
+          "minimum": 1.5830459309509024,
+          "maximum": 1.7339984099962749
+        },
+        "decode": {
+          "values": [
+            30.500620173041707,
+            29.810094802703937,
+            30.05516124004524
+          ],
+          "median": 30.05516124004524,
+          "mean": 30.121958738596962,
+          "stddev": 0.35007535064554895,
+          "minimum": 29.810094802703937,
+          "maximum": 30.500620173041707
+        }
+      },
+      "repetition": {
+        "prefill": {
+          "values": [
+            1312.3411865135395,
+            1276.3703455124548,
+            1285.1154876962319
+          ],
+          "median": 1285.1154876962319,
+          "mean": 1291.275673240742,
+          "stddev": 18.75996441996685,
+          "minimum": 1276.3703455124548,
+          "maximum": 1312.3411865135395
+        },
+        "ttft": {
+          "values": [
+            1.5703769330284558,
+            1.650427184998989,
+            1.604522064968478
+          ],
+          "median": 1.604522064968478,
+          "mean": 1.608442060998641,
+          "stddev": 0.040168837259669805,
+          "minimum": 1.5703769330284558,
+          "maximum": 1.650427184998989
+        },
+        "decode": {
+          "values": [
+            63.77295107547451,
+            87.50279652614255,
+            90.08087093935639
+          ],
+          "median": 87.50279652614255,
+          "mean": 80.45220618032448,
+          "stddev": 14.50206123485606,
+          "minimum": 63.77295107547451,
+          "maximum": 90.08087093935639
+        }
+      }
+    }
+  },
+  "memory": {
+    "previous_original": {
+      "samples": 98,
+      "docker_observed_peak_gib": 5.562892913818359,
+      "wsl_min_available_gib": 13.278861999511719
+    },
+    "previous_edited": {
+      "samples": 100,
+      "docker_observed_peak_gib": 4.831634521484375,
+      "wsl_min_available_gib": 13.423389434814453
+    },
+    "retest": {
+      "samples": 99,
+      "docker_observed_peak_gib": 4.607292175292969,
+      "wsl_min_available_gib": 12.728435516357422
+    }
+  },
+  "case_count": 97,
+  "comparisons": {
+    "language-rheumatism-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-rheumatism-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-rheumatism-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-coronary-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-coronary-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-coronary-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-thyroid-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-thyroid-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-thyroid-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-kidney-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-kidney-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-kidney-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-gout-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-gout-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-gout-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-vaccine-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-vaccine-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-vaccine-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-docker-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-docker-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-docker-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-cache-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-cache-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-cache-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-sql-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-sql-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-sql-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-backup-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-backup-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-backup-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_trip-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_trip-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_trip-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_history-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_history-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-china_history-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_trip-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_trip-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_trip-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_food-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_food-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-korea_food-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-business-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-business-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-business-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-biology-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-biology-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-biology-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_medical-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_medical-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_medical-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_software-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_software-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-zh_software-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_notice-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_notice-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_notice-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_software-17": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_software-29": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "language-ko_software-43": {
+      "kind": "language",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-0": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-1": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-2": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-3": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-4": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "preserve-5": {
+      "kind": "preserve",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-0": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-1": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-2": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-3": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-4": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "word-5": {
+      "kind": "word",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-0": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-1": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-2": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-3": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-4": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "math-5": {
+      "kind": "exact",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "code-sort": {
+      "kind": "code",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "tool-0": {
+      "kind": "tool",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "tool-1": {
+      "kind": "tool",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "tool-2": {
+      "kind": "tool",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "tool-3": {
+      "kind": "tool",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "tool-4": {
+      "kind": "tool",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "quote-2": {
+      "kind": "quote",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-mixed-1": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-mixed-2": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-mixed-3": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-repetition-1": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-repetition-2": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "speed-repetition-3": {
+      "kind": "speed",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-notice": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-work_order": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-inventory": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-deadline": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-negation": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    },
+    "grounded-read_english": {
+      "kind": "grounded",
+      "content_identical": true,
+      "finish_identical": true,
+      "calls_identical": true,
+      "reasoning_identical": true
+    }
+  },
+  "reproduction": {
+    "same_final_output": 97,
+    "same_language_content_and_finish": 60,
+    "same_reasoning": 97,
+    "inherited_reviews": 60
+  }
+}

@@ -1,0 +1,886 @@
+{
+  "purpose": {
+    "purpose": "Investigate prose MTP 4K and 32K prefill/TTFT plus 4K decode under matched reduced histories; 0K is the shallow startup control. Do not replace or pool with formal samples.",
+    "order": [
+      "v0171",
+      "v016"
+    ],
+    "depths": "from executed-plan.json",
+    "samples_per_point": 1,
+    "history_limit": "The 0K/4K/32K sequence omits intermediate depths from the formal sweep. Old/new controls share exact history, but this is not an exact replay of every formal cache allocation.",
+    "old_runtime_used_for_focused_control_only": true
+  },
+  "points": 6,
+  "pairs": 3,
+  "rows": [
+    {
+      "depth": 0,
+      "equal": {
+        "request": true,
+        "output": true,
+        "finish": true,
+        "work": true,
+        "draft_work": true
+      },
+      "formal_request_equal": true,
+      "formal_token_cache_work_equal": true,
+      "phases": [
+        {
+          "depth": 0,
+          "phase": "queue_ms",
+          "v016_ms": 14.279191,
+          "v0171_ms": 3.64544,
+          "pct": -74.47026235589958,
+          "delta_ms": -10.633751,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "prefill_ms",
+          "v016_ms": 2226.760221,
+          "v0171_ms": 2411.772142,
+          "pct": 8.308569519753405,
+          "delta_ms": 185.0119209999998,
+          "flag": true,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "decode_ms",
+          "v016_ms": 4048.3080269999996,
+          "v0171_ms": 3608.3866990000015,
+          "pct": -10.866794845302374,
+          "delta_ms": -439.9213279999981,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "server_ttft_ms",
+          "v016_ms": 2241.149755,
+          "v0171_ms": 2415.502585,
+          "pct": 7.7796153340944585,
+          "delta_ms": 174.35283000000027,
+          "flag": true,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "server_max_inter_token_ms",
+          "v016_ms": 160.74032,
+          "v0171_ms": 134.122475,
+          "pct": -16.559532169651014,
+          "delta_ms": -26.61784499999999,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "cache_restore_ms",
+          "v016_ms": 0,
+          "v0171_ms": 0,
+          "pct": null,
+          "delta_ms": 0,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 0,
+          "phase": "cache_snapshot_ms",
+          "v016_ms": 13.776285000000001,
+          "v0171_ms": 11.49702,
+          "pct": -16.544844999940132,
+          "delta_ms": -2.2792650000000023,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        }
+      ],
+      "v016": {
+        "prefill_tokens_per_second": 916.1291731194439,
+        "decode_tokens_per_second": 31.618147420183945,
+        "server_ttft_ms": 2241.149755,
+        "prompt_tokens": 2040,
+        "cached_prompt_tokens": 0,
+        "prefill_tokens": 2040,
+        "completion_tokens": 128,
+        "draft_tokens": 95,
+        "draft_accepted_tokens": 55
+      },
+      "v0171": {
+        "prefill_tokens_per_second": 845.8510505508609,
+        "decode_tokens_per_second": 35.47291647967577,
+        "server_ttft_ms": 2415.502585,
+        "prompt_tokens": 2040,
+        "cached_prompt_tokens": 0,
+        "prefill_tokens": 2040,
+        "completion_tokens": 128,
+        "draft_tokens": 95,
+        "draft_accepted_tokens": 55
+      },
+      "cache_work": {
+        "v016": {
+          "cache_snapshot_bytes": 326798564,
+          "cache_snapshot_ms": 13.776285000000001,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 6,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2040,
+            "captures": 2,
+            "captured_capacity_bytes": 328925184,
+            "borrowed_capacity_bytes": 47710208,
+            "copied_payload_bytes": 279088356,
+            "captured_checkpoint_ids": [
+              247,
+              437
+            ],
+            "global_spill": {
+              "idle_bytes": 56229888,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 39.175689,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0.093249,
+              "residual_wait_ms": 13.864038,
+              "reassignments": 2,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2911711397,
+            "global_ram_bytes": 2911711397,
+            "global_peak_ledger_bytes": 2911730578,
+            "global_peak_ram_bytes": 2911730578,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 2195980288,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 47710208,
+                "reserved_bytes": 47710208,
+                "peak_bytes": 56229888
+              },
+              "backing_materialized": {
+                "bytes": 57212928,
+                "reserved_bytes": 0,
+                "peak_bytes": 57212928
+              },
+              "private_state": {
+                "bytes": 533987328,
+                "reserved_bytes": 0,
+                "peak_bytes": 533987328
+              },
+              "private_tail": {
+                "bytes": 16908288,
+                "reserved_bytes": 0,
+                "peak_bytes": 16908288
+              },
+              "metadata": {
+                "bytes": 59912357,
+                "reserved_bytes": 0,
+                "peak_bytes": 59931538
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        },
+        "v0171": {
+          "cache_snapshot_bytes": 326798564,
+          "cache_snapshot_ms": 11.49702,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "none",
+            "selection_reason": 6,
+            "deepest_live_tokens": 0,
+            "deepest_ram_tokens": 0,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 0,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2040,
+            "captures": 2,
+            "captured_capacity_bytes": 328925184,
+            "borrowed_capacity_bytes": 47710208,
+            "copied_payload_bytes": 279088356,
+            "captured_checkpoint_ids": [
+              247,
+              437
+            ],
+            "global_spill": {
+              "idle_bytes": 56229888,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 28.203156,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0.054646,
+              "residual_wait_ms": 3.71395,
+              "reassignments": 2,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 2911711397,
+            "global_ram_bytes": 2911711397,
+            "global_peak_ledger_bytes": 2911730578,
+            "global_peak_ram_bytes": 2911730578,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 2195980288,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 47710208,
+                "reserved_bytes": 47710208,
+                "peak_bytes": 56229888
+              },
+              "backing_materialized": {
+                "bytes": 57212928,
+                "reserved_bytes": 0,
+                "peak_bytes": 57212928
+              },
+              "private_state": {
+                "bytes": 533987328,
+                "reserved_bytes": 0,
+                "peak_bytes": 533987328
+              },
+              "private_tail": {
+                "bytes": 16908288,
+                "reserved_bytes": 0,
+                "peak_bytes": 16908288
+              },
+              "metadata": {
+                "bytes": 59912357,
+                "reserved_bytes": 0,
+                "peak_bytes": 59931538
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "depth": 4096,
+      "equal": {
+        "request": true,
+        "output": true,
+        "finish": true,
+        "work": true,
+        "draft_work": true
+      },
+      "formal_request_equal": true,
+      "formal_token_cache_work_equal": true,
+      "phases": [
+        {
+          "depth": 4096,
+          "phase": "queue_ms",
+          "v016_ms": 2.88896,
+          "v0171_ms": 1.985433,
+          "pct": -31.275164765175013,
+          "delta_ms": -0.903527,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "prefill_ms",
+          "v016_ms": 2678.232167,
+          "v0171_ms": 2491.797158,
+          "pct": -6.96112201537904,
+          "delta_ms": -186.43500900000026,
+          "flag": false,
+          "original_flag": true,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "decode_ms",
+          "v016_ms": 4099.897881000001,
+          "v0171_ms": 3661.4412760000005,
+          "pct": -10.694329901042732,
+          "delta_ms": -438.4566050000003,
+          "flag": false,
+          "original_flag": true,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "server_ttft_ms",
+          "v016_ms": 2681.257864,
+          "v0171_ms": 2493.87565,
+          "pct": -6.988593544690125,
+          "delta_ms": -187.3822140000002,
+          "flag": false,
+          "original_flag": true,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "server_max_inter_token_ms",
+          "v016_ms": 147.890647,
+          "v0171_ms": 127.19933,
+          "pct": -13.990957115766756,
+          "delta_ms": -20.691316999999998,
+          "flag": false,
+          "original_flag": true,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "cache_restore_ms",
+          "v016_ms": 0,
+          "v0171_ms": 0,
+          "pct": null,
+          "delta_ms": 0,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        },
+        {
+          "depth": 4096,
+          "phase": "cache_snapshot_ms",
+          "v016_ms": 20.765483999999997,
+          "v0171_ms": 16.496355,
+          "pct": -20.558774358449806,
+          "delta_ms": -4.269128999999996,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": true
+        }
+      ],
+      "v016": {
+        "prefill_tokens_per_second": 762.4432359377304,
+        "decode_tokens_per_second": 31.220289801164434,
+        "server_ttft_ms": 2681.257864,
+        "prompt_tokens": 6138,
+        "cached_prompt_tokens": 4096,
+        "prefill_tokens": 2042,
+        "completion_tokens": 128,
+        "draft_tokens": 101,
+        "draft_accepted_tokens": 53
+      },
+      "v0171": {
+        "prefill_tokens_per_second": 819.4888550394598,
+        "decode_tokens_per_second": 34.958911082095966,
+        "server_ttft_ms": 2493.87565,
+        "prompt_tokens": 6138,
+        "cached_prompt_tokens": 4096,
+        "prefill_tokens": 2042,
+        "completion_tokens": 128,
+        "draft_tokens": 101,
+        "draft_accepted_tokens": 53
+      },
+      "cache_work": {
+        "v016": {
+          "cache_snapshot_bytes": 470723220,
+          "cache_snapshot_ms": 20.765483999999997,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "live",
+            "selection_reason": 0,
+            "deepest_live_tokens": 4096,
+            "deepest_ram_tokens": 4088,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 4096,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2042,
+            "captures": 3,
+            "captured_capacity_bytes": 473300992,
+            "borrowed_capacity_bytes": 56229888,
+            "copied_payload_bytes": 414493332,
+            "captured_checkpoint_ids": [
+              886,
+              924,
+              1130
+            ],
+            "global_spill": {
+              "idle_bytes": 170328064,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 113.94582,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0.234134,
+              "residual_wait_ms": 44.660864,
+              "reassignments": 3,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 3862992747,
+            "global_ram_bytes": 3862992747,
+            "global_peak_ledger_bytes": 3863016872,
+            "global_peak_ram_bytes": 3863016872,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 2150891520,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 94633984,
+                "reserved_bytes": 94633984,
+                "peak_bytes": 105250816
+              },
+              "backing_materialized": {
+                "bytes": 172818432,
+                "reserved_bytes": 0,
+                "peak_bytes": 172818432
+              },
+              "private_state": {
+                "bytes": 1334968320,
+                "reserved_bytes": 0,
+                "peak_bytes": 1334968320
+              },
+              "private_tail": {
+                "bytes": 48955392,
+                "reserved_bytes": 0,
+                "peak_bytes": 48955392
+              },
+              "metadata": {
+                "bytes": 60725099,
+                "reserved_bytes": 0,
+                "peak_bytes": 60749224
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        },
+        "v0171": {
+          "cache_snapshot_bytes": 470723220,
+          "cache_snapshot_ms": 16.496355,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "live",
+            "selection_reason": 0,
+            "deepest_live_tokens": 4096,
+            "deepest_ram_tokens": 4088,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 4096,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2042,
+            "captures": 3,
+            "captured_capacity_bytes": 473300992,
+            "borrowed_capacity_bytes": 56229888,
+            "copied_payload_bytes": 414493332,
+            "captured_checkpoint_ids": [
+              886,
+              924,
+              1130
+            ],
+            "global_spill": {
+              "idle_bytes": 177143808,
+              "foreground_bytes": 0,
+              "idle_copy_ms": 92.55901,
+              "foreground_copy_ms": 0,
+              "stream_wait_ms": 0.25562,
+              "residual_wait_ms": 5.171647,
+              "reassignments": 3,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 3862992747,
+            "global_ram_bytes": 3862992747,
+            "global_peak_ledger_bytes": 3863016872,
+            "global_peak_ram_bytes": 3863016872,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 2150891520,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 87818240,
+                "reserved_bytes": 87818240,
+                "peak_bytes": 105250816
+              },
+              "backing_materialized": {
+                "bytes": 179634176,
+                "reserved_bytes": 0,
+                "peak_bytes": 179634176
+              },
+              "private_state": {
+                "bytes": 1334968320,
+                "reserved_bytes": 0,
+                "peak_bytes": 1334968320
+              },
+              "private_tail": {
+                "bytes": 48955392,
+                "reserved_bytes": 0,
+                "peak_bytes": 48955392
+              },
+              "metadata": {
+                "bytes": 60725099,
+                "reserved_bytes": 0,
+                "peak_bytes": 60749224
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "depth": 32768,
+      "equal": {
+        "request": true,
+        "output": true,
+        "finish": true,
+        "work": true,
+        "draft_work": true
+      },
+      "formal_request_equal": false,
+      "formal_token_cache_work_equal": false,
+      "phases": [
+        {
+          "depth": 32768,
+          "phase": "queue_ms",
+          "v016_ms": 6.885206,
+          "v0171_ms": 4.75191,
+          "pct": -30.983764320196094,
+          "delta_ms": -2.1332960000000005,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "prefill_ms",
+          "v016_ms": 2492.495802,
+          "v0171_ms": 2626.804824,
+          "pct": 5.388535535033978,
+          "delta_ms": 134.3090219999999,
+          "flag": true,
+          "original_flag": true,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "decode_ms",
+          "v016_ms": 3437.749366,
+          "v0171_ms": 3598.5472889999996,
+          "pct": 4.677418446799009,
+          "delta_ms": 160.79792299999963,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "server_ttft_ms",
+          "v016_ms": 2499.467133,
+          "v0171_ms": 2631.652869,
+          "pct": 5.288556678932732,
+          "delta_ms": 132.1857359999999,
+          "flag": true,
+          "original_flag": true,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "server_max_inter_token_ms",
+          "v016_ms": 130.062105,
+          "v0171_ms": 133.73335,
+          "pct": 2.82268613136778,
+          "delta_ms": 3.671244999999999,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "cache_restore_ms",
+          "v016_ms": 0,
+          "v0171_ms": 0,
+          "pct": null,
+          "delta_ms": 0,
+          "flag": false,
+          "original_flag": false,
+          "exact_formal_request_and_work": false
+        },
+        {
+          "depth": 32768,
+          "phase": "cache_snapshot_ms",
+          "v016_ms": 24.321630000000003,
+          "v0171_ms": 29.293186,
+          "pct": 20.440883279615708,
+          "delta_ms": 4.971555999999996,
+          "flag": true,
+          "original_flag": false,
+          "exact_formal_request_and_work": false
+        }
+      ],
+      "v016": {
+        "prefill_tokens_per_second": 826.0796260310011,
+        "decode_tokens_per_second": 37.23366260087036,
+        "server_ttft_ms": 2499.467133,
+        "prompt_tokens": 34824,
+        "cached_prompt_tokens": 32765,
+        "prefill_tokens": 2059,
+        "completion_tokens": 128,
+        "draft_tokens": 106,
+        "draft_accepted_tokens": 65
+      },
+      "v0171": {
+        "prefill_tokens_per_second": 783.8420202322577,
+        "decode_tokens_per_second": 35.56990911062056,
+        "server_ttft_ms": 2631.652869,
+        "prompt_tokens": 34824,
+        "cached_prompt_tokens": 32765,
+        "prefill_tokens": 2059,
+        "completion_tokens": 128,
+        "draft_tokens": 106,
+        "draft_accepted_tokens": 65
+      },
+      "cache_work": {
+        "v016": {
+          "cache_snapshot_bytes": 470822136,
+          "cache_snapshot_ms": 24.321630000000003,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "live",
+            "selection_reason": 0,
+            "deepest_live_tokens": 32765,
+            "deepest_ram_tokens": 32757,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 32765,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2059,
+            "captures": 3,
+            "captured_capacity_bytes": 476971008,
+            "borrowed_capacity_bytes": 63897600,
+            "copied_payload_bytes": 406924536,
+            "captured_checkpoint_ids": [
+              7359,
+              7360,
+              7643
+            ],
+            "global_spill": {
+              "idle_bytes": 537395200,
+              "foreground_bytes": 757858304,
+              "idle_copy_ms": 377.771185,
+              "foreground_copy_ms": 418.552684,
+              "stream_wait_ms": 1.330204,
+              "residual_wait_ms": 518.536701,
+              "reassignments": 5,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 3868937578,
+            "global_ram_bytes": 3868937578,
+            "global_peak_ledger_bytes": 3869214498,
+            "global_peak_ram_bytes": 3869214498,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 16187392,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 480837632,
+                "reserved_bytes": 480837632,
+                "peak_bytes": 896663552
+              },
+              "backing_materialized": {
+                "bytes": 1255079936,
+                "reserved_bytes": 0,
+                "peak_bytes": 1309016064
+              },
+              "private_state": {
+                "bytes": 2002452480,
+                "reserved_bytes": 0,
+                "peak_bytes": 2269446144
+              },
+              "private_tail": {
+                "bytes": 47710208,
+                "reserved_bytes": 0,
+                "peak_bytes": 63242240
+              },
+              "metadata": {
+                "bytes": 66669930,
+                "reserved_bytes": 0,
+                "peak_bytes": 66946850
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        },
+        "v0171": {
+          "cache_snapshot_bytes": 470822136,
+          "cache_snapshot_ms": 29.293186,
+          "component_cache": {
+            "schema": "component-cache-v1",
+            "reuse": "live",
+            "selection_reason": 0,
+            "deepest_live_tokens": 32765,
+            "deepest_ram_tokens": 32757,
+            "deepest_disk_tokens": 0,
+            "selected_tokens": 32765,
+            "restored_bytes": 0,
+            "prefilled_tokens": 2059,
+            "captures": 3,
+            "captured_capacity_bytes": 476971008,
+            "borrowed_capacity_bytes": 63897600,
+            "copied_payload_bytes": 406924536,
+            "captured_checkpoint_ids": [
+              7359,
+              7360,
+              7643
+            ],
+            "global_spill": {
+              "idle_bytes": 540016640,
+              "foreground_bytes": 753401856,
+              "idle_copy_ms": 309.565069,
+              "foreground_copy_ms": 356.168801,
+              "stream_wait_ms": 1.145324,
+              "residual_wait_ms": 468.362492,
+              "reassignments": 5,
+              "idle_failures": 0
+            },
+            "global_ledger_bytes": 3868935978,
+            "global_ram_bytes": 3868935978,
+            "global_peak_ledger_bytes": 3869214498,
+            "global_peak_ram_bytes": 3869214498,
+            "global_persistence_pinned_bytes": 0,
+            "global_peak_persistence_pinned_bytes": 0,
+            "global_categories": {
+              "backing_free": {
+                "bytes": 16187392,
+                "reserved_bytes": 0,
+                "peak_bytes": 2524905472
+              },
+              "backing_assigned": {
+                "bytes": 482672640,
+                "reserved_bytes": 482672640,
+                "peak_bytes": 896663552
+              },
+              "backing_materialized": {
+                "bytes": 1253244928,
+                "reserved_bytes": 0,
+                "peak_bytes": 1307181056
+              },
+              "private_state": {
+                "bytes": 2002452480,
+                "reserved_bytes": 0,
+                "peak_bytes": 2269446144
+              },
+              "private_tail": {
+                "bytes": 47710208,
+                "reserved_bytes": 0,
+                "peak_bytes": 63242240
+              },
+              "metadata": {
+                "bytes": 66668330,
+                "reserved_bytes": 0,
+                "peak_bytes": 66946850
+              },
+              "transfer_staging": {
+                "bytes": 0,
+                "reserved_bytes": 0,
+                "peak_bytes": 0
+              }
+            }
+          }
+        }
+      }
+    }
+  ],
+  "flags": [
+    {
+      "depth": 0,
+      "phase": "prefill_ms",
+      "v016_ms": 2226.760221,
+      "v0171_ms": 2411.772142,
+      "pct": 8.308569519753405,
+      "delta_ms": 185.0119209999998,
+      "flag": true,
+      "original_flag": false,
+      "exact_formal_request_and_work": true
+    },
+    {
+      "depth": 0,
+      "phase": "server_ttft_ms",
+      "v016_ms": 2241.149755,
+      "v0171_ms": 2415.502585,
+      "pct": 7.7796153340944585,
+      "delta_ms": 174.35283000000027,
+      "flag": true,
+      "original_flag": false,
+      "exact_formal_request_and_work": true
+    },
+    {
+      "depth": 32768,
+      "phase": "prefill_ms",
+      "v016_ms": 2492.495802,
+      "v0171_ms": 2626.804824,
+      "pct": 5.388535535033978,
+      "delta_ms": 134.3090219999999,
+      "flag": true,
+      "original_flag": true,
+      "exact_formal_request_and_work": false
+    },
+    {
+      "depth": 32768,
+      "phase": "server_ttft_ms",
+      "v016_ms": 2499.467133,
+      "v0171_ms": 2631.652869,
+      "pct": 5.288556678932732,
+      "delta_ms": 132.1857359999999,
+      "flag": true,
+      "original_flag": true,
+      "exact_formal_request_and_work": false
+    },
+    {
+      "depth": 32768,
+      "phase": "cache_snapshot_ms",
+      "v016_ms": 24.321630000000003,
+      "v0171_ms": 29.293186,
+      "pct": 20.440883279615708,
+      "delta_ms": 4.971555999999996,
+      "flag": true,
+      "original_flag": false,
+      "exact_formal_request_and_work": false
+    }
+  ],
+  "original_flags_reproduced": [],
+  "ordered_requests_equal": true,
+  "limits": [
+    "One reverse-order pair per selected depth; no variance or significance estimate.",
+    "Reduced identical history contains 0K/4K/32K only; intermediate official sweep depths were omitted. Recalibration can change the 32K input relative to the original formal row; old/new control inputs remain exact.",
+    "No control values replace or enter formal averages. Unrepeated formal flags remain descriptive and unqualified."
+  ]
+}

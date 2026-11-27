@@ -1,0 +1,61 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo v0.13.0 更新とOrca IQ4_XS改善案</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f6f8;color:#243247;font:16px/1.85 system-ui,-apple-system,"Yu Gothic",sans-serif}main{max-width:1120px;margin:32px auto;padding:44px;background:white;border:1px solid #e0e6eb;border-radius:16px}h1{font-size:32px;line-height:1.5;margin:10px 0 18px}h2{font-size:23px;margin:44px 0 16px;border-bottom:2px solid #d9e8e4;padding-bottom:9px}.eyebrow{color:#4d6972;font-size:14px}.lead{font-size:18px}.status{padding:18px;background:#e7f3ee;border-left:5px solid #278768;border-radius:5px}table{width:100%;border-collapse:collapse;font-size:14px;margin:20px 0}th,td{padding:12px 14px;border:1px solid #dbe2e9;text-align:left;vertical-align:top}th{background:#eef3f6;color:#33485c}tr:nth-child(even){background:#fafcfd}a{color:#0865a2;text-underline-offset:3px}code{font-size:.87em;background:#f0f3f6;border-radius:4px;padding:2px 4px;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:18px;background:#f0f3f6;border-radius:8px;font-size:13px}.note{padding:15px 18px;background:#f6f3e9;border-radius:8px}details{margin:20px 0;border:1px solid #dbe2e9;padding:15px 20px;border-radius:8px}summary{font-weight:600;cursor:pointer}li{margin:9px 0}@media(max-width:750px){main{margin:0;padding:22px;border:0;border-radius:0}h1{font-size:25px}table{display:block;overflow:auto}th,td{min-width:150px}}</style><main>
+<p class="eyebrow">2026年10月13日・Strix Halo / WSL / Docker</p>
+<h1>Gufo v0.13.0 更新と<br>Orca IQ4_XS 改善案の再評価</h1>
+<p class="lead">Gufoを更新し、<b>128K・MTP・2セッション</b>で再起動しました。既存のIQ4計算処理を維持し、追加の独自最適化は未実施です。</p>
+<div class="status">稼働中：Gufo v0.13.0　｜　Orca IQ4_XS + Orca MTP + Vision　｜　API :18080</div>
+<h2>1. 今回適用した内容</h2>
+<table><tr><th>項目</th><th>稼働設定</th><th>判断の理由</th></tr>
+<tr><td>本体</td><td>v0.13.0 + 既存のOrca対応</td><td>公式変更を競合なしで統合。独自のIQ4計算処理は変更なし。</td></tr>
+<tr><td>セッション</td><td><code>--sessions 2</code></td><td>2つの会話を同時に受け付け、実測でもGPUバッチ幅2を確認。</td></tr>
+<tr><td>コンテキスト</td><td><code>--context 131072</code></td><td>各セッションが128K。2つで64Kずつになる設定ではない。</td></tr>
+<tr><td>MTP</td><td><code>--speculative mtp --draft-tokens 7 --min-draft-tokens 1</code></td><td>Orcaの互換MTPファイルを使用。公式の自動調整を維持。</td></tr>
+<tr><td>会話キャッシュ</td><td><code>--cache-ram-bytes 4294967296</code></td><td>4GiBを維持。自動設定で大きく確保せず、他のアプリと2セッション分の余裕を残す。</td></tr>
+<tr><td>Prefill</td><td><code>--prefill-chunk 512</code></td><td>他の会話の生成中に挟む入力処理の上限。単独の長文入力は本体側の4096トークン方針を使用。</td></tr>
+<tr><td>n-gram読込</td><td>32 → <b>128並列</b></td><td>v0.13.0の公式変更。起動フラグではなく本体に組み込み済み。</td></tr>
+<tr><td>モデル・画像</td><td>IQ4_XSをネイティブ処理／Visionあり</td><td><code>--weight-compat off</code>とOrcaのmmprojを維持。</td></tr>
+<tr><td>応答条件</td><td>thinking off／既存のサンプリング既定値</td><td>速度を上げるために応答条件や精度を変更していない。</td></tr>
+</table>
+<p>n-gramの改善は、このモデルの埋め込み表を並列に読む処理です。MTPとは別の「n-gram投機デコード」を追加したわけではありません。新しい停止検出機能 <code>--stall-timeout-ms</code> は公式既定の0（無効）を維持しました。これは性能設定ではありません。</p>
+<p>根拠：<a href="https://github.com/gufo-org/gufo/releases/tag/v0.13.0">Gufo v0.13.0</a>、<a href="https://github.com/gufo-org/gufo/blob/v0.13.0/docs/models/qwen3.8-flash-next/README.md">Flash-Nextの公式設定</a>、<a href="https://github.com/gufo-org/gufo/blob/v0.13.0/docs/SERVER.md">サーバー仕様</a>、<a href="https://github.com/gufo-org/gufo/blob/v0.13.0/docs/KV-CACHE.md">キャッシュ仕様</a>。</p>
+<h2>2. 確認結果と、その範囲</h2>
+<ul><li>公式書式検査：585ファイル合格。</li><li>n-gram・HTTP・OpenAI互換API・CLI・スケジューラー：5件のテスト群が合格。</li><li>ネイティブIQ4のGPU数値テスト：1件のテスト群が合格。</li><li>固定した2つの質問を、更新後に1件ずつ／2件同時で実行。<b>4件とも旧版の出力文章と完全一致</b>。各192出力トークン、temperature 0、seed 42、キャッシュ再利用なし。</li><li>2つのスロットの同時稼働に加え、応答の記録でも <code>batched-w2</code> とGPUバッチ幅2を確認。</li><li>MTPの実際の提案・採用を確認。画像内の文字と色を答えるVision確認も合格。</li></ul>
+<p class="note">これは更新時の動作確認です。一般的な応答品質すべてを保証する試験ではなく、128Kを2会話同時に埋める負荷試験も未実施です。今回の比較は、長文Prefillの性能改善率を測る正式なベンチマークにはなっていません。</p>
+<details><summary>短い動作確認で得られた速度（参考）</summary>
+<p>各セル1回。初回の準備時間・キャッシュ状態・同時実行条件が異なるため、更新の速度改善率は算出しません。同時実行のtok/sは<b>各リクエスト単位</b>です。</p>
+<table><tr><th>条件</th><th>入力token</th><th>出力token</th><th>TTFT秒</th><th>Decode tok/s</th><th>GPUバッチ幅</th></tr><tr><td>更新前・1件ずつ／1</td><td>55</td><td>192</td><td>0.818</td><td>32.64</td><td>1</td></tr><tr><td>更新前・1件ずつ／2</td><td>56</td><td>192</td><td>0.296</td><td>32.20</td><td>1</td></tr><tr><td>更新後・1件ずつ／1</td><td>55</td><td>192</td><td>2.922</td><td>33.94</td><td>1</td></tr><tr><td>更新後・1件ずつ／2</td><td>56</td><td>192</td><td>0.251</td><td>34.45</td><td>1</td></tr><tr><td>更新後・2件同時／1</td><td>55</td><td>192</td><td>0.493</td><td>24.71</td><td>2</td></tr><tr><td>更新後・2件同時／2</td><td>56</td><td>192</td><td>0.493</td><td>25.42</td><td>2</td></tr></table></details>
+<details><summary>メモリ参考値と復旧情報</summary>
+<table><tr><th>採取時点</th><th>8060S専用 GiB</th><th>8060S共有 GiB</th><th>Windows空き GiB</th></tr><tr><td>更新前</td><td>63.72</td><td>14.43</td><td>5.38</td></tr><tr><td>更新後</td><td>63.71</td><td>16.22</td><td>2.87</td></tr></table>
+<p>WindowsのGPUアダプター全体の値で、Gufo単独やピーク使用量ではありません。旧版の長時間稼働後と、新版の短い確認後なので、同じ履歴での厳密比較でもありません。専用・共有とプロセスRSSを単純加算して総消費量にはしません。2セッション同時の128K長文については、別途メモリと速度の確認が必要です。</p>
+<p>旧コンテナ <code>Gufo-v0.12.0-backup-20261013</code> は停止状態で保存。新しいGufoのみ稼働し、ビルド用コンテナも停止済みです。Strataは起動していません。</p>
+</details>
+<h2>3. 最新Strataから分かったこと</h2>
+<p><a href="https://github.com/Niko1221/Strata/releases/tag/v0.1.43">Strata v0.1.43</a>の速度向上は、対象GPU・量子化形式・GPUに収まる重みの割合に依存します。目立つRDNA4向け変更はgfx1200／gfx1201が対象で、<b>gfx1151へ同じ増加率を当てはめる根拠はありません</b>。</p>
+<table><tr><th>Strataでの変更・着想</th><th>Gufo / Orcaへの評価</th></tr>
+<tr><td>HCの計算結果とQ8_1入力を同時に作る</td><td>Gufoにも生成側の仕組みがある。IQ4側で既存結果を受け取る接続が不足しており、下記B1の根拠になる。</td></tr>
+<tr><td>正規化の入力をレジスタに保持</td><td>Gufoは <code>RmsNormCachedKernel</code> で2560／10240幅を処理済み。共通処理を置き換える必要性は低い。</td></tr>
+<tr><td>トークン・制御情報を固定メモリから転送</td><td>Gufoにも固定メモリと転送完了を待つ仕組みがある。今回の新規移植候補から除外。</td></tr>
+<tr><td>専門家の入替、PCIe転送の重ね合わせ</td><td>GPUに専門家の重みを保持する現在のGufo構成との前提が異なる。優先度は低い。</td></tr>
+<tr><td>専門家の一部省略／INT8 Prefill／精度を変える高速設定</td><td>回答や中間計算が変わるものがある。過去に不合格になった方式も含むため採用候補から除外。</td></tr>
+</table>
+<p><a href="https://github.com/Niko1221/Strata/blob/v0.1.43/docs/STRIX_HALO.md">Strix Halo文書</a>はv0.1.42から変更されていません。掲載の51 tok/s前後は、Unslothのモデル、Linux環境、独自の高速設定で得られた数字です。文書自身が丸めの変わる設定を区別しており、現在のWSL・Orca・精度維持条件での到達保証値ではありません。</p>
+<p>公式Gufoにも新しい不採用記録があります。8192トークンの入力チャンクは約3GiBの追加作業領域に対して明確な改善がなく、SSM処理の別ストリーム化も遅くなっています。今回これらを起動設定に追加しない理由です。<a href="https://github.com/gufo-org/gufo/blob/v0.13.0/docs/models/qwen3.8-flash-next/EXPERIMENTS.md">Gufoの実験記録</a></p>
+<h2>4. 改善案：A → B1 → B2 → C</h2>
+<p>前回の優先順位は維持します。今回の公式更新ではIQ4側の接続不足は解消されていません。モデルファイル名はIQ4_XSですが、内部にはIQ4_NLなども含まれるため、<b>実際のテンソル形式と形状を条件に限定</b>します。</p>
+<table><tr><th>順番・狙い</th><th>変更内容</th><th>精度維持の条件</th></tr>
+<tr><td><b>A：Prefill / TTFT</b><br>共有専門家の中間入力を再利用</td><td>Q8経路にあるSwiGLUの直接FP16出力を、IQ4_NL共有専門家のDownへ接続する。専用の既存バッファから <code>NativeIq4DenseF16</code> に渡し、変換し直しと他の入力バッファの上書きを減らす。</td><td>今も行うFP16への丸めの位置・回数・値を保つ。重みをFP16に展開する過去の失敗案とは別。SwiGLU後のビット列とDown出力を比較。</td></tr>
+<tr><td><b>B1：Decode / MTP</b><br>作成済みQ8_1入力の再利用</td><td>HCがすでに作った <code>mixed_q8_ready_</code> をIQ4_XSのGate/Upに渡す。今はIQ4の経路で同じ入力を再量子化しているため、その重複だけを省く。</td><td>既存Decodeが使用するQ8_1コードとスケールが完全一致すること。FP16 PrefillをINT8方式へ変える改修ではない。Q4/Q8経路は維持。</td></tr>
+<tr><td><b>B2：Decode / MTP</b><br>IQ4のGate/Up処理をまとめる</td><td>B1を単独で評価・採用した後、既存の融合処理にIQ4_XS専用の分岐と対応カーネルを足す。入力読み込み・起動・中間メモリの費用を減らす。</td><td>単に条件を足すだけでは不十分。ドット積の足し順、SwiGLUの丸め、出力配置を元と一致させる。未対応の行数は従来経路へ戻す。</td></tr>
+<tr><td><b>C：MTP中心・低優先</b><br>IQ4_NL Downの入力を専門家ごとにまとめる</td><td>既存のQ5_1/Q8_0用処理を参考に、同じ専門家を使う行をIQ4_NLでも近くに置き、重みの読み込みを再利用。最後に元の出力スロットへ戻す。</td><td>重みの再量子化・全面並べ替えはしない。各行の演算と専門家の合算順を保持。並べ替え自体の負担で遅くなれば不採用。</td></tr>
+</table>
+<p>変更はそれぞれ別コミットにし、Gufoの <code>NativeIq4…</code>、<code>…_preq</code> など既存の命名と設計に合わせます。共通ファイル内にIQ4専用の分岐を加える範囲に留め、Q4_K_XL側の処理や共通スケジューラー・キャッシュ方式の置き換えは提案しません。</p>
+<p>Strataから取り入れるのは「作った中間結果をその場で利用する」「同じ重みを複数行で再利用する」「加算順を守る」という実装上の工夫です。現在のGufoの計算契約に合わせて実装する必要があり、Strataのカーネルをそのまま差し替える案ではありません。</p>
+<h2>5. 採用判断の条件</h2>
+<ol><li>元の計算との一致に加え、独立した参照値を用いる既存の数値テストに合格する。しきい値は緩めない。異常値を黙って0に置き換えて通すこともしない。</li><li>最初に小さな数値テスト。その後、単独の変更について32K／128Kを各3回測り、平均と各回を保存する。悪化を平均で隠さず、ばらつく結果は保留する。</li><li>今回から<b>sessions 2</b>を前提に、同時実行時の状態混線、MTPの棄却・巻き戻し、固定seedでの再現、会話キャッシュ復元も短く確認する。1～8行だけでなく、同時実行から生じる幅と従来経路への戻りも対象。</li><li>Prefillが速くてもDecode・TTFT・メモリの悪化がないか確認。精度不合格または明確な性能悪化は戻す。</li><li>結果を提示し、ユーザーが採用と判断した項目だけを残して次へ進む。</li></ol>
+<p class="note">追加改善はすべて未実装・未測定です。改善率の予測値や、無劣化を確認済みという扱いはしていません。次に着手するなら、変更範囲の小さいAを単独で実施するのが妥当です。</p>
+<details><summary>実際の起動引数・ソース情報・確認データ</summary>
+<pre>/opt/sc117/gufo serve --host 0.0.0.0 --port 8080 --sessions 2 llm --model /models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/Qwen3.8-Flash-Next-Uncensored-IQ4_XS-00001-of-00003.gguf --served-model-name orcarouter-iq4xs --weight-compat off --context 131072 --cache-ram-bytes 4294967296 --think off --max-tokens 32768 --request-timeout-ms 1800000 --max-output-bytes 67108864 --speculative mtp --mtp-model /models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/Qwen3.8-Flash-Next-Uncensored-MTP-draft-gufo-compat.gguf --draft-tokens 7 --mmproj /models/OrcaRouter-Qwen3.8-Flash-Next-Uncensored-IQ4_XS/mmproj-Qwen3.8-Flash-Next-Uncensored-F16.gguf --prefill-chunk 512 --min-draft-tokens 1</pre>
+<p>稼働ソース：<code>9bbd97f9f9d78ca6947f4990eff95076352562f0</code><br>公式Gufo：v0.13.0 / <code>fcf8bf7</code><br>調査対象Strata：v0.1.43 / <code>7695859</code></p>
+<p><span title="参照先はローカル保管">最終確認</span> ／ <span title="参照先はローカル保管">統合記録</span> ／ <span title="参照先はローカル保管">ソース調査の箇所</span> ／ <span title="参照先はローカル保管">応答一致・同時実行</span> ／ <span title="参照先はローカル保管">CPUテスト</span> ／ <span title="参照先はローカル保管">IQ4数値テスト</span></p>
+<p>コード参照：<a href="https://github.com/Niko1221/Strata/blob/v0.1.43/src/kernels/cuda/fused_gr.cu">Strata HC・Q8_1生成</a> ／ <a href="https://github.com/Niko1221/Strata/blob/v0.1.43/src/kernels/cuda/native_mmvq.cu">Strata MMVQ</a> ／ <a href="https://github.com/Niko1221/Strata/blob/v0.1.43/src/prefill/prefill.cpp">Strata Prefill転送</a> ／ <a href="https://github.com/gufo-org/gufo/blob/v0.13.0/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp">Gufo標準カーネル</a>。</p>
+</details>
+</main></html>

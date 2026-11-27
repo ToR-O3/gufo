@@ -1,0 +1,462 @@
+[
+  {
+    "file": "src/cli/bench/bench.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/cli/bench/bench.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/cli/prompt/prompt.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/cli/prompt/prompt.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/cli/serve/inference_backend.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/cli/serve/inference_backend.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/cli/serve/serve.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/cli/weight_compat_options.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/core/gguf_reader.hpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/core/hip/weight_upload.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/core/hip/weight_upload.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/core/quant/ggml_dequant.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/core/quant/ggml_dequant.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/core/quant/iq_codebooks.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/gemm_route.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/hip/kernels/iq4_half.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/hip/kernels/prefill_fp16.hip",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/hip/kernels/prefill_quant_gemm.hip",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/hip/kernels/small_batch_gemm.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen/hip/ops/gemm.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/CMakeLists.txt",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/cpu_ops.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/cpu_ops.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/engine.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/models/qwen38_flash_next/engine.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/batch.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/blaslt.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/compat_upload.hpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/device_model.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/executor.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/iq_prefill.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/kernels.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/VENDOR.md",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/common.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/mmvq.hip.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_ggml_stubs.h",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/mmq/vecdotq.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/native_quant.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/kernels/rocm/native_quant.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/reference.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/reference.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/sc117_q8_allowlist.inc",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/weight_compat.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/weight_compat.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/weights.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "src/models/qwen38_flash_next/weights.hpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/cli/bench_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/cli/prompt_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/cli/serve_test.py",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "tests/cli/text_generation_scheduler_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/core/gguf_identity_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/core/gguf_reader_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/core/hip_memory_visibility_test.hip",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/functional/README.md",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "tests/functional/iq4_decision_diagnosis.py",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/functional/iq4_decision_long.py",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/functional/iq4_prefill_bench.py",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/functional/sc117_continuation.py",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/CMakeLists.txt",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/blaslt_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/compat_upload_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/generate_sc117_quant.py",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_continuation/manifest.json",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn1.reply.txt",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn1.request.json",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_continuation/same_a_turn2.request.json",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_q8.bin",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_quant.bin",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/fixtures/sc117_quant.json",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/gdn_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/gpu_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/hc_mix_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/iq4xs_bind_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/iq4xs_chunk_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/mtp_audit.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/native_iq4_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/reference_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/routed_wmma_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_bind_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_continuation_replay.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_expert_ops_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_ffn_replay.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_quality_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/sc117_quant_test.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/session_sc117.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/session_test.cpp",
+    "unchanged_from_adopted": false,
+    "upstream_changed": true
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/swiglu_half_probe.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  },
+  {
+    "file": "tests/models/qwen38_flash_next/trunk_trace_audit.cpp",
+    "unchanged_from_adopted": true,
+    "upstream_changed": false
+  }
+]

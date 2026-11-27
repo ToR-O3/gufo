@@ -1,0 +1,235 @@
+{
+  "status": "adopted",
+  "adoption": {
+    "adopted_at_jst": "2026-11-01T17:08:50.365766+09:00",
+    "status": "adopted",
+    "image": "gufo:v0.28.1-attention-8f4a7e77-rocm101",
+    "image_id": "sha256:1c981240f95a7766beee15e98afb76bcb92956ab14e67c0f90e22b4e5c6fb4d0",
+    "container_id": "c8f74c480c1eb3c261112ae10867814f82a5b1fdf60ea9a470a4619710cda953",
+    "source_revision": "8f4a7e77f91c466bfe5fbf0703385c9a17b6f4c2",
+    "binary_sha256": "445cdac8dfc8bc4b94cc6752d33d0a0c39a75ef2bb1a30db34365b5ed70dfbf5",
+    "normal_options_unchanged": true,
+    "docker_host_configuration_unchanged": true,
+    "restart_policy": {
+      "Name": "on-failure",
+      "MaximumRetryCount": 3
+    },
+    "runtime_rocm": "10.1",
+    "external_ple": "/models/PLE/Qwen3.8-Flash-Next-PLE-BF16.gguf",
+    "thinking_auto_resolved_on": true,
+    "short_response": "OK",
+    "future_docker_start_uses_adopted_image": true,
+    "replaced_container_removed": true
+  },
+  "commits": {
+    "integration": "0090201a84eaa5a8b685730f51af43bf3636df0b",
+    "fix": "8f4a7e77f91c466bfe5fbf0703385c9a17b6f4c2"
+  },
+  "sample": {
+    "concurrency": 1,
+    "repetition": 1,
+    "request_index": 1,
+    "prompt_tokens": 133106,
+    "cached_prompt_tokens": 131052,
+    "completion_tokens": 128,
+    "prefill_tokens": 2054,
+    "wall_ms": 5993.624283990357,
+    "client_ttft_ms": 2169.042056950275,
+    "client_event_inter_token_ms": 30.095172519832264,
+    "queue_ms": 15.864338,
+    "prefill_ms": 2137.128451,
+    "decode_ms": 3802.311797000001,
+    "server_ttft_ms": 2153.076499,
+    "server_inter_token_ms": 30.092083653543302,
+    "server_max_inter_token_ms": 92.656439,
+    "requested_logical_concurrency": 1,
+    "physical_execution_width": 1,
+    "execution_plan": "serial-c1",
+    "metrics_source": "gufo",
+    "cache_hit": true,
+    "draft_tokens": 114,
+    "draft_accepted_tokens": 66,
+    "draft_acceptance": 0.5789473684210527,
+    "case_id": null,
+    "category": null,
+    "completion_sha256": "347538132f02381bb9a69ec546b277976027e96bfaacb4552a5ba890c8a52c04",
+    "prefill_tokens_per_second": 961.102735326413,
+    "decode_tokens_per_second": 33.66373060225917,
+    "whole_request_tokens_per_second": 364.053516972755,
+    "started_at": 282548.606749862,
+    "finished_at": 282554.600374146,
+    "run": 1
+  },
+  "previous_mtp128_three_runs": {
+    "prefill": {
+      "n": 3,
+      "mean": 894.9532509913771,
+      "min": 885.9996603717095,
+      "max": 910.6340809879795,
+      "sd": 13.62554520012911,
+      "values": [
+        888.2260116144425,
+        910.6340809879795,
+        885.9996603717095
+      ]
+    },
+    "ttft_seconds": {
+      "n": 3,
+      "mean": 2.3036768716666667,
+      "min": 2.274180683,
+      "max": 2.320482791,
+      "sd": 0.02562720240536064,
+      "values": [
+        2.316367141,
+        2.274180683,
+        2.320482791
+      ]
+    },
+    "decode": {
+      "n": 3,
+      "mean": 31.176616016790987,
+      "min": 29.56357860020001,
+      "max": 32.531744035507614,
+      "sd": 1.5007962739734622,
+      "values": [
+        32.531744035507614,
+        29.56357860020001,
+        31.434525414665337
+      ]
+    },
+    "counts": [
+      {
+        "prefill_tokens": 2046,
+        "cached_prompt_tokens": 130933,
+        "completion_tokens": 128,
+        "completion_sha256": "00763ee08da546218c39d360f8171c49288d34fbbbcc0624c28c37d44d39a8f8",
+        "draft_tokens": 79,
+        "draft_accepted_tokens": 57
+      },
+      {
+        "prefill_tokens": 2061,
+        "cached_prompt_tokens": 130933,
+        "completion_tokens": 128,
+        "completion_sha256": "13b2c1614aef54b41bbdb7454a714a721c895517018a265c4e63fc8ef485f76f",
+        "draft_tokens": 118,
+        "draft_accepted_tokens": 56
+      },
+      {
+        "prefill_tokens": 2044,
+        "cached_prompt_tokens": 130933,
+        "completion_tokens": 128,
+        "completion_sha256": "16fc17418d24b8a4540fe3eabac4cb6ea122a4a9ed8aa03dc3a797c05fd60a89",
+        "draft_tokens": 95,
+        "draft_accepted_tokens": 55
+      }
+    ]
+  },
+  "memory_peak_and_min_available_GiB": [
+    [
+      "Windows全体（物理メモリ）",
+      58.0257682800293,
+      5.621513366699219
+    ],
+    [
+      "WSL全体（総量−MemAvailable）",
+      12.560897827148438,
+      10.904067993164062
+    ],
+    [
+      "HIPが報告するGPUメモリ",
+      79.3935432434082,
+      32.082550048828125
+    ],
+    [
+      "Docker cgroup（ファイルキャッシュ等を含む）",
+      9.348976135253906,
+      null
+    ],
+    [
+      "GufoプロセスRSS",
+      9.498371124267578,
+      null
+    ]
+  ],
+  "operator_checks": [
+    {
+      "test": "attention_ops",
+      "returncode": 0,
+      "seconds": 114.10004350799136
+    },
+    {
+      "test": "hc_mix_ops",
+      "returncode": 0,
+      "seconds": 1.5714032230316661
+    },
+    {
+      "test": "hc_route_ops",
+      "returncode": 0,
+      "seconds": 3.2266381930094212
+    }
+  ],
+  "concurrent_check": {
+    "reference_hash": "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "users": 6,
+    "hashes": [
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+      "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0"
+    ],
+    "all_equal": true,
+    "prompt_tokens": [
+      2040,
+      2040,
+      2040,
+      2040,
+      2040,
+      2040
+    ],
+    "completion_tokens": [
+      128,
+      128,
+      128,
+      128,
+      128,
+      128
+    ]
+  },
+  "formal_repetitions": 1,
+  "full_three_run_benchmark_deferred": true,
+  "memory_scope": "Entire official single-user BF16 run including load, calibration, warmup, 128K history preparation and measured request; telemetry scopes overlap.",
+  "normal_memory_snapshot": {
+    "wsl_bytes": {
+      "MemTotal": 25195315200,
+      "MemFree": 9960718336,
+      "MemAvailable": 18469392384,
+      "SwapTotal": 6442450944,
+      "SwapFree": 110755840
+    },
+    "hip": {
+      "unix": 1793520709.9354727,
+      "rc": 0,
+      "total_bytes": 119696543744,
+      "free_bytes": 36469727232,
+      "used_bytes": 83226816512,
+      "process_bytes": {
+        "VmHWM": 4418211840,
+        "VmRSS": 4415852544,
+        "VmSwap": 0
+      },
+      "cgroup_bytes": {
+        "memory.current": 3334778880,
+        "memory.peak": 3508105216
+      }
+    }
+  },
+  "memory_reported_total_GiB": [
+    63.647281646728516,
+    23.4649658203125,
+    111.47609329223633,
+    null,
+    null
+  ]
+}

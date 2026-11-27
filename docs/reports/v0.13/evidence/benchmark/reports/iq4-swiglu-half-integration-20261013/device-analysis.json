@@ -1,0 +1,70 @@
+{
+  "identical_function_bytes": 157,
+  "address_only_different_functions": 16,
+  "after_resolving_pc_relative_addresses_all_16_have_identical_instructions": true,
+  "original_half_vector_body_identical": true,
+  "original_half_tail": "The scalar tail has extra dependency-delay instructions and instruction scheduling changes; numeric output was separately verified identical. Kernel addresses and code placement also differ. This is not proof of performance equivalence.",
+  "scope": "Only the Qwen3.8 kernels.hip GPU translation unit; excludes host code and other translation units.",
+  "referenced_constants": [
+    {
+      "variant": "baseline",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL12ksigns_iq2xsE",
+      "size": 128,
+      "sha256": "a76742a603f8beca5212ecce0f1f02f11a4887fd2f7c8b15aca0ea3eb3380c31"
+    },
+    {
+      "variant": "baseline",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL11iq3xxs_gridE",
+      "size": 1024,
+      "sha256": "46e35f5a997efdee6c99ce57854c8a0d4f0ff8ca57e5e8a60c0793ea580acf5d"
+    },
+    {
+      "variant": "candidate",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL12ksigns_iq2xsE",
+      "size": 128,
+      "sha256": "a76742a603f8beca5212ecce0f1f02f11a4887fd2f7c8b15aca0ea3eb3380c31"
+    },
+    {
+      "variant": "candidate",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL11iq3xxs_gridE",
+      "size": 1024,
+      "sha256": "46e35f5a997efdee6c99ce57854c8a0d4f0ff8ca57e5e8a60c0793ea580acf5d"
+    },
+    {
+      "variant": "baseline",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL9iq2s_gridE",
+      "size": 8192,
+      "sha256": "e1aa1473412b0552c2174c30ef22ab4073f6a181b85a17056e8249bd2932fd88"
+    },
+    {
+      "variant": "candidate",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL9iq2s_gridE",
+      "size": 8192,
+      "sha256": "e1aa1473412b0552c2174c30ef22ab4073f6a181b85a17056e8249bd2932fd88"
+    },
+    {
+      "variant": "baseline",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL9iq3s_gridE",
+      "size": 2048,
+      "sha256": "bd1af4945a1717c65610b0284e4628b9a1ba3b306fae3a06f6e5f597356e349f"
+    },
+    {
+      "variant": "candidate",
+      "name": "_ZN4gufo6models17qwen38_flash_next4rocm10iq_prefillL9iq3s_gridE",
+      "size": 2048,
+      "sha256": "bd1af4945a1717c65610b0284e4628b9a1ba3b306fae3a06f6e5f597356e349f"
+    },
+    {
+      "variant": "baseline",
+      "name": "_ZN7rocprim17ROCPRIM_400200_NS16block_radix_sortIfLj256ELj4EjLj1ELj1ELj0ELNS0_26block_radix_rank_algorithmE1ELNS0_18block_padding_hintE2ELNS0_4arch9wavefront6targetE0EE19radix_bits_per_passE",
+      "size": 4,
+      "sha256": "dc765660b06ee03dd16fd7ca5b957e8c805161ac2c4af28c5a100ab2ab432ca1"
+    },
+    {
+      "variant": "candidate",
+      "name": "_ZN7rocprim17ROCPRIM_400200_NS16block_radix_sortIfLj256ELj4EjLj1ELj1ELj0ELNS0_26block_radix_rank_algorithmE1ELNS0_18block_padding_hintE2ELNS0_4arch9wavefront6targetE0EE19radix_bits_per_passE",
+      "size": 4,
+      "sha256": "dc765660b06ee03dd16fd7ca5b957e8c805161ac2c4af28c5a100ab2ab432ca1"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "scope": "Header-derived packed tensor payload sizes, not measured RAM or VRAM",
+  "old_q8_conversion": {
+    "tensor_count": 206,
+    "source_bytes": 2336343040,
+    "q8_bytes": 3556802560,
+    "additional_payload_bytes": 1220459520,
+    "source_types": {
+      "IQ4_XS": 43,
+      "Q4_K": 43,
+      "Q6_K": 89,
+      "Q5_K": 31
+    }
+  },
+  "models": {
+    "ista": {
+      "tensor_count": 1224,
+      "payload_bytes": 83606638080,
+      "ple_payload_bytes": 28800138240,
+      "expert_payload_bytes": 50292326400,
+      "type_histogram": {
+        "Q6_K": 129,
+        "BF16": 484,
+        "F32": 292,
+        "IQ4_XS": 45,
+        "Q4_K": 47,
+        "IQ4_NL": 87,
+        "IQ3_XXS": 34,
+        "Q5_K": 35,
+        "Q2_0": 9,
+        "IQ2_S": 40,
+        "F16": 1,
+        "IQ3_S": 20,
+        "Q8_0": 1
+      }
+    },
+    "sc117": {
+      "tensor_count": 1224,
+      "payload_bytes": 83852561920,
+      "ple_payload_bytes": 28800138240,
+      "expert_payload_bytes": 50292326400,
+      "type_histogram": {
+        "Q6_K": 89,
+        "BF16": 484,
+        "F32": 292,
+        "IQ4_XS": 45,
+        "Q4_K": 43,
+        "IQ4_NL": 40,
+        "Q8_0": 96,
+        "IQ3_XXS": 34,
+        "Q5_K": 31,
+        "Q2_0": 9,
+        "IQ2_S": 40,
+        "F16": 1,
+        "IQ3_S": 20
+      }
+    }
+  }
+}

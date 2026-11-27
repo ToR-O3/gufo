@@ -1,0 +1,31 @@
+{
+  "status": "passed",
+  "plans": 100,
+  "measured_input_counts_matched": 297,
+  "input_token_range": [
+    929,
+    1061
+  ],
+  "missing_token_metrics": [
+    {
+      "model": "iq4",
+      "id": "mgsm-ja-142",
+      "planned_input_tokens": 945,
+      "status": "timeout"
+    },
+    {
+      "model": "q4",
+      "id": "mgsm-ja-142",
+      "planned_input_tokens": 945,
+      "status": "timeout"
+    },
+    {
+      "model": "iq3",
+      "id": "mgsm-ja-148",
+      "planned_input_tokens": 1044,
+      "status": "timeout"
+    }
+  ],
+  "memory_gaps_over_3seconds": [],
+  "note": "Historical metadata-only native input plans are retained byte-identical; all newly completed requests are checked against their counts. Timeouts do not get invented output-token metrics. This is not a claim of a fresh tokenizer probe."
+}

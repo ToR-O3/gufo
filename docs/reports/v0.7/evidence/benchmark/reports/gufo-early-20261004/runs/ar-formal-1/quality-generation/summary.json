@@ -1,0 +1,1240 @@
+{
+  "cases": [
+    {
+      "id": "ja01_schedule",
+      "plan": {
+        "id": "ja01_schedule",
+        "category": "japanese",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 66,
+        "answer_total_tokens": 21,
+        "scored_tokens": 4,
+        "forward_tokens": 69,
+        "vocab_size": 248320,
+        "input_ids_sha256": "bc2d196bd87cb663a0f7e7fb803b3fd2e61d17bf3444d1269c291b73c23a1712",
+        "targets": [
+          4754,
+          247256,
+          3147,
+          96012
+        ]
+      },
+      "response": {
+        "id": "cmpl-r2rtwiqum8ws",
+        "object": "text_completion",
+        "created": 1791117691,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "{\n  \"曜日\": \"金曜\",\n  \"時刻\": \"15時30分\",\n  \"会場\": \"第2会議室\"\n}",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 66,
+          "completion_tokens": 36,
+          "total_tokens": 102,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 158.6950091977704,
+          "completion_tokens_per_second": 16.689365540496297,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 66,
+          "prompt_ms": 415.892096,
+          "prompt_per_token_ms": 6.301395393939393,
+          "prompt_per_second": 158.6950091977704,
+          "predicted_n": 36,
+          "predicted_ms": 2157.062227,
+          "predicted_per_token_ms": 59.91839519444444,
+          "predicted_per_second": 16.689365540496297,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 2.588377453997964,
+      "judge": {
+        "correct": false
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "ja02_summary",
+      "plan": {
+        "id": "ja02_summary",
+        "category": "japanese",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 66,
+        "answer_total_tokens": 19,
+        "scored_tokens": 4,
+        "forward_tokens": 69,
+        "vocab_size": 248320,
+        "input_ids_sha256": "26afe30997cced25f8c78f67f1318084d202d7c1413238d5c966da970fbdcd20",
+        "targets": [
+          114425,
+          171323,
+          96690,
+          242802
+        ]
+      },
+      "response": {
+        "id": "cmpl-spsq9dc1w06h",
+        "object": "text_completion",
+        "created": 1791117694,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "大雨増水で清掃は翌週土曜へ延期。集合場所と時刻は変更なし。",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 66,
+          "completion_tokens": 21,
+          "total_tokens": 87,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 153.82135597906873,
+          "completion_tokens_per_second": 16.42655607228616,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 66,
+          "prompt_ms": 429.06916,
+          "prompt_per_token_ms": 6.501047878787879,
+          "prompt_per_second": 153.82135597906873,
+          "predicted_n": 21,
+          "predicted_ms": 1278.4176980000002,
+          "predicted_per_token_ms": 60.87703323809525,
+          "predicted_per_second": 16.42655607228616,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 1.712821999011794,
+      "judge": {
+        "machine_conditions": true,
+        "characters": 29,
+        "needs_semantic_review": true,
+        "rubric": "原因と延期先が正しく、集合場所・開始時刻を変更したと述べない。"
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "ja03_polite",
+      "plan": {
+        "id": "ja03_polite",
+        "category": "japanese",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 45,
+        "answer_total_tokens": 8,
+        "scored_tokens": 4,
+        "forward_tokens": 48,
+        "vocab_size": 248320,
+        "input_ids_sha256": "1c12079b298df3154eaa5a9f94348ff6c0fb87d612b7625d578042e84b1490c9",
+        "targets": [
+          247995,
+          176320,
+          101936,
+          155177
+        ]
+      },
+      "response": {
+        "id": "cmpl-68okq8qt1t26",
+        "object": "text_completion",
+        "created": 1791117695,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "本日中にご送付いただけますと幸いです。",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 45,
+          "completion_tokens": 9,
+          "total_tokens": 54,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 132.91688602260353,
+          "completion_tokens_per_second": 16.444036039553314,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 45,
+          "prompt_ms": 338.557435,
+          "prompt_per_token_ms": 7.523498555555555,
+          "prompt_per_second": 132.91688602260353,
+          "predicted_n": 9,
+          "predicted_ms": 547.31089,
+          "predicted_per_token_ms": 60.81232111111111,
+          "predicted_per_second": 16.444036039553314,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 0.8909166649973486,
+      "judge": {
+        "machine_conditions": false,
+        "characters": 19,
+        "needs_semantic_review": true,
+        "rubric": "取引先向けの自然な依頼文で、期限を変えず、送付済みの断定にしない。"
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "ja04_exception",
+      "plan": {
+        "id": "ja04_exception",
+        "category": "japanese",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 83,
+        "answer_total_tokens": 7,
+        "scored_tokens": 4,
+        "forward_tokens": 86,
+        "vocab_size": 248320,
+        "input_ids_sha256": "1bb5f0c19a9d2a098735327729d1a1ba8d01cf71aa5ad29d917b7be07cf5f26c",
+        "targets": [
+          1143,
+          96556,
+          96742,
+          2129
+        ]
+      },
+      "response": {
+        "id": "cmpl-19pyzg2ls877",
+        "object": "text_completion",
+        "created": 1791117696,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "[\"青木\", \"上田\"]",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 83,
+          "completion_tokens": 8,
+          "total_tokens": 91,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 180.81092317911794,
+          "completion_tokens_per_second": 16.079938067475336,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 83,
+          "prompt_ms": 459.043063,
+          "prompt_per_token_ms": 5.530639313253012,
+          "prompt_per_second": 180.81092317911794,
+          "predicted_n": 8,
+          "predicted_ms": 497.514354,
+          "predicted_per_token_ms": 62.18929425,
+          "predicted_per_second": 16.079938067475336,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 0.9611963309871498,
+      "judge": {
+        "correct": true
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "code01_unique",
+      "plan": {
+        "id": "code01_unique",
+        "category": "code",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 61,
+        "answer_total_tokens": 48,
+        "scored_tokens": 4,
+        "forward_tokens": 64,
+        "vocab_size": 248320,
+        "input_ids_sha256": "d65fb72451891b50ce61df833c1e7c65d7a3d5a7fb07e43dd871c06c1de5f75e",
+        "targets": [
+          727,
+          14733,
+          20567,
+          51532
+        ]
+      },
+      "response": {
+        "id": "cmpl-i79562p5ts0b",
+        "object": "text_completion",
+        "created": 1791117697,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "```python\ndef stable_unique(xs):\n    seen = set()\n    result = []\n    for x in xs:\n        if x not in seen:\n            seen.add(x)\n            result.append(x)\n    return result\n```",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 61,
+          "completion_tokens": 52,
+          "total_tokens": 113,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 159.39964178824042,
+          "completion_tokens_per_second": 16.04539183586957,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 61,
+          "prompt_ms": 382.685929,
+          "prompt_per_token_ms": 6.273539819672131,
+          "prompt_per_second": 159.39964178824042,
+          "predicted_n": 52,
+          "predicted_ms": 3240.805867,
+          "predicted_per_token_ms": 62.32318975,
+          "predicted_per_second": 16.04539183586957,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 3.6290431969973724,
+      "judge": {
+        "correct": true,
+        "tests": [
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [],
+            "expected": []
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              3,
+              1,
+              2
+            ],
+            "expected": [
+              3,
+              1,
+              2
+            ]
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              "b",
+              "a",
+              "c"
+            ],
+            "expected": [
+              "b",
+              "a",
+              "c"
+            ]
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              0,
+              -1,
+              2
+            ],
+            "expected": [
+              0,
+              -1,
+              2
+            ]
+          }
+        ]
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 256,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "code02_merge",
+      "plan": {
+        "id": "code02_merge",
+        "category": "code",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 73,
+        "answer_total_tokens": 87,
+        "scored_tokens": 4,
+        "forward_tokens": 76,
+        "vocab_size": 248320,
+        "input_ids_sha256": "41e2b795f8b19486ab4f1f30a6cabf9d50e89098f4c5f9dea3f25e9bd5d6fa79",
+        "targets": [
+          727,
+          10562,
+          39914,
+          2784
+        ]
+      },
+      "response": {
+        "id": "cmpl-4imwnn560xob",
+        "object": "text_completion",
+        "created": 1791117701,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "```python\ndef merge_sorted(a, b):\n    i = 0\n    j = 0\n    result = []\n    while i < len(a) and j < len(b):\n        if a[i] <= b[j]:\n            result.append(a[i])\n            i += 1\n        else:\n            result.append(b[j])\n            j += 1\n    while i < len(a):\n        result.append(a[i])\n        i += 1\n    while j < len(b):\n        result.append(b[j])\n        j += 1\n    return result\n```",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 73,
+          "completion_tokens": 129,
+          "total_tokens": 202,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 176.59146630350946,
+          "completion_tokens_per_second": 17.135024132424046,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 73,
+          "prompt_ms": 413.383509,
+          "prompt_per_token_ms": 5.662787794520548,
+          "prompt_per_second": 176.59146630350946,
+          "predicted_n": 129,
+          "predicted_ms": 7528.439937000003,
+          "predicted_per_token_ms": 58.359999511627926,
+          "predicted_per_second": 17.135024132424043,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 7.949979280994739,
+      "judge": {
+        "correct": true,
+        "tests": [
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [],
+            "expected": []
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              1,
+              2,
+              3,
+              3,
+              5,
+              6
+            ],
+            "expected": [
+              1,
+              2,
+              3,
+              3,
+              5,
+              6
+            ]
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              -3,
+              0
+            ],
+            "expected": [
+              -3,
+              0
+            ]
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": [
+              -5,
+              -4,
+              -1,
+              2,
+              2,
+              2
+            ],
+            "expected": [
+              -5,
+              -4,
+              -1,
+              2,
+              2,
+              2
+            ]
+          }
+        ]
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 256,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "code03_search",
+      "plan": {
+        "id": "code03_search",
+        "category": "code",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 61,
+        "answer_total_tokens": 85,
+        "scored_tokens": 4,
+        "forward_tokens": 64,
+        "vocab_size": 248320,
+        "input_ids_sha256": "9af2396aa89b6cd0fdf16457fc98a8eb5d46c9e01091a89349d29e4e30775b8c",
+        "targets": [
+          727,
+          1118,
+          3442,
+          20449
+        ]
+      },
+      "response": {
+        "id": "cmpl-wagydfkj4wpq",
+        "object": "text_completion",
+        "created": 1791117709,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "```python\ndef first_index(nums, target):\n    left = 0\n    right = len(nums) - 1\n    result = -1\n    while left <= right:\n        mid = (left + right) // 2\n        if nums[mid] == target:\n            result = mid\n            right = mid - 1\n        elif nums[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return result\n```",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 61,
+          "completion_tokens": 108,
+          "total_tokens": 169,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 194.38002791227098,
+          "completion_tokens_per_second": 16.91389998522558,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 61,
+          "prompt_ms": 313.818249,
+          "prompt_per_token_ms": 5.144561459016393,
+          "prompt_per_second": 194.38002791227098,
+          "predicted_n": 108,
+          "predicted_ms": 6385.280750999996,
+          "predicted_per_token_ms": 59.12296991666663,
+          "predicted_per_second": 16.91389998522558,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 6.706085501995403,
+      "judge": {
+        "correct": true,
+        "tests": [
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": -1,
+            "expected": -1
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": 1,
+            "expected": 1
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": -1,
+            "expected": -1
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": 0,
+            "expected": 0
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": 0,
+            "expected": 0
+          }
+        ]
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 256,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "code04_brackets",
+      "plan": {
+        "id": "code04_brackets",
+        "category": "code",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 62,
+        "answer_total_tokens": 77,
+        "scored_tokens": 4,
+        "forward_tokens": 65,
+        "vocab_size": 248320,
+        "input_ids_sha256": "57cb25fb09150a291590a0c5fef88ce3d89cdcf890514cb5523d05ac4e96d836",
+        "targets": [
+          727,
+          23086,
+          1104,
+          1590
+        ]
+      },
+      "response": {
+        "id": "cmpl-18u0rbxqgase",
+        "object": "text_completion",
+        "created": 1791117716,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "```python\ndef balanced(s):\n    stack = []\n    pairs = {')': '(', ']': '[', '}': '{'}\n    for char in s:\n        if char in '([{':\n            stack.append(char)\n        elif char in ')]}':\n            if not stack or stack[-1] != pairs[char]:\n                return False\n            stack.pop()\n    return len(stack) == 0\n```",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 62,
+          "completion_tokens": 93,
+          "total_tokens": 155,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 185.15553043652014,
+          "completion_tokens_per_second": 16.149817344671522,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 62,
+          "prompt_ms": 334.853622,
+          "prompt_per_token_ms": 5.400864870967742,
+          "prompt_per_second": 185.15553043652014,
+          "predicted_n": 93,
+          "predicted_ms": 5758.579060999997,
+          "predicted_per_token_ms": 61.92020495698921,
+          "predicted_per_second": 16.149817344671522,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 6.100385981990257,
+      "judge": {
+        "correct": true,
+        "tests": [
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": true,
+            "expected": true
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": true,
+            "expected": true
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": false,
+            "expected": false
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": false,
+            "expected": false
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": false,
+            "expected": false
+          },
+          {
+            "correct": true,
+            "input_unchanged": true,
+            "actual": true,
+            "expected": true
+          }
+        ]
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 256,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "math01_linear",
+      "plan": {
+        "id": "math01_linear",
+        "category": "math",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 36,
+        "answer_total_tokens": 1,
+        "scored_tokens": 1,
+        "forward_tokens": 36,
+        "vocab_size": 248320,
+        "input_ids_sha256": "90851604ad6b99dceb759977c62b3d731b2f21e5e00d727a46649c0c486d4761",
+        "targets": [
+          22
+        ]
+      },
+      "response": {
+        "id": "cmpl-923locgbpm6c",
+        "object": "text_completion",
+        "created": 1791117722,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "7",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 36,
+          "completion_tokens": 1,
+          "total_tokens": 37,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 140.24164726592286,
+          "completion_tokens_per_second": 16.04113177178583,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 36,
+          "prompt_ms": 256.69978,
+          "prompt_per_token_ms": 7.130549444444444,
+          "prompt_per_second": 140.24164726592286,
+          "predicted_n": 1,
+          "predicted_ms": 62.339741000000004,
+          "predicted_per_token_ms": 62.339741000000004,
+          "predicted_per_second": 16.04113177178583,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 0.3240043510159012,
+      "judge": {
+        "correct": true
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "math02_union",
+      "plan": {
+        "id": "math02_union",
+        "category": "math",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 41,
+        "answer_total_tokens": 2,
+        "scored_tokens": 2,
+        "forward_tokens": 42,
+        "vocab_size": 248320,
+        "input_ids_sha256": "850118702ab7383885ed5e30afbfd3d78dbc6c82177db6e4af83b69e3ea4eb8c",
+        "targets": [
+          19,
+          22
+        ]
+      },
+      "response": {
+        "id": "cmpl-83zn2jy6lizn",
+        "object": "text_completion",
+        "created": 1791117723,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "31",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 41,
+          "completion_tokens": 2,
+          "total_tokens": 43,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 138.78402608587263,
+          "completion_tokens_per_second": 15.485966388840431,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 41,
+          "prompt_ms": 295.423048,
+          "prompt_per_token_ms": 7.205440195121951,
+          "prompt_per_second": 138.78402608587263,
+          "predicted_n": 2,
+          "predicted_ms": 129.14918899999998,
+          "predicted_per_token_ms": 64.57459449999999,
+          "predicted_per_second": 15.485966388840431,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 0.4289826480089687,
+      "judge": {
+        "correct": false
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "math03_probability",
+      "plan": {
+        "id": "math03_probability",
+        "category": "math",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 51,
+        "answer_total_tokens": 4,
+        "scored_tokens": 4,
+        "forward_tokens": 54,
+        "vocab_size": 248320,
+        "input_ids_sha256": "a3455f65fecd8f22fff0e30871c0b52236795e89c5d6a92e7baeebee0be88e7b",
+        "targets": [
+          18,
+          14,
+          16,
+          15
+        ]
+      },
+      "response": {
+        "id": "cmpl-0pwzjvbd65zs",
+        "object": "text_completion",
+        "created": 1791117723,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "3/10",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "stop"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 51,
+          "completion_tokens": 4,
+          "total_tokens": 55,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 148.99707788099465,
+          "completion_tokens_per_second": 16.61369597376631,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 51,
+          "prompt_ms": 342.288592,
+          "prompt_per_token_ms": 6.711541019607843,
+          "prompt_per_second": 148.99707788099465,
+          "predicted_n": 4,
+          "predicted_ms": 240.76521000000002,
+          "predicted_per_token_ms": 60.191302500000006,
+          "predicted_per_second": 16.61369597376631,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 0.5887543020071462,
+      "judge": {
+        "correct": true
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    },
+    {
+      "id": "math04_sequence",
+      "plan": {
+        "id": "math04_sequence",
+        "category": "math",
+        "weights": "sc117-iq3s-q8",
+        "storage": "float32",
+        "chat_template_id": "qwen38-reasoning-compiled-v3",
+        "chat_template_sha256": "12827f24b742ea4e80cdc12dbcf9622227056b9f797252a3149263d4f9aaadce",
+        "enable_thinking": false,
+        "add_bos": false,
+        "add_eos": false,
+        "parse_special_tokens": true,
+        "server_render_and_tokenize_equal": true,
+        "prompt_tokens": 43,
+        "answer_total_tokens": 3,
+        "scored_tokens": 3,
+        "forward_tokens": 45,
+        "vocab_size": 248320,
+        "input_ids_sha256": "a6c787ea5566388bfdf8accf53132ba868b066e61c6f7746631f2d4f469183bb",
+        "targets": [
+          21,
+          20,
+          15
+        ]
+      },
+      "response": {
+        "id": "cmpl-k3zulyo8moo6",
+        "object": "text_completion",
+        "created": 1791117724,
+        "model": "sc117-iq3s-q8",
+        "choices": [
+          {
+            "text": "等差数列の和を求める公式 $S_n = \\frac{n}{2} \\{ 2a + (n-1)d \\}$ を使用します。\n\nここで、\n*   初項 $a = 4$\n*   公差 $d = 3$\n*   項数 $n = 20$\n\nこれらを公式に代入すると：\n\n$$\n\\begin{aligned}\nS_{20} &= \\frac{20}{2} \\{ 2(4) + (20-1)(3) \\} \\\\\n&= 1",
+            "index": 0,
+            "logprobs": null,
+            "finish_reason": "length"
+          }
+        ],
+        "usage": {
+          "prompt_tokens": 43,
+          "completion_tokens": 128,
+          "total_tokens": 171,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "cached_tokens": 0,
+          "prompt_tokens_per_second": 150.9911658826064,
+          "completion_tokens_per_second": 16.1935201074156,
+          "draft_tokens": 0,
+          "draft_tokens_accepted": 0
+        },
+        "timings": {
+          "prompt_n": 43,
+          "prompt_ms": 284.784873,
+          "prompt_per_token_ms": 6.622904023255814,
+          "prompt_per_second": 150.9911658826064,
+          "predicted_n": 128,
+          "predicted_ms": 7904.396274000003,
+          "predicted_per_token_ms": 61.753095890625026,
+          "predicted_per_second": 16.1935201074156,
+          "cache_n": 0,
+          "cache_restore_ms": 0,
+          "cache_snapshot_ms": 0,
+          "cache_disk_enqueue_ms": 0,
+          "draft_rounds": 0,
+          "draft_n": 0,
+          "draft_n_accepted": 0
+        }
+      },
+      "wall_seconds": 8.196038034016965,
+      "judge": {
+        "correct": false
+      },
+      "actual_prompt_matches_plan": true,
+      "request_settings": {
+        "model": "sc117-iq3s-q8",
+        "temperature": 0,
+        "top_p": 1,
+        "top_k": 1,
+        "min_p": 0,
+        "seed": 117,
+        "max_tokens": 128,
+        "cache_prompt": false,
+        "stream": false
+      }
+    }
+  ]
+}

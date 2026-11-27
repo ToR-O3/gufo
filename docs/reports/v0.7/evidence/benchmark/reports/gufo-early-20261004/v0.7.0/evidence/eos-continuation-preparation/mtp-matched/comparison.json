@@ -1,0 +1,42 @@
+{
+  "schema": "sc117-v070-natural-stop-continuation-v1",
+  "status": "candidate_contract_matched",
+  "pairs": [
+    {
+      "name": "natural_stop_turn1",
+      "identical_request": true,
+      "identical_visible_reply": true,
+      "same_input_count": true,
+      "same_output_count": true,
+      "same_cached_count": true,
+      "same_finish_reasons": true,
+      "ar_drafted": 0,
+      "mtp_drafted": 1,
+      "ar_timings": {},
+      "mtp_timings": {},
+      "ar_wall_ms": 1,
+      "mtp_wall_ms": 1
+    },
+    {
+      "name": "natural_stop_turn2",
+      "identical_request": true,
+      "identical_visible_reply": true,
+      "same_input_count": true,
+      "same_output_count": true,
+      "same_cached_count": true,
+      "same_finish_reasons": true,
+      "ar_drafted": 0,
+      "mtp_drafted": 1,
+      "ar_timings": {},
+      "mtp_timings": {},
+      "ar_wall_ms": 1,
+      "mtp_wall_ms": 1
+    }
+  ],
+  "both_eos_candidates": true,
+  "both_completed_prefixes_reused": true,
+  "all_request_reply_counts_equal": true,
+  "mtp_drafts_observed": true,
+  "eos_token_identity_proven": false,
+  "timing_policy": "Observation only; no formal performance or timing threshold."
+}

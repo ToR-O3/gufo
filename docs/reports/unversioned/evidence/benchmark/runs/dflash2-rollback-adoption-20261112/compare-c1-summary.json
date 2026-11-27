@@ -1,0 +1,2443 @@
+{
+  "requests": {
+    "prose/0": {
+      "mtp": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 117,
+        "accepted": 66,
+        "cached_tokens": 0,
+        "prefill_ms": 1500.301576,
+        "decode_tok_s": 34.33793921310644,
+        "ttft_ms": 1542.8631830000086,
+        "response_ms": 5262.752292997902,
+        "max_gap_ms": 169.3530449992977
+      },
+      "dflash": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 90,
+        "accepted": 64,
+        "cached_tokens": 0,
+        "prefill_ms": 1701.648593,
+        "decode_tok_s": 35.22383250054739,
+        "ttft_ms": 1813.116909994278,
+        "response_ms": 5496.793253994838,
+        "max_gap_ms": 183.28455000300892
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -33,
+          -12,
+          -26
+        ],
+        "accepted": [
+          -5,
+          9,
+          -2
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          178.79537000000005,
+          223.84913500000016,
+          227.35993999999982
+        ],
+        "decode_tok_s": [
+          0.4742092282618273,
+          2.374518658142364,
+          0.8858932874409504
+        ],
+        "ttft_ms": [
+          242.54031300370116,
+          280.91875599784544,
+          293.6322819950874
+        ],
+        "response_ms": [
+          232.7692000035313,
+          34.609436996106524,
+          234.0409609969356
+        ],
+        "max_gap_ms": [
+          10.218523995717987,
+          38.03179499664111,
+          13.931505003711209
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -27.73109243697479,
+          -11.764705882352944,
+          -22.22222222222222
+        ],
+        "accepted": [
+          -7.246376811594201,
+          17.647058823529417,
+          -3.0303030303030276
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          11.91729535315773,
+          14.888591798755968,
+          15.421670616357908
+        ],
+        "decode_tok_s": [
+          1.3213008667795956,
+          7.510139467870114,
+          2.579925609230549
+        ],
+        "ttft_ms": [
+          15.72014392955412,
+          18.0980437668663,
+          19.3244654525879
+        ],
+        "response_ms": [
+          4.543946924318698,
+          0.6164020991224595,
+          4.447120973341789
+        ],
+        "max_gap_ms": [
+          5.876883541814548,
+          29.267342024086584,
+          8.226309130591059
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "deep/0": {
+      "mtp": {
+        "prompt_tokens": 13473,
+        "output_tokens": 128,
+        "drafted": 117,
+        "accepted": 61,
+        "cached_tokens": 0,
+        "prefill_ms": 11138.435157,
+        "decode_tok_s": 32.78825311403898,
+        "ttft_ms": 11472.457322000992,
+        "response_ms": 15563.469549000729,
+        "max_gap_ms": 228.81452000001445
+      },
+      "dflash": {
+        "prompt_tokens": 13473,
+        "output_tokens": 128,
+        "drafted": 89,
+        "accepted": 56,
+        "cached_tokens": 0,
+        "prefill_ms": 12478.608667,
+        "decode_tok_s": 31.22159250506061,
+        "ttft_ms": 12867.24516400136,
+        "response_ms": 17034.284490000573,
+        "max_gap_ms": 211.113564997504
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -28,
+          -28,
+          -23
+        ],
+        "accepted": [
+          -5,
+          -5,
+          -3
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          1368.9344760000022,
+          1187.8946180000003,
+          859.1265339999991
+        ],
+        "decode_tok_s": [
+          -0.1671500899303986,
+          -1.5666606089783706,
+          0.690514277872964
+        ],
+        "ttft_ms": [
+          1445.4303989987238,
+          1224.366939997708,
+          898.1542710025678
+        ],
+        "response_ms": [
+          1574.5376519989804,
+          1470.814940999844,
+          871.307651999814
+        ],
+        "max_gap_ms": [
+          30.772870995861012,
+          74.63466899935156,
+          -24.8843810040853
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -23.140495867768596,
+          -23.931623931623935,
+          -20.535714285714292
+        ],
+        "accepted": [
+          -8.196721311475407,
+          -8.333333333333337,
+          -4.477611940298509
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          12.290186697721971,
+          10.520987537588123,
+          7.7316751294015384
+        ],
+        "decode_tok_s": [
+          -0.5381252991415231,
+          -4.778115514508984,
+          2.033616363879931
+        ],
+        "ttft_ms": [
+          12.599135114905069,
+          10.516016026634034,
+          7.834944510871078
+        ],
+        "response_ms": [
+          10.085969309724252,
+          9.450430936167953,
+          5.712976543971071
+        ],
+        "max_gap_ms": [
+          13.216742133450188,
+          54.685868062972844,
+          -10.87535048216508
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "repetition/0": {
+      "mtp": {
+        "prompt_tokens": 2578,
+        "output_tokens": 128,
+        "drafted": 159,
+        "accepted": 111,
+        "cached_tokens": 0,
+        "prefill_ms": 2426.785354,
+        "decode_tok_s": 29.981799167016185,
+        "ttft_ms": 2512.096628997824,
+        "response_ms": 6739.458536001621,
+        "max_gap_ms": 711.9746609969297
+      },
+      "dflash": {
+        "prompt_tokens": 2578,
+        "output_tokens": 128,
+        "drafted": 127,
+        "accepted": 109,
+        "cached_tokens": 0,
+        "prefill_ms": 2697.5864380000003,
+        "decode_tok_s": 75.87048879111924,
+        "ttft_ms": 2850.968191996799,
+        "response_ms": 4613.557169002888,
+        "max_gap_ms": 170.79996299435152
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -32,
+          -32,
+          -32
+        ],
+        "accepted": [
+          -2,
+          -2,
+          -2
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          270.8010840000002,
+          372.3197630000004,
+          106.74487099999942
+        ],
+        "decode_tok_s": [
+          44.934185943463135,
+          45.88868962410306,
+          48.51748463661704
+        ],
+        "ttft_ms": [
+          338.8715629989747,
+          451.9131449924316,
+          169.3853980032145
+        ],
+        "response_ms": [
+          -2125.9013669987326,
+          -2086.6514410008676,
+          -2575.0876079982845
+        ],
+        "max_gap_ms": [
+          -535.9287539904471,
+          -501.8703649911913,
+          -544.1556030054926
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -20.125786163522008,
+          -20.125786163522008,
+          -20.125786163522008
+        ],
+        "accepted": [
+          -1.8018018018018056,
+          -1.8018018018018056,
+          -1.8018018018018056
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          11.15883955511956,
+          15.904064229687576,
+          4.303558124675133
+        ],
+        "decode_tok_s": [
+          147.70725499574246,
+          153.05515645834387,
+          168.6832914243826
+        ],
+        "ttft_ms": [
+          13.489591088467169,
+          18.631839664848226,
+          6.596602599764223
+        ],
+        "response_ms": [
+          -31.544097432194974,
+          -31.086464517866187,
+          -36.5913958526161
+        ],
+        "max_gap_ms": [
+          -75.27357128693633,
+          -74.69993553111723,
+          -76.11040865798522
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "japanese/0": {
+      "mtp": {
+        "prompt_tokens": 62,
+        "output_tokens": 128,
+        "drafted": 114,
+        "accepted": 53,
+        "cached_tokens": 0,
+        "prefill_ms": 547.658542,
+        "decode_tok_s": 27.686105914736057,
+        "ttft_ms": 578.6332470015623,
+        "response_ms": 5215.299834002508,
+        "max_gap_ms": 127.21097200119402
+      },
+      "dflash": {
+        "prompt_tokens": 62,
+        "output_tokens": 128,
+        "drafted": 94,
+        "accepted": 47,
+        "cached_tokens": 0,
+        "prefill_ms": 433.77151,
+        "decode_tok_s": 28.399411787478137,
+        "ttft_ms": 504.3558050019783,
+        "response_ms": 4999.549606000073,
+        "max_gap_ms": 79.75532799900975
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -20,
+          -20,
+          -20
+        ],
+        "accepted": [
+          -6,
+          -6,
+          -6
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -113.88703200000003,
+          -118.29852,
+          -186.42528299999998
+        ],
+        "decode_tok_s": [
+          0.7133058727420796,
+          0.26521141924570557,
+          1.2783023369404702
+        ],
+        "ttft_ms": [
+          -74.27744199958397,
+          -79.22136299748672,
+          -149.21518100163667
+        ],
+        "response_ms": [
+          -200.97885900031542,
+          -134.57846899837023,
+          -335.81364099518396
+        ],
+        "max_gap_ms": [
+          -95.55157300201245,
+          -43.6316129998886,
+          -24.294643000757787
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -17.543859649122805,
+          -17.543859649122805,
+          -17.543859649122805
+        ],
+        "accepted": [
+          -11.32075471698113,
+          -11.32075471698113,
+          -11.32075471698113
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -20.795262607261588,
+          -22.10549490411422,
+          -29.992919525886098
+        ],
+        "decode_tok_s": [
+          2.576403756233625,
+          0.9440309774523037,
+          4.6292417560865
+        ],
+        "ttft_ms": [
+          -12.83670483583247,
+          -14.079553375243481,
+          -22.826637050593334
+        ],
+        "response_ms": [
+          -3.853639587315405,
+          -2.6212526651550494,
+          -6.329230060977665
+        ],
+        "max_gap_ms": [
+          -54.505311802560065,
+          -36.04684406228292,
+          -19.097914762045644
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "code/0": {
+      "mtp": {
+        "prompt_tokens": 56,
+        "output_tokens": 128,
+        "drafted": 121,
+        "accepted": 87,
+        "cached_tokens": 0,
+        "prefill_ms": 568.191137,
+        "decode_tok_s": 45.694584086369524,
+        "ttft_ms": 597.2567520002485,
+        "response_ms": 3415.3019139994285,
+        "max_gap_ms": 117.68636899796547
+      },
+      "dflash": {
+        "prompt_tokens": 56,
+        "output_tokens": 128,
+        "drafted": 108,
+        "accepted": 85,
+        "cached_tokens": 0,
+        "prefill_ms": 422.999304,
+        "decode_tok_s": 46.1631751267573,
+        "ttft_ms": 505.00677499803714,
+        "response_ms": 3281.941558001563,
+        "max_gap_ms": 99.56577599950833
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -13,
+          -13,
+          -13
+        ],
+        "accepted": [
+          -2,
+          -2,
+          -2
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -138.27021899999994,
+          -156.73633700000005,
+          -143.06779699999998
+        ],
+        "decode_tok_s": [
+          0.46859104038777843,
+          0.28407317548359856,
+          2.1625610150129404
+        ],
+        "ttft_ms": [
+          -93.13503799785394,
+          -115.42130599991651,
+          -90.0849579993519
+        ],
+        "response_ms": [
+          -133.36035599786555,
+          -144.52760700078215,
+          -206.1848219964304
+        ],
+        "max_gap_ms": [
+          -18.12059299845714,
+          -20.064635005837772,
+          22.757356004149187
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -10.743801652892559,
+          -10.743801652892559,
+          -10.743801652892559
+        ],
+        "accepted": [
+          -2.298850574712641,
+          -2.298850574712641,
+          -2.298850574712641
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -24.259697433750382,
+          -27.58514288476134,
+          -25.27399962782857
+        ],
+        "decode_tok_s": [
+          1.0254848572471387,
+          0.6176663824006168,
+          4.9293028542623185
+        ],
+        "ttft_ms": [
+          -15.527211285014552,
+          -19.32524088063695,
+          -15.13799520379947
+        ],
+        "response_ms": [
+          -3.9047896600653997,
+          -4.257190703500613,
+          -5.842258748304941
+        ],
+        "max_gap_ms": [
+          -15.397359229232743,
+          -17.121527326515128,
+          18.73244468191002
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "json/0": {
+      "mtp": {
+        "prompt_tokens": 94,
+        "output_tokens": 91,
+        "drafted": 74,
+        "accepted": 37,
+        "cached_tokens": 0,
+        "prefill_ms": 675.875944,
+        "decode_tok_s": 27.517803497234024,
+        "ttft_ms": 706.4267200039467,
+        "response_ms": 4018.8662159998785,
+        "max_gap_ms": 134.71458899584832
+      },
+      "dflash": {
+        "prompt_tokens": 94,
+        "output_tokens": 91,
+        "drafted": 71,
+        "accepted": 45,
+        "cached_tokens": 0,
+        "prefill_ms": 523.236528,
+        "decode_tok_s": 32.05653958571821,
+        "ttft_ms": 595.1505500052008,
+        "response_ms": 3445.473695996043,
+        "max_gap_ms": 96.69979099999182
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -3,
+          -3,
+          -3
+        ],
+        "accepted": [
+          8,
+          8,
+          8
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -97.45343000000003,
+          -153.14342,
+          -164.63681499999996
+        ],
+        "decode_tok_s": [
+          4.538736088484189,
+          4.532508636449002,
+          4.897658119517093
+        ],
+        "ttft_ms": [
+          -53.241071007505525,
+          -111.2761699987459,
+          -126.76499799999874
+        ],
+        "response_ms": [
+          -533.6583380048978,
+          -588.9211289977538,
+          -650.2700310011278
+        ],
+        "max_gap_ms": [
+          -42.83700399537338,
+          -38.0147979958565,
+          -31.423097003425937
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -4.054054054054057,
+          -4.054054054054057,
+          -4.054054054054057
+        ],
+        "accepted": [
+          21.62162162162162,
+          21.62162162162162,
+          21.62162162162162
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -15.520607432101007,
+          -22.65851024282054,
+          -23.934175771658005
+        ],
+        "decode_tok_s": [
+          16.493816771896075,
+          16.427180868196967,
+          18.587455988733925
+        ],
+        "ttft_ms": [
+          -8.091296936623504,
+          -15.75197636891824,
+          -17.6174053079148
+        ],
+        "response_ms": [
+          -13.41142574422982,
+          -14.653912256475365,
+          -15.531957303260114
+        ],
+        "max_gap_ms": [
+          -31.15943401291664,
+          -28.218768493609893,
+          -23.41581016730172
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "tool/0": {
+      "mtp": {
+        "prompt_tokens": 315,
+        "output_tokens": 43,
+        "drafted": 42,
+        "accepted": 37,
+        "cached_tokens": 0,
+        "prefill_ms": 865.885778,
+        "decode_tok_s": 65.96336162336237,
+        "ttft_ms": 1132.418127002893,
+        "response_ms": 1567.4567030000617,
+        "max_gap_ms": 125.11263399937889
+      },
+      "dflash": {
+        "prompt_tokens": 315,
+        "output_tokens": 43,
+        "drafted": 42,
+        "accepted": 36,
+        "cached_tokens": 0,
+        "prefill_ms": 825.2099639999999,
+        "decode_tok_s": 66.38164518611433,
+        "ttft_ms": 1074.4474890016136,
+        "response_ms": 1548.8965080003254,
+        "max_gap_ms": 99.92380699986825
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          0,
+          0,
+          0
+        ],
+        "accepted": [
+          -1,
+          -1,
+          -1
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -43.0659629999999,
+          -61.91602999999998,
+          -33.96252200000015
+        ],
+        "decode_tok_s": [
+          -0.08143558414772656,
+          1.872320187585558,
+          0.9953603298616116
+        ],
+        "ttft_ms": [
+          -62.40370700106723,
+          -90.22572599496925,
+          12.317923006776255
+        ],
+        "response_ms": [
+          -11.124803000711836,
+          -57.89621899748454,
+          37.54800499882549
+        ],
+        "max_gap_ms": [
+          -22.570616005396005,
+          -27.199381998798344,
+          -33.899343994562514
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "accepted": [
+          -2.7027027027026973,
+          -2.7027027027026973,
+          -2.7027027027026973
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -4.9736309446579146,
+          -6.949992194788535,
+          -3.952934079409076
+        ],
+        "decode_tok_s": [
+          -0.12252754943637978,
+          2.8384244548907756,
+          1.5339654893766985
+        ],
+        "ttft_ms": [
+          -5.510659491669179,
+          -7.746870524126715,
+          1.09494871938558
+        ],
+        "response_ms": [
+          -0.7131186556402436,
+          -3.628209060154286,
+          2.3954731844879618
+        ],
+        "max_gap_ms": [
+          -18.168230180629674,
+          -21.739916369224055,
+          -25.331449560602024
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "thinking/0": {
+      "mtp": {
+        "prompt_tokens": 1628,
+        "output_tokens": 128,
+        "drafted": 94,
+        "accepted": 61,
+        "cached_tokens": 0,
+        "prefill_ms": 1728.095306,
+        "decode_tok_s": 34.17949365096213,
+        "ttft_ms": 1786.0506659999373,
+        "response_ms": 5533.316077999189,
+        "max_gap_ms": 116.50007599382661
+      },
+      "dflash": {
+        "prompt_tokens": 1628,
+        "output_tokens": 128,
+        "drafted": 91,
+        "accepted": 66,
+        "cached_tokens": 0,
+        "prefill_ms": 1703.711237,
+        "decode_tok_s": 34.75895535876568,
+        "ttft_ms": 1825.78456599731,
+        "response_ms": 5494.782072004455,
+        "max_gap_ms": 97.54894499928923
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -3,
+          -3,
+          25
+        ],
+        "accepted": [
+          7,
+          4,
+          23
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          13.199883,
+          -39.18036399999983,
+          -28.693647000000055
+        ],
+        "decode_tok_s": [
+          1.5581472070730982,
+          0.5794617078035529,
+          3.8744318820603354
+        ],
+        "ttft_ms": [
+          70.86313599575078,
+          23.302089000935666,
+          33.186332999321166
+        ],
+        "response_ms": [
+          -91.99208200152498,
+          -38.53400599473389,
+          -448.32423900516005
+        ],
+        "max_gap_ms": [
+          -18.95113099453738,
+          -26.507968999794684,
+          -81.9381249966682
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -3.157894736842104,
+          -3.1914893617021267,
+          39.0625
+        ],
+        "accepted": [
+          11.475409836065564,
+          6.557377049180335,
+          53.48837209302326
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          0.7735469896244851,
+          -2.267257127773248,
+          -1.6562898930271075
+        ],
+        "decode_tok_s": [
+          4.556764122508028,
+          1.6953490116646153,
+          12.634598118595841
+        ],
+        "ttft_ms": [
+          4.016611479925891,
+          1.3046712192730459,
+          1.851297875253377
+        ],
+        "response_ms": [
+          -1.669621577722502,
+          -0.6963998703769625,
+          -7.494029038210948
+        ],
+        "max_gap_ms": [
+          -16.26705462024043,
+          -23.928251088883645,
+          -45.171098766672955
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "code-copy/0": {
+      "mtp": {
+        "prompt_tokens": 176,
+        "output_tokens": 138,
+        "drafted": 133,
+        "accepted": 127,
+        "cached_tokens": 0,
+        "prefill_ms": 681.694367,
+        "decode_tok_s": 31.930227059979355,
+        "ttft_ms": 710.8172339940211,
+        "response_ms": 5027.981373001239,
+        "max_gap_ms": 1281.1587429969222
+      },
+      "dflash": {
+        "prompt_tokens": 176,
+        "output_tokens": 138,
+        "drafted": 121,
+        "accepted": 120,
+        "cached_tokens": 0,
+        "prefill_ms": 604.066607,
+        "decode_tok_s": 88.0565464786671,
+        "ttft_ms": 672.535035002511,
+        "response_ms": 2241.250322003907,
+        "max_gap_ms": 109.16554799769074
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -12,
+          -12,
+          -12
+        ],
+        "accepted": [
+          -7,
+          -7,
+          -7
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -74.70978300000002,
+          -78.96620600000006,
+          -59.82376599999998
+        ],
+        "decode_tok_s": [
+          56.12631941868774,
+          56.01980702197961,
+          54.281982146400985
+        ],
+        "ttft_ms": [
+          -31.863392992818262,
+          -40.05291999055771,
+          -8.163915008481126
+        ],
+        "response_ms": [
+          -2786.731050997332,
+          -2732.177778991172,
+          -2800.6719000040903
+        ],
+        "max_gap_ms": [
+          -1171.9931949992315,
+          -1159.4566049971036,
+          -1163.2990839934791
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -9.022556390977442,
+          -9.022556390977442,
+          -9.022556390977442
+        ],
+        "accepted": [
+          -5.511811023622048,
+          -5.511811023622048,
+          -5.511811023622048
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -11.006538250394948,
+          -11.583813776768393,
+          -8.56775627687989
+        ],
+        "decode_tok_s": [
+          175.77801533718264,
+          172.5991014151041,
+          174.36265269684762
+        ],
+        "ttft_ms": [
+          -4.523490076986592,
+          -5.634770525399868,
+          -1.119546122892634
+        ],
+        "response_ms": [
+          -55.424450574961305,
+          -55.0321889690736,
+          -54.11159629617251
+        ],
+        "max_gap_ms": [
+          -91.47915521051453,
+          -91.49306140952423,
+          -88.03803037587348
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "json-copy/0": {
+      "mtp": {
+        "prompt_tokens": 174,
+        "output_tokens": 85,
+        "drafted": 94,
+        "accepted": 72,
+        "cached_tokens": 0,
+        "prefill_ms": 698.368544,
+        "decode_tok_s": 46.035635731762746,
+        "ttft_ms": 726.1847089976072,
+        "response_ms": 2574.58197199594,
+        "max_gap_ms": 664.6257800020976
+      },
+      "dflash": {
+        "prompt_tokens": 174,
+        "output_tokens": 85,
+        "drafted": 81,
+        "accepted": 72,
+        "cached_tokens": 0,
+        "prefill_ms": 619.004454,
+        "decode_tok_s": 62.86534849040948,
+        "ttft_ms": 692.1419939972111,
+        "response_ms": 2082.238693998079,
+        "max_gap_ms": 143.02376500563696
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -13,
+          -13,
+          -13
+        ],
+        "accepted": [
+          0,
+          0,
+          0
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -76.01749099999995,
+          -79.36409000000003,
+          -151.24822100000006
+        ],
+        "decode_tok_s": [
+          18.388500318504995,
+          15.147946588806654,
+          20.150294017063878
+        ],
+        "ttft_ms": [
+          -31.048853001266252,
+          -34.04271500039613,
+          -104.82864300865913
+        ],
+        "response_ms": [
+          -558.0008799952338,
+          -492.34327799786115,
+          -717.1528240069165
+        ],
+        "max_gap_ms": [
+          -536.8688130038208,
+          -483.0465379927773,
+          -619.2067029915052
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -13.829787234042556,
+          -13.829787234042556,
+          -13.829787234042556
+        ],
+        "accepted": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -11.076040035911383,
+          -11.364213162498915,
+          -19.343792520274317
+        ],
+        "decode_tok_s": [
+          39.89163731412353,
+          32.904827636289546,
+          47.17375235852212
+        ],
+        "ttft_ms": [
+          -4.35195890971406,
+          -4.687886508569861,
+          -12.88234282071773
+        ],
+        "response_ms": [
+          -21.80443952097939,
+          -19.12323178493217,
+          -25.469387483046248
+        ],
+        "max_gap_ms": [
+          -80.77760886767385,
+          -73.55499909700627,
+          -81.23615218616882
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "cache-seed/0": {
+      "mtp": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 117,
+        "accepted": 66,
+        "cached_tokens": 1580,
+        "prefill_ms": 482.443886,
+        "decode_tok_s": 30.23588504934072,
+        "ttft_ms": 562.020922996453,
+        "response_ms": 4829.067260005104,
+        "max_gap_ms": 157.8980960039189
+      },
+      "dflash": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 90,
+        "accepted": 64,
+        "cached_tokens": 0,
+        "prefill_ms": 1638.644354,
+        "decode_tok_s": 34.37157644161774,
+        "ttft_ms": 1746.0607059983886,
+        "response_ms": 5436.417961995176,
+        "max_gap_ms": 142.7643499991973
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -33,
+          -12,
+          -26
+        ],
+        "accepted": [
+          -5,
+          9,
+          -2
+        ],
+        "cached_tokens": [
+          -1568,
+          -1588,
+          0
+        ],
+        "prefill_ms": [
+          1201.564332,
+          1171.960437,
+          -342.07409
+        ],
+        "decode_tok_s": [
+          3.490631548037843,
+          5.094508231016178,
+          4.135691392277021
+        ],
+        "ttft_ms": [
+          1241.5264640003443,
+          1199.733963003382,
+          -323.09309099946404
+        ],
+        "response_ms": [
+          829.0981659956742,
+          454.70982500410173,
+          -792.5964150053915
+        ],
+        "max_gap_ms": [
+          -15.133746004721615,
+          -27.169324006536044,
+          42.119944002479315
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -27.73109243697479,
+          -11.764705882352944,
+          -22.22222222222222
+        ],
+        "accepted": [
+          -7.246376811594201,
+          17.647058823529417,
+          -3.0303030303030276
+        ],
+        "cached_tokens": [
+          -100.0,
+          -100.0,
+          0.0
+        ],
+        "prefill_ms": [
+          249.0578421383497,
+          251.12509651795008,
+          -68.45907254593845
+        ],
+        "decode_tok_s": [
+          10.988318601927682,
+          18.5927850254878,
+          13.678089414376826
+        ],
+        "ttft_ms": [
+          220.90395805570031,
+          219.60007969339838,
+          -55.63015479882958
+        ],
+        "response_ms": [
+          17.995238071287645,
+          8.689080779179847,
+          -16.413033249086574
+        ],
+        "max_gap_ms": [
+          -9.584501895669472,
+          -17.059908281857428,
+          29.024700612799627
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "cache-exact/0": {
+      "mtp": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 117,
+        "accepted": 66,
+        "cached_tokens": 1590,
+        "prefill_ms": 0,
+        "decode_tok_s": 30.003370897472433,
+        "ttft_ms": 44.757156996638514,
+        "response_ms": 4313.634624995757,
+        "max_gap_ms": 143.71996699628653
+      },
+      "dflash": {
+        "prompt_tokens": 1590,
+        "output_tokens": 128,
+        "drafted": 90,
+        "accepted": 64,
+        "cached_tokens": 1588,
+        "prefill_ms": 184.958883,
+        "decode_tok_s": 34.021163099996585,
+        "ttft_ms": 286.7405709985178,
+        "response_ms": 4015.390637003293,
+        "max_gap_ms": 166.49217600206612
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -33,
+          -12,
+          -26
+        ],
+        "accepted": [
+          -5,
+          9,
+          -2
+        ],
+        "cached_tokens": [
+          -9,
+          -10,
+          0
+        ],
+        "prefill_ms": [
+          206.461527,
+          184.958883,
+          0
+        ],
+        "decode_tok_s": [
+          3.532713449871018,
+          5.744213856672314,
+          4.017792202524152
+        ],
+        "ttft_ms": [
+          267.869277005957,
+          241.98341400187928,
+          27.172488000360318
+        ],
+        "response_ms": [
+          -86.5202379936818,
+          -513.6669219937176,
+          -477.10180599824525
+        ],
+        "max_gap_ms": [
+          47.87556399969617,
+          28.69563000422204,
+          -7.833843999833334
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -27.73109243697479,
+          -11.764705882352944,
+          -22.22222222222222
+        ],
+        "accepted": [
+          -7.246376811594201,
+          17.647058823529417,
+          -3.0303030303030276
+        ],
+        "cached_tokens": [
+          -0.5707038681039944,
+          -0.6257822277847325,
+          0.0
+        ],
+        "prefill_ms": [
+          null,
+          null,
+          null
+        ],
+        "decode_tok_s": [
+          11.199359245179963,
+          20.927559012067356,
+          13.391136003530256
+        ],
+        "ttft_ms": [
+          614.9648862079632,
+          540.6585901335366,
+          58.43345750716218
+        ],
+        "response_ms": [
+          -2.109266647431618,
+          -10.909804971730352,
+          -11.060320297728376
+        ],
+        "max_gap_ms": [
+          33.3116998286906,
+          20.824636638331274,
+          -5.4025790123836455
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "cache-followup/0": {
+      "mtp": {
+        "prompt_tokens": 1744,
+        "output_tokens": 128,
+        "drafted": 85,
+        "accepted": 45,
+        "cached_tokens": 1718,
+        "prefill_ms": 560.287764,
+        "decode_tok_s": 29.041861189204173,
+        "ttft_ms": 564.4350759976078,
+        "response_ms": 4962.851627999044,
+        "max_gap_ms": 150.96520299994154
+      },
+      "dflash": {
+        "prompt_tokens": 1744,
+        "output_tokens": 128,
+        "drafted": 91,
+        "accepted": 58,
+        "cached_tokens": 1718,
+        "prefill_ms": 397.036965,
+        "decode_tok_s": 31.411406484601866,
+        "ttft_ms": 463.8048479973804,
+        "response_ms": 4603.176037999219,
+        "max_gap_ms": 175.79050600033952
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -32,
+          12,
+          3
+        ],
+        "accepted": [
+          -10,
+          26,
+          10
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -158.78884500000004,
+          -178.28828,
+          -139.17797099999996
+        ],
+        "decode_tok_s": [
+          0.6598624068098466,
+          5.951033907669302,
+          1.2545212024504266
+        ],
+        "ttft_ms": [
+          -95.61156399286119,
+          -120.54108700249344,
+          -76.20109900017269
+        ],
+        "response_ms": [
+          -138.1346569978632,
+          -982.8620980042615,
+          -202.80284799810033
+        ],
+        "max_gap_ms": [
+          52.33315499935998,
+          22.07412200368708,
+          44.71344700141344
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -25.806451612903224,
+          15.189873417721511,
+          3.529411764705892
+        ],
+        "accepted": [
+          -14.70588235294118,
+          78.78787878787878,
+          22.222222222222232
+        ],
+        "cached_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "prefill_ms": [
+          -28.340587677013772,
+          -31.76346950410095,
+          -25.955631157577454
+        ],
+        "decode_tok_s": [
+          2.14578625756352,
+          22.721904324677688,
+          4.319699740582661
+        ],
+        "ttft_ms": [
+          -16.939337765973008,
+          -21.305967119869116,
+          -14.11115922405165
+        ],
+        "response_ms": [
+          -2.9134276550072835,
+          -17.976683044914623,
+          -4.086417713033019
+        ],
+        "max_gap_ms": [
+          42.389662968667416,
+          14.621993389891074,
+          29.1925065075062
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    },
+    "cache-followup-cold/0": {
+      "mtp": {
+        "prompt_tokens": 1744,
+        "output_tokens": 128,
+        "drafted": 104,
+        "accepted": 57,
+        "cached_tokens": 0,
+        "prefill_ms": 1858.098862,
+        "decode_tok_s": 29.38709770816706,
+        "ttft_ms": 1890.8288780003204,
+        "response_ms": 6248.490897000011,
+        "max_gap_ms": 153.10465400398243
+      },
+      "dflash": {
+        "prompt_tokens": 1744,
+        "output_tokens": 128,
+        "drafted": 89,
+        "accepted": 62,
+        "cached_tokens": 0,
+        "prefill_ms": 1780.91273,
+        "decode_tok_s": 33.29710371727297,
+        "ttft_ms": 1871.8395749965566,
+        "response_ms": 5794.915176003997,
+        "max_gap_ms": 192.29833399731433
+      },
+      "per_pair_dflash_minus_mtp": {
+        "prompt_tokens": [
+          0,
+          0,
+          0
+        ],
+        "output_tokens": [
+          0,
+          0,
+          0
+        ],
+        "drafted": [
+          -33,
+          -6,
+          9
+        ],
+        "accepted": [
+          -7,
+          0,
+          23
+        ],
+        "cached_tokens": [
+          0,
+          0,
+          0
+        ],
+        "prefill_ms": [
+          -74.33890199999996,
+          -77.18613200000004,
+          -89.16618700000004
+        ],
+        "decode_tok_s": [
+          2.894661393693454,
+          1.5664246305296707,
+          5.2271493029169065
+        ],
+        "ttft_ms": [
+          -0.4250939964549616,
+          -18.98930300376378,
+          -20.343460004369263
+        ],
+        "response_ms": [
+          -324.3706659995951,
+          -198.1682760088006,
+          -634.7131229995284
+        ],
+        "max_gap_ms": [
+          57.81699399813078,
+          46.694312994077336,
+          33.28546199918492
+        ]
+      },
+      "per_pair_dflash_relative_pct": {
+        "prompt_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "output_tokens": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "drafted": [
+          -27.04918032786885,
+          -5.769230769230771,
+          12.00000000000001
+        ],
+        "accepted": [
+          -10.144927536231885,
+          0.0,
+          56.09756097560976
+        ],
+        "cached_tokens": [
+          null,
+          null,
+          null
+        ],
+        "prefill_ms": [
+          -3.9898069371370637,
+          -4.154037956673595,
+          -4.835164010565562
+        ],
+        "decode_tok_s": [
+          9.521147554150321,
+          5.383915069866951,
+          17.787225383145653
+        ],
+        "ttft_ms": [
+          -0.022439980359512113,
+          -1.0042845878177165,
+          -1.0842322198108323
+        ],
+        "response_ms": [
+          -5.300792843718327,
+          -3.14395324270762,
+          -10.15786264975217
+        ],
+        "max_gap_ms": [
+          44.659513520515446,
+          30.498297584646107,
+          20.932558214266116
+        ]
+      },
+      "matches": [
+        {
+          "rep": 1,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 2,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        },
+        {
+          "rep": 3,
+          "prompt_equal": true,
+          "output_equal": true,
+          "output_tokens_equal": true,
+          "plan": [
+            "serial-c1",
+            "serial-c1"
+          ]
+        }
+      ]
+    }
+  },
+  "cohorts": {},
+  "resources": {
+    "compare-c1-forward/mtp": {
+      "hip_ready_gib": [
+        70.36584091186523
+      ],
+      "hip_post_case_gib": {
+        "prose": [
+          71.28055572509766
+        ],
+        "deep": [
+          72.15069198608398
+        ],
+        "repetition": [
+          72.46721267700195
+        ],
+        "japanese": [
+          72.47004699707031
+        ],
+        "code": [
+          72.47045135498047
+        ],
+        "json": [
+          72.47058868408203
+        ],
+        "tool": [
+          72.47058868408203
+        ],
+        "thinking": [
+          72.47071838378906
+        ],
+        "code-copy": [
+          72.98531341552734
+        ],
+        "json-copy": [
+          72.99190521240234
+        ],
+        "cache": [
+          72.99203491210938
+        ]
+      },
+      "peak_docker_anon_gib": 4.107555389404297,
+      "wsl_available_low_gib": 15.648719787597656
+    },
+    "compare-c1-forward/auto": {
+      "hip_ready_gib": [
+        67.85126876831055
+      ],
+      "hip_post_case_gib": {
+        "prose": [
+          68.92578887939453
+        ],
+        "deep": [
+          69.54249572753906
+        ],
+        "repetition": [
+          69.55940628051758
+        ],
+        "japanese": [
+          69.54751586914062
+        ],
+        "code": [
+          69.56126022338867
+        ],
+        "json": [
+          69.5602798461914
+        ],
+        "tool": [
+          69.56417846679688
+        ],
+        "thinking": [
+          69.56216812133789
+        ],
+        "code-copy": [
+          69.5650863647461
+        ],
+        "json-copy": [
+          69.56606674194336
+        ],
+        "cache": [
+          69.55696868896484
+        ]
+      },
+      "peak_docker_anon_gib": 4.098907470703125,
+      "wsl_available_low_gib": 15.572834014892578
+    },
+    "compare-c1-reverse/mtp": {
+      "hip_ready_gib": [
+        70.3536376953125
+      ],
+      "hip_post_case_gib": {
+        "prose": [
+          70.89994049072266
+        ],
+        "deep": [
+          72.12915802001953
+        ],
+        "repetition": [
+          72.45160293579102
+        ],
+        "japanese": [
+          72.45450210571289
+        ],
+        "code": [
+          72.45601654052734
+        ],
+        "json": [
+          72.4561538696289
+        ],
+        "tool": [
+          72.4561538696289
+        ],
+        "thinking": [
+          72.46287536621094
+        ],
+        "code-copy": [
+          72.97185516357422
+        ],
+        "json-copy": [
+          72.97185516357422
+        ],
+        "cache": [
+          72.97198486328125
+        ]
+      },
+      "peak_docker_anon_gib": 4.102020263671875,
+      "wsl_available_low_gib": 15.551464080810547
+    },
+    "compare-c1-reverse/auto": {
+      "hip_ready_gib": [
+        67.85322570800781
+      ],
+      "hip_post_case_gib": {
+        "prose": [
+          68.47163772583008
+        ],
+        "deep": [
+          69.55725479125977
+        ],
+        "repetition": [
+          69.56795501708984
+        ],
+        "japanese": [
+          69.55606460571289
+        ],
+        "code": [
+          69.56980895996094
+        ],
+        "json": [
+          69.56882858276367
+        ],
+        "tool": [
+          69.57272720336914
+        ],
+        "thinking": [
+          69.55484390258789
+        ],
+        "code-copy": [
+          69.55288314819336
+        ],
+        "json-copy": [
+          69.55386352539062
+        ],
+        "cache": [
+          69.52938079833984
+        ]
+      },
+      "peak_docker_anon_gib": 4.094455718994141,
+      "wsl_available_low_gib": 15.494091033935547
+    }
+  }
+}

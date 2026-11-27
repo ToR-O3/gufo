@@ -1,0 +1,202 @@
+{
+  "order": [
+    "v0171",
+    "v016"
+  ],
+  "warmups_per_fixture_version": 1,
+  "formal_repetitions": 3,
+  "fixtures": [
+    {
+      "case": "text-0",
+      "samples": [
+        {
+          "repeat": 1,
+          "v016_decode_ms": 1552.0274420000003,
+          "v0171_decode_ms": 1508.970427,
+          "decode_latency_pct": -2.7742431502702947,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            44,
+            33,
+            31
+          ],
+          "v0171_draft_work": [
+            44,
+            33,
+            31
+          ]
+        },
+        {
+          "repeat": 2,
+          "v016_decode_ms": 1526.1052479999998,
+          "v0171_decode_ms": 1559.494239,
+          "decode_latency_pct": 2.1878563777798066,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            44,
+            33,
+            31
+          ],
+          "v0171_draft_work": [
+            44,
+            33,
+            31
+          ]
+        },
+        {
+          "repeat": 3,
+          "v016_decode_ms": 1606.628193,
+          "v0171_decode_ms": 1634.9028409999999,
+          "decode_latency_pct": 1.759875005504763,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            44,
+            33,
+            31
+          ],
+          "v0171_draft_work": [
+            44,
+            33,
+            31
+          ]
+        }
+      ],
+      "means": {
+        "v016": {
+          "decode_ms_arithmetic": 1561.586961,
+          "decode_ms_sample_sd": 41.10382549716973,
+          "decode_tok_s_arithmetic": 41.00272745199729,
+          "decode_tok_s_sample_sd": 1.0702242740321923
+        },
+        "v0171": {
+          "decode_ms_arithmetic": 1567.789169,
+          "decode_ms_sample_sd": 63.374660722922336,
+          "decode_tok_s_arithmetic": 40.86600930480841,
+          "decode_tok_s_sample_sd": 1.6403352245195233
+        }
+      },
+      "mean_decode_latency_pct": 0.3971733982735204,
+      "mean_decode_rate_pct": -0.3334367142989181
+    },
+    {
+      "case": "text-1",
+      "samples": [
+        {
+          "repeat": 1,
+          "v016_decode_ms": 1788.166757,
+          "v0171_decode_ms": 1647.384358,
+          "decode_latency_pct": -7.873001690076709,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            54,
+            32,
+            31
+          ],
+          "v0171_draft_work": [
+            54,
+            32,
+            31
+          ]
+        },
+        {
+          "repeat": 2,
+          "v016_decode_ms": 1701.1316409999997,
+          "v0171_decode_ms": 1609.282698,
+          "decode_latency_pct": -5.399284851700658,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            54,
+            32,
+            31
+          ],
+          "v0171_draft_work": [
+            54,
+            32,
+            31
+          ]
+        },
+        {
+          "repeat": 3,
+          "v016_decode_ms": 1752.1115459999999,
+          "v0171_decode_ms": 1634.9263909999997,
+          "decode_latency_pct": -6.688224574943824,
+          "flag_5pct_and_3ms": false,
+          "same_output_token_cache_work": true,
+          "same_draft_work": true,
+          "v016_draft_work": [
+            54,
+            32,
+            31
+          ],
+          "v0171_draft_work": [
+            54,
+            32,
+            31
+          ]
+        }
+      ],
+      "means": {
+        "v016": {
+          "decode_ms_arithmetic": 1747.136648,
+          "decode_ms_sample_sd": 43.73031056219676,
+          "decode_tok_s_arithmetic": 36.64673836989113,
+          "decode_tok_s_sample_sd": 0.9214036981813337
+        },
+        "v0171": {
+          "decode_ms_arithmetic": 1630.531149,
+          "decode_ms_sample_sd": 19.42737084290673,
+          "decode_tok_s_arithmetic": 39.25474294435211,
+          "decode_tok_s_sample_sd": 0.46953459440947937
+        }
+      },
+      "mean_decode_latency_pct": -6.674091527613591,
+      "mean_decode_rate_pct": 7.116607617674675
+    }
+  ],
+  "formal_benchmark_averages_unchanged": true,
+  "limits": [
+    "Only two recurring/adjacent short-input decode histories tested; no extrapolation to all prompts.",
+    "One version block each, three warmed repeats; no randomized order or thermal sensor data.",
+    "Warmup and all individual samples retained; no exclusions or changed thresholds."
+  ],
+  "warmups": {
+    "v016": {
+      "text-0": {
+        "decode_ms": 1893.110548,
+        "prefill_ms": 681.755407,
+        "draft_tokens": 44,
+        "draft_accepted": 33
+      },
+      "text-1": {
+        "decode_ms": 2138.712341,
+        "prefill_ms": 192.227781,
+        "draft_tokens": 54,
+        "draft_accepted": 32
+      }
+    },
+    "v0171": {
+      "text-0": {
+        "decode_ms": 1658.4921639999998,
+        "prefill_ms": 487.690836,
+        "draft_tokens": 44,
+        "draft_accepted": 33
+      },
+      "text-1": {
+        "decode_ms": 1888.979715,
+        "prefill_ms": 193.668952,
+        "draft_tokens": 54,
+        "draft_accepted": 32
+      }
+    }
+  }
+}

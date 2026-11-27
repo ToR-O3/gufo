@@ -1,0 +1,1205 @@
+{
+  "references": {
+    "current": "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0",
+    "minimal": "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382"
+  },
+  "results": [
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "current-ar-control",
+      "spec": {
+        "users": 1,
+        "sessions": 1,
+        "cache": false,
+        "prepare": false,
+        "binary": "current",
+        "name": "current-ar-control",
+        "ar": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 3
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "current-cached-c6",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-cached-c6"
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 6,
+          "responses": 6,
+          "hashes": {
+            "3ed1065e5283b12884397ac8f4ecc147502f2de4148b4ef32bad378781b619ed": 5,
+            "0a64d547c63bedc54fe355e4686cc9904577da72c935d3d76cc6c33dca8046d6": 1
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 6,
+      "responses": 18
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "current-no-cache-c6",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": false,
+        "prepare": false,
+        "binary": "current",
+        "name": "current-no-cache-c6"
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "current-cached-serial",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-cached-serial",
+        "serial": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "minimal-ar-control",
+      "spec": {
+        "users": 1,
+        "sessions": 1,
+        "cache": false,
+        "prepare": false,
+        "binary": "minimal",
+        "name": "minimal-ar-control",
+        "ar": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 1,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 1
+          },
+          "execution_plans": [
+            "serial-c1"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 3
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "minimal-cached-c6",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "minimal",
+        "name": "minimal-cached-c6"
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "minimal-no-cache-c6",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": false,
+        "prepare": false,
+        "binary": "minimal",
+        "name": "minimal-no-cache-c6"
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 1,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 5,
+            "c2341dab0afd0aca9671c0a9b7a7512d393625f7922338d37333bcbe30df4a5a": 1
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 1,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 5,
+            "c2341dab0afd0aca9671c0a9b7a7512d393625f7922338d37333bcbe30df4a5a": 1
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            0
+          ]
+        }
+      ],
+      "mismatches": 2,
+      "responses": 18
+    },
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "name": "current-cached-c6-repeat",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-cached-c6-repeat"
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 1,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 5,
+            "06dda2647ca814a4eb3ab2c1d99863e4067cc755c65d98b0481a698ba998b526": 1
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 1,
+      "responses": 18
+    },
+    {
+      "phase": "phase2",
+      "name": "current-cached-logprobs",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-cached-logprobs",
+        "extra_payload": {
+          "logprobs": true,
+          "top_logprobs": 5
+        },
+        "repetitions": 4,
+        "serial_after": 3
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 6,
+          "responses": 6,
+          "hashes": {
+            "3ed1065e5283b12884397ac8f4ecc147502f2de4148b4ef32bad378781b619ed": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 4,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 6,
+      "responses": 24
+    },
+    {
+      "phase": "phase2",
+      "name": "current-serial-logprobs",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-serial-logprobs",
+        "serial": true,
+        "extra_payload": {
+          "logprobs": true,
+          "top_logprobs": 5
+        }
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "serial-fallback"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "phase2",
+      "name": "current-cached-draft1",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-cached-draft1",
+        "extra_args": [
+          "--draft-tokens",
+          "1"
+        ]
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "phase2",
+      "name": "current-serial-preparation",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "name": "current-serial-preparation",
+        "prepare_serial": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "phase2",
+      "name": "minimal-cached-extended",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "minimal",
+        "name": "minimal-cached-extended",
+        "repetitions": 6
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 1,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 5,
+            "b64419a7e4d6fc2a75aadb0bc198334d89ba1d4eff6b71fe0ee8244fe6aaf53e": 1
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 4,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 5,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 6,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9da7f07832f3d8882232c49ea21ad3c66a448a1139d3cda3dee179f24f205382": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 1,
+      "responses": 36
+    },
+    {
+      "phase": "phase3",
+      "name": "current-cached-draft2",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "extra_payload": {
+          "logprobs": true,
+          "top_logprobs": 5
+        },
+        "name": "current-cached-draft2",
+        "extra_args": [
+          "--draft-tokens",
+          "2"
+        ]
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "phase3",
+      "name": "current-prepare-once",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "extra_payload": {
+          "logprobs": true,
+          "top_logprobs": 5
+        },
+        "name": "current-prepare-once",
+        "prepare_once": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    },
+    {
+      "phase": "phase3",
+      "name": "current-serial-preparation-logprobs",
+      "spec": {
+        "users": 6,
+        "sessions": 6,
+        "cache": true,
+        "prepare": true,
+        "binary": "current",
+        "extra_payload": {
+          "logprobs": true,
+          "top_logprobs": 5
+        },
+        "name": "current-serial-preparation-logprobs",
+        "prepare_serial": true
+      },
+      "rounds": [
+        {
+          "repetition": 1,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 2,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        },
+        {
+          "repetition": 3,
+          "mismatches": 0,
+          "responses": 6,
+          "hashes": {
+            "9feec72df7626c26d53cb97aeb8d4b80922ceb7bf7584dbd8aaba958a75445f0": 6
+          },
+          "execution_plans": [
+            "batched-w6"
+          ],
+          "cached_tokens": [
+            2040
+          ]
+        }
+      ],
+      "mismatches": 0,
+      "responses": 18
+    }
+  ],
+  "memory": [
+    {
+      "phase": "c6-divergence-20261101-144729",
+      "windows_min_available_gib": 13.555931091308594,
+      "wsl_min_available_gib": 15.659660339355469,
+      "wsl_peak_swap_used_gib": 5.999992370605469,
+      "host_samples": 230,
+      "windows_samples": 232
+    },
+    {
+      "phase": "phase2",
+      "windows_min_available_gib": 13.738391876220703,
+      "wsl_min_available_gib": 17.122264862060547,
+      "wsl_peak_swap_used_gib": 5.682773590087891,
+      "host_samples": 158,
+      "windows_samples": 156
+    },
+    {
+      "phase": "phase3",
+      "windows_min_available_gib": 13.86328125,
+      "wsl_min_available_gib": 17.185646057128906,
+      "wsl_peak_swap_used_gib": 5.682346343994141,
+      "host_samples": 84,
+      "windows_samples": 85
+    }
+  ],
+  "limitations": [
+    "A single synthetic 2040-token prose input, 128 generated tokens, greedy sampling, thinking off, 4096-token context; not a model-quality benchmark.",
+    "The minimal build retains IQ4_XS mixed-format and external PLE support. No unmodified-upstream full-model control is claimed.",
+    "The source-level adaptive batch controller is identified, but individual selected widths were not traced; no single kernel is proven faulty.",
+    "All normal configuration and source files remain unchanged. No workaround was adopted from these diagnostics."
+  ],
+  "first_divergence": {
+    "token_index_1based": 106,
+    "round1": {
+      "token": " and",
+      "logprob": -0.847565477618871,
+      "bytes": [
+        32,
+        97,
+        110,
+        100
+      ],
+      "top_logprobs": [
+        {
+          "token": " and",
+          "logprob": -0.847565477618871,
+          "bytes": [
+            32,
+            97,
+            110,
+            100
+          ]
+        },
+        {
+          "token": ":",
+          "logprob": -0.8628280813786366,
+          "bytes": [
+            58
+          ]
+        },
+        {
+          "token": ",",
+          "logprob": -1.9431427176091054,
+          "bytes": [
+            44
+          ]
+        },
+        {
+          "token": "—",
+          "logprob": -5.251677339801488,
+          "bytes": [
+            226,
+            128,
+            148
+          ]
+        },
+        {
+          "token": ".",
+          "logprob": -7.736486261615453,
+          "bytes": [
+            46
+          ]
+        }
+      ]
+    },
+    "round3": {
+      "token": ":",
+      "logprob": -0.8509020739854752,
+      "bytes": [
+        58
+      ],
+      "top_logprobs": [
+        {
+          "token": ":",
+          "logprob": -0.8509020739854752,
+          "bytes": [
+            58
+          ]
+        },
+        {
+          "token": " and",
+          "logprob": -0.8719038897813737,
+          "bytes": [
+            32,
+            97,
+            110,
+            100
+          ]
+        },
+        {
+          "token": ",",
+          "logprob": -1.9082808429063736,
+          "bytes": [
+            44
+          ]
+        },
+        {
+          "token": "—",
+          "logprob": -5.22667836487903,
+          "bytes": [
+            226,
+            128,
+            148
+          ]
+        },
+        {
+          "token": ".",
+          "logprob": -7.662684910899538,
+          "bytes": [
+            46
+          ]
+        }
+      ]
+    },
+    "prior_tokens": [
+      "Key",
+      " elements",
+      " include",
+      " the",
+      " communal",
+      " aspects",
+      " of",
+      " survival"
+    ],
+    "round1_trace": "00007",
+    "round3_trace": "00031"
+  },
+  "final_verification": {
+    "unix": 1793513569.029479,
+    "normal_restored": true,
+    "same_container": true,
+    "same_image": true,
+    "same_arguments": true,
+    "settings_unchanged": true,
+    "source_clean": true,
+    "source_revision": "fbf0a9f889464dace805e446219bb8e34969dca9",
+    "ready": 200,
+    "smoke_response": "OK",
+    "restart_policy": {
+      "Name": "on-failure",
+      "MaximumRetryCount": 3
+    },
+    "running_containers": [
+      "Gufo"
+    ],
+    "image": "gufo:v0.27.0-iq-performance-fbf0a9f8-rocm101",
+    "configuration": "Huihui UD-IQ4_XS + BF16 PLE; ROCm 10.1; AMD_SERIALIZE_COPY=2; sessions=2; context=131072; thinking auto; MTP draft7/min1",
+    "normal_settings_sha256": "e160fc4ca342c684539d4ef3ff1b1a82478a48c382d3a8f3f0e3c6687bdab1af"
+  }
+}

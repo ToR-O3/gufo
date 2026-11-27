@@ -1,0 +1,75 @@
+{
+  "revision": "2a6beddcca7160406694a52517d5fdbf9abbae93",
+  "clean_worktree": true,
+  "private_path_or_diagnostic_hits": [],
+  "changed_files": [
+    "src/models/qwen38_flash_next/cpu_ops.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/batch.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/device_model.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/mmvq.hip.cpp",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h",
+    "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp",
+    "src/models/qwen38_flash_next/weights.cpp",
+    "tests/models/qwen38_flash_next/CMakeLists.txt",
+    "tests/models/qwen38_flash_next/fixtures/iq_expert.bin",
+    "tests/models/qwen38_flash_next/fixtures/iq_expert.json",
+    "tests/models/qwen38_flash_next/iq_expert_ops_test.cpp",
+    "tests/models/qwen38_flash_next/iq_rows_test.cpp"
+  ],
+  "files": [
+    {
+      "path": "src/models/qwen38_flash_next/cpu_ops.cpp",
+      "sha256": "980e2cde6d554371ec2fad907345b5397952c9ae038423712f7513a06330b527"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/batch.cpp",
+      "sha256": "726bd629e31460d1c0151ccce5f020073afa145633e3bad4cb5676f5c05c8b60"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/device_model.cpp",
+      "sha256": "f2271b6f3ad7a18a09de63017ef61f4a1f0d24137cc002021688a98627b47aef"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/executor.cpp",
+      "sha256": "0a3c0367682fd7592cf204c42b432585614760fe3407a8003603edce6a55cf2b"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/mmq/mmvq.hip.cpp",
+      "sha256": "e09894c35c3ef39272adbbb316fcbd3a690829b45e0e06616ed8b90b4b14ce39"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.h",
+      "sha256": "544dd218b10667d5791cd520b48465a2a22fe03cb6288a1eac4c525aacef8fe2"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/kernels/rocm/mmq/qfn_mmq.hip.cpp",
+      "sha256": "44738546325c69dfdb47aa228003f98d79456320372d9d250a2e7f051567d9fe"
+    },
+    {
+      "path": "src/models/qwen38_flash_next/weights.cpp",
+      "sha256": "94334022ea5893483872a538c9b6db20bece1bbe297e16e896686adfba213a2a"
+    },
+    {
+      "path": "tests/models/qwen38_flash_next/CMakeLists.txt",
+      "sha256": "792f5db4666a22e5c2ee60978aca62d78c2edfbc01d7a88f5a262a55a0ceb9ad"
+    },
+    {
+      "path": "tests/models/qwen38_flash_next/fixtures/iq_expert.bin",
+      "sha256": "3fe62c8e5b0af694e4df2b964ff94e89cc86211b8d52355ee683603a0ca7c52c"
+    },
+    {
+      "path": "tests/models/qwen38_flash_next/fixtures/iq_expert.json",
+      "sha256": "269ce64b971a368d476d62ae34ca4037941f21a9279e8fbc53acb43abc22ec51"
+    },
+    {
+      "path": "tests/models/qwen38_flash_next/iq_expert_ops_test.cpp",
+      "sha256": "b63e5ba8741aadfcdcdc76df1d34de5b26035cc83c54c2ea8a562a365153781b"
+    },
+    {
+      "path": "tests/models/qwen38_flash_next/iq_rows_test.cpp",
+      "sha256": "f98d7e5a3318b5869d54f57c655a24961146382b54996e37dac9d87a07b5c991"
+    }
+  ],
+  "format_check": "PASS: Checked 695 C++ files"
+}

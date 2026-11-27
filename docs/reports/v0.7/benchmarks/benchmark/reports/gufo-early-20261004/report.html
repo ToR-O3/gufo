@@ -1,0 +1,1849 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo SC117 検証結果</title><style>:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#1b2838;font:15px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}main{max-width:1320px;margin:0 auto;padding:32px 24px 80px}header{background:#152c43;color:#fff;padding:32px;border-radius:16px}header a{color:#b8dbff}h1{font-size:30px;margin:8px 0 12px}h2{font-size:21px;margin:0 0 14px}.eyebrow{letter-spacing:.12em;font-weight:700;color:#8cdac5}section{margin-top:24px;background:white;border:1px solid #dbe2ea;border-radius:12px;padding:24px}.scroll{overflow:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid #e4e9ef}th{background:#edf2f7;white-space:nowrap}tr:last-child td{border-bottom:0}a{color:#075daa;text-decoration:underline;text-underline-offset:2px}code{overflow-wrap:anywhere;font-size:11px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6fa;padding:14px;font-size:12px}.badge{display:inline-block;background:#edf2f7;border:1px solid #d4dce7;padding:2px 8px;border-radius:5px;white-space:nowrap}.notice{border-left:4px solid #c88923;background:#fff8e8;padding:12px 16px}.pending{color:#76500c;background:#fff8e8;padding:12px}.muted{opacity:.8;font-size:13px}details{margin-top:12px}summary{cursor:pointer;font-weight:600}@media(max-width:700px){main{padding:14px}header,section{padding:18px}h1{font-size:25px}}</style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><main><header><p class="eyebrow">SC117 · IQ3_S · Strix Halo</p><h1>Gufo 対応検証 — 途中結果</h1><p>AR のロード・長文検索、短い MTP 継続・rollback、既存 Huihui の通常生成を確認。数値差の局所原因を実証しました。固定ソース・公式ビルド・独立イメージを用意しました。追加変換の品質比較、正式 AR / MTP 性能と256K MTPの確認を継続中です。</p><p class="muted">更新 UTC 2026-10-04T13:32:48.363510+00:00 · <span title="参照先はローカル保管">集計データ JSON</span></p></header><section><h2>明示した成果物の選択</h2><details><summary>選択ファイル・SHA・7入力パス</summary><pre>{
+  &quot;explicit&quot;: false,
+  &quot;file&quot;: null,
+  &quot;sha256&quot;: null,
+  &quot;paths&quot;: {
+    &quot;source_manifest&quot;: &quot;source/manifest.json&quot;,
+    &quot;release_build&quot;: &quot;build/final-release-build.json&quot;,
+    &quot;image_manifest&quot;: &quot;runtime/final-image.json&quot;,
+    &quot;image_validation&quot;: &quot;runtime/final-image-validation.json&quot;,
+    &quot;ar_run&quot;: &quot;runs/ar-formal-1&quot;,
+    &quot;mtp_run&quot;: &quot;runs/mtp-formal-1&quot;,
+    &quot;quality_review&quot;: null
+  }
+}</pre></details></section><section><h2>最終検証の承認と証拠確認</h2><p>complete=true は、明示的な --review-state に complete=true があり、下記の必要な証拠を全て確認できた場合だけ設定します。品質の任意閾値やメモリ14 GB達成を自動の合否基準にはしません。</p><div class="scroll"><table><thead><tr><th>項目</th><th>状態</th></tr></thead><tbody><tr><td>必要な証拠と明示レビュー</td><td>要レビュー</td></tr><tr><td>主たるメモリ表示</td><td>development_native_ar</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>確認項目</th><th>証拠あり</th></tr></thead><tbody><tr><td>explicit_root_review_complete</td><td>False</td></tr><tr><td>source_image_packaging</td><td>True</td></tr><tr><td>formal_ar</td><td>True</td></tr><tr><td>formal_mtp</td><td>False</td></tr><tr><td>explicit_quality_review_selected</td><td>True</td></tr><tr><td>twelve_cpu_pairs</td><td>True</td></tr><tr><td>twelve_gpu_generations</td><td>True</td></tr><tr><td>final_image_gpu_generation_linked</td><td>True</td></tr></tbody></table></div><details><summary>明示レビューと未完了項目</summary><pre>{
+  &quot;review&quot;: null,
+  &quot;blockers&quot;: [
+    &quot;explicit_root_review_complete&quot;,
+    &quot;formal_mtp&quot;
+  ],
+  &quot;limits&quot;: [
+    &quot;Completion means the specified work and review are finished; it is not a blanket model-quality or numerical-allclose PASS.&quot;,
+    &quot;The 14 GB memory target is reported empirically, without a stop threshold or completion veto.&quot;,
+    &quot;Strict JSON and semantic retrieval are separate. Original failed/invalid diagnostic records remain retained.&quot;
+  ]
+}</pre></details></section><section><h2>AR · 最終実行のメモリと live idle60</h2><p>計測証拠の確認: True。有効phaseのavailable最小 10.800022 GB、観測全sampleの14 GB達成 False。未知はゼロと扱いません。stopping / idle_complete等の終了後phaseは集計対象から除きます。サンプル間の瞬間ピークは保証できません。</p><div class="scroll"><table><thead><tr><th>phase</th><th>available最小 GB</th><th>physical使用最大 GB</th><th>commit最大 GB</th><th>commit余裕最小 GB</th><th>14 GB以上</th></tr></thead><tbody><tr><td>before_load</td><td>12.245082</td><td>56.095666</td><td>87.426159</td><td>75.223364</td><td>False</td></tr><tr><td>decode</td><td>11.025064</td><td>57.315684</td><td>154.387227</td><td>8.262296</td><td>False</td></tr><tr><td>idle60</td><td>10.800022</td><td>57.540727</td><td>154.576257</td><td>8.073265</td><td>False</td></tr><tr><td>loading</td><td>11.735679</td><td>56.605069</td><td>153.708155</td><td>8.941367</td><td>False</td></tr><tr><td>long</td><td>11.389477</td><td>56.951271</td><td>154.324406</td><td>8.325116</td><td>False</td></tr><tr><td>prefill</td><td>10.972246</td><td>57.368502</td><td>154.578162</td><td>8.071361</td><td>False</td></tr><tr><td>quality_generation</td><td>11.335582</td><td>57.005167</td><td>154.429792</td><td>8.219730</td><td>False</td></tr><tr><td>ready</td><td>11.618017</td><td>56.722731</td><td>153.816883</td><td>8.832639</td><td>False</td></tr><tr><td>speed</td><td>11.657507</td><td>56.683241</td><td>153.968734</td><td>8.680788</td><td>False</td></tr></tbody></table></div><p>GPU counterはadapter別、Linux RSSはanon/file別に表示します。Windows physical / commit / GPU / Linuxの値は重複し、足し合わせません。</p><div class="scroll"><table><thead><tr><th>phase</th><th>adapter counter</th><th>dedicated bytes</th><th>shared bytes</th><th>committed bytes</th></tr></thead><tbody><tr><td>before_load</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,579,090,432</td><td>217,788,416</td><td>5,918,068,736</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>832,737,280</td><td>862,322,688</td><td>1,976,872,960</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>decode</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,650,704,896</td><td>367,333,376</td><td>6,069,702,656</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,909,507,584</td><td>985,542,656</td><td>68,160,479,232</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>idle</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,637,949,952</td><td>360,587,264</td><td>6,055,759,872</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,909,507,584</td><td>985,542,656</td><td>68,160,479,232</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>idle60</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,647,006,208</td><td>215,408,640</td><td>6,065,987,584</td></tr><tr><td>idle60</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>idle60</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,909,507,584</td><td>985,542,656</td><td>68,160,479,232</td></tr><tr><td>idle60</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>loading</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,602,249,216</td><td>218,939,392</td><td>5,942,636,544</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,601,709,568</td><td>1,324,019,712</td><td>67,818,840,064</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,666,441,728</td><td>366,153,728</td><td>6,087,798,784</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,909,507,584</td><td>985,542,656</td><td>68,160,479,232</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>quality_generation</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,640,043,008</td><td>218,587,136</td><td>6,054,133,760</td></tr><tr><td>quality_generation</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>quality_generation</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,909,437,952</td><td>969,158,656</td><td>68,160,409,600</td></tr><tr><td>quality_generation</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>ready</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,597,547,008</td><td>219,181,056</td><td>5,937,221,632</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,601,709,568</td><td>951,701,504</td><td>67,818,840,064</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>speed</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,592,824,320</td><td>219,181,056</td><td>5,932,498,944</td></tr><tr><td>speed</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>speed</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>66,902,847,488</td><td>984,629,248</td><td>68,152,905,728</td></tr><tr><td>speed</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>phase</th><th>RSS bytes</th><th>anon bytes</th><th>file bytes</th><th>cgroup current bytes</th></tr></thead><tbody><tr><td>before_load</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>decode</td><td>524,582,912</td><td>345,415,680</td><td>175,235,072</td><td>927,084,544</td></tr><tr><td>idle60</td><td>525,631,488</td><td>346,464,256</td><td>175,235,072</td><td>928,419,840</td></tr><tr><td>loading</td><td>749,985,792</td><td>590,077,952</td><td>155,975,680</td><td>1,139,699,712</td></tr><tr><td>prefill</td><td>524,582,912</td><td>345,415,680</td><td>175,235,072</td><td>927,633,408</td></tr><tr><td>quality_generation</td><td>515,932,160</td><td>336,764,928</td><td>175,235,072</td><td>918,298,624</td></tr><tr><td>ready</td><td>338,481,152</td><td>188,727,296</td><td>145,821,696</td><td>738,750,464</td></tr></tbody></table></div><p>Live idle60有効: True、telemetry coverage: True。</p><p><span title="参照先はローカル保管">全stage結果</span> · <span title="参照先はローカル保管">live idle60</span> · <span title="参照先はローカル保管">計測coverage</span> · <span title="参照先はローカル保管">phase別raw集計</span> · <span title="参照先はローカル保管">physical CSV</span> · <span title="参照先はローカル保管">GPU CSV</span> · <span title="参照先はローカル保管">Linux CSV</span></p><details><summary>実サンプル間隔・欠測</summary><pre>{
+  &quot;sampling&quot;: {
+    &quot;physical&quot;: {
+      &quot;samples&quot;: 1553,
+      &quot;median_seconds&quot;: 1.0117135047912598,
+      &quot;min_seconds&quot;: 0.999312162399292,
+      &quot;max_seconds&quot;: 1.0195810794830322
+    },
+    &quot;gpu&quot;: {
+      &quot;samples&quot;: 1553,
+      &quot;median_seconds&quot;: 1.0117359161376953,
+      &quot;min_seconds&quot;: 0.9994750022888184,
+      &quot;max_seconds&quot;: 1.0312261581420898
+    },
+    &quot;linux&quot;: {
+      &quot;samples&quot;: 1569,
+      &quot;median_seconds&quot;: 1.000978946685791,
+      &quot;min_seconds&quot;: 0.9966440200805664,
+      &quot;max_seconds&quot;: 1.0119829177856445
+    }
+  },
+  &quot;sampling_by_phase&quot;: {
+    &quot;physical&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 1553,
+        &quot;median_seconds&quot;: 1.0117135047912598,
+        &quot;min_seconds&quot;: 0.999312162399292,
+        &quot;max_seconds&quot;: 1.0195810794830322
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 9,
+        &quot;median_seconds&quot;: 1.0087465047836304,
+        &quot;min_seconds&quot;: 1.0049471855163574,
+        &quot;max_seconds&quot;: 1.0129969120025635
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 279,
+        &quot;median_seconds&quot;: 1.0123530626296997,
+        &quot;min_seconds&quot;: 0.999398946762085,
+        &quot;max_seconds&quot;: 480.9133229255676
+      },
+      &quot;idle60&quot;: {
+        &quot;samples&quot;: 59,
+        &quot;median_seconds&quot;: 1.006289005279541,
+        &quot;min_seconds&quot;: 0.9998259544372559,
+        &quot;max_seconds&quot;: 1.0158908367156982
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 37,
+        &quot;median_seconds&quot;: 1.0108120441436768,
+        &quot;min_seconds&quot;: 0.999312162399292,
+        &quot;max_seconds&quot;: 1.0172040462493896
+      },
+      &quot;long&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 1114,
+        &quot;median_seconds&quot;: 1.0120751857757568,
+        &quot;min_seconds&quot;: 0.9995601177215576,
+        &quot;max_seconds&quot;: 50.48127508163452
+      },
+      &quot;quality_generation&quot;: {
+        &quot;samples&quot;: 41,
+        &quot;median_seconds&quot;: 1.0112979412078857,
+        &quot;min_seconds&quot;: 1.0007250308990479,
+        &quot;max_seconds&quot;: 1.0169918537139893
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0094890594482422,
+        &quot;min_seconds&quot;: 1.0004408359527588,
+        &quot;max_seconds&quot;: 1.0148921012878418
+      },
+      &quot;speed&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      },
+      &quot;stopping&quot;: {
+        &quot;samples&quot;: 2,
+        &quot;median_seconds&quot;: 1.0133941173553467,
+        &quot;min_seconds&quot;: 1.0133941173553467,
+        &quot;max_seconds&quot;: 1.0133941173553467
+      }
+    },
+    &quot;gpu&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 1553,
+        &quot;median_seconds&quot;: 1.0117359161376953,
+        &quot;min_seconds&quot;: 0.9994750022888184,
+        &quot;max_seconds&quot;: 1.0312261581420898
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 9,
+        &quot;median_seconds&quot;: 1.0081136226654053,
+        &quot;min_seconds&quot;: 1.0045180320739746,
+        &quot;max_seconds&quot;: 1.0122051239013672
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 276,
+        &quot;median_seconds&quot;: 1.0120110511779785,
+        &quot;min_seconds&quot;: 1.0000650882720947,
+        &quot;max_seconds&quot;: 481.1156508922577
+      },
+      &quot;idle&quot;: {
+        &quot;samples&quot;: 2,
+        &quot;median_seconds&quot;: 988.3030920028687,
+        &quot;min_seconds&quot;: 988.3030920028687,
+        &quot;max_seconds&quot;: 988.3030920028687
+      },
+      &quot;idle60&quot;: {
+        &quot;samples&quot;: 59,
+        &quot;median_seconds&quot;: 1.0077900886535645,
+        &quot;min_seconds&quot;: 0.9994750022888184,
+        &quot;max_seconds&quot;: 1.0158748626708984
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 37,
+        &quot;median_seconds&quot;: 1.0111476182937622,
+        &quot;min_seconds&quot;: 1.0000500679016113,
+        &quot;max_seconds&quot;: 1.0161340236663818
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 1116,
+        &quot;median_seconds&quot;: 1.0123679637908936,
+        &quot;min_seconds&quot;: 0.9997498989105225,
+        &quot;max_seconds&quot;: 49.49805498123169
+      },
+      &quot;quality_generation&quot;: {
+        &quot;samples&quot;: 41,
+        &quot;median_seconds&quot;: 1.0112155675888062,
+        &quot;min_seconds&quot;: 0.9996509552001953,
+        &quot;max_seconds&quot;: 1.0174169540405273
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0091831684112549,
+        &quot;min_seconds&quot;: 1.0004820823669434,
+        &quot;max_seconds&quot;: 1.0151548385620117
+      },
+      &quot;speed&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      },
+      &quot;stopping&quot;: {
+        &quot;samples&quot;: 2,
+        &quot;median_seconds&quot;: 1.0004308223724365,
+        &quot;min_seconds&quot;: 1.0004308223724365,
+        &quot;max_seconds&quot;: 1.0004308223724365
+      }
+    },
+    &quot;linux&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 1569,
+        &quot;median_seconds&quot;: 1.000978946685791,
+        &quot;min_seconds&quot;: 0.9966440200805664,
+        &quot;max_seconds&quot;: 1.0119829177856445
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0006639957427979,
+        &quot;min_seconds&quot;: 0.9984581470489502,
+        &quot;max_seconds&quot;: 1.0007970333099365
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 282,
+        &quot;median_seconds&quot;: 1.0006258487701416,
+        &quot;min_seconds&quot;: 0.9979159832000732,
+        &quot;max_seconds&quot;: 480.5041079521179
+      },
+      &quot;idle60&quot;: {
+        &quot;samples&quot;: 60,
+        &quot;median_seconds&quot;: 1.0007421970367432,
+        &quot;min_seconds&quot;: 0.9966440200805664,
+        &quot;max_seconds&quot;: 1.0008978843688965
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 37,
+        &quot;median_seconds&quot;: 1.0006896257400513,
+        &quot;min_seconds&quot;: 0.9986410140991211,
+        &quot;max_seconds&quot;: 1.0024139881134033
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 1126,
+        &quot;median_seconds&quot;: 1.0011570453643799,
+        &quot;min_seconds&quot;: 0.9969210624694824,
+        &quot;max_seconds&quot;: 50.04265284538269
+      },
+      &quot;quality_generation&quot;: {
+        &quot;samples&quot;: 41,
+        &quot;median_seconds&quot;: 1.0008699893951416,
+        &quot;min_seconds&quot;: 0.9987740516662598,
+        &quot;max_seconds&quot;: 1.0029020309448242
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 11,
+        &quot;median_seconds&quot;: 1.0006434917449951,
+        &quot;min_seconds&quot;: 1.000507116317749,
+        &quot;max_seconds&quot;: 1.0008111000061035
+      },
+      &quot;stopping&quot;: {
+        &quot;samples&quot;: 2,
+        &quot;median_seconds&quot;: 1.0009150505065918,
+        &quot;min_seconds&quot;: 1.0009150505065918,
+        &quot;max_seconds&quot;: 1.0009150505065918
+      }
+    }
+  },
+  &quot;unavailable_samples&quot;: {
+    &quot;physical&quot;: 0,
+    &quot;gpu&quot;: 0,
+    &quot;linux&quot;: 12
+  },
+  &quot;limits&quot;: [
+    &quot;Peaks are sampled; instantaneous peaks between samples may be missed.&quot;,
+    &quot;GPU adapter/process, physical and commit counters overlap and must not be added.&quot;,
+    &quot;Multiple adapters remain separate because adapter attribution is not inferred from a LUID.&quot;
+  ]
+}</pre></details><details><summary>最終実行の確認項目</summary><pre>{
+  &quot;coordinator_completed&quot;: true,
+  &quot;runtime_identity&quot;: true,
+  &quot;telemetry_coverage&quot;: true,
+  &quot;live_idle60&quot;: true,
+  &quot;memory_samples_present&quot;: true,
+  &quot;smoke&quot;: true,
+  &quot;speed&quot;: true,
+  &quot;continuation&quot;: true,
+  &quot;long&quot;: true
+}</pre></details></section><section><h2>MTP · 最終実行のメモリと live idle60</h2><p>計測証拠の確認: False。有効phaseのavailable最小 6.076658 GB、観測全sampleの14 GB達成 False。未知はゼロと扱いません。stopping / idle_complete等の終了後phaseは集計対象から除きます。サンプル間の瞬間ピークは保証できません。</p><div class="scroll"><table><thead><tr><th>phase</th><th>available最小 GB</th><th>physical使用最大 GB</th><th>commit最大 GB</th><th>commit余裕最小 GB</th><th>14 GB以上</th></tr></thead><tbody><tr><td>before_load</td><td>11.417678</td><td>56.923070</td><td>87.613309</td><td>75.036213</td><td>False</td></tr><tr><td>continuation</td><td>9.149399</td><td>59.191349</td><td>166.202008</td><td>0.779043</td><td>False</td></tr><tr><td>decode</td><td>7.705440</td><td>60.635308</td><td>167.872188</td><td>0.395219</td><td>False</td></tr><tr><td>idle</td><td>8.201425</td><td>60.139323</td><td>164.791747</td><td>4.355809</td><td>False</td></tr><tr><td>loading</td><td>9.074450</td><td>59.266298</td><td>157.484425</td><td>5.165097</td><td>False</td></tr><tr><td>prefill</td><td>6.076658</td><td>62.264091</td><td>167.658602</td><td>0.631452</td><td>False</td></tr><tr><td>ready</td><td>9.121788</td><td>59.218960</td><td>157.592404</td><td>5.057118</td><td>False</td></tr></tbody></table></div><p>GPU counterはadapter別、Linux RSSはanon/file別に表示します。Windows physical / commit / GPU / Linuxの値は重複し、足し合わせません。</p><div class="scroll"><table><thead><tr><th>phase</th><th>adapter counter</th><th>dedicated bytes</th><th>shared bytes</th><th>committed bytes</th></tr></thead><tbody><tr><td>before_load</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,620,070,912</td><td>217,444,352</td><td>6,035,390,464</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>832,737,280</td><td>862,322,688</td><td>1,976,872,960</td></tr><tr><td>before_load</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>continuation</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,829,491,200</td><td>397,578,240</td><td>6,311,415,808</td></tr><tr><td>continuation</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>continuation</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,457,189,376</td><td>2,992,156,672</td><td>71,731,159,040</td></tr><tr><td>continuation</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>decode</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,952,834,048</td><td>397,479,936</td><td>6,415,462,400</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>200,790,016</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,457,189,376</td><td>2,999,828,480</td><td>71,731,159,040</td></tr><tr><td>decode</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>idle</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,891,336,704</td><td>386,052,096</td><td>6,362,333,184</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,457,189,376</td><td>2,997,923,840</td><td>71,729,397,760</td></tr><tr><td>idle</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,516,305,408</td><td>4,113,637,376</td></tr><tr><td>loading</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,649,779,200</td><td>221,282,304</td><td>6,068,162,560</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,366,995,456</td><td>2,553,864,192</td><td>71,202,672,640</td></tr><tr><td>loading</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,944,945,152</td><td>397,479,936</td><td>6,421,524,480</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,457,189,376</td><td>2,990,395,392</td><td>71,729,397,760</td></tr><tr><td>prefill</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr><tr><td>ready</td><td>luid_0x00000000_0x00019337_phys_0</td><td>4,640,555,008</td><td>218,370,048</td><td>6,056,120,320</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001A869_phys_0</td><td>0</td><td>8,192</td><td>197,591,040</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001A8B4_phys_0</td><td>68,366,995,456</td><td>2,553,864,192</td><td>71,202,672,640</td></tr><tr><td>ready</td><td>luid_0x00000000_0x0001C84B_phys_0</td><td>0</td><td>3,699,122,176</td><td>4,113,637,376</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>phase</th><th>RSS bytes</th><th>anon bytes</th><th>file bytes</th><th>cgroup current bytes</th></tr></thead><tbody><tr><td>before_load</td><td>—</td><td>—</td><td>—</td><td>—</td></tr><tr><td>decode</td><td>567,402,496</td><td>375,635,968</td><td>187,834,368</td><td>409,792,512</td></tr><tr><td>idle</td><td>567,615,488</td><td>375,848,960</td><td>187,834,368</td><td>409,632,768</td></tr><tr><td>loading</td><td>771,698,688</td><td>599,470,080</td><td>169,721,856</td><td>633,692,160</td></tr><tr><td>prefill</td><td>565,805,056</td><td>374,038,528</td><td>188,485,632</td><td>407,289,856</td></tr><tr><td>ready</td><td>369,180,672</td><td>206,385,152</td><td>158,863,360</td><td>238,850,048</td></tr><tr><td>speed</td><td>537,726,976</td><td>346,222,592</td><td>187,572,224</td><td>379,240,448</td></tr></tbody></table></div><p>Live idle60有効: False、telemetry coverage: False。</p><p><span title="参照先はローカル保管">全stage結果</span> · live idle60（未保存） · <span title="参照先はローカル保管">計測coverage</span> · <span title="参照先はローカル保管">phase別raw集計</span> · <span title="参照先はローカル保管">physical CSV</span> · <span title="参照先はローカル保管">GPU CSV</span> · <span title="参照先はローカル保管">Linux CSV</span></p><details><summary>実サンプル間隔・欠測</summary><pre>{
+  &quot;sampling&quot;: {
+    &quot;physical&quot;: {
+      &quot;samples&quot;: 598,
+      &quot;median_seconds&quot;: 1.0117781162261963,
+      &quot;min_seconds&quot;: 0.9996800422668457,
+      &quot;max_seconds&quot;: 1.029088020324707
+    },
+    &quot;gpu&quot;: {
+      &quot;samples&quot;: 598,
+      &quot;median_seconds&quot;: 1.0117449760437012,
+      &quot;min_seconds&quot;: 0.9941320419311523,
+      &quot;max_seconds&quot;: 1.0267081260681152
+    },
+    &quot;linux&quot;: {
+      &quot;samples&quot;: 605,
+      &quot;median_seconds&quot;: 1.0008535385131836,
+      &quot;min_seconds&quot;: 0.9973199367523193,
+      &quot;max_seconds&quot;: 1.0067188739776611
+    }
+  },
+  &quot;sampling_by_phase&quot;: {
+    &quot;physical&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 598,
+        &quot;median_seconds&quot;: 1.0117781162261963,
+        &quot;min_seconds&quot;: 0.9996800422668457,
+        &quot;max_seconds&quot;: 1.029088020324707
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 9,
+        &quot;median_seconds&quot;: 1.0090200901031494,
+        &quot;min_seconds&quot;: 1.0017309188842773,
+        &quot;max_seconds&quot;: 1.0152909755706787
+      },
+      &quot;continuation&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 182,
+        &quot;median_seconds&quot;: 1.0127389430999756,
+        &quot;min_seconds&quot;: 1.0003578662872314,
+        &quot;max_seconds&quot;: 66.67952990531921
+      },
+      &quot;idle&quot;: {
+        &quot;samples&quot;: 4,
+        &quot;median_seconds&quot;: 107.06806516647339,
+        &quot;min_seconds&quot;: 65.70863008499146,
+        &quot;max_seconds&quot;: 179.9397268295288
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 37,
+        &quot;median_seconds&quot;: 1.011850357055664,
+        &quot;min_seconds&quot;: 1.001662015914917,
+        &quot;max_seconds&quot;: 1.0157289505004883
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 355,
+        &quot;median_seconds&quot;: 1.0121769905090332,
+        &quot;min_seconds&quot;: 0.9996800422668457,
+        &quot;max_seconds&quot;: 14.15515398979187
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0119881629943848,
+        &quot;min_seconds&quot;: 0.9997141361236572,
+        &quot;max_seconds&quot;: 1.0138418674468994
+      }
+    },
+    &quot;gpu&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 598,
+        &quot;median_seconds&quot;: 1.0117449760437012,
+        &quot;min_seconds&quot;: 0.9941320419311523,
+        &quot;max_seconds&quot;: 1.0267081260681152
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 9,
+        &quot;median_seconds&quot;: 1.0090200901031494,
+        &quot;min_seconds&quot;: 1.0017309188842773,
+        &quot;max_seconds&quot;: 1.0122458934783936
+      },
+      &quot;continuation&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 182,
+        &quot;median_seconds&quot;: 1.0125579833984375,
+        &quot;min_seconds&quot;: 0.9941320419311523,
+        &quot;max_seconds&quot;: 66.67742419242859
+      },
+      &quot;idle&quot;: {
+        &quot;samples&quot;: 5,
+        &quot;median_seconds&quot;: 105.56259202957153,
+        &quot;min_seconds&quot;: 10.09739899635315,
+        &quot;max_seconds&quot;: 131.44711899757385
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 37,
+        &quot;median_seconds&quot;: 1.0121949911117554,
+        &quot;min_seconds&quot;: 1.000049114227295,
+        &quot;max_seconds&quot;: 1.015753984451294
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 353,
+        &quot;median_seconds&quot;: 1.0121945142745972,
+        &quot;min_seconds&quot;: 0.9990909099578857,
+        &quot;max_seconds&quot;: 14.161909103393555
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0120069980621338,
+        &quot;min_seconds&quot;: 1.0011229515075684,
+        &quot;max_seconds&quot;: 1.0167222023010254
+      },
+      &quot;unmarked&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      }
+    },
+    &quot;linux&quot;: {
+      &quot;all&quot;: {
+        &quot;samples&quot;: 605,
+        &quot;median_seconds&quot;: 1.0008535385131836,
+        &quot;min_seconds&quot;: 0.9973199367523193,
+        &quot;max_seconds&quot;: 1.0067188739776611
+      },
+      &quot;before_load&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0007929801940918,
+        &quot;min_seconds&quot;: 0.9982709884643555,
+        &quot;max_seconds&quot;: 1.0010828971862793
+      },
+      &quot;decode&quot;: {
+        &quot;samples&quot;: 183,
+        &quot;median_seconds&quot;: 1.000840425491333,
+        &quot;min_seconds&quot;: 0.9976840019226074,
+        &quot;max_seconds&quot;: 66.05016112327576
+      },
+      &quot;idle&quot;: {
+        &quot;samples&quot;: 2,
+        &quot;median_seconds&quot;: 149.1290090084076,
+        &quot;min_seconds&quot;: 149.1290090084076,
+        &quot;max_seconds&quot;: 149.1290090084076
+      },
+      &quot;loading&quot;: {
+        &quot;samples&quot;: 38,
+        &quot;median_seconds&quot;: 1.0006558895111084,
+        &quot;min_seconds&quot;: 0.9986240863800049,
+        &quot;max_seconds&quot;: 1.0011448860168457
+      },
+      &quot;prefill&quot;: {
+        &quot;samples&quot;: 361,
+        &quot;median_seconds&quot;: 1.0010333061218262,
+        &quot;min_seconds&quot;: 0.9973199367523193,
+        &quot;max_seconds&quot;: 14.013171911239624
+      },
+      &quot;ready&quot;: {
+        &quot;samples&quot;: 10,
+        &quot;median_seconds&quot;: 1.0007071495056152,
+        &quot;min_seconds&quot;: 1.0003938674926758,
+        &quot;max_seconds&quot;: 1.000971794128418
+      },
+      &quot;speed&quot;: {
+        &quot;samples&quot;: 1,
+        &quot;median_seconds&quot;: null,
+        &quot;min_seconds&quot;: null,
+        &quot;max_seconds&quot;: null
+      }
+    }
+  },
+  &quot;unavailable_samples&quot;: {
+    &quot;physical&quot;: 0,
+    &quot;gpu&quot;: 0,
+    &quot;linux&quot;: 12
+  },
+  &quot;limits&quot;: [
+    &quot;Peaks are sampled; instantaneous peaks between samples may be missed.&quot;,
+    &quot;GPU adapter/process, physical and commit counters overlap and must not be added.&quot;,
+    &quot;Multiple adapters remain separate because adapter attribution is not inferred from a LUID.&quot;
+  ]
+}</pre></details><details><summary>最終実行の確認項目</summary><pre>{
+  &quot;coordinator_completed&quot;: false,
+  &quot;runtime_identity&quot;: true,
+  &quot;telemetry_coverage&quot;: false,
+  &quot;live_idle60&quot;: false,
+  &quot;memory_samples_present&quot;: false,
+  &quot;smoke&quot;: true,
+  &quot;speed&quot;: true,
+  &quot;continuation&quot;: false,
+  &quot;long&quot;: false
+}</pre></details></section><section><h2>最終イメージ · AR / MTP 長文容量</h2><p>各条件の4値検索と厳密JSON書式を分けます。長文は機能容量の試験で、反復した正式速度比較には混ぜません。</p><div class="scroll"><table><thead><tr><th>mode</th><th>context条件</th><th>実入力tokens</th><th>生成tokens</th><th>4値検索</th><th>厳密JSON</th><th>MTP提案</th><th>MTP採用</th><th>証拠</th></tr></thead><tbody><tr><td>ar</td><td>32,768</td><td>32,252</td><td>73</td><td>True</td><td>False</td><td>0</td><td>0</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>ar</td><td>131,072</td><td>130,554</td><td>73</td><td>True</td><td>False</td><td>0</td><td>0</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>ar</td><td>262,144</td><td>261,631</td><td>73</td><td>True</td><td>False</td><td>0</td><td>0</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr></tbody></table></div></section><section><h2>AR / MTP 比較 · speed</h2><p>警告なしの整合性確認: True。出力差・入力差・比較警告を隠さず、review_requiredを上位の未完了状態へ伝播します。</p><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-formal-1/speed/comparison.json">比較JSON</a> · <span title="参照先はローカル保管">比較表（保存済みの場合）</span></p><details><summary>警告と出力数別の比較</summary><pre>{
+  &quot;issues&quot;: [],
+  &quot;cold_summary&quot;: [
+    {
+      &quot;target&quot;: 512,
+      &quot;n&quot;: 3,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;mtp_proposed&quot;: 597,
+      &quot;mtp_accepted&quot;: 408,
+      &quot;acceptance&quot;: 0.6834170854271356,
+      &quot;draft_zero_requests&quot;: 0,
+      &quot;output_matches&quot;: 3,
+      &quot;ar_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 440.9076173216536,
+        &quot;minimum&quot;: 350.4280486531632,
+        &quot;maximum&quot;: 441.24066006433446,
+        &quot;range&quot;: 90.81261141117125
+      },
+      &quot;mtp_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 413.86003432517725,
+        &quot;minimum&quot;: 337.50917320425583,
+        &quot;maximum&quot;: 438.67140087507306,
+        &quot;range&quot;: 101.16222767081723
+      },
+      &quot;ar_pp&quot;: 440.9076173216536,
+      &quot;mtp_pp&quot;: 413.86003432517725,
+      &quot;pp_change_pct&quot;: -6.134523862567887,
+      &quot;ar_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 16.893018261795778,
+        &quot;minimum&quot;: 16.85831552618056,
+        &quot;maximum&quot;: 17.757308890824923,
+        &quot;range&quot;: 0.8989933646443617
+      },
+      &quot;mtp_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 28.50751154889403,
+        &quot;minimum&quot;: 26.238014128081936,
+        &quot;maximum&quot;: 29.012975921902683,
+        &quot;range&quot;: 2.774961793820747
+      },
+      &quot;ar_tg&quot;: 16.893018261795778,
+      &quot;mtp_tg&quot;: 28.50751154889403,
+      &quot;tg_change_pct&quot;: 68.75321571968512,
+      &quot;ar_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 1161.4003849972505,
+        &quot;minimum&quot;: 1160.2622530190274,
+        &quot;maximum&quot;: 1458.9405290025752,
+        &quot;range&quot;: 298.6782759835478
+      },
+      &quot;mtp_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 1265.4764680191875,
+        &quot;minimum&quot;: 1197.4014060106128,
+        &quot;maximum&quot;: 1543.870807014173,
+        &quot;range&quot;: 346.46940100356005
+      },
+      &quot;ar_ttft_ms&quot;: 1161.4003849972505,
+      &quot;mtp_ttft_ms&quot;: 1265.4764680191875,
+      &quot;ttft_ms_change_pct&quot;: 8.961257837208603
+    },
+    {
+      &quot;target&quot;: 4096,
+      &quot;n&quot;: 3,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;mtp_proposed&quot;: 564,
+      &quot;mtp_accepted&quot;: 351,
+      &quot;acceptance&quot;: 0.6223404255319149,
+      &quot;draft_zero_requests&quot;: 0,
+      &quot;output_matches&quot;: 3,
+      &quot;ar_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 562.6548072751564,
+        &quot;minimum&quot;: 556.44960085537,
+        &quot;maximum&quot;: 566.000573423718,
+        &quot;range&quot;: 9.550972568348016
+      },
+      &quot;mtp_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 538.288582250074,
+        &quot;minimum&quot;: 530.9564771081947,
+        &quot;maximum&quot;: 547.2758132112449,
+        &quot;range&quot;: 16.319336103050205
+      },
+      &quot;ar_pp&quot;: 562.6548072751564,
+      &quot;mtp_pp&quot;: 538.288582250074,
+      &quot;pp_change_pct&quot;: -4.330581505751985,
+      &quot;ar_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 17.057911591195023,
+        &quot;minimum&quot;: 16.76505104037241,
+        &quot;maximum&quot;: 17.247144284479965,
+        &quot;range&quot;: 0.4820932441075563
+      },
+      &quot;mtp_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 25.011232957504262,
+        &quot;minimum&quot;: 24.115855302253507,
+        &quot;maximum&quot;: 25.8827384379215,
+        &quot;range&quot;: 1.7668831356679924
+      },
+      &quot;ar_tg&quot;: 17.057911591195023,
+      &quot;mtp_tg&quot;: 25.011232957504262,
+      &quot;tg_change_pct&quot;: 46.625410876291554,
+      &quot;ar_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 7265.488709002966,
+        &quot;minimum&quot;: 7222.715214011259,
+        &quot;maximum&quot;: 7345.791892003035,
+        &quot;range&quot;: 123.0766779917758
+      },
+      &quot;mtp_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 7622.242270997958,
+        &quot;minimum&quot;: 7490.458905987907,
+        &quot;maximum&quot;: 7724.668321985519,
+        &quot;range&quot;: 234.20941599761136
+      },
+      &quot;ar_ttft_ms&quot;: 7265.488709002966,
+      &quot;mtp_ttft_ms&quot;: 7622.242270997958,
+      &quot;ttft_ms_change_pct&quot;: 4.910248660257688
+    },
+    {
+      &quot;target&quot;: 32768,
+      &quot;n&quot;: 3,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;mtp_proposed&quot;: 738,
+      &quot;mtp_accepted&quot;: 435,
+      &quot;acceptance&quot;: 0.5894308943089431,
+      &quot;draft_zero_requests&quot;: 0,
+      &quot;output_matches&quot;: 3,
+      &quot;ar_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 573.9459064136007,
+        &quot;minimum&quot;: 552.7964085956249,
+        &quot;maximum&quot;: 577.2667104039328,
+        &quot;range&quot;: 24.47030180830791
+      },
+      &quot;mtp_pp_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 557.8959463446007,
+        &quot;minimum&quot;: 500.94476204567525,
+        &quot;maximum&quot;: 562.1424967466836,
+        &quot;range&quot;: 61.19773470100836
+      },
+      &quot;ar_pp&quot;: 573.9459064136007,
+      &quot;mtp_pp&quot;: 557.8959463446007,
+      &quot;pp_change_pct&quot;: -2.796423824902061,
+      &quot;ar_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 17.786359367619067,
+        &quot;minimum&quot;: 17.391524742868594,
+        &quot;maximum&quot;: 17.887071652411088,
+        &quot;range&quot;: 0.4955469095424938
+      },
+      &quot;mtp_tg_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 27.120554768338828,
+        &quot;minimum&quot;: 20.640235874216145,
+        &quot;maximum&quot;: 27.87824055078231,
+        &quot;range&quot;: 7.238004676566163
+      },
+      &quot;ar_tg&quot;: 17.786359367619067,
+      &quot;mtp_tg&quot;: 27.120554768338828,
+      &quot;tg_change_pct&quot;: 52.479516509225135,
+      &quot;ar_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 57120.008602010785,
+        &quot;minimum&quot;: 56792.571588011924,
+        &quot;maximum&quot;: 59304.28192199906,
+        &quot;range&quot;: 2511.710333987139
+      },
+      &quot;mtp_ttft_ms_distribution&quot;: {
+        &quot;n&quot;: 3,
+        &quot;median&quot;: 58788.592310011154,
+        &quot;minimum&quot;: 58346.94368598866,
+        &quot;maximum&quot;: 65472.017259016866,
+        &quot;range&quot;: 7125.073573028203
+      },
+      &quot;ar_ttft_ms&quot;: 57120.008602010785,
+      &quot;mtp_ttft_ms&quot;: 58788.592310011154,
+      &quot;ttft_ms_change_pct&quot;: 2.921189525068857
+    }
+  ],
+  &quot;pairs&quot;: [
+    {
+      &quot;name&quot;: &quot;cold_512_r1&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 512,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.757308890824923,
+      &quot;mtp_tg&quot;: 26.238014128081936,
+      &quot;tg_change_pct&quot;: 47.75895542166828,
+      &quot;ar_pp&quot;: 440.9076173216536,
+      &quot;mtp_pp&quot;: 337.50917320425583,
+      &quot;pp_change_pct&quot;: -23.45127188899663,
+      &quot;ar_ttft_ms&quot;: 1161.4003849972505,
+      &quot;mtp_ttft_ms&quot;: 1543.870807014173,
+      &quot;mtp_accepted&quot;: 136,
+      &quot;mtp_proposed&quot;: 199,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_4096_r1&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.057911591195023,
+      &quot;mtp_tg&quot;: 25.8827384379215,
+      &quot;tg_change_pct&quot;: 51.73450923078819,
+      &quot;ar_pp&quot;: 562.6548072751564,
+      &quot;mtp_pp&quot;: 547.2758132112449,
+      &quot;pp_change_pct&quot;: -2.733291152063444,
+      &quot;ar_ttft_ms&quot;: 7265.488709002966,
+      &quot;mtp_ttft_ms&quot;: 7490.458905987907,
+      &quot;mtp_accepted&quot;: 117,
+      &quot;mtp_proposed&quot;: 188,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_32768_r1&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 32768,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.391524742868594,
+      &quot;mtp_tg&quot;: 27.87824055078231,
+      &quot;tg_change_pct&quot;: 60.29785175801678,
+      &quot;ar_pp&quot;: 577.2667104039328,
+      &quot;mtp_pp&quot;: 562.1424967466836,
+      &quot;pp_change_pct&quot;: -2.6199698310450548,
+      &quot;ar_ttft_ms&quot;: 56792.571588011924,
+      &quot;mtp_ttft_ms&quot;: 58346.94368598866,
+      &quot;mtp_accepted&quot;: 145,
+      &quot;mtp_proposed&quot;: 246,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_512_r2&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 512,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 16.893018261795778,
+      &quot;mtp_tg&quot;: 29.012975921902683,
+      &quot;tg_change_pct&quot;: 71.74536528807683,
+      &quot;ar_pp&quot;: 350.4280486531632,
+      &quot;mtp_pp&quot;: 438.67140087507306,
+      &quot;pp_change_pct&quot;: 25.181589362228497,
+      &quot;ar_ttft_ms&quot;: 1458.9405290025752,
+      &quot;mtp_ttft_ms&quot;: 1197.4014060106128,
+      &quot;mtp_accepted&quot;: 136,
+      &quot;mtp_proposed&quot;: 199,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_4096_r2&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.247144284479965,
+      &quot;mtp_tg&quot;: 25.011232957504262,
+      &quot;tg_change_pct&quot;: 45.016662149750196,
+      &quot;ar_pp&quot;: 566.000573423718,
+      &quot;mtp_pp&quot;: 538.288582250074,
+      &quot;pp_change_pct&quot;: -4.896106554453672,
+      &quot;ar_ttft_ms&quot;: 7222.715214011259,
+      &quot;mtp_ttft_ms&quot;: 7622.242270997958,
+      &quot;mtp_accepted&quot;: 117,
+      &quot;mtp_proposed&quot;: 188,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_32768_r2&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 32768,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.887071652411088,
+      &quot;mtp_tg&quot;: 27.120554768338828,
+      &quot;tg_change_pct&quot;: 51.62098802619328,
+      &quot;ar_pp&quot;: 573.9459064136007,
+      &quot;mtp_pp&quot;: 557.8959463446007,
+      &quot;pp_change_pct&quot;: -2.796423824902061,
+      &quot;ar_ttft_ms&quot;: 57120.008602010785,
+      &quot;mtp_ttft_ms&quot;: 58788.592310011154,
+      &quot;mtp_accepted&quot;: 145,
+      &quot;mtp_proposed&quot;: 246,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_512_r3&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 512,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 16.85831552618056,
+      &quot;mtp_tg&quot;: 28.50751154889403,
+      &quot;tg_change_pct&quot;: 69.1005931442115,
+      &quot;ar_pp&quot;: 441.24066006433446,
+      &quot;mtp_pp&quot;: 413.86003432517725,
+      &quot;pp_change_pct&quot;: -6.2053723097878155,
+      &quot;ar_ttft_ms&quot;: 1160.2622530190274,
+      &quot;mtp_ttft_ms&quot;: 1265.4764680191875,
+      &quot;mtp_accepted&quot;: 136,
+      &quot;mtp_proposed&quot;: 199,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_4096_r3&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 16.76505104037241,
+      &quot;mtp_tg&quot;: 24.115855302253507,
+      &quot;tg_change_pct&quot;: 43.84599989692492,
+      &quot;ar_pp&quot;: 556.44960085537,
+      &quot;mtp_pp&quot;: 530.9564771081947,
+      &quot;pp_change_pct&quot;: -4.581389528896684,
+      &quot;ar_ttft_ms&quot;: 7345.791892003035,
+      &quot;mtp_ttft_ms&quot;: 7724.668321985519,
+      &quot;mtp_accepted&quot;: 117,
+      &quot;mtp_proposed&quot;: 188,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;cold_32768_r3&quot;,
+      &quot;group&quot;: &quot;cold&quot;,
+      &quot;target&quot;: 32768,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 256,
+      &quot;mtp_output_tokens&quot;: 256,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.786359367619067,
+      &quot;mtp_tg&quot;: 20.640235874216145,
+      &quot;tg_change_pct&quot;: 16.04531004693799,
+      &quot;ar_pp&quot;: 552.7964085956249,
+      &quot;mtp_pp&quot;: 500.94476204567525,
+      &quot;pp_change_pct&quot;: -9.379881226377428,
+      &quot;ar_ttft_ms&quot;: 59304.28192199906,
+      &quot;mtp_ttft_ms&quot;: 65472.017259016866,
+      &quot;mtp_accepted&quot;: 145,
+      &quot;mtp_proposed&quot;: 246,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    }
+  ]
+}</pre></details></section><section><h2>AR / MTP 比較 · continuation</h2><p>警告なしの整合性確認: False。出力差・入力差・比較警告を隠さず、review_requiredを上位の未完了状態へ伝播します。</p><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-formal-1/continuation/comparison.json">比較JSON</a> · <span title="参照先はローカル保管">比較表（保存済みの場合）</span></p><details><summary>警告と出力数別の比較</summary><pre>{
+  &quot;issues&quot;: [
+    &quot;Visible output differs: same_a_turn2&quot;,
+    &quot;Conversation input differs; do not compare speed: same_a_turn3&quot;,
+    &quot;Comparison assessment is not checks_passed&quot;,
+    &quot;Visible reply comparison not equal: same_a_turn2&quot;,
+    &quot;Visible reply comparison not equal: same_a_turn3&quot;,
+    &quot;Request payload comparison not equal: same_a_turn3&quot;
+  ],
+  &quot;cold_summary&quot;: [],
+  &quot;pairs&quot;: [
+    {
+      &quot;name&quot;: &quot;same_a_turn1&quot;,
+      &quot;group&quot;: &quot;same_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.794925447413277,
+      &quot;mtp_tg&quot;: 19.90310270542532,
+      &quot;tg_change_pct&quot;: 11.847069909014385,
+      &quot;ar_pp&quot;: 571.8502502185167,
+      &quot;mtp_pp&quot;: 406.48501308876666,
+      &quot;pp_change_pct&quot;: -28.91757712208053,
+      &quot;ar_ttft_ms&quot;: 7148.561199981486,
+      &quot;mtp_ttft_ms&quot;: 10116.13466902054,
+      &quot;mtp_accepted&quot;: 56,
+      &quot;mtp_proposed&quot;: 96,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;same_a_turn2&quot;,
+      &quot;group&quot;: &quot;same_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: false,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 16.994629053547513,
+      &quot;mtp_tg&quot;: 22.024115702955417,
+      &quot;tg_change_pct&quot;: 29.59456563341718,
+      &quot;ar_pp&quot;: 104.52107036211453,
+      &quot;mtp_pp&quot;: 34.326493139576876,
+      &quot;pp_change_pct&quot;: -67.15830308601672,
+      &quot;ar_ttft_ms&quot;: 304.4209799845703,
+      &quot;mtp_ttft_ms&quot;: 882.6141160097905,
+      &quot;mtp_accepted&quot;: 64,
+      &quot;mtp_proposed&quot;: 106,
+      &quot;ar_cached&quot;: 4211,
+      &quot;mtp_cached&quot;: 4212
+    },
+    {
+      &quot;name&quot;: &quot;same_a_turn3&quot;,
+      &quot;group&quot;: &quot;same_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: false,
+      &quot;reply_matches&quot;: null,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: false,
+      &quot;ar_tg&quot;: null,
+      &quot;mtp_tg&quot;: 35.785517675866586,
+      &quot;tg_change_pct&quot;: null,
+      &quot;ar_pp&quot;: null,
+      &quot;mtp_pp&quot;: 60.38699209197918,
+      &quot;pp_change_pct&quot;: null,
+      &quot;ar_ttft_ms&quot;: null,
+      &quot;mtp_ttft_ms&quot;: 505.91849998454563,
+      &quot;mtp_accepted&quot;: 98,
+      &quot;mtp_proposed&quot;: 113,
+      &quot;ar_cached&quot;: 4369,
+      &quot;mtp_cached&quot;: 4370
+    },
+    {
+      &quot;name&quot;: &quot;aba_r1_a&quot;,
+      &quot;group&quot;: &quot;aba_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.851264242571915,
+      &quot;mtp_tg&quot;: 23.0640075611846,
+      &quot;tg_change_pct&quot;: 29.20097561595256,
+      &quot;ar_pp&quot;: 556.093838611435,
+      &quot;mtp_pp&quot;: 498.3004559444902,
+      &quot;pp_change_pct&quot;: -10.392739256247607,
+      &quot;ar_ttft_ms&quot;: 7350.090261985315,
+      &quot;mtp_ttft_ms&quot;: 8240.997424989473,
+      &quot;mtp_accepted&quot;: 56,
+      &quot;mtp_proposed&quot;: 96,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r1_b&quot;,
+      &quot;group&quot;: &quot;aba_b&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.86898011166445,
+      &quot;mtp_tg&quot;: 26.383487419495722,
+      &quot;tg_change_pct&quot;: 47.64965462283548,
+      &quot;ar_pp&quot;: 554.2953734840469,
+      &quot;mtp_pp&quot;: 504.4934503417016,
+      &quot;pp_change_pct&quot;: -8.984726469808546,
+      &quot;ar_ttft_ms&quot;: 7376.429903000826,
+      &quot;mtp_ttft_ms&quot;: 8125.537365995115,
+      &quot;mtp_accepted&quot;: 65,
+      &quot;mtp_proposed&quot;: 106,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r1_resume&quot;,
+      &quot;group&quot;: &quot;aba_resume&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.913533679018943,
+      &quot;mtp_tg&quot;: 21.99268845787139,
+      &quot;tg_change_pct&quot;: 22.77135741023626,
+      &quot;ar_pp&quot;: 546.1491868532214,
+      &quot;mtp_pp&quot;: 495.2119314080971,
+      &quot;pp_change_pct&quot;: -9.326619295839734,
+      &quot;ar_ttft_ms&quot;: 7769.2244770005345,
+      &quot;mtp_ttft_ms&quot;: 8591.215368011035,
+      &quot;mtp_accepted&quot;: 46,
+      &quot;mtp_proposed&quot;: 76,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r2_a&quot;,
+      &quot;group&quot;: &quot;aba_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.837822658664297,
+      &quot;mtp_tg&quot;: 23.517548925089354,
+      &quot;tg_change_pct&quot;: 31.840916770558113,
+      &quot;ar_pp&quot;: 573.9103583217192,
+      &quot;mtp_pp&quot;: 511.6101614351665,
+      &quot;pp_change_pct&quot;: -10.855388125200694,
+      &quot;ar_ttft_ms&quot;: 7124.40272900858,
+      &quot;mtp_ttft_ms&quot;: 8017.373398004565,
+      &quot;mtp_accepted&quot;: 56,
+      &quot;mtp_proposed&quot;: 96,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r2_b&quot;,
+      &quot;group&quot;: &quot;aba_b&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.8710574774062,
+      &quot;mtp_tg&quot;: 25.78406896687797,
+      &quot;tg_change_pct&quot;: 44.27836181197411,
+      &quot;ar_pp&quot;: 570.7031097974663,
+      &quot;mtp_pp&quot;: 510.15464360807516,
+      &quot;pp_change_pct&quot;: -10.609450894858242,
+      &quot;ar_ttft_ms&quot;: 7164.0476240136195,
+      &quot;mtp_ttft_ms&quot;: 8032.8770199848805,
+      &quot;mtp_accepted&quot;: 65,
+      &quot;mtp_proposed&quot;: 106,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r2_resume&quot;,
+      &quot;group&quot;: &quot;aba_resume&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.94166720272538,
+      &quot;mtp_tg&quot;: 22.554312987803744,
+      &quot;tg_change_pct&quot;: 25.709125762725616,
+      &quot;ar_pp&quot;: 545.301248408536,
+      &quot;mtp_pp&quot;: 531.0361579543443,
+      &quot;pp_change_pct&quot;: -2.61600179640602,
+      &quot;ar_ttft_ms&quot;: 7782.651540997904,
+      &quot;mtp_ttft_ms&quot;: 8013.36197098135,
+      &quot;mtp_accepted&quot;: 46,
+      &quot;mtp_proposed&quot;: 76,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r3_a&quot;,
+      &quot;group&quot;: &quot;aba_a&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.872375663938886,
+      &quot;mtp_tg&quot;: 23.975024922843804,
+      &quot;tg_change_pct&quot;: 34.14570829113806,
+      &quot;ar_pp&quot;: 570.2097265567313,
+      &quot;mtp_pp&quot;: 555.2302374041159,
+      &quot;pp_change_pct&quot;: -2.627013966084124,
+      &quot;ar_ttft_ms&quot;: 7169.990016991505,
+      &quot;mtp_ttft_ms&quot;: 7385.595850995742,
+      &quot;mtp_accepted&quot;: 56,
+      &quot;mtp_proposed&quot;: 96,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r3_b&quot;,
+      &quot;group&quot;: &quot;aba_b&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.89334669166721,
+      &quot;mtp_tg&quot;: 26.780557235105654,
+      &quot;tg_change_pct&quot;: 49.667682052889226,
+      &quot;ar_pp&quot;: 574.7434558173695,
+      &quot;mtp_pp&quot;: 548.0341140935559,
+      &quot;pp_change_pct&quot;: -4.647176310312052,
+      &quot;ar_ttft_ms&quot;: 7111.477827973431,
+      &quot;mtp_ttft_ms&quot;: 7483.303647983121,
+      &quot;mtp_accepted&quot;: 65,
+      &quot;mtp_proposed&quot;: 106,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    },
+    {
+      &quot;name&quot;: &quot;aba_r3_resume&quot;,
+      &quot;group&quot;: &quot;aba_resume&quot;,
+      &quot;target&quot;: 4096,
+      &quot;comparable&quot;: true,
+      &quot;reply_matches&quot;: true,
+      &quot;ar_output_tokens&quot;: 128,
+      &quot;mtp_output_tokens&quot;: 128,
+      &quot;decode_comparable&quot;: true,
+      &quot;ar_tg&quot;: 17.851383397677267,
+      &quot;mtp_tg&quot;: 22.70884760216883,
+      &quot;tg_change_pct&quot;: 27.21057576480932,
+      &quot;ar_pp&quot;: 550.8575760815554,
+      &quot;mtp_pp&quot;: 531.5078278575182,
+      &quot;pp_change_pct&quot;: -3.512659000113749,
+      &quot;ar_ttft_ms&quot;: 7702.31998100644,
+      &quot;mtp_ttft_ms&quot;: 8041.997192980489,
+      &quot;mtp_accepted&quot;: 46,
+      &quot;mtp_proposed&quot;: 76,
+      &quot;ar_cached&quot;: 0,
+      &quot;mtp_cached&quot;: 0
+    }
+  ]
+}</pre></details></section><section><h2>v1 継続会話の不一致 · 原因と修正の診断</h2><p>v1 の正式 MTP 試験は same_a_turn2 の本文差で停止しました。turn1/2のHTTP送信bytesはAR/MTPで同一、SSE再構成も保存本文に一致し、ベンチ誤比較は確認されていません。旧ARは128個目を出力後に実行せず、次回prefillへ回していました。保持済みtokenはAR4211、MTP4212で、同じ4242入力のprefill分割が異なりました。</p><p>native再現は両方の正式本文を再現しました。同じAR状態から最後のtokenだけをdecodeで実行して4212へ進める反実仮想では、次回prefill logitsがMTPとbitwise一致し、turn2の128 tokenも一致しました。ARのfinal_token_advance_requiredを有効にし、旧AR数値履歴とのcache共有を避けるAR限定policy tagを追加する修正とCPU回帰試験を用意しました。</p><div class="scroll"><table><thead><tr><th>診断項目</th><th>観測値</th></tr></thead><tbody><tr><td>元のnative turn2最初の相違index（0起点）</td><td>73</td></tr><tr><td>反実仮想turn2の128 token一致</td><td>True</td></tr><tr><td>実MTP cycle開始logitsのbitwise一致</td><td>64 / 64</td></tr></tbody></table></div><p class="notice">これはcontext8192の原因切り分けであり、正式context262144の再測定・HTTP回帰・256K MTPを代替しません。64行は実cycle開始行であり、全128個の内部verify行を直接採取した主張ではありません。v1の失敗と当初の因果未確定HTTP監査は変更せず保存し、修正版の完了判定は選択した版の証拠を別に確認します。</p><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-formal-1/continuation/comparison.json">v1の不一致原記録</a> · <a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-formal-1/http-continuation-audit.json">当初のHTTP・request/SSE監査</a> · <a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-cont-native-replay-r1/validation-summary.json">native反実仮想の検証と限界</a> · <span title="参照先はローカル保管">修正後CPU回帰ログ</span> · <span title="参照先はローカル保管">AR限定cache policy検査</span></p><details><summary>診断の対象・token比較・限界</summary><pre>{
+  &quot;assessment&quot;: &quot;reproduced_serving_final_token_boundary_cause; supports advancing the final AR token before request completion&quot;,
+  &quot;scope&quot;: &quot;This is a diagnostic attribution, not formal performance qualification or a blanket MTP quality pass. Original AR/MTP failures are preserved.&quot;,
+  &quot;formal_reproduction&quot;: {
+    &quot;input_request_bytes_equal_ar_mtp_turn1_and_turn2&quot;: true,
+    &quot;native_input_tokens&quot;: [
+      4084,
+      4242
+    ],
+    &quot;ar_turn1_visible_reply_exact&quot;: true,
+    &quot;ar_turn2_visible_reply_exact&quot;: true,
+    &quot;mtp_turn1_visible_reply_exact&quot;: true,
+    &quot;mtp_turn2_visible_reply_exact&quot;: true,
+    &quot;limitation&quot;: &quot;Formal HTTP SSE does not expose raw generated IDs. Formal identity here is exact visible UTF-8 reply bytes; raw-token comparisons below are between native replay paths. Context differs, but both formal visible outcomes were reproduced exactly.&quot;
+  },
+  &quot;native_token_comparisons&quot;: {
+    &quot;turn1_ar_vs_mtp_all_128_exact&quot;: true,
+    &quot;turn2_original_ar_vs_mtp_first_mismatch_index&quot;: 73,
+    &quot;turn2_counterfactual_ar_vs_mtp_all_128_exact&quot;: true
+  },
+  &quot;frontier_comparisons&quot;: {
+    &quot;original_ar_vs_mtp_prefill&quot;: {
+      &quot;bitwise_equal&quot;: false,
+      &quot;max_abs&quot;: 0.6099886894226074,
+      &quot;relative_l2&quot;: 0.054326471057967146
+    },
+    &quot;counterfactual_ar_vs_mtp_prefill_bitwise_exact&quot;: true,
+    &quot;counterfactual_ar_vs_actual_mtp_cycle_frontiers&quot;: {
+      &quot;checked&quot;: 64,
+      &quot;bitwise_exact&quot;: 64,
+      &quot;max_abs&quot;: 0,
+      &quot;generation_offsets&quot;: [
+        0,
+        3,
+        4,
+        7,
+        12,
+        13,
+        15,
+        16,
+        19,
+        21,
+        22,
+        24,
+        27,
+        28,
+        29,
+        31,
+        34,
+        37,
+        41,
+        45,
+        47,
+        49,
+        50,
+        52,
+        55,
+        57,
+        59,
+        60,
+        61,
+        62,
+        64,
+        66,
+        68,
+        70,
+        72,
+        74,
+        75,
+        76,
+        78,
+        79,
+        81,
+        83,
+        85,
+        87,
+        89,
+        90,
+        91,
+        93,
+        95,
+        97,
+        99,
+        101,
+        103,
+        105,
+        107,
+        109,
+        111,
+        112,
+        114,
+        116,
+        118,
+        120,
+        123,
+        126
+      ],
+      &quot;independently_rechecked_saved_binary_rows&quot;: true
+    },
+    &quot;common_prefix_decode_replay_vs_actual_mtp_cycle_frontiers_before_mismatch&quot;: {
+      &quot;checked&quot;: 35,
+      &quot;bitwise_exact&quot;: 35,
+      &quot;last_generation_offset&quot;: 72,
+      &quot;note&quot;: &quot;Comparisons executed inside diagnostic; intermediate replay rows are represented by metrics, while the final replay target is saved as binary.&quot;
+    },
+    &quot;limitation&quot;: &quot;The 64 actual cycle-start rows are not all128 interior verification target rows. Mismatch index73 lies inside an accepted two-token cycle starting72; no claim that the private verifier logit row was directly dumped.&quot;
+  }
+}</pre></details></section><section><h2>検証状況</h2><div class="scroll"><table><thead><tr><th>項目</th><th>状態</th><th>判定の範囲</th></tr></thead><tbody><tr><td>A: 6形式の演算・CPU golden・転送変換</td><td><span class="badge">演算検証成功</span></td><td>演算単位の検証範囲。全モデル数値一致や MTP 合格は意味しない。</td></tr><tr><td>主モデルのロード・AR 長文検索</td><td><span class="badge">機能検証成功</span></td><td>32K / 128K / 256K の4位置検索。JSON形式の逸脱は別記。</td></tr><tr><td>B: 同じ変換済み重みの CPU / GPU 比較</td><td><span class="badge">局所原因を実証・全体未一律判定</span></td><td>同じ変換後重みの比較を実施。実Q8境界を跨ぐ局所増幅を反実仮想で実証し、同入力packed演算は既存bound内。全モデル残差への一律許容判定は行わない。</td></tr><tr><td>C: 追加 Q8 変換による品質差</td><td><span class="badge">測定データあり・要確認</span></td><td>原形式/Q8変換後のCPU比較12問を保存。記述統計とGPU生成を分離し、一般的な品質保証にしない。</td></tr><tr><td>正式 AR / MTP 性能・継続会話</td><td><span class="badge">要レビュー</span></td><td>最終imageのspeed/continuation、反復数、request・source・binary・変換digestと比較警告を確認。完了には明示レビューも必要。</td></tr><tr><td>既存 Huihui 通常経路</td><td><span class="badge">smoke成功</span></td><td>weight-compat off の短い生成のみ。追加変換ログ0件。全体品質・モデル間性能比較は対象外。</td></tr><tr><td>MTP 機能・長文容量</td><td><span class="badge">短文focused成功・長文待ち</span></td><td>短いfocused試験でAR/MTP 64 token・全completed frontierがbitwise一致。51提案/34採用/8reject、prefix/次request/文脈末尾rollbackを確認。256K MTPと正式性能は未測定。</td></tr><tr><td>Windows available physical 14 GB 目標</td><td><span class="badge">観測範囲で達成</span></td><td>native AR機能試験の有効サンプルで判定。正式測定の保証ではない。</td></tr><tr><td>推論後 live idle 60秒</td><td><span class="badge">無効</span></td><td>ユーザーが誤停止を確認。停止後に開始した idle60 は無効。正式測定時に再計測。</td></tr><tr><td>最終ソース・公式ビルド・独立イメージ</td><td><span class="badge">ソース・build・image整合性検証済み</span></td><td>source bundle復元・fsck・差分一致、公式release成功、host source/binary mount無しでimage内のversion/SHA一致を検証。最終imageのモデル推論・正式測定は別工程。</td></tr></tbody></table></div></section><section><h2>A · 6形式の演算と読み込み</h2><p>演算単位の有限・誤差上限確認。全モデルの数値/生成品質の認定ではない。 CPU golden は 69,120 値の完全一致、Q8 は 7 byte golden。表の誤差は各形式のケース別指標の最大です。通常値は極端な stress 行を除き、stress を含む最大絶対誤差も併記します。</p><div class="scroll"><table><thead><tr><th>形式</th><th>状態</th><th>比較した dot</th><th>通常 max abs</th><th>通常 relative L2</th><th>stress込み max abs</th><th>Q8 code差</th></tr></thead><tbody><tr><td>IQ2_S</td><td>passed</td><td>15,720</td><td>0.00000670</td><td>0.0000002341</td><td>46.539500</td><td>0</td></tr><tr><td>IQ3_XXS</td><td>passed</td><td>15,720</td><td>0.00000975</td><td>0.0000001698</td><td>159.761000</td><td>0</td></tr><tr><td>IQ3_S</td><td>passed</td><td>15,720</td><td>0.00000573</td><td>0.0000001378</td><td>100.715000</td><td>0</td></tr><tr><td>IQ4_XS</td><td>passed</td><td>15,720</td><td>0.00004640</td><td>0.0000001391</td><td>681.333000</td><td>0</td></tr><tr><td>IQ4_NL</td><td>passed</td><td>18,340</td><td>0.00000163</td><td>0.0000000871</td><td>7.758560</td><td>0</td></tr><tr><td>Q2_0</td><td>passed</td><td>10,480</td><td>0.00000001</td><td>0.0000000239</td><td>0.096497</td><td>0</td></tr></tbody></table></div><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/evidence/sc117-gpu-native-summary-a9dd8d6680ae.json">native GPU 検証 JSON</a> · <span title="参照先はローカル保管">CPU 条件</span> · <span title="参照先はローカル保管">CPU golden ログ</span> · <span title="参照先はローカル保管">実 GGUF metadata-only Bind ログ</span> · <span title="参照先はローカル保管">CPU focused tests</span></p><details><summary>演算の許容誤差・カバレッジ・dispatch 条件</summary><pre>{
+  &quot;acceptance&quot;: {
+    &quot;unchanged_dot_bound&quot;: &quot;u=2^-24; n=2K+32; gamma=n*u/(1-n*u); abs_error &lt;= gamma*sum(abs(w*x))+1e-7. Chosen before measurements from FP32 multiply/add/reduction forward error.&quot;,
+    &quot;fractional_dot_goldens&quot;: &quot;Exact equality required for IQ2_S +/-5.375 and IQ3_XXS +/-15.5; no tolerance.&quot;,
+    &quot;activation_codes&quot;: &quot;Scale bits must match; differing integer code may only be adjacent at a half-integer within4*u*abs(x/d), reflecting float reassociation. Final operator fixtures have0 differing codes.&quot;,
+    &quot;swiglu&quot;: &quot;abs_error &lt;= 2e-6*(1+abs(reference)), including FP32 exp/multiply rounding.&quot;
+  },
+  &quot;coverage&quot;: {
+    &quot;formats&quot;: [
+      &quot;IQ2_S&quot;,
+      &quot;IQ3_XXS&quot;,
+      &quot;IQ3_S&quot;,
+      &quot;IQ4_XS&quot;,
+      &quot;IQ4_NL&quot;,
+      &quot;Q2_0&quot;
+    ],
+    &quot;expert_ids&quot;: [
+      0,
+      271,
+      511
+    ],
+    &quot;physical_expert_strides&quot;: 512,
+    &quot;tokens&quot;: [
+      1,
+      8,
+      9,
+      32,
+      33,
+      129
+    ],
+    &quot;split_33&quot;: [
+      9,
+      24
+    ],
+    &quot;real_gate_up_shape&quot;: [
+      640,
+      2560
+    ],
+    &quot;real_down_shape&quot;: [
+      2560,
+      640
+    ],
+    &quot;ragged_output_rows&quot;: 7,
+    &quot;paired_gate_up&quot;: &quot;distinct packed weights plus independent SwiGLU comparison&quot;,
+    &quot;negative_checks&quot;: [
+      &quot;partial row block rejected&quot;,
+      &quot;unknown type rejected&quot;
+    ],
+    &quot;finite&quot;: &quot;Every output checked finite; selected rows checked against independent FP64 dots. This is operator coverage, not a full-model MTP/long-context pass.&quot;
+  },
+  &quot;dispatch_limits&quot;: {
+    &quot;IQ2_S_IQ3_XXS_IQ3_S_IQ4_XS&quot;: &quot;Packed vector decode/verify and native tiled MMQ prefill.&quot;,
+    &quot;IQ4_NL&quot;: &quot;Packed vector decode/verify; native tiled MMQ prefill for all whole IQ4_NL blocks, including actual K640 and smallest K32.&quot;,
+    &quot;Q2_0&quot;: &quot;Packed vector route at every batch width;64values/18bytes, code-1.&quot;,
+    &quot;fusion&quot;: &quot;New formats use paired or separate nonfused projection fallback; existing Q4/Q5/Q8 fusion retained.&quot;
+  }
+}</pre></details></section><section><h2>重みの同一性と変換</h2><div class="scroll"><table><thead><tr><th>項目</th><th>観測値</th></tr></thead><tbody><tr><td>主モデル元ファイル SHA</td><td>2 / 2 一致</td></tr><tr><td>Q8 に変換する tensor 数</td><td>206</td></tr><tr><td>Q8 runtime bytes</td><td>3,556,802,560</td></tr><tr><td>Q8 追加 bytes</td><td>1,220,459,520</td></tr><tr><td>変換 scratch high-water bytes</td><td>16,787,456</td></tr><tr><td>既存 raw staging bytes</td><td>268,500,992</td></tr><tr><td>全変換 tensor manifest SHA256</td><td><code>b2a63f2d3c648a5cd131ea809be242a982b1bc056d539ce065dbb9eb602011f6</code></td></tr><tr><td>主モデル Q8 206個のみの digest</td><td><code>04875d3771dead60106383f1df0e851b0967229dafdc26863cd4cbfc76717268</code></td></tr></tbody></table></div><p>元 GGUF を変更せず、選択した tensor をロード時に変換します。scratch と既存 raw staging は別計上です。</p><p><span title="参照先はローカル保管">元モデル全ファイル SHA</span> · <span title="参照先はローカル保管">名前・型・サイズ・変換後 SHA manifest</span> · <span title="参照先はローカル保管">ロードログ</span></p></section><section><h2>開発候補の AR · 長文の機能容量（保持した旧記録）</h2><p>各入力の約 10 / 35 / 65 / 90% に置いた4値を検索。全て 73 tokens で終了しました。最大 256 tokens を予約していますが、256 tokens を生成した試験ではありません。厳密 JSON 形式と検索成否を分離します。</p><div class="scroll"><table><thead><tr><th>条件</th><th>実入力 tokens</th><th>生成 tokens</th><th>4値検索</th><th>厳密 JSON</th><th>証拠</th></tr></thead><tbody><tr><td>32,768</td><td>32,252</td><td>73</td><td>合格</td><td>不合格</td><td><span title="参照先はローカル保管">runs/ar-native-256k-r1/long-32k/posthoc-assessment.json</span></td></tr><tr><td>131,072</td><td>130,554</td><td>73</td><td>合格</td><td>不合格</td><td><span title="参照先はローカル保管">runs/ar-native-256k-r1/long-128k-256k/results.json</span></td></tr><tr><td>262,144</td><td>261,631</td><td>73</td><td>合格</td><td>不合格</td><td><span title="参照先はローカル保管">runs/ar-native-256k-r1/long-128k-256k/results.json</span></td></tr></tbody></table></div><p class="notice">3条件とも全文を囲む単一の Markdown JSON fence があり、書式は不合格です。32K の元の failed 結果を保存し、後日の検索再評価は別ファイルにしています。</p><p><span title="参照先はローカル保管">32K 元の失敗 JSON</span> · <span title="参照先はローカル保管">32K 後日評価</span> · <span title="参照先はローカル保管">128K / 256K CSV</span> · <span title="参照先はローカル保管">入力校正</span></p></section><section><h2>生成品質 · GPU 12問と C の比較は別扱い</h2><p>GPU 自由生成は日本語4問・コード4問・数学4問を記録。下表は選択中のレビューに対応する生成結果です。内容・書式・打切りと、意味評価・厳密一致を分けて示します。原形式 / 追加 Q8 変換後の C 比較は 12 / 12 問です。誤答の原因を追加変換と断定していません。</p><div class="scroll"><table><thead><tr><th>ID</th><th>分類</th><th>元の機械評価</th><th>内容・形式のレビュー</th><th>生成</th><th>終了</th><th>原データ</th></tr></thead><tbody><tr><td>ja01_schedule</td><td>japanese</td><td>不合格</td><td>金曜=金曜日、15時30分=15:30。要求キー・曜日・時刻・会場は意味的に正しい。厳密文字列一致の不合格は保持する。</td><td>36</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>ja02_summary</td><td>japanese</td><td>機械条件 合格</td><td>大雨・増水・翌週土曜への延期・集合条件不変を正しく含み、29字で40字以内。ただし句点2つで二文となり、一文要件は満たさない。旧回答から『大雨』が加わったため、最終本文を新たにレビューした。</td><td>21</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>ja03_polite</td><td>japanese</td><td>機械条件 不合格</td><td>期限・丁寧な依頼表現は適切。資料という目的語を省略しているため、機械条件不合格を保持し、完全な独立文としての忠実性は部分的。</td><td>9</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>ja04_exception</td><td>japanese</td><td>合格</td><td>正社員だけでなく、対象外に指定されていない契約社員も含めた。</td><td>8</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>code01_unique</td><td>code</td><td>合格</td><td>setで既出管理、入力非変更、出現順保持。Markdown fenceは「関数定義だけ」という書式要件から外れるが実行試験は全件成功。</td><td>52</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>code02_merge</td><td>code</td><td>合格</td><td>各pointerは単調に前進しO(len(a)+len(b))、sort/importなし、入力非変更。Markdown fenceあり。</td><td>129</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>code03_search</td><td>code</td><td>合格</td><td>一致後に左半分へ探索を続ける二分探索で先頭位置を返す。Markdown fenceあり。</td><td>108</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>code04_brackets</td><td>code</td><td>合格</td><td>stackで対応と順序を照合し他文字を無視。Markdown fenceあり。</td><td>93</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>math01_linear</td><td>math</td><td>合格</td><td>3*7+5=26。</td><td>1</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>math02_union</td><td>math</td><td>不合格</td><td>正答はfloor(100/3)+floor(100/5)-floor(100/15)=33+20-6=47。出力31。</td><td>2</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>math03_probability</td><td>math</td><td>合格</td><td>最終回答3/10は(3/5)*(2/4)=3/10と一致し、既約分数だけという書式も満たす。旧回答1/10から変化。CPU Cは元・変換後とも先頭1を選好するが、GPUとの経路差を含むため、今回の改善を追加Q8変換の効果とは断定しない。</td><td>4</td><td>stop</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr><tr><td>math04_sequence</td><td>math</td><td>不合格</td><td>公式と代入は正しいが128token打切りで最終値650に未到達。整数だけという要求にも未従属。</td><td>128</td><td>length</td><td><span title="参照先はローカル保管">raw JSON</span></td></tr></tbody></table></div><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/ar-formal-1/quality-generation/summary.json">選択した GPU 出力・判定</a> · <span title="参照先はローカル保管">旧開発生成の内容レビュー（保持）</span> · <span title="参照先はローカル保管">C / GPU 統合レビュー</span></p><details><summary>品質比較の限界</summary><pre>[
+  &quot;Cは同一CPU実装・演算精度における206テンソルの追加Q8変換の比較。GPU経路との差は別のB検証対象。&quot;,
+  &quot;先頭行だけが未強制の次トークン分布。2行目以降は固定正答の履歴で条件付けされ、元モデルの自由生成を表さない。&quot;,
+  &quot;先頭argmaxが変わってもGPUの誤答全体の原因は確定しない。同じargmaxでも分布や後続生成への影響がないとはいえない。&quot;,
+  &quot;NLLは固定答案に対する値。等価な日本語・コード答案や書式の別解があり、一般的な正答率とは異なる。&quot;,
+  &quot;短いコード答案の先頭4トークンは主に関数宣言で、アルゴリズムの品質をほぼ評価できない。&quot;,
+  &quot;数学の答案全体を採点してもEOSは採点しない。自由生成による正答率の対照とは区別する。&quot;,
+  &quot;12問は小規模な固定確認で、統計的な品質保証ではない。未測定項目を合格と扱わず、任意の合否閾値も置かない。&quot;
+]</pre></details></section><section><h2>C · ケース別の比較範囲</h2><div class="scroll"><table><thead><tr><th>case</th><th>status</th><th>採点token数</th><th>答案全token数</th><th>答案全体採点</th><th>平均NLL差</th></tr></thead><tbody><tr><td>ja01_schedule</td><td>measured</td><td>4</td><td>21</td><td>False</td><td>0.00886765</td></tr><tr><td>ja02_summary</td><td>measured</td><td>4</td><td>19</td><td>False</td><td>0.01830895</td></tr><tr><td>ja03_polite</td><td>measured</td><td>4</td><td>8</td><td>False</td><td>0.00646015</td></tr><tr><td>ja04_exception</td><td>measured</td><td>4</td><td>7</td><td>False</td><td>-0.01017042</td></tr><tr><td>code01_unique</td><td>measured</td><td>4</td><td>48</td><td>False</td><td>0.00847301</td></tr><tr><td>code02_merge</td><td>measured</td><td>4</td><td>87</td><td>False</td><td>0.01654453</td></tr><tr><td>code03_search</td><td>measured</td><td>4</td><td>85</td><td>False</td><td>-0.00152327</td></tr><tr><td>code04_brackets</td><td>measured</td><td>4</td><td>77</td><td>False</td><td>-0.00861701</td></tr><tr><td>math01_linear</td><td>measured</td><td>1</td><td>1</td><td>True</td><td>-0.05421405</td></tr><tr><td>math02_union</td><td>measured</td><td>2</td><td>2</td><td>True</td><td>-0.04658060</td></tr><tr><td>math03_probability</td><td>measured</td><td>4</td><td>4</td><td>True</td><td>-0.00931121</td></tr><tr><td>math04_sequence</td><td>measured</td><td>3</td><td>3</td><td>True</td><td>-0.03376115</td></tr></tbody></table></div><details><summary>C 記述統計</summary><pre>{
+  &quot;all&quot;: {
+    &quot;measured_cases&quot;: 12,
+    &quot;scored_rows&quot;: 42,
+    &quot;first_argmax_changed_cases&quot;: 1,
+    &quot;fully_scored_fixed_answers&quot;: 4,
+    &quot;mean_target_nll_original&quot;: 0.9712271186143424,
+    &quot;mean_target_nll_converted&quot;: 0.9680716632472753,
+    &quot;mean_target_nll_delta&quot;: -0.0031554553670670566,
+    &quot;mean_kl_original_to_converted&quot;: 0.0012652611185873079
+  },
+  &quot;code&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 16,
+    &quot;first_argmax_changed_cases&quot;: 0,
+    &quot;fully_scored_fixed_answers&quot;: 0,
+    &quot;mean_target_nll_original&quot;: 0.3185645514293083,
+    &quot;mean_target_nll_converted&quot;: 0.3222838666237964,
+    &quot;mean_target_nll_delta&quot;: 0.003719315194488093,
+    &quot;mean_kl_original_to_converted&quot;: 0.00017350220177603703
+  },
+  &quot;japanese&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 16,
+    &quot;first_argmax_changed_cases&quot;: 1,
+    &quot;fully_scored_fixed_answers&quot;: 0,
+    &quot;mean_target_nll_original&quot;: 1.3343680059560434,
+    &quot;mean_target_nll_converted&quot;: 1.3402345910928344,
+    &quot;mean_target_nll_delta&quot;: 0.005866585136790947,
+    &quot;mean_kl_original_to_converted&quot;: 0.0014768955504873738
+  },
+  &quot;math&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 10,
+    &quot;first_argmax_changed_cases&quot;: 0,
+    &quot;fully_scored_fixed_answers&quot;: 4,
+    &quot;mean_target_nll_original&quot;: 1.4344618063636756,
+    &quot;mean_target_nll_converted&quot;: 1.4058714532919474,
+    &quot;mean_target_nll_delta&quot;: -0.0285903530717281,
+    &quot;mean_kl_original_to_converted&quot;: 0.002673460294445236
+  }
+}</pre></details></section><section><h2>C · 現在完了した原形式 / Q8変換後比較</h2><p>math02_union は正答「47」の2 tokenをteacher forcingで採点。先頭argmaxは両方 id18 =「3」で、正答先頭 id19 =「4」は両方2位です。2行目は「4」を与えた後の分布であり、元モデルが自由生成で「31」を返すことは確認していません。C 全体は 12 / 12 問です。計測済みの範囲を記述統計として報告し、任意の品質合格閾値は置きません。</p><div class="scroll"><table><thead><tr><th>case</th><th>行</th><th>条件</th><th>原形式top1</th><th>変換後top1</th><th>KL</th><th>原形式NLL</th><th>変換後NLL</th></tr></thead><tbody><tr><td>math02_union</td><td>0</td><td>未強制の次token</td><td>18</td><td>18</td><td>0.004079137</td><td>1.373244</td><td>1.279943</td></tr><tr><td>math02_union</td><td>1</td><td>正答prefixを強制</td><td>22</td><td>22</td><td>0.000236597</td><td>0.167966</td><td>0.168105</td></tr></tbody></table></div><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/quality/c-math02-comparison.json">C math02 raw比較</a> · <span title="参照先はローカル保管">CPU所要時間</span> · <span title="参照先はローカル保管">C / GPU統合データ</span></p><details><summary>C 集計（固定答案に対する記述統計）</summary><pre>{
+  &quot;all&quot;: {
+    &quot;measured_cases&quot;: 12,
+    &quot;scored_rows&quot;: 42,
+    &quot;first_argmax_changed_cases&quot;: 1,
+    &quot;fully_scored_fixed_answers&quot;: 4,
+    &quot;mean_target_nll_original&quot;: 0.9712271186143424,
+    &quot;mean_target_nll_converted&quot;: 0.9680716632472753,
+    &quot;mean_target_nll_delta&quot;: -0.0031554553670670566,
+    &quot;mean_kl_original_to_converted&quot;: 0.0012652611185873079
+  },
+  &quot;code&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 16,
+    &quot;first_argmax_changed_cases&quot;: 0,
+    &quot;fully_scored_fixed_answers&quot;: 0,
+    &quot;mean_target_nll_original&quot;: 0.3185645514293083,
+    &quot;mean_target_nll_converted&quot;: 0.3222838666237964,
+    &quot;mean_target_nll_delta&quot;: 0.003719315194488093,
+    &quot;mean_kl_original_to_converted&quot;: 0.00017350220177603703
+  },
+  &quot;japanese&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 16,
+    &quot;first_argmax_changed_cases&quot;: 1,
+    &quot;fully_scored_fixed_answers&quot;: 0,
+    &quot;mean_target_nll_original&quot;: 1.3343680059560434,
+    &quot;mean_target_nll_converted&quot;: 1.3402345910928344,
+    &quot;mean_target_nll_delta&quot;: 0.005866585136790947,
+    &quot;mean_kl_original_to_converted&quot;: 0.0014768955504873738
+  },
+  &quot;math&quot;: {
+    &quot;measured_cases&quot;: 4,
+    &quot;scored_rows&quot;: 10,
+    &quot;first_argmax_changed_cases&quot;: 0,
+    &quot;fully_scored_fixed_answers&quot;: 4,
+    &quot;mean_target_nll_original&quot;: 1.4344618063636756,
+    &quot;mean_target_nll_converted&quot;: 1.4058714532919474,
+    &quot;mean_target_nll_delta&quot;: -0.0285903530717281,
+    &quot;mean_kl_original_to_converted&quot;: 0.002673460294445236
+  }
+}</pre></details></section><section><h2>B · 同じ変換済み重みの全モデル数値差</h2><p class="notice">同じ変換後重みの比較を実施。実Q8境界を跨ぐ局所増幅を反実仮想で実証し、同入力packed演算は既存bound内。全モデル残差への一律許容判定は行わない。 未解明の差を許容済みとは扱いません。以下は math02 の1つの固定プロンプト末尾の logits 比較です。</p><div class="scroll"><table><thead><tr><th>比較</th><th>max abs</th><th>relative L2</th><th>KL(ref→candidate)</th><th>top1一致</th><th>top10重複</th><th>原データ</th></tr></thead><tbody><tr><td>cpu-decode-vs-gpu-decode</td><td>0.710052</td><td>0.062126</td><td>0.009461</td><td>True</td><td>10</td><td><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-math02-decode/comparison.json">JSON</a></td></tr><tr><td>cpu-decode-vs-gpu-prefill</td><td>1.351965</td><td>0.110807</td><td>0.031581</td><td>True</td><td>9</td><td><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-math02-prefill-native/cpu-comparison.json">JSON</a></td></tr><tr><td>gpu-decode-vs-gpu-prefill</td><td>1.510865</td><td>0.113520</td><td>0.024895</td><td>True</td><td>9</td><td><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-math02-prefill-native/decode-comparison.json">JSON</a></td></tr></tbody></table></div><details><summary>B の追加レビュー</summary><pre>{
+  &quot;b_status&quot;: &quot;local_cause_demonstrated&quot;,
+  &quot;b_note&quot;: &quot;同じ変換後重みの比較を実施。実Q8境界を跨ぐ局所増幅を反実仮想で実証し、同入力packed演算は既存bound内。全モデル残差への一律許容判定は行わない。&quot;,
+  &quot;mtp_status&quot;: &quot;focused_pass_long_pending&quot;,
+  &quot;mtp_note&quot;: &quot;短いfocused試験でAR/MTP 64 token・全completed frontierがbitwise一致。51提案/34採用/8reject、prefix/次request/文脈末尾rollbackを確認。256K MTPと正式性能は未測定。&quot;
+}</pre></details></section><section><h2>B · 境界で増幅された差の局所再現</h2><p>位置0・layer5の保存入力から、CPU/GPUそれぞれのFFN出力をbitwise再現しました。実GPUから取得したQ8 bytesでは index2439 の codeだけが4→5となり、保存scaleは一致。GPU側のそのcodeだけを4に戻した反実仮想で、元の局所CPU/GPU L2距離が <strong>99.9616%</strong> 減少しました。これは全語彙 logits の誤差削減率ではなく、1箇所のFFN hidden出力の比較です。</p><div class="scroll"><table><thead><tr><th>同じ保存入力を両方へ与えた比較</th><th>FFN max abs</th><th>FFN relative L2</th></tr></thead><tbody><tr><td>cpu_saved_input_cpu_vs_gpu</td><td>0.0000000149</td><td>0.0000001038</td></tr><tr><td>gpu_saved_input_cpu_vs_gpu</td><td>0.0000000112</td><td>0.0000001066</td></tr></tbody></table></div><p>同じactual Q8入力に対する 122,880 dot は、事前に決めた gamma 誤差上限をすべて満たしました。誤差/上限の最大比は 0.000805175。閾値を緩めていません。</p><p class="notice">trunk trace は位置0と40のみです。保存された288行のrouterは独立sortのordered top10と全て一致し、無効行0。Dense / HC等6節は基準commitからbyte同一です。ただしHCの同入力oracle実測ではありません。BF16 prefill / FP32 decode の既存精度差と、layer11でのexpert選択境界も記録していますが、全中間状態や全残差の無害性は証明していません。Bの数値根拠は対象と範囲を限定して報告します。</p><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-layer5-ffn-replay/validation-summary.json">局所検証 summary</a> · <span title="参照先はローカル保管">再現・反実仮想の全数値</span> · <a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-math02-trunk-trace/analysis.json">trunk trace 解析</a> · <span title="参照先はローカル保管">仕様§11との独立監査</span> · <a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/b-math02-trunk-trace/router-audit.json">288行router独立監査</a> · <span title="参照先はローカル保管">B受入範囲・HC精度契約</span></p><details><summary>仕様判定と残る狭い確認</summary><pre>{
+  &quot;schema&quot;: &quot;sc117-numerical-criterion-review-v1&quot;,
+  &quot;recorded_utc&quot;: &quot;2026-10-04T11:09:42.129449+00:00&quot;,
+  &quot;reviewer&quot;: &quot;independent static evidence review&quot;,
+  &quot;spec_file&quot;: &quot;/mnt/c/Users/user/Documents/Codex/2026-10-02/https-github-com-gufo-org-gufo/handoff/GUFO_SC117_IQ3S_SPEC.txt&quot;,
+  &quot;spec_sha256&quot;: &quot;3a67827a247739ca6bd422b471dbd22e232428ebd64192a4292ad0665f510ca8&quot;,
+  &quot;spec_lines&quot;: {
+    &quot;comparison_B&quot;: [
+      393,
+      394
+    ],
+    &quot;no_quantization_excuse&quot;: [
+      398,
+      399
+    ],
+    &quot;predeclared_bounds&quot;: [
+      406,
+      407
+    ],
+    &quot;completion&quot;: [
+      470,
+      478
+    ]
+  },
+  &quot;judgment&quot;: &quot;scoped_numerical_justification_sufficient; no blanket global tolerance pass&quot;,
+  &quot;conclusions_ja&quot;: [
+    &quot;同一actual Q8入力の122,880 dotが既存の事前bound内であり、今回追加したpacked演算の局所検証根拠は十分。&quot;,
+    &quot;異なるsaved入力で実GPU Q8 code2439が4/5に分かれ、code4への反実仮想で当該FFN L2距離を99.9616%減らしたため、局所の不連続増幅は実証された。&quot;,
+    &quot;位置0/40とlayer5一箇所のreplayから全モデル残差の無害性・同一精度・品質保証を導かない。&quot;,
+    &quot;仕様は全層bitwise一致や全モデル共通allclose閾値を定めていない。未指定の全体閾値を後から作らず、観測値・精度差・限界を報告する。&quot;
+  ],
+  &quot;static_checks&quot;: {
+    &quot;ar_and_B_runtime_conversion_manifests_equal&quot;: true,
+    &quot;canonical_tensor_manifest_sha256&quot;: &quot;b2a63f2d3c648a5cd131ea809be242a982b1bc056d539ce065dbb9eb602011f6&quot;,
+    &quot;q8_tensor_count&quot;: 206,
+    &quot;q8_runtime_bytes&quot;: 3556802560,
+    &quot;baseline_to_current_Dense_dispatch_section_identical&quot;: true,
+    &quot;existing_precision_difference&quot;: &quot;BF16 matrix prefill narrows activations to BF16 for hipBLASLt; decode SmallGemm consumes FP32 activations. CPU reference uses FP64 accumulation. These are documented comparisons of differing execution precision, not same-precision equivalence.&quot;
+  },
+  &quot;remaining_narrow_requirements&quot;: [
+    &quot;最終ソースで生成したproduction imageと正式runのsource/binary/model/変換digestを結び付ける。&quot;,
+    &quot;Bレポートで局所検証PASSと全モデル残差未一律判定を分け、初期primitiveと中間recurrent stateを全て追跡していない限界を残す。&quot;
+  ],
+  &quot;additional_full_model_gpu_run_required_by_literal_spec&quot;: false,
+  &quot;optional_only_if_stronger_claim_needed&quot;: &quot;全モデルの全残差が既知丸めだけに由来すると主張するなら、現在未分離の最初のHC/RMS等primitiveを保存入力で照合し、prefillのBF16 narrowingを同じ精度で参照に反映する狭い検証が必要。その強い主張は今回行わない。&quot;,
+  &quot;evidence&quot;: [
+    &quot;runs/b-math02-decode/conversion-manifest.json&quot;,
+    &quot;runs/ar-native-256k-r1/conversion-manifest.json&quot;,
+    &quot;runs/b-math02-trunk-trace/analysis.json&quot;,
+    &quot;runs/b-layer5-ffn-replay/replay.json&quot;,
+    &quot;runs/b-layer5-ffn-replay/validation-summary.json&quot;
+  ]
+}</pre></details></section><section><h2>MTP · focused 継続・reject・rollback 試験</h2><p>同じtarget重みのgreedy AR/MTPで、64生成tokenと全completed frontierがbitwise一致。live prefix、次request、resetと文脈末尾rollbackを確認しました。</p><div class="scroll"><table><thead><tr><th>生成token</th><th>提案</th><th>採用</th><th>reject cycles</th><th>文脈末尾rollback</th></tr></thead><tbody><tr><td>64</td><td>51</td><td>34</td><td>8</td><td>合格</td></tr></tbody></table></div><p class="notice">文脈末尾テストは context14 / prompt10 の小さい境界条件です。256K + MTPや正式な速度測定は上記の最終実行証拠で確認します。draft採用率を品質指標にしません。</p><p><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/runs/mtp-sc117-session-r1/validation-summary.json">MTP focused summary</a> · <span title="参照先はローカル保管">試験ログ</span></p><details><summary>文脈末尾の検査項目と制約</summary><pre>{
+  &quot;passed&quot;: true,
+  &quot;context_tokens&quot;: 14,
+  &quot;prompt_tokens&quot;: 10,
+  &quot;warm_decode_requested_budget&quot;: 2,
+  &quot;boundary_decode_requested_budget&quot;: 8,
+  &quot;reason_budget_exceeds_remaining_slots&quot;: &quot;The session context is prompt length +4; warm decode commits at least1. Boundary budget8 therefore exceeds at most3 remaining slots.&quot;,
+  &quot;checks&quot;: [
+    &quot;restore keeps allocated rollback rows and configured allocation bound&quot;,
+    &quot;same restored snapshot/sampler produces identical committed tokens, RNG state, and logits&quot;,
+    &quot;full-context restore releases unusable rollback&quot;,
+    &quot;explicit reset releases rollback&quot;
+  ],
+  &quot;limitation&quot;: &quot;Boundary committed token count is not separately logged by the pre-existing CheckRollbackReuse function.&quot;
+}</pre></details></section><section><h2>既存 Huihui · default off の回帰smoke</h2><p>weight-compat=off で「4です。」を 3 tokens生成。追加weight conversionログは 0 件、exit 0、OOM False。</p><p>1問の基本動作確認です。モデルpayloadの全SHAは未検証で、包括的回帰試験やSC117との性能比較ではありません。非致命的ROCm loader警告もrawログに残します。</p><p><span title="参照先はローカル保管">smoke結果</span> · <span title="参照先はローカル保管">元ログ</span></p></section><section><h2>開発候補のメモリ · 有効な稼働中サンプルのみ</h2><p>native AR の before-load〜稼働中について、Windows available physical 最小は <strong>15.842161 GB</strong>。観測した全サンプルは14 GB以上です。約1秒サンプリングであり、瞬間ピークや別条件を保証しません。</p><div class="scroll"><table><thead><tr><th>phase</th><th>sample数</th><th>available最小 GB</th><th>commit最大 GB</th><th>14GB以上</th></tr></thead><tbody><tr><td>before_load</td><td>27</td><td>17.863188</td><td>84.202086</td><td>True</td></tr><tr><td>decode</td><td>12</td><td>17.448448</td><td>150.034973</td><td>True</td></tr><tr><td>idle</td><td>489</td><td>15.842161</td><td>151.837811</td><td>True</td></tr><tr><td>loading</td><td>53</td><td>17.484411</td><td>150.105117</td><td>True</td></tr><tr><td>prefill</td><td>746</td><td>16.610791</td><td>150.778049</td><td>True</td></tr><tr><td>ready</td><td>44</td><td>17.473311</td><td>150.081065</td><td>True</td></tr></tbody></table></div><p class="notice">ユーザーが誤停止を確認した時刻 2026-10-04T10:33:10.356358583Z 以降の 145 samples を除外。停止後に始まった idle60 は無効です。最終AR/MTPのlive idle60は上記の別記録で判定します。</p><p>先行する context4096 の開発試験では available 最小 9.151336 GB で、14 GB 目標を満たしませんでした。native 長文試験との環境差を性能改善とは解釈しません。GPU dedicated/shared・Windows physical/commit・Linux RSS は重複するため加算しません。</p><p><span title="参照先はローカル保管">停止時刻で限定した有効集計</span> · <span title="参照先はローカル保管">無効 idle60 記録</span> · <span title="参照先はローカル保管">全独立カウンタ・サンプル間隔</span> · <span title="参照先はローカル保管">physical raw JSONL</span> · <span title="参照先はローカル保管">GPU raw JSONL</span> · <span title="参照先はローカル保管">Linux raw JSONL</span></p><details><summary>実サンプル間隔</summary><pre>{
+  &quot;physical&quot;: {
+    &quot;samples&quot;: 1516,
+    &quot;median_seconds&quot;: 1.0111751556396484,
+    &quot;min_seconds&quot;: 0.9991400241851807,
+    &quot;max_seconds&quot;: 1.0309548377990723
+  },
+  &quot;gpu&quot;: {
+    &quot;samples&quot;: 1516,
+    &quot;median_seconds&quot;: 1.0112121105194092,
+    &quot;min_seconds&quot;: 0.9990370273590088,
+    &quot;max_seconds&quot;: 1.0196070671081543
+  },
+  &quot;linux&quot;: {
+    &quot;samples&quot;: 1531,
+    &quot;median_seconds&quot;: 1.000758171081543,
+    &quot;min_seconds&quot;: 0.997636079788208,
+    &quot;max_seconds&quot;: 1.0153839588165283
+  }
+}</pre></details></section><section><h2>選択中の正式な性能測定</h2><p>正式 metadata（凍結 source / binary / image / 変換 digest）を持つ結果だけを表示します。MTP 比較は同一条件の結果が揃ってから評価します。</p><div class="scroll"><table><thead><tr><th>run</th><th>mode</th><th>分類</th><th>group</th><th>入力目標</th><th>実出力数</th><th>n</th><th>PP tok/s</th><th>decode tok/s</th><th>TTFT ms</th></tr></thead><tbody><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>aba_a</td><td>4,096</td><td>128</td><td>3</td><td>570.21 [556.09–573.91]</td><td>17.85 [17.84–17.87]</td><td>7,169.99 [7,124.40–7,350.09]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>aba_b</td><td>4,096</td><td>128</td><td>3</td><td>570.70 [554.30–574.74]</td><td>17.87 [17.87–17.89]</td><td>7,164.05 [7,111.48–7,376.43]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>aba_resume</td><td>4,096</td><td>128</td><td>3</td><td>546.15 [545.30–550.86]</td><td>17.91 [17.85–17.94]</td><td>7,769.22 [7,702.32–7,782.65]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>calibration</td><td>0</td><td>16</td><td>2</td><td>369.84 [193.02–546.66]</td><td>18.55 [18.36–18.74]</td><td>3,892.28 [566.05–7,218.52]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>104.52 [104.52–104.52]</td><td>16.99 [16.99–16.99]</td><td>304.42 [304.42–304.42]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>96.33 [96.33–96.33]</td><td>17.92 [17.92–17.92]</td><td>330.21 [330.21–330.21]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/continuation</span></td><td>ar</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>571.85 [571.85–571.85]</td><td>17.79 [17.79–17.79]</td><td>7,148.56 [7,148.56–7,148.56]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/speed</span></td><td>ar</td><td>formal</td><td>calibration</td><td>0</td><td>16</td><td>2</td><td>386.52 [213.65–559.39]</td><td>19.12 [18.80–19.44]</td><td>3,783.61 [511.80–7,055.42]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/speed</span></td><td>ar</td><td>formal</td><td>cold</td><td>512</td><td>256</td><td>3</td><td>440.91 [350.43–441.24]</td><td>16.89 [16.86–17.76]</td><td>1,161.40 [1,160.26–1,458.94]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/speed</span></td><td>ar</td><td>formal</td><td>cold</td><td>4,096</td><td>256</td><td>3</td><td>562.65 [556.45–566.00]</td><td>17.06 [16.77–17.25]</td><td>7,265.49 [7,222.72–7,345.79]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/speed</span></td><td>ar</td><td>formal</td><td>cold</td><td>32,768</td><td>256</td><td>3</td><td>573.95 [552.80–577.27]</td><td>17.79 [17.39–17.89]</td><td>57,120.01 [56,792.57–59,304.28]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>aba_a</td><td>4,096</td><td>128</td><td>3</td><td>511.61 [498.30–555.23]</td><td>23.52 [23.06–23.98]</td><td>8,017.37 [7,385.60–8,241.00]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>aba_b</td><td>4,096</td><td>128</td><td>3</td><td>510.15 [504.49–548.03]</td><td>26.38 [25.78–26.78]</td><td>8,032.88 [7,483.30–8,125.54]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>aba_resume</td><td>4,096</td><td>128</td><td>3</td><td>531.04 [495.21–531.51]</td><td>22.55 [21.99–22.71]</td><td>8,042.00 [8,013.36–8,591.22]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>34.33 [34.33–34.33]</td><td>22.02 [22.02–22.02]</td><td>882.61 [882.61–882.61]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>60.39 [60.39–60.39]</td><td>35.79 [35.79–35.79]</td><td>505.92 [505.92–505.92]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/continuation</span></td><td>mtp</td><td>formal</td><td>same_a</td><td>4,096</td><td>128</td><td>1</td><td>406.49 [406.49–406.49]</td><td>19.90 [19.90–19.90]</td><td>10,116.13 [10,116.13–10,116.13]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/speed</span></td><td>mtp</td><td>formal</td><td>cold</td><td>512</td><td>256</td><td>3</td><td>413.86 [337.51–438.67]</td><td>28.51 [26.24–29.01]</td><td>1,265.48 [1,197.40–1,543.87]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/speed</span></td><td>mtp</td><td>formal</td><td>cold</td><td>4,096</td><td>256</td><td>3</td><td>538.29 [530.96–547.28]</td><td>25.01 [24.12–25.88]</td><td>7,622.24 [7,490.46–7,724.67]</td></tr><tr><td><span title="参照先はローカル保管">mtp-formal-1/speed</span></td><td>mtp</td><td>formal</td><td>cold</td><td>32,768</td><td>256</td><td>3</td><td>557.90 [500.94–562.14]</td><td>27.12 [20.64–27.88]</td><td>58,788.59 [58,346.94–65,472.02]</td></tr></tbody></table></div></section><section><h2>以前の正式測定の原記録</h2><p>選択中の版とは別の原記録です。失敗・警告を保持しますが、選択した新しい版の完了判定や速度比較には混ぜません。</p><p class="pending">未測定</p></section><section><h2>開発・機能試験での速度参考値</h2><p>source 未凍結や CPU compile 並行などを含む参考値です。正式結果へ混ぜません。数値は median [min–max]、出力数別、warmup を除外。1回の機能試験は n=1 です。この欄から正式なAR / MTPの速度優劣は判断しません。</p><div class="scroll"><table><thead><tr><th>run</th><th>mode</th><th>分類</th><th>group</th><th>入力目標</th><th>実出力数</th><th>n</th><th>PP tok/s</th><th>decode tok/s</th><th>TTFT ms</th></tr></thead><tbody><tr><td><span title="参照先はローカル保管">ar-formal-1/long</span></td><td>ar</td><td>functional_capacity_only</td><td>capacity</td><td>32,768</td><td>73</td><td>1</td><td>560.34 [560.34–560.34]</td><td>16.38 [16.38–16.38]</td><td>57,566.88 [57,566.88–57,566.88]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/long</span></td><td>ar</td><td>functional_capacity_only</td><td>capacity</td><td>131,072</td><td>73</td><td>1</td><td>557.79 [557.79–557.79]</td><td>16.55 [16.55–16.55]</td><td>234,070.44 [234,070.44–234,070.44]</td></tr><tr><td><span title="参照先はローカル保管">ar-formal-1/long</span></td><td>ar</td><td>functional_capacity_only</td><td>capacity</td><td>262,144</td><td>73</td><td>1</td><td>545.14 [545.14–545.14]</td><td>15.98 [15.98–15.98]</td><td>479,954.41 [479,954.41–479,954.41]</td></tr><tr><td><span title="参照先はローカル保管">ar-native-256k-r1/long-128k-256k</span></td><td>ar</td><td>functional_capacity_only</td><td>capacity</td><td>131,072</td><td>73</td><td>1</td><td>582.71 [582.71–582.71]</td><td>17.40 [17.40–17.40]</td><td>224,061.80 [224,061.80–224,061.80]</td></tr><tr><td><span title="参照先はローカル保管">ar-native-256k-r1/long-128k-256k</span></td><td>ar</td><td>functional_capacity_only</td><td>capacity</td><td>262,144</td><td>73</td><td>1</td><td>548.95 [548.95–548.95]</td><td>16.85 [16.85–16.85]</td><td>476,625.24 [476,625.24–476,625.24]</td></tr><tr><td><span title="参照先はローカル保管">ar-smoke-r1/prefill-baseline</span></td><td>ar</td><td>development_diagnostic</td><td>cold</td><td>512</td><td>256</td><td>3</td><td>310.46 [305.70–324.15]</td><td>17.76 [17.75–18.26]</td><td>1,669.28 [1,597.71–1,698.41]</td></tr><tr><td><span title="参照先はローカル保管">ar-smoke-r1/prefill-baseline-no-build</span></td><td>ar</td><td>development_diagnostic</td><td>cold</td><td>512</td><td>256</td><td>3</td><td>314.52 [311.99–315.70]</td><td>17.91 [17.73–17.94]</td><td>1,648.20 [1,642.00–1,661.01]</td></tr></tbody></table></div></section><section><h2>失敗・中断した原記録</h2><p>後日の評価や修正で、元の failed / interrupted 記録を置き換えません。</p><div class="scroll"><table><thead><tr><th>結果</th><th>状態</th><th>エラー</th></tr></thead><tbody><tr><td><span title="参照先はローカル保管">runs/ar-native-256k-r1/long-32k/results.json</span></td><td>failed</td><td>long_32768: Input-token count, JSON retrieval, or output reservation check failed</td></tr><tr><td><span title="参照先はローカル保管">runs/mtp-formal-1/qualification.json</span></td><td>failed_review_required</td><td>continuation AR/MTP comparison requires numerical review</td></tr></tbody></table></div><p><span title="参照先はローカル保管">CPU 診断中断の記録</span> · <span title="参照先はローカル保管">手動停止 events</span> · <span title="参照先はローカル保管">ユーザー再開指示の記録</span></p></section><section><h2>環境・他アプリの観測</h2><p>最新の保存済み環境を表示します。区分と並行process数を読み、formal_precheckというラベルだけで静穏性を認定しません。正式AR/MTP測定前には同じhelperを別ファイル名で実行し、その時点の他の試験・compiler負荷を確認します。Windowsの電源・driver・設定は変更していません。</p><div class="scroll"><table><thead><tr><th>項目</th><th>値</th></tr></thead><tbody><tr><td>取得UTC</td><td>2026-10-04T12:57:16.708246+00:00</td></tr><tr><td>区分</td><td>formal_precheck / 自動の正式環境認定なし</td></tr><tr><td>Windows build</td><td>26300.9550 / DisplayVersion 26H2</td></tr><tr><td>CPU</td><td>AMD RYZEN AI MAX+ 395 w/ Radeon 8060S</td></tr><tr><td>Windows physical bytes</td><td>68,340,748,288</td></tr><tr><td>WSL kernel</td><td>6.6.87.2-microsoft-standard-WSL2</td></tr><tr><td>電源計画</td><td>電源設定の GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (バランス)</td></tr><tr><td>対象GPU</td><td>AMD Radeon(TM) 8060S Graphics / gfx1151</td></tr><tr><td>記録時のcompiler / task model probe</td><td>0 / 0</td></tr><tr><td>Windows GPU driver</td><td>AMD Radeon(TM) 8060S Graphics / 32.0.31041.1004 / 2026-08-17T00:00:00.0000000Z</td></tr><tr><td>Windows GPU driver</td><td>NVIDIA GeForce RTX 5070 Ti / 32.0.16.1692 / 2026-09-04T00:00:00.0000000Z</td></tr></tbody></table></div><p>LM Studioの選択したPIDを 2.377 秒観測。記録されたGPU engineは 15 個、最大利用率は 0.000%。短い区間の軽い活動はUIと整合しますが、UIのみ・推論停止を断定しません。別GPUの存在と対象8060Sを区別し、PDHのLUIDをadapter名へ未確認のまま対応付けません。</p><div class="scroll"><table><thead><tr><th>PID</th><th>名前</th><th>CPU差分 ms</th><th>working set bytes</th><th>private bytes</th></tr></thead><tbody><tr><td>33364</td><td>LM Studio</td><td>0.000</td><td>39,247,872</td><td>276,631,552</td></tr><tr><td>37720</td><td>LM Studio</td><td>0.000</td><td>8,261,632</td><td>11,476,992</td></tr><tr><td>38492</td><td>LM Studio</td><td>0.000</td><td>13,377,536</td><td>63,479,808</td></tr><tr><td>38528</td><td>LM Studio</td><td>0.000</td><td>15,642,624</td><td>15,081,472</td></tr><tr><td>38744</td><td>LM Studio</td><td>0.000</td><td>20,561,920</td><td>59,539,456</td></tr></tbody></table></div><p><span title="参照先はローカル保管">最新環境・選択process/engine raw JSON</span> · <span title="参照先はローカル保管">環境取得helper</span> · <span title="参照先はローカル保管">選択PIDの2秒観測helper</span></p><details><summary>環境記録の制約</summary><pre>[
+  &quot;Read-only snapshot; no settings, drivers, power plans, containers, or model state were changed.&quot;,
+  &quot;No process command lines, complete environments, serial numbers, or unrelated container labels are collected.&quot;,
+  &quot;Power scheme is observed; effective OEM firmware power/thermal limits remain unknown.&quot;,
+  &quot;Registry ProductName may retain legacy branding; build and UBR are raw current-version fields.&quot;,
+  &quot;Windows physical, commit, GPU, and WSL capacity are independent overlapping counters; never sum them.&quot;,
+  &quot;A formal_precheck label requests a preflight record, not automatic certification that the machine is idle.&quot;,
+  &quot;Process names are a point-in-time sample; compiler/model processes can start or stop during capture.&quot;,
+  &quot;GPU counter LUIDs are preserved without inferring which Windows adapter they identify.&quot;
+]</pre></details><div class="scroll"><table><thead><tr><th>保存した環境</th><th>区分</th><th>取得UTC</th></tr></thead><tbody><tr><td><span title="参照先はローカル保管">environment/preformal-build-active.json</span></td><td>diagnostic</td><td>2026-10-04T11:18:37.469626+00:00</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-build-active-r2.json</span></td><td>diagnostic</td><td>2026-10-04T11:21:03.136241+00:00</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-build-active-r3.json</span></td><td>diagnostic</td><td>2026-10-04T11:23:12.622271+00:00</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-cpu-active-r4.json</span></td><td>diagnostic</td><td>2026-10-04T11:25:29.248828+00:00</td></tr><tr><td><span title="参照先はローカル保管">environment/ar-preformal-1.json</span></td><td>formal_precheck</td><td>2026-10-04T12:29:32.923555+00:00</td></tr><tr><td><span title="参照先はローカル保管">environment/mtp-preformal-1.json</span></td><td>formal_precheck</td><td>2026-10-04T12:57:16.708246+00:00</td></tr></tbody></table></div></section><section><h2>最終ソース・公式ビルド・独立イメージ</h2><p>固定ソースとバイナリの納品物を検証しました。Git bundleを新規cloneし、fsck、commit、元branchとの差分byte一致を確認。公式releaseビルド後、ホストのsource/binary mountとGPU device無しでイメージを起動し、versionとSHAを確認しました。</p><div class="scroll"><table><thead><tr><th>項目</th><th>値</th></tr></thead><tbody><tr><td>source commit</td><td><code>dda7daaa4c135ea7f10cea2d480d1a1c01b5158f</code></td></tr><tr><td>binary SHA256</td><td><code>b69a493a2cfc9a0fa95d77d27f6c50fec99a7aa55dd2857dcc3adaa9c6726f0b</code></td></tr><tr><td>image tag</td><td>gufo-sc117:20261004-b69a493a2cfc</td></tr><tr><td>image ID</td><td><code>sha256:41a79dd5bd49eacf1b0d989d8a453cd01217a0e0309a51e8507a1f5abd604f40</code></td></tr><tr><td>image bytes</td><td>12,012,868,893</td></tr><tr><td>公式preset / flags</td><td>release / RelWithDebInfo / gfx1151 / tests・tools OFF</td></tr><tr><td>source_frozen</td><td>True</td></tr></tbody></table></div><p class="notice">イメージには依存Nix closureとbuild toolchainを保持しています。モデルは同梱しません。この整合性検査は最終イメージでのモデル推論成功・正式性能測定を意味しません。</p><p><span title="参照先はローカル保管">ソースSHA・復元検証</span> · <span title="参照先はローカル保管">復元fsckログ</span> · <span title="参照先はローカル保管">公式release結果</span> · <span title="参照先はローカル保管">固定image manifest</span> · <span title="参照先はローカル保管">独立image内のversion/SHA検査</span></p></section><section><h2>再現・起動・ソースと成果物</h2><p><span title="参照先はローカル保管">起動・停止・rollback・クリーン再構築手順</span> · <span title="参照先はローカル保管">固定 Nix Dockerfile</span> · <span title="参照先はローカル保管">再構築スクリプト</span> · <span title="参照先はローカル保管">補助ファイル SHA</span></p><p>保存済み source archive / image manifest と再構築・起動手順を表示します。成果物の整合性検証と、残る品質・正式性能・256K MTP検証を分けて記録します。</p><div class="scroll"><table><thead><tr><th>成果物</th><th>bytes</th></tr></thead><tbody><tr><td><span title="参照先はローカル保管">build/ar-final-console.log</span></td><td>453</td></tr><tr><td><span title="参照先はローカル保管">build/continuation-cache-source-proof.json</span></td><td>1,036</td></tr><tr><td><span title="参照先はローカル保管">build/continuation-cpu-tests.log</span></td><td>760</td></tr><tr><td><span title="参照先はローカル保管">build/continuation-fix.patch</span></td><td>3,653</td></tr><tr><td><span title="参照先はローカル保管">build/coordinator-delivery-validation.json</span></td><td>823</td></tr><tr><td><span title="参照先はローカル保管">build/cpu-focused-final.log</span></td><td>3,922</td></tr><tr><td><span title="参照先はローカル保管">build/final-format-r2.log</span></td><td>28</td></tr><tr><td><span title="参照先はローカル保管">build/final-format.log</span></td><td>28</td></tr><tr><td><span title="参照先はローカル保管">build/final-image-seal-attempt1.log</span></td><td>1,675</td></tr><tr><td><span title="参照先はローカル保管">build/final-image-seal.log</span></td><td>1,892</td></tr><tr><td><span title="参照先はローカル保管">build/final-release-build.json</span></td><td>1,406</td></tr><tr><td><span title="参照先はローカル保管">build/final-release-build.log</span></td><td>76,647</td></tr><tr><td><span title="参照先はローカル保管">build/final-release-configure.log</span></td><td>2,263</td></tr><tr><td><span title="参照先はローカル保管">build/mtp-final-console.log</span></td><td>689</td></tr><tr><td><span title="参照先はローカル保管">build/rebuild-manifest-reader-validation.json</span></td><td>1,725</td></tr><tr><td><span title="参照先はローカル保管">build/release-build.log</span></td><td>27,170</td></tr><tr><td><span title="参照先はローカル保管">build/release-configure.log</span></td><td>145</td></tr><tr><td><span title="参照先はローカル保管">build/report-cli-missing-path-validation.json</span></td><td>2,550</td></tr><tr><td><span title="参照先はローカル保管">build/report-link-validation.json</span></td><td>505</td></tr><tr><td><span title="参照先はローカル保管">build/report-rebuild-validation.json</span></td><td>849</td></tr><tr><td><span title="参照先はローカル保管">build/report-selection-validation.json</span></td><td>51,587</td></tr><tr><td><span title="参照先はローカル保管">build/restart-after-user-stop.json</span></td><td>326</td></tr><tr><td><span title="参照先はローカル保管">build/source-candidate.json</span></td><td>1,127</td></tr><tr><td><span title="参照先はローカル保管">environment/ar-preformal-1.json</span></td><td>15,326</td></tr><tr><td><span title="参照先はローカル保管">environment/mtp-preformal-1.json</span></td><td>15,360</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-build-active-r2.json</span></td><td>10,719</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-build-active-r3.json</span></td><td>10,067</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-build-active.json</span></td><td>9,825</td></tr><tr><td><span title="参照先はローカル保管">environment/preformal-cpu-active-r4.json</span></td><td>16,286</td></tr><tr><td><span title="参照先はローカル保管">runtime/Dockerfile</span></td><td>1,002</td></tr><tr><td><span title="参照先はローカル保管">runtime/README.txt</span></td><td>18,240</td></tr><tr><td><span title="参照先はローカル保管">runtime/benchmark_provenance.py</span></td><td>5,361</td></tr><tr><td><span title="参照先はローカル保管">runtime/build-production.sh</span></td><td>1,284</td></tr><tr><td><span title="参照先はローカル保管">runtime/build-shell.nix</span></td><td>273</td></tr><tr><td><span title="参照先はローカル保管">runtime/capture_environment.py</span></td><td>14,105</td></tr><tr><td><span title="参照先はローカル保管">runtime/capture_process_load.ps1</span></td><td>6,138</td></tr><tr><td><span title="参照先はローカル保管">runtime/closure-image-id.txt</span></td><td>179</td></tr><tr><td><span title="参照先はローカル保管">runtime/collect_memory.py</span></td><td>6,404</td></tr><tr><td><span title="参照先はローカル保管">runtime/delivery-files.json</span></td><td>4,152</td></tr><tr><td><span title="参照先はローカル保管">runtime/final-image-validation.json</span></td><td>1,140</td></tr><tr><td><span title="参照先はローカル保管">runtime/final-image.json</span></td><td>1,816</td></tr><tr><td><span title="参照先はローカル保管">runtime/generate_report.py</span></td><td>54,339</td></tr><tr><td><span title="参照先はローカル保管">runtime/helper-manifest.json</span></td><td>3,080</td></tr><tr><td><span title="参照先はローカル保管">runtime/long_capacity.py</span></td><td>17,951</td></tr><tr><td><span title="参照先はローカル保管">runtime/probe.py</span></td><td>5,561</td></tr><tr><td><span title="参照先はローカル保管">runtime/rebuild_image.py</span></td><td>4,042</td></tr><tr><td><span title="参照先はローカル保管">runtime/report_final_results.py</span></td><td>18,875</td></tr><tr><td><span title="参照先はローカル保管">runtime/report_selection.py</span></td><td>2,772</td></tr><tr><td><span title="参照先はローカル保管">runtime/run_final_qualification.py</span></td><td>15,441</td></tr><tr><td><span title="参照先はローカル保管">runtime/runtime.py</span></td><td>12,967</td></tr><tr><td><span title="参照先はローカル保管">runtime/sc117_benchmark.py</span></td><td>44,673</td></tr><tr><td><span title="参照先はローカル保管">runtime/summarize_memory.py</span></td><td>5,571</td></tr><tr><td><span title="参照先はローカル保管">runtime/test_report_final_results.py</span></td><td>9,017</td></tr><tr><td><span title="参照先はローカル保管">runtime/test_report_selection.py</span></td><td>5,674</td></tr><tr><td><span title="参照先はローカル保管">runtime/windows_memory.ps1</span></td><td>6,355</td></tr><tr><td><span title="参照先はローカル保管">source/README.txt</span></td><td>780</td></tr><tr><td><span title="参照先はローカル保管">source/bundle-verify.txt</span></td><td>306</td></tr><tr><td><span title="参照先はローカル保管">source/commits.txt</span></td><td>5,228</td></tr><tr><td><span title="参照先はローカル保管">source/gufo-sc117-iq3s.bundle</span></td><td>13,675,758</td></tr><tr><td><span title="参照先はローカル保管">source/gufo-sc117-iq3s.tar.gz</span></td><td>5,828,302</td></tr><tr><td><span title="参照先はローカル保管">source/manifest.json</span></td><td>1,705</td></tr><tr><td><span title="参照先はローカル保管">source/restore-check.log</span></td><td>41</td></tr><tr><td><span title="参照先はローカル保管">source/sc117-iq3s.patch</span></td><td>461,114</td></tr></tbody></table></div><details><summary>公式 release ビルド</summary><pre>{
+  &quot;source_commit&quot;: &quot;dda7daaa4c135ea7f10cea2d480d1a1c01b5158f&quot;,
+  &quot;started_utc&quot;: &quot;2026-10-04T11:09:03.266363+00:00&quot;,
+  &quot;preset&quot;: &quot;release&quot;,
+  &quot;status&quot;: &quot;passed&quot;,
+  &quot;parallel&quot;: 2,
+  &quot;format_checked_files&quot;: 499,
+  &quot;steps&quot;: [
+    {
+      &quot;label&quot;: &quot;configure&quot;,
+      &quot;command&quot;: [
+        &quot;bash&quot;,
+        &quot;/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/build-infrastructure/run-gpu.sh&quot;,
+        &quot;cmake&quot;,
+        &quot;--preset&quot;,
+        &quot;release&quot;,
+        &quot;-DGUFO_RELEASE_VERSION=sc117-iq3s-20261004&quot;,
+        &quot;-DGUFO_REVISION=dda7daaa4c135ea7f10cea2d480d1a1c01b5158f&quot;,
+        &quot;-DGUFO_BUILD_TOOLS=OFF&quot;
+      ],
+      &quot;exit_code&quot;: 0,
+      &quot;elapsed_seconds&quot;: 16.78194580800482
+    },
+    {
+      &quot;label&quot;: &quot;build&quot;,
+      &quot;command&quot;: [
+        &quot;bash&quot;,
+        &quot;/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/build-infrastructure/run-gpu.sh&quot;,
+        &quot;cmake&quot;,
+        &quot;--build&quot;,
+        &quot;--preset&quot;,
+        &quot;release&quot;,
+        &quot;--target&quot;,
+        &quot;gufo&quot;,
+        &quot;--parallel&quot;,
+        &quot;2&quot;
+      ],
+      &quot;exit_code&quot;: 0,
+      &quot;elapsed_seconds&quot;: 771.3949164680089
+    }
+  ],
+  &quot;finished_utc&quot;: &quot;2026-10-04T11:22:11.407123+00:00&quot;,
+  &quot;binary_bytes&quot;: 164895608,
+  &quot;binary_sha256&quot;: &quot;b69a493a2cfc9a0fa95d77d27f6c50fec99a7aa55dd2857dcc3adaa9c6726f0b&quot;,
+  &quot;version_output&quot;: &quot;gufo version sc117-iq3s-20261004 (dda7daaa4c135ea7f10cea2d480d1a1c01b5158f)&quot;
+}</pre></details><details><summary>以前のソース候補</summary><pre>{
+  &quot;revision&quot;: &quot;1c2578261185aa22399f187cb46d43b195dbefd4&quot;,
+  &quot;version&quot;: &quot;sc117-iq3s-20261004&quot;,
+  &quot;recorded_utc&quot;: &quot;2026-10-04T10:26:16.551546+00:00&quot;,
+  &quot;format&quot;: {
+    &quot;command&quot;: &quot;run-cpu.sh python3 tools/ci/check-format.py&quot;,
+    &quot;files&quot;: 497,
+    &quot;status&quot;: &quot;passed&quot;
+  },
+  &quot;cpu_tests&quot;: {
+    &quot;command&quot;: &quot;run-cpu.sh ctest --preset cpu-test -R &#x27;qwen38_flash_next\\.(sc117_quant|config|ngram|mtp_sampling)|gguf_reader&#x27; --output-on-failure&quot;,
+    &quot;passed&quot;: 5,
+    &quot;failed&quot;: 0
+  },
+  &quot;status&quot;: &quot;candidate_pending_full_model_qualification&quot;,
+  &quot;configure_command&quot;: [
+    &quot;/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/build-infrastructure/run-gpu.sh&quot;,
+    &quot;cmake&quot;,
+    &quot;--preset&quot;,
+    &quot;gpu-test&quot;,
+    &quot;-DGUFO_RELEASE_VERSION=sc117-iq3s-20261004&quot;,
+    &quot;-DGUFO_REVISION=1c2578261185aa22399f187cb46d43b195dbefd4&quot;
+  ],
+  &quot;binary_sha256&quot;: &quot;79a63d679326bcd70460d1944ff1ec2a98f6d2c671fc7fccc591b51e317f7fb7&quot;,
+  &quot;binary_bytes&quot;: 164895600,
+  &quot;version_output&quot;: &quot;gufo version sc117-iq3s-20261004 (1c2578261185aa22399f187cb46d43b195dbefd4)&quot;,
+  &quot;build_status&quot;: &quot;passed&quot;,
+  &quot;build_log&quot;: &quot;release-build.log&quot;
+}</pre></details><details><summary>保存済みイメージ manifest</summary><pre>[
+  {
+    &quot;path&quot;: &quot;runtime/final-image.json&quot;,
+    &quot;created_utc&quot;: &quot;2026-10-04T11:29:44.215253+00:00&quot;,
+    &quot;image_id&quot;: &quot;sha256:41a79dd5bd49eacf1b0d989d8a453cd01217a0e0309a51e8507a1f5abd604f40&quot;,
+    &quot;tag&quot;: &quot;gufo-sc117:20261004-b69a493a2cfc&quot;,
+    &quot;binary_sha256&quot;: &quot;b69a493a2cfc9a0fa95d77d27f6c50fec99a7aa55dd2857dcc3adaa9c6726f0b&quot;,
+    &quot;gufo_version&quot;: &quot;gufo version sc117-iq3s-20261004 (dda7daaa4c135ea7f10cea2d480d1a1c01b5158f)&quot;,
+    &quot;source_commit&quot;: &quot;dda7daaa4c135ea7f10cea2d480d1a1c01b5158f&quot;,
+    &quot;source_status&quot;: &quot;?? work/\n&quot;,
+    &quot;source_frozen&quot;: true,
+    &quot;source_freeze_scopes&quot;: [
+      &quot;src&quot;,
+      &quot;tests&quot;,
+      &quot;cmake&quot;,
+      &quot;tools&quot;,
+      &quot;assets&quot;,
+      &quot;CMakeLists.txt&quot;,
+      &quot;CMakePresets.json&quot;,
+      &quot;flake.nix&quot;,
+      &quot;flake.lock&quot;,
+      &quot;version.txt&quot;
+    ],
+    &quot;build_configuration&quot;: {
+      &quot;BUILD_TESTING:BOOL&quot;: &quot;OFF&quot;,
+      &quot;CMAKE_BUILD_TYPE:STRING&quot;: &quot;RelWithDebInfo&quot;,
+      &quot;CMAKE_CXX_COMPILER:FILEPATH&quot;: &quot;/nix/store/l5qkpzsr4gxvksh45b3nhxbkyr5cviar-gcc-wrapper-15.3.0/bin/g++&quot;,
+      &quot;CMAKE_CXX_FLAGS:STRING&quot;: &quot;&quot;,
+      &quot;CMAKE_CXX_FLAGS_RELWITHDEBINFO:STRING&quot;: &quot;-O2 -g -DNDEBUG&quot;,
+      &quot;CMAKE_HIP_ARCHITECTURES:STRING&quot;: &quot;gfx1151&quot;,
+      &quot;CMAKE_HIP_COMPILER:FILEPATH&quot;: &quot;/nix/store/dcy8iyr9632m2khx1yxbyrafa7fz6hcy-hipClang/bin/clang++&quot;,
+      &quot;CMAKE_HIP_FLAGS_RELWITHDEBINFO:STRING&quot;: &quot;-O2 -g -DNDEBUG&quot;,
+      &quot;GUFO_BUILD_TOOLS:BOOL&quot;: &quot;OFF&quot;,
+      &quot;GUFO_RELEASE_VERSION:STRING&quot;: &quot;sc117-iq3s-20261004&quot;,
+      &quot;GUFO_REVISION:STRING&quot;: &quot;dda7daaa4c135ea7f10cea2d480d1a1c01b5158f&quot;
+    },
+    &quot;original_image_preserved&quot;: &quot;sha256:31b86b99ac2db6da829e90a573700ed327dc1b91af8eb8a44b03fe36910bfde6&quot;,
+    &quot;original_container_preserved&quot;: &quot;141b5fcaf0c12d5ce379b773035d9231308eb39597e3d0f83b7c2a8bbca8428d&quot;,
+    &quot;builder_id&quot;: &quot;8e8bb08ec88391dd5d78a8c2e61fcfba420daf623872e0fbe655af6317170331&quot;,
+    &quot;contains_build_toolchain&quot;: true,
+    &quot;note&quot;: &quot;Self-contained Nix closure retained. Bind-mounted source/models are not included.&quot;
+  }
+]</pre></details></section><section><h2>証拠ファイルと再生成</h2><p>納品生成スクリプト: runtime/generate_report.py と runtime/report_final_results.py。保存済みファイルだけを読み、GPU / HTTP / ビルドを実行しません。--selection は source/build/image/AR/MTP/品質レビューの7パスを明示し、未存在の対象では更新前に停止します。選択と完了承認は独立です。再実行すると report.html / report-data.json のみを更新し、生データを保持します。--quality-review で完成した C 統合 JSON を指定します。joined-review-final.json は明示指定時だけ選択します。--review-state で明示レビュー JSON を渡し、complete=true と必要な証拠が揃う場合だけ全体完了を表示します。report_final_results.py と report_selection.py も同じフォルダに必要です。work側の複写元がない場合はevidence/source-index.jsonのSHA付き保存物を使います。</p><p><span title="参照先はローカル保管">レポート再生成手順</span> · <span title="参照先はローカル保管">生成スクリプト</span> · <span title="参照先はローカル保管">正式証拠の確認ロジック</span> · <span title="参照先はローカル保管">成果物選択の検証</span> · <span title="参照先はローカル保管">保存済み演算証拠の索引</span></p><div class="scroll"><table><thead><tr><th>複写元</th><th>SHA付き保存先</th></tr></thead><tbody><tr><td>work/gufo/work/sc117-iq4-native-stdout.log</td><td><span title="参照先はローカル保管">evidence/sc117-iq4-native-stdout-901e670f7372.log</span></td></tr><tr><td>work/gufo/work/sc117-iq4-native-stderr.log</td><td><span title="参照先はローカル保管">evidence/sc117-iq4-native-stderr-8fa1fd8fa45b.log</span></td></tr><tr><td>work/gufo/work/sc117-gpu-summary.json</td><td><a href="../../../../evidence/benchmark/reports/gufo-early-20261004/evidence/sc117-gpu-summary-6401eb1364ed.json">evidence/sc117-gpu-summary-6401eb1364ed.json</a></td></tr><tr><td>work/gufo/work/sc117-gpu-initial.log</td><td><span title="参照先はローカル保管">evidence/sc117-gpu-initial-236077c9aaf4.log</span></td></tr><tr><td>work/gufo/work/sc117-gpu-initial-detail.log</td><td><span title="参照先はローカル保管">evidence/sc117-gpu-initial-detail-54ee31e9d41c.log</span></td></tr><tr><td>work/gufo/work/sc117-gpu-final-detail.log</td><td><span title="参照先はローカル保管">evidence/sc117-gpu-final-detail-214cc129f98b.log</span></td></tr><tr><td>work/gufo/work/sc117-reference/mtp_hash.json</td><td><span title="参照先はローカル保管">evidence/mtp_hash-23914217a17e.json</span></td></tr><tr><td>work/gufo/tests/models/qwen38_flash_next/fixtures/sc117_quant.json</td><td><span title="参照先はローカル保管">evidence/sc117_quant-44b43262cc04.json</span></td></tr><tr><td>work/gufo/tests/models/qwen38_flash_next/fixtures/generate_sc117_quant.py</td><td><span title="参照先はローカル保管">evidence/generate_sc117_quant-c652c1879066.py</span></td></tr></tbody></table></div><details><summary>集計に読み込んだ JSON と SHA256</summary><pre>{
+  &quot;evidence/sc117-gpu-native-summary-a9dd8d6680ae.json&quot;: {
+    &quot;bytes&quot;: 16625,
+    &quot;sha256&quot;: &quot;a9dd8d6680aeb144394703d4ff0c0a0e525a67f0a12c99d11e1abda03cdf18b3&quot;
+  },
+  &quot;quality/cpu-native-qualification.json&quot;: {
+    &quot;bytes&quot;: 1197,
+    &quot;sha256&quot;: &quot;7c112c2991ff6bb83a4389760594dca5350578a20d0fe94d7136e2727a1b0573&quot;
+  },
+  &quot;quality/sc117-bind-validation.json&quot;: {
+    &quot;bytes&quot;: 682,
+    &quot;sha256&quot;: &quot;e82c9cfc3fb8bd5388d2e343c6fee2ccd0f9b91ccc865ac46071fdf565f8c7f6&quot;
+  },
+  &quot;model-hashes.json&quot;: {
+    &quot;bytes&quot;: 946,
+    &quot;sha256&quot;: &quot;feaae22dc74ed90e6ce9592499c20893d24f96df513b679551d6dad646f4b804&quot;
+  },
+  &quot;runs/ar-native-256k-r1/conversion-manifest.json&quot;: {
+    &quot;bytes&quot;: 105196,
+    &quot;sha256&quot;: &quot;d088ed39225a8c81e311080b76707f2b7e9213d76882f3be746d86c839b0d3d0&quot;
+  },
+  &quot;runs/ar-native-256k-r1/capacity-assessment.json&quot;: {
+    &quot;bytes&quot;: 1419,
+    &quot;sha256&quot;: &quot;1837ec2038df49101f7868a165c14e1a0e51f0216e3f245abdf7c3bb9e0f2f3e&quot;
+  },
+  &quot;quality/ar-generation/summary.json&quot;: {
+    &quot;bytes&quot;: 37369,
+    &quot;sha256&quot;: &quot;ceada8682783aa3307e2dfda7319ddd1aeb015b92f2f1502882be0a9355ec1cb&quot;
+  },
+  &quot;quality/ar-generation/editorial-review.json&quot;: {
+    &quot;bytes&quot;: 3312,
+    &quot;sha256&quot;: &quot;245581998f2f247ddaac263a306934c74289b2017f8df968329d5a6149448ea1&quot;
+  },
+  &quot;quality/joined-review-final.json&quot;: {
+    &quot;bytes&quot;: 580196,
+    &quot;sha256&quot;: &quot;92cb3e1c09bcda936f6739824a6074fd0ac3edd7b2e2b515efd2e528ac0e047c&quot;
+  },
+  &quot;runs/ar-formal-1/quality-generation/summary.json&quot;: {
+    &quot;bytes&quot;: 37354,
+    &quot;sha256&quot;: &quot;5f79ca3e418070ce6442e8a346011b88577b4fa98f8461cbf5739055afdd1a52&quot;
+  },
+  &quot;quality/c-math02-comparison.json&quot;: {
+    &quot;bytes&quot;: 2621,
+    &quot;sha256&quot;: &quot;d47cf59c5839c0803a0c329977574249d42065888b5e61a8c54750bc15231a27&quot;
+  },
+  &quot;runs/b-math02-decode/comparison.json&quot;: {
+    &quot;bytes&quot;: 3341,
+    &quot;sha256&quot;: &quot;6e7c1f014fc7c8c918453fd060dcd0b1c3e772dcc3deb7937296340eda7496ca&quot;
+  },
+  &quot;runs/b-math02-prefill-native/cpu-comparison.json&quot;: {
+    &quot;bytes&quot;: 3349,
+    &quot;sha256&quot;: &quot;a0eba147f7c5cc6932137f56e59adc7637345b5d4432cd0912b475b867bfe58a&quot;
+  },
+  &quot;runs/b-math02-prefill-native/decode-comparison.json&quot;: {
+    &quot;bytes&quot;: 3343,
+    &quot;sha256&quot;: &quot;a3125e99bc0bec18e0a2c25c386fa171e1d915f7392ad23eb4be73878607b1ba&quot;
+  },
+  &quot;runs/b-math02-trunk-trace/analysis.json&quot;: {
+    &quot;bytes&quot;: 117731,
+    &quot;sha256&quot;: &quot;2a2c63f7eb43ecf3a101fc3e885bc2b57df8a129c5423063a3b9128efe5c68f5&quot;
+  },
+  &quot;runs/b-layer5-ffn-replay/validation-summary.json&quot;: {
+    &quot;bytes&quot;: 3605,
+    &quot;sha256&quot;: &quot;9213fb1057c23d6e22e38173b82c8f5809d069a6f5d0e26dd32e1b59cff58b6e&quot;
+  },
+  &quot;runs/b-layer5-ffn-replay/replay.json&quot;: {
+    &quot;bytes&quot;: 7694,
+    &quot;sha256&quot;: &quot;3d701694c5250b28baaee835fd4654338784d536afc2997135852c32f68aa349&quot;
+  },
+  &quot;runs/b-layer5-ffn-replay/criterion-review.json&quot;: {
+    &quot;bytes&quot;: 3002,
+    &quot;sha256&quot;: &quot;47a5ecc9c549b61043d880832d7a5df7146c4cd9bf8dc395d77b0ffd68a33520&quot;
+  },
+  &quot;runs/b-math02-trunk-trace/B-assessment.json&quot;: {
+    &quot;bytes&quot;: 10386,
+    &quot;sha256&quot;: &quot;05bb509b1cd37b55abf776dda632c54706e6f9c3fd91a5e1583997c69d99e333&quot;
+  },
+  &quot;runs/b-math02-trunk-trace/router-audit.json&quot;: {
+    &quot;bytes&quot;: 248354,
+    &quot;sha256&quot;: &quot;459d0b5e9eedbc60cd2bde0e9328f48b953ff5aea2c3c39696b2899b0380e403&quot;
+  },
+  &quot;runs/mtp-sc117-session-r1/validation-summary.json&quot;: {
+    &quot;bytes&quot;: 1203,
+    &quot;sha256&quot;: &quot;1da4baafe0f093f3a32fa0c88d410723a6d3cdcefab211443a942e6f03dd089d&quot;
+  },
+  &quot;runs/huihui-default-smoke/result.json&quot;: {
+    &quot;bytes&quot;: 939,
+    &quot;sha256&quot;: &quot;72bda39115118a828ac4b00f6a1763b790e8fef013df48d5ece932d7bac7961b&quot;
+  },
+  &quot;runs/ar-native-256k-r1/qualified-memory.json&quot;: {
+    &quot;bytes&quot;: 2312,
+    &quot;sha256&quot;: &quot;6f0c5b47c19a2c1536b83711d251401e79a38fecd117699da23bcdc5ceeba81a&quot;
+  },
+  &quot;runs/ar-smoke-r1/telemetry/memory-summary.json&quot;: {
+    &quot;bytes&quot;: 48664,
+    &quot;sha256&quot;: &quot;075dcc226aaa2461d773ea989fe361fc4a3e6b2d73a000a5c8dc5c7e223199ca&quot;
+  },
+  &quot;runs/ar-native-256k-r1/telemetry/memory-summary.json&quot;: {
+    &quot;bytes&quot;: 38540,
+    &quot;sha256&quot;: &quot;179992dbf667e9783e5c6cd5ad4527eb4333a0f9f1c5dbd2bb89ec4228a5f4c9&quot;
+  },
+  &quot;runs/ar-native-256k-r1/idle-60s.json&quot;: {
+    &quot;bytes&quot;: 376,
+    &quot;sha256&quot;: &quot;b1f60b5c306869fed9ac4d17c7a00dec7e5d84c23855c3b3e82933ccab8ba66b&quot;
+  },
+  &quot;runs/ar-formal-1/continuation/results.json&quot;: {
+    &quot;bytes&quot;: 172138,
+    &quot;sha256&quot;: &quot;a5f965ec11129b7f58b463e8d7f7d7d0e01fdab6d87c5a81db766d473f67b07b&quot;
+  },
+  &quot;runs/ar-formal-1/long/results.json&quot;: {
+    &quot;bytes&quot;: 20409,
+    &quot;sha256&quot;: &quot;5c5fa5de1824c2ba7078258fa632b124e27340e5588a5b7371a86cf732f2e0d6&quot;
+  },
+  &quot;runs/ar-formal-1/smoke/results.json&quot;: {
+    &quot;bytes&quot;: 112364,
+    &quot;sha256&quot;: &quot;b701d3532f854eab62d749bf4482a74747971846a2cc1b703e66890a1fd4ea14&quot;
+  },
+  &quot;runs/ar-formal-1/speed/results.json&quot;: {
+    &quot;bytes&quot;: 166243,
+    &quot;sha256&quot;: &quot;6e8395252734b1b392b3c2cf6a351098da7c35020d1bf1a7f7f0b4e1407b3a20&quot;
+  },
+  &quot;runs/ar-native-256k-r1/long-128k-256k/results.json&quot;: {
+    &quot;bytes&quot;: 12706,
+    &quot;sha256&quot;: &quot;4f22ddddd3f1f90ecff9f1165ceaba5cdeee94173e7a4383a78a0868321730e7&quot;
+  },
+  &quot;runs/ar-native-256k-r1/long-32k/results.json&quot;: {
+    &quot;bytes&quot;: 7195,
+    &quot;sha256&quot;: &quot;2eb1182210a63408b9664803b8cd5a9db18bcb13164b430b2329bbd8bb58ca16&quot;
+  },
+  &quot;runs/ar-smoke-r1/prefill-baseline/results.json&quot;: {
+    &quot;bytes&quot;: 22421,
+    &quot;sha256&quot;: &quot;66a987bebc9707415235c347706d0b98d38cb7aae392c186d8428c7234612048&quot;
+  },
+  &quot;runs/ar-smoke-r1/prefill-baseline-no-build/results.json&quot;: {
+    &quot;bytes&quot;: 15408,
+    &quot;sha256&quot;: &quot;c85466d8e8eb04bb0e095f388e86ec92f7fc3c1d8107a19fbe02ae38a8116ef9&quot;
+  },
+  &quot;runs/ar-smoke-r1/short-sessions/results.json&quot;: {
+    &quot;bytes&quot;: 18763,
+    &quot;sha256&quot;: &quot;bff57a21998c16390b8444ea10d0e5b34bca8f7a81f8a67dc8c83a6c588b357a&quot;
+  },
+  &quot;runs/ar-smoke-r1/smoke/results.json&quot;: {
+    &quot;bytes&quot;: 4101,
+    &quot;sha256&quot;: &quot;b7c67fbbddc1674f1673c17f1135adfcdb01cd8d7202c2cdc784215e0589f2ea&quot;
+  },
+  &quot;runs/mtp-formal-1/continuation/results.json&quot;: {
+    &quot;bytes&quot;: 165633,
+    &quot;sha256&quot;: &quot;ef893d240dc3462a329a3c768c53ec491050ba10d40d9f73b533b3eac003f8b7&quot;
+  },
+  &quot;runs/mtp-formal-1/smoke/results.json&quot;: {
+    &quot;bytes&quot;: 112516,
+    &quot;sha256&quot;: &quot;de562806a52f0762f340c235db8407b309a4d9d79932be22ef6a3580f47a284d&quot;
+  },
+  &quot;runs/mtp-formal-1/speed/results.json&quot;: {
+    &quot;bytes&quot;: 159624,
+    &quot;sha256&quot;: &quot;3d6a111e13f8b41f6655420d85d6756ce63b7fd0c06405f3e08e09e10405833b&quot;
+  },
+  &quot;runs/ar-formal-1/qualification.json&quot;: {
+    &quot;bytes&quot;: 6239,
+    &quot;sha256&quot;: &quot;3ee2adfca9409dc127cbfacbec6911fc0cc83f54cf2b1aa21109b2fb3a0a19e1&quot;
+  },
+  &quot;runs/mtp-formal-1/qualification.json&quot;: {
+    &quot;bytes&quot;: 4832,
+    &quot;sha256&quot;: &quot;7e46cdd7c3ab6cad0de30f60667bda2efb0c761a7fad9d7b45a35dc7c84eeab9&quot;
+  },
+  &quot;runs/mtp-formal-1/continuation/comparison.json&quot;: {
+    &quot;bytes&quot;: 13695,
+    &quot;sha256&quot;: &quot;0f64eee80aa1f8a94efb71fd48f659860152a243c1d595f530689d5601f1f368&quot;
+  },
+  &quot;runs/mtp-formal-1/speed/comparison.json&quot;: {
+    &quot;bytes&quot;: 17156,
+    &quot;sha256&quot;: &quot;c97ad01d21d644422b01f7054e3dcd51a5d3f26d2744d4fecc15e06be1d5e894&quot;
+  },
+  &quot;build/source-candidate.json&quot;: {
+    &quot;bytes&quot;: 1127,
+    &quot;sha256&quot;: &quot;7737a945783879b46dc495e9d8f6606c368a0b5cf3d37891d8a651608d714cc4&quot;
+  },
+  &quot;build/final-release-build.json&quot;: {
+    &quot;bytes&quot;: 1406,
+    &quot;sha256&quot;: &quot;ede63e99f834d6f59b0068742dc0838c1b997d815a38be2f7a8f99802868f94d&quot;
+  },
+  &quot;runtime/final-image.json&quot;: {
+    &quot;bytes&quot;: 1816,
+    &quot;sha256&quot;: &quot;cf34ec35266324a6f00eb69d5eff9662412b74ad84e0ed5d2f269c3ace7170d3&quot;
+  },
+  &quot;runtime/final-image-validation.json&quot;: {
+    &quot;bytes&quot;: 1140,
+    &quot;sha256&quot;: &quot;eae6a61c94bf82594760b8f67915fe6ea3177886cd89d67307dbc99e049ebaca&quot;
+  },
+  &quot;source/manifest.json&quot;: {
+    &quot;bytes&quot;: 1705,
+    &quot;sha256&quot;: &quot;12629387bc7a79512da1658eecd1997cd47d03f0d8f246d0f4172e126bc2366d&quot;
+  },
+  &quot;environment/ar-preformal-1.json&quot;: {
+    &quot;bytes&quot;: 15326,
+    &quot;sha256&quot;: &quot;a2daa76a4bcb8fd0186501569d194068983742b9645f16bd562d8ba8cdb38a22&quot;
+  },
+  &quot;environment/mtp-preformal-1.json&quot;: {
+    &quot;bytes&quot;: 15360,
+    &quot;sha256&quot;: &quot;83e055cef709cc462f00146ee940c173dd83dcba6d7b211d21f5e664ac379a55&quot;
+  },
+  &quot;environment/preformal-build-active-r2.json&quot;: {
+    &quot;bytes&quot;: 10719,
+    &quot;sha256&quot;: &quot;a9464aa92dd5b9ecc27ff426ca51e04dfecce2fbbe7cf3ecdcc6b24b3cd2a908&quot;
+  },
+  &quot;environment/preformal-build-active-r3.json&quot;: {
+    &quot;bytes&quot;: 10067,
+    &quot;sha256&quot;: &quot;55d837bb80bb641adb4b7d5a6cf74123eca2490463928aa58269c3a5b437d13c&quot;
+  },
+  &quot;environment/preformal-build-active.json&quot;: {
+    &quot;bytes&quot;: 9825,
+    &quot;sha256&quot;: &quot;4c4456de0fa8a113433a5e386b9032fb85aa5671995f4a455b4f748e073fec86&quot;
+  },
+  &quot;environment/preformal-cpu-active-r4.json&quot;: {
+    &quot;bytes&quot;: 16286,
+    &quot;sha256&quot;: &quot;300805b19453b9fe37c891f2602c53a4c2a8c10f29d7f614b712df5ff51ee230&quot;
+  },
+  &quot;runs/ar-formal-1/state.json&quot;: {
+    &quot;bytes&quot;: 5040,
+    &quot;sha256&quot;: &quot;d8728631a24e4962a2f91af8b807efeca392e23467ae34cc69f35173ac21c979&quot;
+  },
+  &quot;runs/ar-formal-1/idle-60s.json&quot;: {
+    &quot;bytes&quot;: 814,
+    &quot;sha256&quot;: &quot;fb78c4e2592efccb118e21838c027d99438a205e3fcfe3ddd9a0f0ec25ab6527&quot;
+  },
+  &quot;runs/ar-formal-1/telemetry-validation.json&quot;: {
+    &quot;bytes&quot;: 1392,
+    &quot;sha256&quot;: &quot;c529e1d1b29e1fb9fd38d4369e6ab9b44f17d5dd2633e431e39c1d1436840e87&quot;
+  },
+  &quot;runs/ar-formal-1/telemetry/memory-summary.json&quot;: {
+    &quot;bytes&quot;: 50256,
+    &quot;sha256&quot;: &quot;e2fd1ddd5739d6202ff47254120c9895dce87c42bf982eb31271b5dff87880c1&quot;
+  },
+  &quot;runs/mtp-formal-1/state.json&quot;: {
+    &quot;bytes&quot;: 5152,
+    &quot;sha256&quot;: &quot;7b517fd7370ee09af580fb1a94bb75bc333a724e1556213975e1f3946ad78817&quot;
+  },
+  &quot;runs/mtp-formal-1/telemetry-validation.json&quot;: {
+    &quot;bytes&quot;: 444,
+    &quot;sha256&quot;: &quot;299982d065bed1f867b4a34401560b2ab9dabe6272af5e1177d39cf3f971b776&quot;
+  },
+  &quot;runs/mtp-formal-1/telemetry/memory-summary.json&quot;: {
+    &quot;bytes&quot;: 41568,
+    &quot;sha256&quot;: &quot;aee42c9f0fece393fde1999a3c70be65d43307c95f6d657347666146a3a23b2c&quot;
+  },
+  &quot;runs/mtp-cont-native-replay-r1/validation-summary.json&quot;: {
+    &quot;bytes&quot;: 16511,
+    &quot;sha256&quot;: &quot;835db05dc24c3dd21bd39b1341472090cce8517022a8dec6e22e4c25ab4a6ec2&quot;
+  },
+  &quot;build/continuation-cache-source-proof.json&quot;: {
+    &quot;bytes&quot;: 1036,
+    &quot;sha256&quot;: &quot;d3c61e8397f8e26dac2a2dfe9c2922dbb74473bd020b33ec44ea708c2c2dd8cf&quot;
+  }
+}</pre></details><details><summary>読込警告</summary><pre>[]</pre></details></section></main></body></html>

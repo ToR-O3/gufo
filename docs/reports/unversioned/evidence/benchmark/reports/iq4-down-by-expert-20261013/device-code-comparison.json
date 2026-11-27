@@ -1,0 +1,8 @@
+{
+  "scope": "qfn_mmq gfx1151 GPU function bytes in the release diagnostic; excludes host dispatch, launch arguments and performance",
+  "common_functions": 720,
+  "bit_identical_count": 720,
+  "changed_common": [],
+  "removed_names": [],
+  "added_names": []
+}

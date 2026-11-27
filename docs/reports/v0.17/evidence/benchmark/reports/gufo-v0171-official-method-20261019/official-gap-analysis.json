@@ -1,0 +1,113 @@
+{
+  "checked_at": "2026-10-19T05:50:11.747533+00:00",
+  "scope": "Saved evidence and source inspection only; no inference, runtime changes or new measurements.",
+  "prefill_means": [
+    {
+      "table": "single-ar",
+      "official_v016_pp": 1631.43625,
+      "official_v0171_pp": 1680.0075,
+      "official_change_pct": 2.9772079662935047,
+      "local_v016_pp": 939.9992461129671,
+      "local_v0171_pp": 907.2751305386485,
+      "local_change_pct": -3.4812916829069285,
+      "gap_v016_pct": -42.38210373755229,
+      "gap_v0171_pct": -45.995769034444876,
+      "official_old_new_output_and_token_cache_counts_equal": true,
+      "official_old_new_hardware_fingerprint_equal": true
+    },
+    {
+      "table": "single-mtp",
+      "official_v016_pp": 1582.61625,
+      "official_v0171_pp": 1633.595,
+      "official_change_pct": 3.2211693769730987,
+      "local_v016_pp": 863.4074559837863,
+      "local_v0171_pp": 820.1305323950625,
+      "local_change_pct": -5.012340730763453,
+      "gap_v016_pct": -45.44429478821627,
+      "gap_v0171_pct": -49.79596947866133,
+      "official_old_new_output_and_token_cache_counts_equal": true,
+      "official_old_new_hardware_fingerprint_equal": true
+    },
+    {
+      "table": "single-mtp-repetition",
+      "official_v016_pp": 1615.77125,
+      "official_v0171_pp": 1619.5825,
+      "official_change_pct": 0.23587806751728113,
+      "local_v016_pp": 853.8661844104997,
+      "local_v0171_pp": 838.934303109121,
+      "local_change_pct": -1.7487378671269926,
+      "gap_v016_pct": -47.15426553043943,
+      "gap_v0171_pct": -48.20058236557132,
+      "official_old_new_output_and_token_cache_counts_equal": true,
+      "official_old_new_hardware_fingerprint_equal": true
+    }
+  ],
+  "v015_ar_reference": {
+    "local_pp": 894.9530148936684,
+    "official_pp": 1646.7975000000001,
+    "gap_pct": -45.65494452756526,
+    "official_source": "https://github.com/gufo-org/gufo/blob/322823e212aed92ac82b0c8e13be08f83b8cc767/docs/models/qwen3.8-flash-next/BENCHMARKS.md",
+    "note": "v0.15 MTP publication used maximum PP across prose and repetition; do not present it as separate per-workload PP."
+  },
+  "upstream_attention_functions_match": [
+    "WmmaCausalAttentionKernel",
+    "CompactSelectionKernel",
+    "SelectMarkKernel",
+    "AttentionKernel",
+    "WmmaCausalAttention",
+    "Attention"
+  ],
+  "q5_1_optimization": {
+    "commit": "5a1669a6c15129917a4e91b77bd36ddaa3e7b0d8",
+    "scope": "Packed Q5_1 routed down weight loading only. Orca expert down is IQ4_NL, so its nonlinear decoder/FP32 scale path remains separate.",
+    "official_isolated_down_ms": [
+      160.5,
+      153.0
+    ],
+    "official_native_prefill_pairs_tok_s": [
+      [
+        1867.8,
+        1869.1
+      ],
+      [
+        1859.8,
+        1878.5
+      ]
+    ],
+    "causal_limit": "No matched IQ4/Q4 or per-change local ablation was run; the proportion of the local/official gap explained by this change is unmeasured."
+  },
+  "common_optimizations": "Official attention and compact-selection functions match in local source; lookup is active: all eight repetitive samples record 102 lookup proposals and 102 accepted.",
+  "prefill_chunk_check": {
+    "scope": "AR d0 raw metrics in each local version",
+    "v015_v016_v0171": [
+      {
+        "prefill_chunks": 1,
+        "max_prefill_chunk_tokens": 2040,
+        "active_decode_prefill_chunks": 0
+      },
+      {
+        "prefill_chunks": 1,
+        "max_prefill_chunk_tokens": 2040,
+        "active_decode_prefill_chunks": 0
+      },
+      {
+        "prefill_chunks": 1,
+        "max_prefill_chunk_tokens": 2040,
+        "active_decode_prefill_chunks": 0
+      }
+    ],
+    "explanation": "--prefill-chunk 512 is the active-decode scheduling bound, also the official default; it did not split this isolated request into four chunks."
+  },
+  "false_meanings": {
+    "same_draft_work": "False for all eight repetitive formal samples: proposals, acceptance or verification rounds changed with context-copy MTP. Output hashes, finish and token/cache counts match across versions for all 24 formal samples. This does not invalidate or dismiss Prefill/TTFT latency flags.",
+    "formal_request_equal": "Only the focused 32K control differs from the original full sweep because reduced depth history recalibrated the prompt. Original total/cached/new: 34747/32719/2028; control: 34824/32765/2059. The control old/new pair itself matches request/output/token/cache/draft work.",
+    "original_flag": "False means a phase was newly flagged in the additional control, not a failed output check.",
+    "flag_5pct_and_3ms": "False means no slowdown exceeding both original thresholds in that pair."
+  },
+  "limits": [
+    "Every depth has one warmed observation per version, not a replicate significance test.",
+    "Local slowdown of 1.7–5.0% is observed, not dismissed as noise or proven to be caused by the version. Existing flags and focused controls remain.",
+    "Official v0.17.1 publication uses a dirty PR production snapshot, not the exact clean tag binary.",
+    "Q4/IQ4 models, MTP weights, Linux/WSL, power and RAM budgets differ; existing absolute gaps are not attributed solely to quantization or OS."
+  ]
+}

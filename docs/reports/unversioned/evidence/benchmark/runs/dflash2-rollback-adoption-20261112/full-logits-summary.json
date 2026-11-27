@@ -1,0 +1,31 @@
+{
+  "sha256_both_files": "14e39d2682f32f850e8c9a9fbd64d50a20879761b6c4a28afb37123b6fd83b5a",
+  "vocab_size": 248320,
+  "bitwise_exact": true,
+  "counts": {
+    "records": 2112,
+    "rows": 3758,
+    "fp32_values": 933186560,
+    "before_proposal": 704,
+    "verification": 2350,
+    "retained_frontier": 704,
+    "next_frontier_after_partial": 328
+  },
+  "partial_rollback_widths": {
+    "2": 177,
+    "3": 25,
+    "4": 29,
+    "5": 1,
+    "6": 5,
+    "7": 5,
+    "8": 90
+  },
+  "partial_rollback_kept": {
+    "1": 220,
+    "2": 60,
+    "3": 37,
+    "4": 13,
+    "5": 1,
+    "6": 1
+  }
+}

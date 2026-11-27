@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-20",
+  "scope": "Standalone allocation tests only; no production code or arithmetic changes",
+  "dedicated_capacity_gib": 63.82878875732422,
+  "comparison_at_60gib": [
+    {
+      "run": "comparison-v2",
+      "label": "60GiB",
+      "mode": "malloc",
+      "windows_free_gib": 11.732,
+      "windows_used_gib": 51.915,
+      "committed_gib": 140.321,
+      "dedicated_gib": 38.873,
+      "shared_gib": 22.964,
+      "system_increase_gib": 22.107
+    },
+    {
+      "run": "split-256m-full",
+      "label": "60GiB",
+      "mode": "malloc",
+      "windows_free_gib": 30.955,
+      "windows_used_gib": 32.693,
+      "committed_gib": 131.96,
+      "dedicated_gib": 60.873,
+      "shared_gib": 0.98,
+      "system_increase_gib": 0.332
+    },
+    {
+      "run": "split-16m-full",
+      "label": "60GiB",
+      "mode": "malloc",
+      "windows_free_gib": 31.185,
+      "windows_used_gib": 32.462,
+      "committed_gib": 131.476,
+      "dedicated_gib": 60.873,
+      "shared_gib": 0.964,
+      "system_increase_gib": 0.355
+    },
+    {
+      "run": "split-4m-full",
+      "label": "60GiB",
+      "mode": "malloc",
+      "windows_free_gib": 30.971,
+      "windows_used_gib": 32.676,
+      "committed_gib": 131.672,
+      "dedicated_gib": 60.873,
+      "shared_gib": 0.964,
+      "system_increase_gib": 0.495
+    }
+  ],
+  "peaks_at_64gib": [
+    {
+      "run": "split-256m-full",
+      "label": "64GiB",
+      "mode": "malloc",
+      "windows_free_gib": 27.11,
+      "windows_used_gib": 36.538,
+      "committed_gib": 136.023,
+      "dedicated_gib": 61.131,
+      "shared_gib": 4.73,
+      "system_increase_gib": 4.177,
+      "dedicated_percent": 95.773
+    },
+    {
+      "run": "split-16m-full",
+      "label": "64GiB",
+      "mode": "malloc",
+      "windows_free_gib": 29.8,
+      "windows_used_gib": 33.847,
+      "committed_gib": 135.482,
+      "dedicated_gib": 63.537,
+      "shared_gib": 2.308,
+      "system_increase_gib": 1.74,
+      "dedicated_percent": 99.543
+    },
+    {
+      "run": "split-4m-full",
+      "label": "64GiB",
+      "mode": "malloc",
+      "windows_free_gib": 29.919,
+      "windows_used_gib": 33.728,
+      "committed_gib": 135.61,
+      "dedicated_gib": 63.76,
+      "shared_gib": 2.086,
+      "system_increase_gib": 1.547,
+      "dedicated_percent": 99.892
+    }
+  ],
+  "managed_at_24gib": {
+    "run": "comparison-v2",
+    "label": "24GiB",
+    "mode": "managed_coarse",
+    "windows_free_gib": 8.733,
+    "windows_used_gib": 54.915,
+    "committed_gib": 94.536,
+    "dedicated_gib": 0.798,
+    "shared_gib": 24.964,
+    "system_increase_gib": 25.538
+  },
+  "restoration": {
+    "restored": true,
+    "health": {
+      "status": "ok",
+      "max_context": 131072,
+      "model": "orcarouter-qwen3.8-flash-next-uncensored-iq4_xs",
+      "images": false,
+      "api_key": true,
+      "image_generation": false,
+      "loaded": true,
+      "service": "strata"
+    },
+    "containers": [
+      "Strata Up 2 minutes (healthy)"
+    ]
+  },
+  "notes": [
+    "All numeric GPU values include idle adapter use; system increase subtracts each run baseline.",
+    "Windows commit is not physical RAM usage.",
+    "Gufo uses a per-tensor allocator and selects malloc vs managed based on reported free heap and a 4 GiB reserve.",
+    "Strata ExpertCache currently uses one summed allocation on HIP.",
+    "The 4 MiB test is an allocation-unit experiment, not an exact replay of Gufo tensor sizes.",
+    "Readback checks sample 512 bytes at start/middle/end of every allocation; not full-model correctness or throughput testing."
+  ],
+  "production_allocation_change_applied": false
+}

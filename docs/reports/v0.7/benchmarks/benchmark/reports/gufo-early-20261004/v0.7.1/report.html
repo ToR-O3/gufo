@@ -1,0 +1,145 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>Gufo v0.7.1 SC117 更新検証</title><style>body{font:15px/1.65 system-ui,sans-serif;color:#182331;max-width:1180px;margin:36px auto;padding:0 22px}h1{font-size:28px}h2{font-size:21px;margin-top:32px}table{border-collapse:collapse;width:100%;font-size:13px;margin:12px 0 24px}th,td{border:1px solid #ced5df;padding:7px;text-align:left;overflow-wrap:anywhere}th{background:#eaf0f7}tr:nth-child(even){background:#f7f9fc}pre{white-space:pre-wrap;background:#f3f5f8;padding:14px}a{color:#075a9b}code{background:#eef3f8}@media print{body{margin:0;max-width:none}details{display:none}h2{break-after:avoid}tr{break-inside:avoid}}</style><h1>Gufo v0.7.1 + SC117 IQ3_S</h1><p>状態：<strong>更新・実機検証完了（品質上の制約を記録）</strong>。更新：2026-10-05T12:29:53.455063+00:00</p><p>公式v0.7.1の変更を既存SC117対応に統合。旧版のソース・イメージ・測定記録は保存しています。このページの実行値は、新しくビルドしたv0.7.1によるものです。</p><table><thead><tr><th>識別</th><th>値</th></tr></thead><tbody><tr><td>公式タグ</td><td>v0.7.1 / 96a464769b097e44d7df43e3bfcaf06ba3aa8e45</td></tr><tr><td>統合ソース</td><td>423cc69c5150680953bfb6264054ba32f99c2abb</td></tr><tr><td>Dockerタグ</td><td>gufo-sc117:v0.7.1-f2bc58666a91</td></tr><tr><td>バイナリSHA256</td><td>f2bc58666a9151227b1ac02e99227a3da13656950f1aa2367529e3d9384db0b0</td></tr></tbody></table><h2>検証範囲</h2><table><thead><tr><th>項目</th><th>状態</th></tr></thead><tbody><tr><td>固定ツールチェーンの本体・検証ビルド</td><td>passed</td></tr><tr><td>CPU共有回帰37件・SC117量子化</td><td>passed</td></tr><tr><td>GPU・実GGUF・MTP/EOS 13項目</td><td>passed</td></tr><tr><td>追加変換206テンソルの旧実装との同一性</td><td>名前・元形式・サイズ・変換後SHA256が完全一致</td></tr></tbody></table><p><code>q8_0</code>は指定された一部の重み206個をQ8_0へ追加変換します。モデル全体の変換ではありません。対象・アルゴリズム・対応モデル範囲は変更していません。Q4は<code>off</code>。APIモデル名は維持しています。</p><h2>32K・128K・256K 長文入力</h2><p>容量・検索機能の単発検証です。入力の4箇所にある情報を取り出す固定問題を使用。速度の平均値や総合知能の評価ではありません。短い定型JSONではMTP受理率が高くなるため、通常の自由文生成のDecode速度と直接比較できません。空きRAMは当該リクエスト中のWindows物理RAM最小値、GB=10⁹バイト。</p><table><thead><tr><th>モデル</th><th>mode</th><th>入力設定</th><th>実入力token</th><th>出力token</th><th>TTFT秒</th><th>Prefill tok/s</th><th>Decode tok/s</th><th>空きRAM最小GB</th><th>4箇所検索</th><th>厳密JSON</th></tr></thead><tbody><tr><td>IQ3</td><td>AR</td><td>約32K</td><td>32252</td><td>73</td><td>56.8</td><td>567.6</td><td>16.3</td><td>25.92</td><td>True</td><td>False</td></tr><tr><td>IQ3</td><td>AR</td><td>約128K</td><td>130554</td><td>73</td><td>237.0</td><td>551.0</td><td>16.3</td><td>24.54</td><td>True</td><td>False</td></tr><tr><td>IQ3</td><td>AR</td><td>約256K</td><td>261631</td><td>73</td><td>478.1</td><td>547.2</td><td>16.8</td><td>24.59</td><td>True</td><td>False</td></tr><tr><td>IQ3</td><td>MTP</td><td>約32K</td><td>32252</td><td>73</td><td>57.5</td><td>561.4</td><td>50.3</td><td>22.63</td><td>True</td><td>False</td></tr><tr><td>IQ3</td><td>MTP</td><td>約128K</td><td>130554</td><td>73</td><td>236.4</td><td>552.4</td><td>44.4</td><td>22.35</td><td>True</td><td>False</td></tr><tr><td>IQ3</td><td>MTP</td><td>約256K</td><td>261631</td><td>73</td><td>486.7</td><td>537.6</td><td>48.3</td><td>21.05</td><td>True</td><td>False</td></tr><tr><td>Q4</td><td>AR</td><td>約32K</td><td>32252</td><td>73</td><td>28.7</td><td>1,125.5</td><td>22.8</td><td>7.75</td><td>True</td><td>False</td></tr><tr><td>Q4</td><td>AR</td><td>約128K</td><td>130554</td><td>68</td><td>122.3</td><td>1,068.0</td><td>23.4</td><td>8.12</td><td>True</td><td>True</td></tr><tr><td>Q4</td><td>AR</td><td>約256K</td><td>261631</td><td>73</td><td>260.1</td><td>1,006.1</td><td>21.6</td><td>8.93</td><td>True</td><td>False</td></tr><tr><td>Q4</td><td>MTP</td><td>約32K</td><td>32252</td><td>73</td><td>26.2</td><td>1,230.9</td><td>49.4</td><td>7.17</td><td>True</td><td>False</td></tr><tr><td>Q4</td><td>MTP</td><td>約128K</td><td>130554</td><td>68</td><td>111.2</td><td>1,174.7</td><td>48.8</td><td>7.12</td><td>True</td><td>True</td></tr><tr><td>Q4</td><td>MTP</td><td>約256K</td><td>261631</td><td>73</td><td>237.8</td><td>1,100.3</td><td>55.7</td><td>6.95</td><td>True</td><td>False</td></tr></tbody></table><h2>IQ3_S 反復速度測定</h2><p>同じ入力条件でウォームアップを除く3回の中央値。出力256トークン。上の長文検索テストとはプロンプト・出力数が異なります。</p><table><thead><tr><th>モデル</th><th>mode</th><th>入力目標</th><th>回数</th><th>出力token</th><th>TTFT秒</th><th>Prefill tok/s</th><th>Decode tok/s</th></tr></thead><tbody><tr><td>IQ3</td><td>AR</td><td>512</td><td>3</td><td>256</td><td>1.2</td><td>422.0</td><td>17.0</td></tr><tr><td>IQ3</td><td>AR</td><td>4096</td><td>3</td><td>256</td><td>7.1</td><td>573.0</td><td>17.2</td></tr><tr><td>IQ3</td><td>AR</td><td>32768</td><td>3</td><td>256</td><td>58.2</td><td>563.8</td><td>17.1</td></tr><tr><td>IQ3</td><td>MTP</td><td>512</td><td>3</td><td>256</td><td>1.3</td><td>398.6</td><td>28.8</td></tr><tr><td>IQ3</td><td>MTP</td><td>4096</td><td>3</td><td>256</td><td>7.8</td><td>527.2</td><td>25.5</td></tr><tr><td>IQ3</td><td>MTP</td><td>32768</td><td>3</td><td>256</td><td>61.1</td><td>536.9</td><td>27.3</td></tr></tbody></table><h2>Windowsの利用可能な物理RAM</h2><p>各セルは中央値 / 最小値［GB］。Windows GetPerformanceInfoで約1秒間隔に実測。14GBは参考目標です。WSL・GPU・Dockerの数値は加算しません。開始前の空き容量やキャッシュ履歴が異なるため、旧版との差をそのまま改善量とは解釈できません。測定間の瞬間的なピークは捉えられません。</p><table><thead><tr><th>段階</th><th>IQ3 AR</th><th>IQ3 MTP</th><th>Q4 AR</th><th>Q4 MTP</th></tr></thead><tbody><tr><td>起動前</td><td>23.95 / 23.25</td><td>25.13 / 25.10</td><td>23.97 / 23.72</td><td>33.94 / 33.85</td></tr><tr><td>読み込み中</td><td>23.75 / 23.57</td><td>24.83 / 22.84</td><td>23.66 / 2.82</td><td>33.72 / 6.12</td></tr><tr><td>ロード完了直後</td><td>23.60 / 23.55</td><td>22.90 / 22.83</td><td>7.41 / 3.10</td><td>7.49 / 7.41</td></tr><tr><td>入力処理中（ストリーム試験）</td><td>24.91 / 22.53</td><td>22.65 / 21.05</td><td>8.99 / 4.61</td><td>8.37 / 6.95</td></tr><tr><td>生成中（ストリーム試験）</td><td>23.42 / 22.48</td><td>22.64 / 21.68</td><td>6.62 / 4.39</td><td>7.11 / 6.98</td></tr><tr><td>生成後60秒待機</td><td>24.86 / 24.79</td><td>21.90 / 21.76</td><td>9.11 / 8.97</td><td>8.14 / 8.01</td></tr></tbody></table><h2>生成品質の固定12問</h2><p>日本語・コード・数学を各4問。正解判定は固定の形式・内容条件に基づきます。量子化だけを分離した比較ではなく、由来の異なる2モデルです。MGSM100問の旧結果はv0.7.0の結果として保存し、この版のスコアには使っていません。</p><table><thead><tr><th>モデル</th><th>問題</th><th>判定（制約は下記）</th><th>入力token一致</th><th>終了理由</th><th>所要秒</th></tr></thead><tbody><tr><td>IQ3</td><td>ja01_schedule</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>2.3</td></tr><tr><td>IQ3</td><td>ja02_summary</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>1.5</td></tr><tr><td>IQ3</td><td>ja03_polite</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>0.8</td></tr><tr><td>IQ3</td><td>ja04_exception</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.9</td></tr><tr><td>IQ3</td><td>code01_unique</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>3.8</td></tr><tr><td>IQ3</td><td>code02_merge</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>7.9</td></tr><tr><td>IQ3</td><td>code03_search</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>6.8</td></tr><tr><td>IQ3</td><td>code04_brackets</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>6.1</td></tr><tr><td>IQ3</td><td>math01_linear</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.3</td></tr><tr><td>IQ3</td><td>math02_union</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>0.5</td></tr><tr><td>IQ3</td><td>math03_probability</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.6</td></tr><tr><td>IQ3</td><td>math04_sequence</td><td>検証用出力上限で未完了</td><td>True</td><td>length</td><td>8.1</td></tr><tr><td>Q4</td><td>ja01_schedule</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>1.7</td></tr><tr><td>Q4</td><td>ja02_summary</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>1.2</td></tr><tr><td>Q4</td><td>ja03_polite</td><td>固定条件不一致</td><td>True</td><td>stop</td><td>0.5</td></tr><tr><td>Q4</td><td>ja04_exception</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.6</td></tr><tr><td>Q4</td><td>code01_unique</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>2.2</td></tr><tr><td>Q4</td><td>code02_merge</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>5.2</td></tr><tr><td>Q4</td><td>code03_search</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>4.8</td></tr><tr><td>Q4</td><td>code04_brackets</td><td>動作合格・コード囲みあり</td><td>True</td><td>stop</td><td>4.0</td></tr><tr><td>Q4</td><td>math01_linear</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.2</td></tr><tr><td>Q4</td><td>math02_union</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.3</td></tr><tr><td>Q4</td><td>math03_probability</td><td>固定条件合致</td><td>True</td><td>stop</td><td>0.4</td></tr><tr><td>Q4</td><td>math04_sequence</td><td>検証用出力上限で未完了</td><td>True</td><td>length</td><td>5.2</td></tr></tbody></table><h2>実行・計測状態</h2><table><thead><tr><th>モデル</th><th>mode</th><th>実行</th><th>Windows等メモリ計測</th></tr></thead><tbody><tr><td>IQ3</td><td>AR</td><td>測定・最終確認済み</td><td>ok</td></tr><tr><td>IQ3</td><td>MTP</td><td>測定・最終確認済み</td><td>ok</td></tr><tr><td>Q4</td><td>AR</td><td>測定・最終確認済み</td><td>ok</td></tr><tr><td>Q4</td><td>MTP</td><td>測定・最終確認済み</td><td>ok</td></tr></tbody></table><h2>確認事項</h2><ul><li>IQ3の固定12問は同じ入力計画・生成設定でv0.7.0と実出力が12/12一致。旧版の合格を流用せず、新版の出力を取得して照合。</li><li>IQ3は数学の集合問題を31と誤答（正答47）。旧版と同じ誤答であり、モデル品質の制約として残す。</li><li>IQ3の日本語要約は内容は正しいが2文で、一文指定に不一致。丁寧な依頼文は自然だが「資料」の明記を欠き、自動必須語条件を満たさない。</li><li>コード4問は動作・入力非変更のテストを通過。併合は線形、探索は二分探索の実装を確認。ただしコードフェンスが付き、関数定義だけという厳密な出力形式には不一致。</li><li>本更新ではGPU数値検査・生成品質を新規実行。旧版のCPU原重み／変換後重みの全12問再計算とMGSM100問は再実行していない。</li><li>IQ3の会議JSONは有効で内容も同義だが、「金曜」「15時30分」が固定期待値「金曜日」「15:30」と文字列不一致。採点基準を事後変更せず、不一致のまま保存。</li><li>速度の旧版との差は別時刻の履歴参考。温度・電力・背景処理と直前の負荷を揃えた対照実験ではなく、アップデートによる速度向上や全条件での速度非劣化を証明するものではない。</li><li>Q4のコード4問は動作・入力非変更を確認し、併合は線形、探索は二分探索。コード囲みは付いている。日本語の固定条件不一致はIQ3と同じ内容。</li><li>Q4は集合問題を47と正答した一方、等差数列の問題は指定した検証用出力上限で終了（finish=length）し、最終回答が出なかった。これは予算内未回答として記録し、誤った最終数値を出したケースとは区別する。サーバーの既定上限は-1のまま。</li><li>初回の補助検査は正解データのマウント不足で終了。検証手順だけを修正して再実行し、13項目が通過。最初の失敗ログはevidence/operator-fixture-mount-missingに保存。</li><li>長文12条件の検索内容はすべて正しい。厳密JSONは2/12条件で合致し、残る10条件はJSON全体をコードフェンスで囲む形式不一致を記録した。</li></ul><h2>起動・再現資料</h2><p><strong>gufoコンテナは新イメージで作成済み・停止状態です。</strong>IQ3_S / q8_0 / MTP構成。起動は <code>docker --context default start gufo</code>、APIは http://127.0.0.1:18080 です。</p><p>設定：コンテキスト262,144、sessions=1、cache-ram-bytes=1、ディスクキャッシュなし、think=off、サーバーmax-tokens=-1。MTP draft-tokens=7。各検証リクエストの出力上限はログに記録しています。</p><p><span title="参照先はローカル保管">説明と起動方法</span> · <span title="参照先はローカル保管">イメージ・バイナリ識別</span> · <span title="参照先はローカル保管">統合ソースbundle</span> · <span title="参照先はローカル保管">移行記録</span> · <span title="参照先はローカル保管">演算検証記録</span> · <span title="参照先はローカル保管">実機検証記録</span> · <span title="参照先はローカル保管">環境</span> · <a href="https://github.com/gufo-org/gufo/releases/tag/v0.7.1">公式リリース</a></p><details><summary>品質テストの実出力</summary><h3>iq3 / ja01_schedule</h3><pre>{
+  &quot;曜日&quot;: &quot;金曜&quot;,
+  &quot;時刻&quot;: &quot;15時30分&quot;,
+  &quot;会場&quot;: &quot;第2会議室&quot;
+}</pre><p>{&quot;correct&quot;: false}</p><h3>iq3 / ja02_summary</h3><pre>大雨増水で清掃は翌週土曜へ延期。集合場所と時刻は変更なし。</pre><p>{&quot;machine_conditions&quot;: true, &quot;characters&quot;: 29, &quot;needs_semantic_review&quot;: true, &quot;rubric&quot;: &quot;原因と延期先が正しく、集合場所・開始時刻を変更したと述べない。&quot;}</p><h3>iq3 / ja03_polite</h3><pre>本日中にご送付いただけますと幸いです。</pre><p>{&quot;machine_conditions&quot;: false, &quot;characters&quot;: 19, &quot;needs_semantic_review&quot;: true, &quot;rubric&quot;: &quot;取引先向けの自然な依頼文で、期限を変えず、送付済みの断定にしない。&quot;}</p><h3>iq3 / ja04_exception</h3><pre>[&quot;青木&quot;, &quot;上田&quot;]</pre><p>{&quot;correct&quot;: true}</p><h3>iq3 / code01_unique</h3><pre>```python
+def stable_unique(xs):
+    seen = set()
+    result = []
+    for x in xs:
+        if x not in seen:
+            seen.add(x)
+            result.append(x)
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [], &quot;expected&quot;: []}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [3, 1, 2], &quot;expected&quot;: [3, 1, 2]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [&quot;b&quot;, &quot;a&quot;, &quot;c&quot;], &quot;expected&quot;: [&quot;b&quot;, &quot;a&quot;, &quot;c&quot;]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [0, -1, 2], &quot;expected&quot;: [0, -1, 2]}]}</p><h3>iq3 / code02_merge</h3><pre>```python
+def merge_sorted(a, b):
+    i = 0
+    j = 0
+    result = []
+    while i &lt; len(a) and j &lt; len(b):
+        if a[i] &lt;= b[j]:
+            result.append(a[i])
+            i += 1
+        else:
+            result.append(b[j])
+            j += 1
+    while i &lt; len(a):
+        result.append(a[i])
+        i += 1
+    while j &lt; len(b):
+        result.append(b[j])
+        j += 1
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [], &quot;expected&quot;: []}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [1, 2, 3, 3, 5, 6], &quot;expected&quot;: [1, 2, 3, 3, 5, 6]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [-3, 0], &quot;expected&quot;: [-3, 0]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [-5, -4, -1, 2, 2, 2], &quot;expected&quot;: [-5, -4, -1, 2, 2, 2]}]}</p><h3>iq3 / code03_search</h3><pre>```python
+def first_index(nums, target):
+    left = 0
+    right = len(nums) - 1
+    result = -1
+    while left &lt;= right:
+        mid = (left + right) // 2
+        if nums[mid] == target:
+            result = mid
+            right = mid - 1
+        elif nums[mid] &lt; target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: -1, &quot;expected&quot;: -1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 1, &quot;expected&quot;: 1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: -1, &quot;expected&quot;: -1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 0, &quot;expected&quot;: 0}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 0, &quot;expected&quot;: 0}]}</p><h3>iq3 / code04_brackets</h3><pre>```python
+def balanced(s):
+    stack = []
+    pairs = {&#x27;)&#x27;: &#x27;(&#x27;, &#x27;]&#x27;: &#x27;[&#x27;, &#x27;}&#x27;: &#x27;{&#x27;}
+    for char in s:
+        if char in &#x27;([{&#x27;:
+            stack.append(char)
+        elif char in &#x27;)]}&#x27;:
+            if not stack or stack[-1] != pairs[char]:
+                return False
+            stack.pop()
+    return len(stack) == 0
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}]}</p><h3>iq3 / math01_linear</h3><pre>7</pre><p>{&quot;correct&quot;: true}</p><h3>iq3 / math02_union</h3><pre>31</pre><p>{&quot;correct&quot;: false}</p><h3>iq3 / math03_probability</h3><pre>3/10</pre><p>{&quot;correct&quot;: true}</p><h3>iq3 / math04_sequence</h3><pre>等差数列の和を求める公式 $S_n = \frac{n}{2} \{ 2a + (n-1)d \}$ を使用します。
+
+ここで、
+*   初項 $a = 4$
+*   公差 $d = 3$
+*   項数 $n = 20$
+
+これらを公式に代入すると：
+
+$$
+\begin{aligned}
+S_{20} &amp;= \frac{20}{2} \{ 2(4) + (20-1)(3) \} \\
+&amp;= 1</pre><p>{&quot;correct&quot;: false}</p><h3>q4 / ja01_schedule</h3><pre>{
+  &quot;曜日&quot;: &quot;金曜&quot;,
+  &quot;時刻&quot;: &quot;15時30分&quot;,
+  &quot;会場&quot;: &quot;第2会議室&quot;
+}</pre><p>{&quot;correct&quot;: false}</p><h3>q4 / ja02_summary</h3><pre>大雨増水で清掃は翌週土曜へ延期。集合場所と時刻は変更なし。</pre><p>{&quot;machine_conditions&quot;: true, &quot;characters&quot;: 29, &quot;needs_semantic_review&quot;: true, &quot;rubric&quot;: &quot;原因と延期先が正しく、集合場所・開始時刻を変更したと述べない。&quot;}</p><h3>q4 / ja03_polite</h3><pre>本日中にご送付いただけますと幸いです。</pre><p>{&quot;machine_conditions&quot;: false, &quot;characters&quot;: 19, &quot;needs_semantic_review&quot;: true, &quot;rubric&quot;: &quot;取引先向けの自然な依頼文で、期限を変えず、送付済みの断定にしない。&quot;}</p><h3>q4 / ja04_exception</h3><pre>[&quot;青木&quot;, &quot;上田&quot;]</pre><p>{&quot;correct&quot;: true}</p><h3>q4 / code01_unique</h3><pre>```python
+def stable_unique(xs):
+    seen = set()
+    result = []
+    for x in xs:
+        if x not in seen:
+            seen.add(x)
+            result.append(x)
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [], &quot;expected&quot;: []}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [3, 1, 2], &quot;expected&quot;: [3, 1, 2]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [&quot;b&quot;, &quot;a&quot;, &quot;c&quot;], &quot;expected&quot;: [&quot;b&quot;, &quot;a&quot;, &quot;c&quot;]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [0, -1, 2], &quot;expected&quot;: [0, -1, 2]}]}</p><h3>q4 / code02_merge</h3><pre>```python
+def merge_sorted(a, b):
+    result = []
+    i, j = 0, 0
+    while i &lt; len(a) and j &lt; len(b):
+        if a[i] &lt;= b[j]:
+            result.append(a[i])
+            i += 1
+        else:
+            result.append(b[j])
+            j += 1
+    while i &lt; len(a):
+        result.append(a[i])
+        i += 1
+    while j &lt; len(b):
+        result.append(b[j])
+        j += 1
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [], &quot;expected&quot;: []}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [1, 2, 3, 3, 5, 6], &quot;expected&quot;: [1, 2, 3, 3, 5, 6]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [-3, 0], &quot;expected&quot;: [-3, 0]}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: [-5, -4, -1, 2, 2, 2], &quot;expected&quot;: [-5, -4, -1, 2, 2, 2]}]}</p><h3>q4 / code03_search</h3><pre>```python
+def first_index(nums, target):
+    left = 0
+    right = len(nums) - 1
+    result = -1
+    
+    while left &lt;= right:
+        mid = (left + right) // 2
+        
+        if nums[mid] == target:
+            result = mid
+            right = mid - 1
+        elif nums[mid] &lt; target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    
+    return result
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: -1, &quot;expected&quot;: -1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 1, &quot;expected&quot;: 1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: -1, &quot;expected&quot;: -1}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 0, &quot;expected&quot;: 0}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: 0, &quot;expected&quot;: 0}]}</p><h3>q4 / code04_brackets</h3><pre>```python
+def balanced(s):
+    stack = []
+    pairs = {&#x27;)&#x27;: &#x27;(&#x27;, &#x27;]&#x27;: &#x27;[&#x27;, &#x27;}&#x27;: &#x27;{&#x27;}
+    for char in s:
+        if char in &#x27;([{&#x27;:
+            stack.append(char)
+        elif char in &#x27;)]}&#x27;:
+            if not stack or stack[-1] != pairs[char]:
+                return False
+            stack.pop()
+    return len(stack) == 0
+```</pre><p>{&quot;correct&quot;: true, &quot;tests&quot;: [{&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: false, &quot;expected&quot;: false}, {&quot;correct&quot;: true, &quot;input_unchanged&quot;: true, &quot;actual&quot;: true, &quot;expected&quot;: true}]}</p><h3>q4 / math01_linear</h3><pre>7</pre><p>{&quot;correct&quot;: true}</p><h3>q4 / math02_union</h3><pre>47</pre><p>{&quot;correct&quot;: true}</p><h3>q4 / math03_probability</h3><pre>3/10</pre><p>{&quot;correct&quot;: true}</p><h3>q4 / math04_sequence</h3><pre>等差数列の和を求める公式 $S_n = \frac{n}{2} \{ 2a + (n-1)d \}$ を使用します。
+
+ここで、
+*   初項 $a = 4$
+*   公差 $d = 3$
+*   項数 $n = 20$
+
+値を代入して計算します。
+
+$$
+\begin{aligned}
+S_{20} &amp;= \frac{20}{2} \{ 2(4) + (20-1)(3) \} \\
+&amp;= 1</pre><p>{&quot;correct&quot;: false}</p></details></html>

@@ -1,0 +1,112 @@
+{
+  "status": "localized rounding amplification demonstrated; no global model threshold relaxed",
+  "exit_code": 0,
+  "oom_killed": false,
+  "actual_device_weight_bytes": 24958976,
+  "cpu_and_gpu_trace_reproduction_bitwise": true,
+  "actual_q8_single_code_difference": {
+    "code_changes": [
+      {
+        "index": 2439,
+        "reference_code": 4,
+        "other_code": 5
+      }
+    ],
+    "different_stored_scales": 0,
+    "sum_half_ignored": "bytes 2..3 are unused by IQ2_S/IQ4_NL/Q8_0 dot products"
+  },
+  "counterfactual_l2_distance_reduction_fraction": 0.9996155629349305,
+  "all_same_input_dot_comparisons_pass_existing_bound": true,
+  "bounded_dot_comparisons": 122880,
+  "max_error_to_bound_ratio": 0.0008051750823417749,
+  "payloads": [
+    {
+      "file": "code4.gpu_q8.bin",
+      "dtype": "q8_1: little-endian float16 d, float16 sum, 32 int8 codes",
+      "shape": [
+        80,
+        36
+      ],
+      "elements_before_quantization": 2560,
+      "offset_bytes": 0,
+      "sha256": "ee0bd226d7e4c8b456ef5a3cd688eff067a4620e18a8e0fd50433ad20a54f1fb"
+    },
+    {
+      "file": "cpu_saved.gpu_q8.bin",
+      "dtype": "q8_1: little-endian float16 d, float16 sum, 32 int8 codes",
+      "shape": [
+        80,
+        36
+      ],
+      "elements_before_quantization": 2560,
+      "offset_bytes": 0,
+      "sha256": "b8bbd8c38fb533c1d61249a2623881680b311cae209801371f245b52618cce12"
+    },
+    {
+      "file": "gpu_saved.gpu_q8.bin",
+      "dtype": "q8_1: little-endian float16 d, float16 sum, 32 int8 codes",
+      "shape": [
+        80,
+        36
+      ],
+      "elements_before_quantization": 2560,
+      "offset_bytes": 0,
+      "sha256": "08a35b3bc6ef1deb1a0053c7e4a457aa3cf455c9c367ad09679098c492f328bb"
+    },
+    {
+      "file": "code4.gpu_output.f32",
+      "dtype": "float32_le",
+      "shape": [
+        2560
+      ],
+      "meaning": "FFN hidden output, not vocabulary logits",
+      "offset_bytes": 0,
+      "sha256": "e94aedd7e06fedeedf9b68c1c2306458424904b61cb7d8a811852b85acccb2c1"
+    },
+    {
+      "file": "cpu_saved.cpu_output.f32",
+      "dtype": "float32_le",
+      "shape": [
+        2560
+      ],
+      "meaning": "FFN hidden output, not vocabulary logits",
+      "offset_bytes": 0,
+      "sha256": "691aaaaf5c7b66fd6d19c81a7caf516a2cb0777216576d6f6fc056d527b001e6"
+    },
+    {
+      "file": "cpu_saved.gpu_output.f32",
+      "dtype": "float32_le",
+      "shape": [
+        2560
+      ],
+      "meaning": "FFN hidden output, not vocabulary logits",
+      "offset_bytes": 0,
+      "sha256": "2dd1b03a21cc2a180f1e5d45e8336f71ffec7e89053667f96a80d2fef4403ddf"
+    },
+    {
+      "file": "gpu_saved.cpu_output.f32",
+      "dtype": "float32_le",
+      "shape": [
+        2560
+      ],
+      "meaning": "FFN hidden output, not vocabulary logits",
+      "offset_bytes": 0,
+      "sha256": "3af8ae72bb9f44fbd03bd471d2d7cd5d0d98f9263444fdf10609f6fb992aeee7"
+    },
+    {
+      "file": "gpu_saved.gpu_output.f32",
+      "dtype": "float32_le",
+      "shape": [
+        2560
+      ],
+      "meaning": "FFN hidden output, not vocabulary logits",
+      "offset_bytes": 0,
+      "sha256": "063f7d12fcf7864218fc81b69b12c7cae31edc7ce094659d4aad3f97f88e8c9e"
+    }
+  ],
+  "limitations": [
+    "This replay isolates one discontinuity at pos0/layer5. It does not equate all layers or prove all end-to-end differences harmless.",
+    "Counterfactual freezes observed GPU routes and shared gate; their small original CPU/GPU differences remain.",
+    "The traced prefill/decode activation-type differences and pos40 expert-set changes are separate measured sources of divergence."
+  ]
+}

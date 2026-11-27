@@ -1,0 +1,451 @@
+{
+  "scope": "Observed wall time. Formal envelope includes all completed sweep setup, load, warmup, cold prefix preparation, slot reset, measurements and shutdown. Preliminary investigation before the manifest timestamp is not timed. No concurrent-user or cold-loading speed suite. Phase boundaries are harness timestamps; they are distinct from server throughput timers.",
+  "recorded_preparation_start": "2026-11-08T01:48:34.357165+00:00",
+  "pilot_seconds": 300.6352047920227,
+  "formal_sweep_count": 18,
+  "formal_seconds": 5991.092967987061,
+  "formal_job_seconds_sum": 5991.028301477432,
+  "formal_phases_seconds": {
+    "server_loading": 509.6827943325043,
+    "warmup": 43.751957654953,
+    "measurement": 892.3542864322662,
+    "prefix_preparation": 4362.888756990433,
+    "slot_reset": 130.18190574645996,
+    "server_shutdown": 40.20448088645935,
+    "other_setup_and_bookkeeping": 11.96411943435669
+  },
+  "jobs": [
+    {
+      "job": "external-q8-mtp-prose-r01",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 1,
+      "total_seconds": 346.48225593566895,
+      "phases_seconds": {
+        "server_loading": 24.005854606628418,
+        "warmup": 2.3484926223754883,
+        "measurement": 50.709776163101196,
+        "prefix_preparation": 257.45417761802673,
+        "slot_reset": 8.91910982131958,
+        "server_shutdown": 2.2721633911132812,
+        "other_setup_and_bookkeeping": 0.772681713104248
+      },
+      "start": 1794104081.3494256,
+      "end": 1794104427.8316815
+    },
+    {
+      "job": "builtin-mtp-prose-r01",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 1,
+      "total_seconds": 331.83692049980164,
+      "phases_seconds": {
+        "server_loading": 24.829068660736084,
+        "warmup": 2.5221517086029053,
+        "measurement": 48.854323387145996,
+        "prefix_preparation": 243.71679759025574,
+        "slot_reset": 8.827017307281494,
+        "server_shutdown": 2.3228702545166016,
+        "other_setup_and_bookkeeping": 0.7646915912628174
+      },
+      "start": 1794104427.8363636,
+      "end": 1794104759.673284
+    },
+    {
+      "job": "external-q8-ar-prose-r01",
+      "condition": "external-q8",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 1,
+      "total_seconds": 317.42250537872314,
+      "phases_seconds": {
+        "server_loading": 37.57472848892212,
+        "warmup": 2.1180663108825684,
+        "measurement": 53.13680577278137,
+        "prefix_preparation": 218.4160988330841,
+        "slot_reset": 3.4527699947357178,
+        "server_shutdown": 1.971454381942749,
+        "other_setup_and_bookkeeping": 0.7525815963745117
+      },
+      "start": 1794104759.6770582,
+      "end": 1794105077.0995636
+    },
+    {
+      "job": "builtin-ar-prose-r01",
+      "condition": "builtin",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 1,
+      "total_seconds": 299.95586705207825,
+      "phases_seconds": {
+        "server_loading": 22.48716974258423,
+        "warmup": 2.1363275051116943,
+        "measurement": 51.884082078933716,
+        "prefix_preparation": 217.34641122817993,
+        "slot_reset": 3.4564385414123535,
+        "server_shutdown": 2.0714919567108154,
+        "other_setup_and_bookkeeping": 0.5739459991455078
+      },
+      "start": 1794105077.1024415,
+      "end": 1794105377.0583086
+    },
+    {
+      "job": "external-q8-mtp-repetition-r01",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 1,
+      "total_seconds": 339.9173047542572,
+      "phases_seconds": {
+        "server_loading": 23.89888834953308,
+        "warmup": 2.1279051303863525,
+        "measurement": 45.40650510787964,
+        "prefix_preparation": 256.3654942512512,
+        "slot_reset": 9.258843898773193,
+        "server_shutdown": 2.2727015018463135,
+        "other_setup_and_bookkeeping": 0.5869665145874023
+      },
+      "start": 1794105377.0618956,
+      "end": 1794105716.9792004
+    },
+    {
+      "job": "builtin-mtp-repetition-r01",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 1,
+      "total_seconds": 351.5635874271393,
+      "phases_seconds": {
+        "server_loading": 23.468055725097656,
+        "warmup": 2.0930211544036865,
+        "measurement": 49.5887930393219,
+        "prefix_preparation": 263.630912065506,
+        "slot_reset": 9.6060791015625,
+        "server_shutdown": 2.429426431655884,
+        "other_setup_and_bookkeeping": 0.7472999095916748
+      },
+      "start": 1794105716.9834256,
+      "end": 1794106068.547013
+    },
+    {
+      "job": "builtin-mtp-repetition-r02",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 2,
+      "total_seconds": 348.21040868759155,
+      "phases_seconds": {
+        "server_loading": 24.264568567276,
+        "warmup": 2.0993409156799316,
+        "measurement": 49.08241891860962,
+        "prefix_preparation": 260.1345434188843,
+        "slot_reset": 9.480358600616455,
+        "server_shutdown": 2.372640371322632,
+        "other_setup_and_bookkeeping": 0.7765378952026367
+      },
+      "start": 1794106068.5513875,
+      "end": 1794106416.7617962
+    },
+    {
+      "job": "external-q8-mtp-repetition-r02",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 2,
+      "total_seconds": 342.86473059654236,
+      "phases_seconds": {
+        "server_loading": 23.994081020355225,
+        "warmup": 2.07918381690979,
+        "measurement": 45.11576533317566,
+        "prefix_preparation": 259.1382496356964,
+        "slot_reset": 9.583310842514038,
+        "server_shutdown": 2.322143316268921,
+        "other_setup_and_bookkeeping": 0.6319966316223145
+      },
+      "start": 1794106416.765325,
+      "end": 1794106759.6300557
+    },
+    {
+      "job": "builtin-ar-prose-r02",
+      "condition": "builtin",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 2,
+      "total_seconds": 301.83681178092957,
+      "phases_seconds": {
+        "server_loading": 23.403934955596924,
+        "warmup": 2.137162923812866,
+        "measurement": 52.512370109558105,
+        "prefix_preparation": 217.51119112968445,
+        "slot_reset": 3.5212459564208984,
+        "server_shutdown": 2.118582248687744,
+        "other_setup_and_bookkeeping": 0.6323244571685791
+      },
+      "start": 1794106759.63376,
+      "end": 1794107061.4705718
+    },
+    {
+      "job": "external-q8-ar-prose-r02",
+      "condition": "external-q8",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 2,
+      "total_seconds": 300.44716453552246,
+      "phases_seconds": {
+        "server_loading": 22.306621313095093,
+        "warmup": 2.108515977859497,
+        "measurement": 52.226476430892944,
+        "prefix_preparation": 217.54142832756042,
+        "slot_reset": 3.5198488235473633,
+        "server_shutdown": 2.1207427978515625,
+        "other_setup_and_bookkeeping": 0.6235308647155762
+      },
+      "start": 1794107061.4742312,
+      "end": 1794107361.9213958
+    },
+    {
+      "job": "builtin-mtp-prose-r02",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 2,
+      "total_seconds": 330.8169162273407,
+      "phases_seconds": {
+        "server_loading": 23.817989587783813,
+        "warmup": 2.458968162536621,
+        "measurement": 48.52454400062561,
+        "prefix_preparation": 243.75436067581177,
+        "slot_reset": 9.307164430618286,
+        "server_shutdown": 2.323045492172241,
+        "other_setup_and_bookkeeping": 0.6308438777923584
+      },
+      "start": 1794107361.9246967,
+      "end": 1794107692.741613
+    },
+    {
+      "job": "external-q8-mtp-prose-r02",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 2,
+      "total_seconds": 347.2198238372803,
+      "phases_seconds": {
+        "server_loading": 24.218562364578247,
+        "warmup": 2.3113670349121094,
+        "measurement": 49.426222801208496,
+        "prefix_preparation": 259.34250712394714,
+        "slot_reset": 8.973398447036743,
+        "server_shutdown": 2.3222734928131104,
+        "other_setup_and_bookkeeping": 0.6254925727844238
+      },
+      "start": 1794107692.745865,
+      "end": 1794108039.965689
+    },
+    {
+      "job": "external-q8-mtp-prose-r03",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 3,
+      "total_seconds": 347.1687955856323,
+      "phases_seconds": {
+        "server_loading": 24.323116064071655,
+        "warmup": 2.350153684616089,
+        "measurement": 49.288711071014404,
+        "prefix_preparation": 259.69297528266907,
+        "slot_reset": 8.657947301864624,
+        "server_shutdown": 2.2221415042877197,
+        "other_setup_and_bookkeeping": 0.6337506771087646
+      },
+      "start": 1794108039.970193,
+      "end": 1794108387.1389885
+    },
+    {
+      "job": "builtin-mtp-prose-r03",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "prose",
+      "repetition": 3,
+      "total_seconds": 328.5326249599457,
+      "phases_seconds": {
+        "server_loading": 23.908416032791138,
+        "warmup": 2.4408388137817383,
+        "measurement": 48.351250648498535,
+        "prefix_preparation": 242.24421882629395,
+        "slot_reset": 8.7570219039917,
+        "server_shutdown": 2.2221834659576416,
+        "other_setup_and_bookkeeping": 0.6086952686309814
+      },
+      "start": 1794108387.1423628,
+      "end": 1794108715.6749878
+    },
+    {
+      "job": "external-q8-ar-prose-r03",
+      "condition": "external-q8",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 3,
+      "total_seconds": 313.11205101013184,
+      "phases_seconds": {
+        "server_loading": 37.04108667373657,
+        "warmup": 2.123772621154785,
+        "measurement": 51.31742811203003,
+        "prefix_preparation": 216.6271948814392,
+        "slot_reset": 3.36527943611145,
+        "server_shutdown": 2.0213112831115723,
+        "other_setup_and_bookkeeping": 0.6159780025482178
+      },
+      "start": 1794108715.6785295,
+      "end": 1794109028.7905805
+    },
+    {
+      "job": "builtin-ar-prose-r03",
+      "condition": "builtin",
+      "mode": "ar",
+      "task": "prose",
+      "repetition": 3,
+      "total_seconds": 333.95710468292236,
+      "phases_seconds": {
+        "server_loading": 57.13487386703491,
+        "warmup": 3.5244596004486084,
+        "measurement": 52.89019751548767,
+        "prefix_preparation": 214.127454996109,
+        "slot_reset": 3.4152462482452393,
+        "server_shutdown": 2.2226369380950928,
+        "other_setup_and_bookkeeping": 0.642235517501831
+      },
+      "start": 1794109028.7946048,
+      "end": 1794109362.7517095
+    },
+    {
+      "job": "external-q8-mtp-repetition-r03",
+      "condition": "external-q8",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 3,
+      "total_seconds": 351.4514892101288,
+      "phases_seconds": {
+        "server_loading": 35.44936752319336,
+        "warmup": 3.313539981842041,
+        "measurement": 45.22496438026428,
+        "prefix_preparation": 255.35092520713806,
+        "slot_reset": 9.146238327026367,
+        "server_shutdown": 2.274334192276001,
+        "other_setup_and_bookkeeping": 0.6921195983886719
+      },
+      "start": 1794109362.755351,
+      "end": 1794109714.2068403
+    },
+    {
+      "job": "builtin-mtp-repetition-r03",
+      "condition": "builtin",
+      "mode": "mtp",
+      "task": "repetition",
+      "repetition": 3,
+      "total_seconds": 358.2319393157959,
+      "phases_seconds": {
+        "server_loading": 33.556410789489746,
+        "warmup": 3.4586896896362305,
+        "measurement": 48.81365156173706,
+        "prefix_preparation": 260.49381589889526,
+        "slot_reset": 8.934586763381958,
+        "server_shutdown": 2.3223378658294678,
+        "other_setup_and_bookkeeping": 0.6524467468261719
+      },
+      "start": 1794109714.2104542,
+      "end": 1794110072.4423935
+    }
+  ],
+  "depth_phases_seconds": {
+    "None": {
+      "server_loading": 509.6827943325043,
+      "warmup": 43.751957654953
+    },
+    "0": {
+      "measurement": 96.03587174415588
+    },
+    "4096": {
+      "prefix_preparation": 61.64654088020325,
+      "slot_reset": 7.46780252456665,
+      "measurement": 116.09675145149231
+    },
+    "8192": {
+      "prefix_preparation": 125.633713722229,
+      "slot_reset": 11.964199542999268,
+      "measurement": 124.18487405776978
+    },
+    "12288": {
+      "prefix_preparation": 189.96221709251404,
+      "slot_reset": 9.071590900421143,
+      "measurement": 113.1593747138977
+    },
+    "16384": {
+      "prefix_preparation": 266.266726732254,
+      "slot_reset": 10.180031776428223,
+      "measurement": 108.08638000488281
+    },
+    "32768": {
+      "prefix_preparation": 525.8526127338409,
+      "slot_reset": 15.101895093917847,
+      "measurement": 117.11620378494263
+    },
+    "65536": {
+      "prefix_preparation": 1052.5963673591614,
+      "slot_reset": 33.22551679611206,
+      "measurement": 116.29150986671448
+    },
+    "131072": {
+      "prefix_preparation": 2140.93057847023,
+      "slot_reset": 43.17086911201477,
+      "measurement": 101.38332080841064
+    }
+  },
+  "superseded_4gib_attempt_seconds": 1020.6986737251282,
+  "superseded_4gib_attempt_reason": "128K MTP restored only 63488 cached tokens; all measurements under this cache capacity kept separately.",
+  "condition_seconds": {
+    "external-q8": 3006.0861208438873,
+    "builtin": 2984.942180633545
+  },
+  "workload_seconds": {
+    "mtp-prose": 2032.0573370456696,
+    "ar-prose": 1866.7315044403076,
+    "mtp-repetition": 2092.239459991455
+  },
+  "repetition_seconds": {
+    "1": 1987.1784410476685,
+    "2": 1971.395855665207,
+    "3": 2032.4540047645569
+  },
+  "first_1_repetitions": {
+    "completed_sweeps": 6,
+    "expected_sweeps": 6,
+    "observed_seconds": 1987.1784410476685
+  },
+  "first_2_repetitions": {
+    "completed_sweeps": 12,
+    "expected_sweeps": 12,
+    "observed_seconds": 3958.5742967128754
+  },
+  "first_3_repetitions": {
+    "completed_sweeps": 18,
+    "expected_sweeps": 18,
+    "observed_seconds": 5991.028301477432
+  },
+  "estimated_longer_runs": {
+    "5": {
+      "estimated_seconds": 9985.047169129053,
+      "observed_iteration_count": 3,
+      "method": "Linear projection from completed full iterations; not measured. Excludes one-off investigation and restoration."
+    },
+    "10": {
+      "estimated_seconds": 19970.094338258106,
+      "observed_iteration_count": 3,
+      "method": "Linear projection from completed full iterations; not measured. Excludes one-off investigation and restoration."
+    }
+  },
+  "normal_restored_at": "2026-11-08T03:55:13.843516+00:00",
+  "recorded_preparation_to_restore_seconds": 7599.486351013184,
+  "formal_start_to_restore_seconds": 6032.494090557098
+}

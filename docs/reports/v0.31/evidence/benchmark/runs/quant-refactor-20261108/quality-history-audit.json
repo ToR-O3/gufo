@@ -1,0 +1,76 @@
+{
+  "previous_saved_benchmark": "/home/user/workspace/Gufo/docs/benchmark/runs/toro3-ple-20261107-164909/summary.json",
+  "previous_single_mismatches": 36,
+  "previous_multi_failures": [
+    {
+      "condition": "toro3-builtin",
+      "job": "multi-ar-c8",
+      "error": "RuntimeError('multi-ar: C8 output differs from its isolated AR reference')"
+    },
+    {
+      "condition": "toro3-q8",
+      "job": "multi-ar-c6",
+      "error": "RuntimeError('multi-ar: C6 output differs from its isolated AR reference')"
+    }
+  ],
+  "pre_refactor_d1_control": "compare-baseline-r1: depth 0 identical; depth 16384 AR/MTP mismatch already present",
+  "current_initial_external_mismatches": [
+    {
+      "depth": 4096,
+      "run": 1,
+      "ar_cached": 4095,
+      "mtp_cached": 4096
+    },
+    {
+      "depth": 4096,
+      "run": 3,
+      "ar_cached": 4095,
+      "mtp_cached": 4096
+    },
+    {
+      "depth": 8192,
+      "run": 1,
+      "ar_cached": 8184,
+      "mtp_cached": 8185
+    },
+    {
+      "depth": 8192,
+      "run": 3,
+      "ar_cached": 8184,
+      "mtp_cached": 8185
+    },
+    {
+      "depth": 12288,
+      "run": 1,
+      "ar_cached": 12249,
+      "mtp_cached": 12250
+    },
+    {
+      "depth": 12288,
+      "run": 2,
+      "ar_cached": 12249,
+      "mtp_cached": 12250
+    },
+    {
+      "depth": 16384,
+      "run": 1,
+      "ar_cached": 16324,
+      "mtp_cached": 16325
+    },
+    {
+      "depth": 16384,
+      "run": 2,
+      "ar_cached": 16324,
+      "mtp_cached": 16325
+    },
+    {
+      "depth": 16384,
+      "run": 3,
+      "ar_cached": 16324,
+      "mtp_cached": 16325
+    }
+  ],
+  "interpretation": "Existing class of AR/MTP and concurrency mismatch, not a new-regression attribution. Current cached token boundaries differ by one. Retain failures and do not qualify affected cells as output-equivalent.",
+  "current_c4_review": "concurrency-quality-review.json",
+  "current_c4_limit": "Newly observed formal failure not reproduced by targeted controls; do not classify it as an established pre-existing C4 defect."
+}

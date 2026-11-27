@@ -1,0 +1,2549 @@
+{
+  "counts": {
+    "original": {
+      "language_total": 60,
+      "language_complete_nonempty": 58,
+      "confirmed_unexpected_mixing": 0,
+      "reviewed_language_issues": 8,
+      "incomplete_answers": 2,
+      "reasoning_hangul_answers": 9,
+      "median_language_duration_s": 12.925328940502368,
+      "total_language_duration_s": 1843.4698254507966,
+      "median_language_output_characters": 298.0,
+      "mtp_draft_tokens": 41642,
+      "mtp_accepted_tokens": 28260,
+      "preserve": {
+        "pass": 6,
+        "total": 6
+      },
+      "word": {
+        "pass": 6,
+        "total": 6
+      },
+      "grounded": {
+        "pass": 6,
+        "total": 6
+      },
+      "quote": {
+        "pass": 1,
+        "total": 1
+      },
+      "exact": {
+        "pass": 6,
+        "total": 6
+      },
+      "code": {
+        "pass": 1,
+        "total": 1
+      },
+      "tool": {
+        "pass": 5,
+        "total": 5
+      },
+      "preserved_terms": {
+        "pass": 36,
+        "total": 36
+      },
+      "tool_followup": {
+        "pass": 5,
+        "total": 5
+      }
+    },
+    "edited": {
+      "language_total": 60,
+      "language_complete_nonempty": 59,
+      "confirmed_unexpected_mixing": 0,
+      "reviewed_language_issues": 14,
+      "incomplete_answers": 1,
+      "reasoning_hangul_answers": 3,
+      "median_language_duration_s": 13.496937798510771,
+      "total_language_duration_s": 1779.491005130054,
+      "median_language_output_characters": 296.5,
+      "mtp_draft_tokens": 41844,
+      "mtp_accepted_tokens": 29051,
+      "preserve": {
+        "pass": 3,
+        "total": 6
+      },
+      "word": {
+        "pass": 5,
+        "total": 6
+      },
+      "grounded": {
+        "pass": 6,
+        "total": 6
+      },
+      "quote": {
+        "pass": 0,
+        "total": 1
+      },
+      "exact": {
+        "pass": 6,
+        "total": 6
+      },
+      "code": {
+        "pass": 1,
+        "total": 1
+      },
+      "tool": {
+        "pass": 4,
+        "total": 5
+      },
+      "preserved_terms": {
+        "pass": 32,
+        "total": 36
+      },
+      "tool_followup": {
+        "pass": 4,
+        "total": 5
+      }
+    }
+  },
+  "checks": {
+    "original": {
+      "all_frozen_requests_match": true,
+      "all_complete_sse": true,
+      "all_cached_tokens_zero": true
+    },
+    "edited": {
+      "all_frozen_requests_match": true,
+      "all_complete_sse": true,
+      "all_cached_tokens_zero": true
+    }
+  },
+  "speed": {
+    "original": {
+      "mixed": {
+        "prefill_tokens_s": {
+          "values": [
+            1314.8684831127448,
+            1331.8147963615875,
+            1295.7335993975769
+          ],
+          "median": 1314.8684831127448,
+          "mean": 1314.1389596239696,
+          "sample_stddev": 18.051657734940513,
+          "min": 1295.7335993975769,
+          "max": 1331.8147963615875
+        },
+        "ttft_s": {
+          "values": [
+            1.570874517026823,
+            1.5526549849892035,
+            1.5971158589818515
+          ],
+          "median": 1.570874517026823,
+          "mean": 1.5735484536659594,
+          "sample_stddev": 0.022350722178715324,
+          "min": 1.5526549849892035,
+          "max": 1.5971158589818515
+        },
+        "decode_tokens_s": {
+          "values": [
+            29.623844058598134,
+            30.64823544775347,
+            30.015064987894128
+          ],
+          "median": 30.015064987894128,
+          "mean": 30.095714831415243,
+          "sample_stddev": 0.5169359026889946,
+          "min": 29.623844058598134,
+          "max": 30.64823544775347
+        }
+      },
+      "repetition": {
+        "prefill_tokens_s": {
+          "values": [
+            1254.7841189265882,
+            1299.286302736569,
+            1273.943918435812
+          ],
+          "median": 1273.943918435812,
+          "mean": 1276.0047800329899,
+          "sample_stddev": 22.322554823683845,
+          "min": 1254.7841189265882,
+          "max": 1299.286302736569
+        },
+        "ttft_s": {
+          "values": [
+            1.6432083990075625,
+            1.6172905009589158,
+            1.6354188290424645
+          ],
+          "median": 1.6354188290424645,
+          "mean": 1.6319725763363142,
+          "sample_stddev": 0.013298189843019894,
+          "min": 1.6172905009589158,
+          "max": 1.6432083990075625
+        },
+        "decode_tokens_s": {
+          "values": [
+            77.31771051352538,
+            94.22879192819325,
+            95.80711594060412
+          ],
+          "median": 94.22879192819325,
+          "mean": 89.11787279410758,
+          "sample_stddev": 10.249665802263719,
+          "min": 77.31771051352538,
+          "max": 95.80711594060412
+        }
+      }
+    },
+    "edited": {
+      "mixed": {
+        "prefill_tokens_s": {
+          "values": [
+            1296.3977127032376,
+            1293.7030389601866,
+            1246.530123765208
+          ],
+          "median": 1293.7030389601866,
+          "mean": 1278.8769584762108,
+          "sample_stddev": 28.045562991515684,
+          "min": 1246.530123765208,
+          "max": 1296.3977127032376
+        },
+        "ttft_s": {
+          "values": [
+            1.5948254220420495,
+            1.5980116170248948,
+            1.6580172819667496
+          ],
+          "median": 1.5980116170248948,
+          "mean": 1.6169514403445646,
+          "sample_stddev": 0.03559972571131639,
+          "min": 1.5948254220420495,
+          "max": 1.6580172819667496
+        },
+        "decode_tokens_s": {
+          "values": [
+            30.014217134372213,
+            28.763770097917238,
+            29.121404217949003
+          ],
+          "median": 29.121404217949003,
+          "mean": 29.299797150079485,
+          "sample_stddev": 0.6440283195794582,
+          "min": 28.763770097917238,
+          "max": 30.014217134372213
+        }
+      },
+      "repetition": {
+        "prefill_tokens_s": {
+          "values": [
+            1258.2297699245767,
+            1215.5223487585436,
+            1236.7931402271774
+          ],
+          "median": 1236.7931402271774,
+          "mean": 1236.8484196367658,
+          "sample_stddev": 21.353764247155027,
+          "min": 1215.5223487585436,
+          "max": 1258.2297699245767
+        },
+        "ttft_s": {
+          "values": [
+            1.6362510939943604,
+            1.7454529739916325,
+            1.6658316879766062
+          ],
+          "median": 1.6658316879766062,
+          "mean": 1.6825119186541997,
+          "sample_stddev": 0.056479511509289364,
+          "min": 1.6362510939943604,
+          "max": 1.7454529739916325
+        },
+        "decode_tokens_s": {
+          "values": [
+            82.4930695606607,
+            93.12059112695165,
+            91.6179457223796
+          ],
+          "median": 91.6179457223796,
+          "mean": 89.07720213666398,
+          "sample_stddev": 5.751311775304927,
+          "min": 82.4930695606607,
+          "max": 93.12059112695165
+        }
+      }
+    }
+  },
+  "memory": {
+    "original": {
+      "samples": 98,
+      "docker_observed_peak_gib": 5.562892913818359,
+      "wsl_min_available_gib": 13.278861999511719
+    },
+    "edited": {
+      "samples": 100,
+      "docker_observed_peak_gib": 4.831634521484375,
+      "wsl_min_available_gib": 13.423389434814453
+    },
+    "windows": {
+      "status": "UNAVAILABLE",
+      "error": "WSL UtilBindVsockAnyPort: socket failed 1",
+      "scope": "Windows OS-visible memory only. WSL and Docker memory monitoring remains enabled.",
+      "attempts": 1
+    }
+  },
+  "issues": [
+    {
+      "variant": "original",
+      "id": "language-coronary-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「虚血（きそく）」と誤読を付記。正しくは「きょけつ」。"
+        ],
+        "sources": [
+          {
+            "title": "難病情報センター：虚血（きょけつ）",
+            "url": "https://www.nanbyou.or.jp/glossary/%E8%99%9A%E8%A1%80"
+          }
+        ]
+      },
+      "content": "冠動脈は心臓の表面を走る血管で、心筋（心臓の筋肉）に酸素と栄養を届ける役割を担っています。心筋は絶えず収縮して血液を送り出しているため、エネルギー需要が高く、常に血流が必要です。\n\n冠動脈の血流が悪くなると、心筋が酸素不足になります。これは虚血（きそく：血流が不足して酸欠になる状態）と呼ばれ、胸痛発作「狭心症」を引き起こします。さらに血流が完全に止まると心筋が壊死（えし：細胞が死ぬこと）し、心筋梗塞（しんきんこうそく）になります。\n\nその結果、心臓のポンプ機能が低下し、呼吸困難、むくみ、倦怠感、失神、心不全などが起こり、命の危険につながるため、冠動脈の血流維持は非常に重要です。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-thyroid-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「骨粗しょうし」と誤記。「甲状腺の目の腫れ」も不自然な表現。"
+        ],
+        "sources": [
+          {
+            "title": "日本整形外科学会：骨粗鬆症（骨粗しょう症）",
+            "url": "https://www.joa.or.jp/public/sick/condition/osteoporosis.html"
+          }
+        ]
+      },
+      "content": "甲状腺ホルモンが多すぎると、体が過剰に活動したような状態になります。代表的には、動悸・頻脈、発汗や暑がり、食欲があるのに体重が減る、手の震え、不眠・イライラ、下痢、疲れやすさ、筋力の低下、月経異常などが起こります。甲状腺の目の腫れや突出が見られることもあります。\n\n放置すると、心房細動などの不整脈、心不全、骨粗しょうし、まれに高熱や意識障害を伴う甲状腺クリーゼにつながるため、早めに医療機関で相談することが重要です。血液検査でホルモンの値を調べ、バセドウ病などの原因を確認し、薬・放射線治療・手術など適切な治療を選ぶことができます。自己判断では治りにくく、治療中でも定期受診で経過を見る必要があります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-sql-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複調べる手順」と助詞が欠けている。人数とセッション数を同列に扱う説明にも注意が必要。"
+        ]
+      },
+      "content": "視聴回数は再生・視聴イベントの発生件数を集計したもので、一人が何度も見れば複数回数として加算されます。一方、視聴者数はユニークな人物やセッションの数を表すため、同じユーザーの繰り返し視聴をまとめて「1」にします。両者を区別しないと、実際の普及率やリーチを過大評価したり、コンテンツの反響と視聴者の厚みを混同したりします。\n\n重複調べる手順としては、まずユーザー ID、セッション ID、端末 ID など重複判定に使えるキーを決めます。次に一定期間内の視聴ログをそのキーで集約し、同一キーの複数レコードを「1 の視聴者」としてまとめます。最後に、ID が欠損している場合は IP・視聴開始時刻・作品 ID などの条件で候補抽出し、同一人物・同一視聴と判断できるものをマージします。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-sql-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「視聴者数は重複を除いた延べ人数」とし、ユニーク人数と延べ人数を混同している。"
+        ]
+      },
+      "content": "視聴回数と視聴者数を区別するのは、両方が示す意味が違うためです。視聴回数は再生や表示といったイベントの総数なので、同じ人が繰り返し見ても複数回に計上され、コンテンツの再生頻度やエンゲージメントを把握するのに適しています。一方、視聴者数は重複を除いた延べ人数の指標で、実際にどのくらいの人が見たか、リーチやユニーク視聴者としての規模を示すのに向きます。この違いを曖昧にすると、実人数を過大評価したり、逆に熱心な視聴者の行動を見落したりする可能性があります。\n\n重複を調べる手順は、まずどの値で「人」を判定するかを決めることが重要です。ユーザーID、アカウントID、CookieID、端末ID、セッションIDなどを使える範囲で用意し、視聴ログのイベント単位で集計します。次に、同一のID・視聴対象・短い時間範囲に同じイベントが複数並んでいないかを確認し、総件数と重複を除いたユニーク件数を比較します。\n\n最後に、見つかった重複が正当な再視聴か、リトライ・ページ更新・Bot・ログ転送の多重記録かなどを切り分けます。必要に応じて、同一IDで一定時間内の同一視聴を1回とみなすなどの重複除去ルールを定め、その前後で数値がどう変わるか検証します。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-backup-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「バックアップtaken」と不要な英語が混入。「最初は全文ではなく重要フォルダ」も対象の表現が不自然。"
+        ]
+      },
+      "content": "まず、バックアップ対象を「事業に必須のファイル」「メール／DB」「一時的なデータ」などに分類し、必要に応じてRPO（許容データ損失時間）とRTO（許容復旧時間）を決めます。その上で、日次・週次・月次などで世代を分けるルールを定め、NAS内だけでなく、外部ディスクやクラウドなど別媒体へもコピーします。重要なデータは改ざん防止機能やアクセス制限のある保管先に置き、自動で古い世代を削除・ローテーションする仕組みにすると、運用ミスを減らせます。\n\n次に、バックアップtakenを「取れていること」だけで終わらせず、定期的な復元確認を計画します。最初は全文ではなく重要フォルダを抜き取って隔離環境へ復元し、ファイル破損や業務手順との整合性をチェックします。最低でも四半期に1回、可能なら月次テストを行い、結果・所要時間・失敗要因を記録して改善します。これでNAS故障時の復旧手順が現実的なものになります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-korea_trip-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "ㄴ",
+            "ㄹ",
+            "ㅂ",
+            "ㅅ",
+            "ㅇ",
+            "ㅈ",
+            "ㅊ",
+            "ㅖ",
+            "ㅚ",
+            "가",
+            "감",
+            "거",
+            "계",
+            "고",
+            "교",
+            "기",
+            "김",
+            "나",
+            "네",
+            "녕",
+            "뉴",
+            "니",
+            "다",
+            "닭",
+            "도",
+            "동",
+            "드",
+            "라",
+            "락",
+            "례",
+            "리",
+            "마",
+            "말",
+            "맙",
+            "맵",
+            "머",
+            "메",
+            "며",
+            "면",
+            "물",
+            "미",
+            "밥",
+            "버",
+            "별",
+            "보",
+            "볶",
+            "비",
+            "빔",
+            "사",
+            "세",
+            "송",
+            "수",
+            "숟",
+            "스",
+            "습",
+            "실",
+            "심",
+            "씀",
+            "아",
+            "안",
+            "에",
+            "오",
+            "요",
+            "육",
+            "은",
+            "을",
+            "음",
+            "의",
+            "이",
+            "점",
+            "젓",
+            "제",
+            "좋",
+            "죄",
+            "주",
+            "지",
+            "찜",
+            "치",
+            "침",
+            "카",
+            "톡",
+            "통",
+            "티",
+            "판",
+            "편",
+            "푼",
+            "하",
+            "합",
+            "해",
+            "행",
+            "후",
+            "히"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "length",
+        "nonempty": false
+      },
+      "review": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "8192トークンすべてが思考で、回答本文は空。finish_reason=length、約255.25秒。本文がないため、混入抑制の成功とは扱わない。"
+        ]
+      },
+      "content": "",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-korea_trip-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "ㄱ",
+            "ㄴ",
+            "ㄷ",
+            "ㅁ",
+            "ㅂ",
+            "ㅆ",
+            "ㅇ",
+            "ㅈ",
+            "ㅌ",
+            "ㅎ",
+            "ㅏ",
+            "ㅓ",
+            "ㅖ",
+            "ㅗ",
+            "ㅛ",
+            "ㅣ",
+            "가",
+            "감",
+            "개",
+            "게",
+            "계",
+            "고",
+            "교",
+            "기",
+            "김",
+            "까",
+            "녕",
+            "니",
+            "다",
+            "대",
+            "도",
+            "드",
+            "떡",
+            "란",
+            "맛",
+            "머",
+            "먹",
+            "미",
+            "받",
+            "밥",
+            "볶",
+            "부",
+            "불",
+            "비",
+            "빔",
+            "사",
+            "산",
+            "삼",
+            "세",
+            "송",
+            "수",
+            "식",
+            "실",
+            "십",
+            "안",
+            "어",
+            "역",
+            "요",
+            "이",
+            "있",
+            "자",
+            "죄",
+            "주",
+            "지",
+            "찌",
+            "철",
+            "치",
+            "침",
+            "카",
+            "커",
+            "탕",
+            "통",
+            "티",
+            "피",
+            "하",
+            "한",
+            "합",
+            "해",
+            "혜",
+            "히"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [
+            "值"
+          ],
+          "replacement_character": false
+        },
+        "finish_reason": "length",
+        "nonempty": false
+      },
+      "review": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "思考だけで8192トークンの上限に達し、回答本文なし。finish_reason=length、約249.37秒。本文がないため混入抑制の成功とは扱わない。"
+        ]
+      },
+      "content": "",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-korea_food-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "参鶏湯の説明に「中にともち米」と余分な「と」が入る。"
+        ]
+      },
+      "content": "ビビンバは、ごはんの上に野菜や肉、卵などをのせ、コチュジャンなどのソースであえて食べる料理です。色とりどりの具材が重なり合い、甘辛い風味と香ばしい食感が楽しめます。具材の組み合わせが自由で、栄養のバランスを取りやすいのも魅力です。\n\nキムチは、白菜や大根などを唐辛子やにんにくなどで漬け込んだ発酵食品です。ピリッと辛い中にも酸味やうま味があり、ご飯のおともや料理の風味づけに使われます。腸内環境を意識した食事にも向いています。\n\n参鶏湯は、小さな鶏の姿の中にともち米や高麗人参などを詰め、じっくり煮込んだスープです。やさしい塩味と素材のうま味が体に染み、韓国では夏に体力をつける料理としても親しまれています。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-biology-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "両性具有は保持。「卵を授精させる」は、卵と精子の結合を述べる文脈で「受精」と「授精」を取り違えている。"
+        ],
+        "sources": [
+          {
+            "title": "動物生殖工学研究会：受精と授精の用語の違い",
+            "url": "https://sarb.weebly.com/answer/q11"
+          }
+        ]
+      },
+      "content": "植物でいう「雌雄同株」と「両性花」は、どちらも「同じ個体が雄と雌の仕組みを持つ」という点で似ていますが、指すレベルが違います。「雌雄同株」は主に**同じ株の中に雄花と雌花が分かれて付いている**状態を指すことが多いです。一方、「両性花」は**1つの花の中に雄しべ（雄の部品）と雌しべ（雌の部品）が両方そろっている**花のことです。つまり、前者は「株の中に雄と雌がある」、後者は「1つの花が雄と雌を兼ねている」という違いです。\n\n動物の「両性具有」は、植物の話とは違い、**1つの動物個体の中に雄と雌の生殖器官が両方そなわっている**ことを指します。たとえばミミズやカタツムリなどが知られており、相手と精子をやり取りして卵を授精させることがよくあります。まとめると、「雌雄同株＝同じ株に雄雌がある」「両性花＝1つの花に雄雌がある」「両性具有＝1つの動物個体に雄雌がある」という違いです。",
+      "tool_calls": []
+    },
+    {
+      "variant": "original",
+      "id": "language-ko_notice-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "관",
+            "기",
+            "까",
+            "껑",
+            "는",
+            "니",
+            "다",
+            "담",
+            "대",
+            "도",
+            "뚜",
+            "료",
+            "른",
+            "를",
+            "부",
+            "서",
+            "섯",
+            "세",
+            "시",
+            "아",
+            "에",
+            "여",
+            "영",
+            "오",
+            "요",
+            "용",
+            "운",
+            "위",
+            "은",
+            "음",
+            "이",
+            "있",
+            "자",
+            "전",
+            "조",
+            "주",
+            "지",
+            "터",
+            "합",
+            "해",
+            "홉",
+            "화",
+            "후",
+            "히"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文は飲み物についての案内だが「ご飲食の際」と食事にも範囲を広げた。図書館の案内として原文にない利用条件を付け加えている。開館時刻と静粛の要点は保持。"
+        ]
+      },
+      "content": "当館は、午前9時から午後6時まで開館しています。\n\nご飲食の際は、ふた付きの容器でご利用ください。また、他の利用者のご迷惑にならないよう、小声でお話しください。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-coronary-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「虚血（きそく）」という誤読が残る。元モデルの同じ課題でも発生しており、編集固有の新規問題とは扱わない。"
+        ],
+        "sources": [
+          {
+            "title": "難病情報センター：虚血（きょけつ）",
+            "url": "https://www.nanbyou.or.jp/glossary/%E8%99%9A%E8%A1%80"
+          }
+        ]
+      },
+      "content": "冠動脈は心臓の表面を走る血管で、心筋（心臓の筋肉）に酸素と栄養を届ける役割を担っています。心筋は絶えず収縮して血液を送り出しているため、エネルギー需要が高く、常に血流が必要です。\n\n冠動脈の血流が悪くなると、心筋が酸素不足になります。これは虚血（きそく：血流が不足して酸欠になる状態）と呼ばれ、胸痛発作「狭心症」を引き起こします。さらに血流が完全に止まると心筋が壊死（えし：細胞が死ぬこと）し、心筋梗塞（しんきんこうそく）になります。\n\nその結果、心臓のポンプ機能が低下し、呼吸困難、むくみ、倦怠感、失神、心不全などが起こり、命の危険につながるため、冠動脈の血流維持は非常に重要です。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-thyroid-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「骨粗しょうし」の誤記と「甲状腺の目の腫れ」の不自然さが元モデルから残っている。"
+        ],
+        "sources": [
+          {
+            "title": "日本整形外科学会：骨粗鬆症（骨粗しょう症）",
+            "url": "https://www.joa.or.jp/public/sick/condition/osteoporosis.html"
+          }
+        ]
+      },
+      "content": "甲状腺ホルモンが多すぎると、体が過剰に活動したような状態になります。代表的には、動悸・頻脈、発汗や暑がり、食欲があるのに体重が減る、手の震え、不眠・イライラ、下痢、疲れやすさ、筋力の低下、月経異常などが起こります。甲状腺の目の腫れや突出が見られることもあります。\n\n放置すると、心房細動などの不整脈、心不全、骨粗しょうし、まれに高熱や意識障害を伴う甲状腺クリーゼにつながるため、早めに医療機関で相談することが重要です。血液検査でホルモンの値を調べ、バセドウ病などの原因を確認し、薬・放射線治療・手術など適切な治療を選ぶことができます。自己判断では治りにくく、治療中でも定期受診で経過を見る必要があります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-vaccine-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語の説明に「 training 用資料」と不要な英語が挿入される。中国語・ハングル混入の件数には含めない。「病原体そのものではなく」は元モデルにもある単純化で、専門的な網羅検証はしていない。"
+        ]
+      },
+      "content": "免疫システムは、体の中をまわる記憶をもった警備員のようなものです。病原体が初めて入ってくると、警備員は相手の特徴を調べ、攻撃方法を決めて、その情報を記録として残します。この記録が「免疫の記憶」です。\n\nワクチンは、病原体そのものではなく、病原体の特徴を少しだけ見せた「 training 用資料」のような役割をします。警備員は実際に戦わなくても相手を学び、備えを準備します。\n\nそのため、本物の病原体が体に入ってきたとき、警備員はすでにその姿を知っているので、すぐに見つけて攻撃できます。その結果、病気を防いだり、かかっても症状を軽くしたりできるのが、ワクチンが免疫と関係するしくみです。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-sql-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複調べる手順」と助詞が欠落。元モデルでも同じ表現が出ている。視聴者とセッションを同列に扱う説明にも粗さがある。"
+        ]
+      },
+      "content": "視聴回数は再生・視聴イベントの発生件数を集計したもので、一人が何度も見れば複数回数として加算されます。一方、視聴者数はユニークな人物やセッションの数を表すため、同じユーザーの繰り返し視聴をまとめて「1」にします。両者を区別しないと、実際の普及率やリーチを過大評価したり、コンテンツの反響と視聴者の厚みを混同したりします。\n\n重複調べる手順としては、まずユーザー ID、セッション ID、端末 ID など重複判定に使えるキーを決めます。次に一定期間内の視聴ログをそのキーで集約し、同一キーの複数レコードを「1 の視聴者」としてまとめます。最後に、ID が欠損している場合は IP・視聴開始時刻・作品 ID などの条件で候補抽出し、同一人物・同一視聴と判断できるものをマージします。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-sql-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複を除いた延べ人数」は実人数と延べ人数が矛盾する表現。元モデルでも発生。"
+        ]
+      },
+      "content": "視聴回数と視聴者数を区別するのは、両方が示す意味が違うためです。視聴回数は再生や表示といったイベントの総数なので、同じ人が繰り返し見ても複数回に計上され、コンテンツの再生頻度やエンゲージメントを把握するのに適しています。一方、視聴者数は重複を除いた延べ人数の指標で、実際にどのくらいの人が見たか、リーチやユニーク視聴者としての規模を示すのに向きます。この違いを曖昧にすると、実人数を過大評価したり、逆に熱心な視聴者の行動を見落したりする可能性があります。\n\n重複を調べる手順は、まずどの値で「人」を判定するかを決めることが重要です。ユーザーID、アカウントID、CookieID、端末ID、セッションIDなどを使える範囲で用意し、視聴ログのイベント単位で集計します。次に、同一のID・視聴対象・短い時間範囲に同じイベントが複数並んでいないかを確認し、総件数と重複を除いたユニーク件数を比較します。\n\n最後に、見つかった重複が正当な再視聴か、リトライ・ページ更新・Bot・ログ転送の多重記録かなどを切り分けます。必要に応じて、同一IDで一定時間内の同一視聴を1回とみなすなどの重複除去ルールを定め、その前後で数値がどう変わるか検証します。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-backup-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「バックアップtaken」と不要な英語が挿入される。「最初は全文ではなく重要フォルダ」も不自然。元モデルと共通の問題。"
+        ]
+      },
+      "content": "まず、バックアップ対象を「事業に必須のファイル」「メール／DB」「一時的なデータ」などに分類し、必要に応じてRPO（許容データ損失時間）とRTO（許容復旧時間）を決めます。その上で、日次・週次・月次などで世代を分けるルールを定め、NAS内だけでなく、外部ディスクやクラウドなど別媒体へもコピーします。重要なデータは改ざん防止機能やアクセス制限のある保管先に置き、自動で古い世代を削除・ローテーションする仕組みにすると、運用ミスを減らせます。\n\n次に、バックアップtakenを「取れていること」だけで終わらせず、定期的な復元確認を計画します。最初は全文ではなく重要フォルダを抜き取って隔離環境へ復元し、ファイル破損や業務手順との整合性をチェックします。最低でも四半期に1回、可能なら月次テストを行い、結果・所要時間・失敗要因を記録して改善します。これでNAS故障時の復旧手順が現実的なものになります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-china_trip-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「具を短時間だけ火を通し」は助詞のつながりが不自然（具に火を通す）。「微辣」「中辣」はメニュー表示の説明なので意図しない中国語の文章混入には数えない。"
+        ]
+      },
+      "content": "四川料理を楽しむ場合は、まず辛さ・痺れ・油の重さを自分の好みに合わせて調整することが大切です。花椒の痺れと唐辛子の辛さを組み合わせた麻辣、麻婆豆腐、宮保鶏丁、火鍋などが代表的です。注文時は「微辣」「中辣」などの表記を参考にし、初めてなら辛さ控えめを選び、花椒や香菜を減らすといった細かな指定も有効です。緑茶、茉莉花茶、烏龍茶など香りの軽い茶を合わせると、辛さと油を穏やかに落ち着けられます。\n\n旅先では、大皿料理は取り箸やスプーンを使い、自分の箸で菜を混ぜないのが安心です。火鍋では具を短時間だけ火を通し、火加減を隣人と確認すると親切です。茶芸の案内がある場では、注がれた茶に軽く礼を述べ、器を丁寧に扱うと好印象です。無理に辛さを受け入れず、米飯や茶で調えながら、ゆったりと味わうのがおすすめです。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-china_trip-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「共食いで少量ずつ味わう」は、料理を分け合って食べる文脈で意味の異なる語を使っている。元モデルの同じ課題にはこの表現はない。四川料理を「シチュアン料理」と表記すること自体は混入とは判定しない。"
+        ]
+      },
+      "content": "シチュアン料理は、麻婆豆腐、回鍋肉、宮保鶏丁、口水鶏などの定番から、辛さや花椒の痺れの強さを店員に確認して選びましょう。辛い料理は白飯や青菜、淡白な豆腐料理と組み合わせ、共食いで少量ずつ味わうと、無理なく旨味と変化を楽しめます。\n\n茶館では、ジャスミン茶や緑茶、蓋付きの茶碗で淹れた茶など、地元の茶をゆっくり選びます。注いでもらうときは軽く会釈し、指先で机を数回叩いて礼を示すのが現地の作法です。器は両手で受け、一口目は温度と香りを確かめ、写真撮影や会話は店員や他客に配慮して行いましょう。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-korea_trip-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "ㄱ",
+            "ㅁ",
+            "ㅂ",
+            "ㅊ",
+            "ㅔ",
+            "맵"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「混雑で道を求めるや人をかき分けるには」は日本語のつながりが崩れている。",
+          "道を空けてもらう場面に「マンサセヨ」を案内。公的な会話集の「失礼します」は「シルレハムニダ」で、この用途で「マンサセヨ」を使う根拠は確認できなかった。確認できた日本語の崩れを理由にissueとし、疑わしい韓国語表現は補足扱い。",
+          "参照資料の検索結果には対応表現が表示されたが、PDF本文の文字検索は一致せず、画像表示もwebツールのエラーで未確認。韓国語表現の正誤は確定せず、要確認の補足にとどめる。"
+        ],
+        "sources": [
+          {
+            "title": "国土交通省 東北運輸局：おもてなし会話集の基本フレーズ",
+            "url": "https://wwwtb.mlit.go.jp/tohoku/content/000174943.pdf"
+          }
+        ]
+      },
+      "content": "ソウルでは、地下鉄・バス・タクシーに使える「ティーマネー」を用意すると便利です。コンビニなどで買い、残高をためてから利用し、乗るたびに自動で引き落とされます。残高が足りないと改札に入れないため、到着後に早めに残高をたしておくと安心です。\n\n食事では、「キムチ」「ビビンバ」「サムギョプサル」「トッポッキ」などが定番です。辛さや味は店によって違うため、注文に迷ったら写真やメニューを指さして「イゴ チュセヨ」と伝えれば分かりやすいです。\n\nあいさつは「アンニョンハセヨ」、礼には「カムサハムニダ」、何かを頼むときは「チュセヨ」が基本です。混雑で道を求めるや人をかき分けるには「マンサセヨ」を使うと丁寧です。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-korea_trip-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "맵",
+            "뵙"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "元モデルは本文未完了だったがコピーは約171秒で完成。",
+          "飲食店で使う語として「水はス」と案内する誤り。国立国語院の辞書本文では水は물（ムル）。ほかの疑わしいカタカナ表現は、全件検証済みとは扱わない。",
+          "高知県の会話集PDFは43MBでweb取得不可。代わりに国立国語院の辞書一覧本文でwater=물を確認した。辞書個別ページはwebでアクセス不可だった。"
+        ],
+        "sources": [
+          {
+            "title": "国立国語院 韓国語基礎辞典：waterに対応する물の項目",
+            "url": "https://krdict.korean.go.kr/eng/dicMarinerSearch/search?mainSearchWord=Water"
+          }
+        ]
+      },
+      "content": "ソウルでは、地下鉄やバスは交通カード前提です。コンビニで買える「ティマネー」に現金を入れておけば、タッチするだけで乗れます。短期で地下鉄を多く使うなら、期間限定の「クライメートカード」も検討できます。駅は「ヨク」、バス停は「バスチョン」と呼ばれます。\n\n食事は「キムチ」「プルコギ」「ビビンバ」「サムギョプサル」「トッポッキ」などが定番です。注文したいときは「ジュムハセヨ」、ご飯は「パ」、水は「ス」、おかわりは「ジュムセヨ」と覚えておくと安心です。指さしや写真でも通じますが、小さな韓国語があると誤解が減ります。\n\nあいさつは「アンニョンハセヨ」が基本で、別れや親しい人には「アンニョン」で構いません。お礼は「ガムサハムニダ」、初対面は「マンナセヨ」、軽く謝るなら「ミョンネヨ」や「スミプニダ」を使うと自然です。会釈を添えると、より好意的に受け取られます。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-korea_trip-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [
+            "ㅌ",
+            "맏"
+          ],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "length",
+        "nonempty": false
+      },
+      "review": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "思考だけで8192トークンの上限に達し、本文なし。約239.64秒。元モデルでも同じ課題は本文未完了。混入抑制の成功には数えない。"
+        ]
+      },
+      "content": "",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-korea_food-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「中にともち米」と余分な「と」が入る。元モデルと同じ誤字。"
+        ]
+      },
+      "content": "ビビンバは、ごはんの上に野菜や肉、卵などをのせ、コチュジャンなどのソースであえて食べる料理です。色とりどりの具材が重なり合い、甘辛い風味と香ばしい食感が楽しめます。具材の組み合わせが自由で、栄養のバランスを取りやすいのも魅力です。\n\nキムチは、白菜や大根などを唐辛子やにんにくなどで漬け込んだ発酵食品です。ピリッと辛い中にも酸味やうま味があり、ご飯のおともや料理の風味づけに使われます。腸内環境を意識した食事にも向いています。\n\n参鶏湯は、小さな鶏の姿の中にともち米や高麗人参などを詰め、じっくり煮込んだスープです。やさしい塩味と素材のうま味が体に染み、韓国では夏に体力をつける料理としても親しまれています。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-biology-17",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「一つの花的におしべとめしべを」と日本語が崩れ、説明対象の用語「両性具有」を「両性具有的」として繰り返す。"
+        ]
+      },
+      "content": "「雌雄同株」とは、一つの植物が、めしべだけの雌花とおしべだけの雄花を両方つけることをいいます。たとえばカボチャでは、雄花と雌花が同じ株にありますが、花自体は雌雄に分かれています。これに対し「両性花」は、一つの花的におしべとめしべを両方持っているものをいいます。アサガオやユリなどの花は両性花です。\n\n動物の「両性具有的」は、一つの動物が雄と雌の両方の生殖器官を持ち、精子と卵子の両方をつくれることを意味します。カタツムリのように互いに精子をやり取りするものもあれば、魚などでは時期や環境によって性が変わるものもいます。つまり、雌雄同株は「株全体」、両性花は「一花」、両性具有的は「動物の体」と、対象レベルが異なります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-biology-29",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "説明対象の用語「両性具有」が「両性具」に欠けた。元モデルは同じ課題で完全な語を保持。"
+        ]
+      },
+      "content": "植物で「雌雄同株」と言うときは、1本の個体の中に雄しべのある花と雌しべのある花の両方があることを指します。同じ株でも、雄花と雌花が別々に付く場合と、1つの花に雄しべと雌しべが両方ある場合とがあります。\n\n一方「両性花」は、1つの花の中に雄しべと雌しべが両方あることを指します。つまり、雌雄同株かどうかは「1本の株」について、両性花かどうかは「1つの花」について言います。例えばトウモロコシは雌雄同株ですが、雄花と雌花は別々です。\n\n動物で「両性具」や「雌雄同体」と言うのは、1つの個体がオスとメスの両方の生殖機能を持つことを指します。カタツムリやミミズなどが例です。植物の場合は花の構造、動物の場合は個体の性のあり方に注目する違いがあります。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "language-biology-43",
+      "check": {
+        "pass": null,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "説明対象の用語「両性具有」が「両性有」に欠けた。元モデルは同じ課題で完全な語を保持。"
+        ]
+      },
+      "content": "「植物の雌雄同株」と「両性花」は、どちらも雄と雌の役割に関係しますが、指すレベルが違います。雌雄同株は、同じ株の中に雄花と雌花が別々の花としてついていることです（例：キュウリ、トウモロコシ）。一方、両性花は、一つの花の中に雄しべと雌しべの両方をもつことです（例：サクラ、ユリ）。\n\n「動物の両性有」は、動物の個体が雄と雌の両方の生殖器や生殖細胞をもっていることを指します。ミミズやカタツムリのように、同じ個体どうしが交配したり、条件によっては自己受精したりする種もあります。\n\nつまり、植物の用語は「株や花のつくり」で分けるのに対し、動物の用語は「個体として性のはたらきを両方もっているか」で表します。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "preserve-0",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": null,
+      "content": "[\"は正\", \"是非\", \"具有\", \"両性具有\", \"尿沈渣\", \"残渣\"]",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "preserve-3",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": null,
+      "content": "[\"森鷗外\", \"内田百間\", \"叱責\", \"𠮟責\", \"𩸽\", \"薔薇\"]",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "preserve-4",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": null,
+      "content": "[\"大小不問症\", \"正措置\", \"備蓄\", \"脆弱性\", \"冗長化\", \"障害復旧\"]",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "word-0",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": null,
+      "content": "監査で指摘された不備に対し、迅速な**は正**措置を講じるよう指示が出た。",
+      "tool_calls": []
+    },
+    {
+      "variant": "edited",
+      "id": "tool-1",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "tool_calls",
+        "nonempty": false
+      },
+      "review": null,
+      "content": "",
+      "tool_calls": [
+        {
+          "id": "call_nhf43vxoeqbi7i13xunc",
+          "type": "function",
+          "function": {
+            "name": "read_file",
+            "arguments": "{\"path\":\"/home/user/workspace/Gufo/docs/benchmark/runs/toro3-zh-hangul-ban-20261115/fixtures/ là正措置.md\"}"
+          }
+        }
+      ]
+    },
+    {
+      "variant": "edited",
+      "id": "quote-2",
+      "check": {
+        "pass": false,
+        "content_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "reasoning_scan": {
+          "hangul": [],
+          "chinese_phrase_flags": [],
+          "outside_japanese_character_sets": [],
+          "replacement_character": false
+        },
+        "finish_reason": "stop",
+        "nonempty": true
+      },
+      "review": null,
+      "content": "は正措置と両性具",
+      "tool_calls": []
+    }
+  ],
+  "case_count_per_model": 97,
+  "manual_review": {
+    "scope": "Every final language answer is reviewed for Japanese text, supplied instructions and visible meaning defects. Specialist facts are not comprehensively audited.",
+    "original": {
+      "language-rheumatism-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "混入・用語欠落なし。「炎症を無理に抑えつけて」はやや不自然だが、無理を避ける趣旨は読める。"
+        ]
+      },
+      "language-rheumatism-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語の説明と生活上の注意を3段落で回答。目立つ混入・欠落なし。"
+        ]
+      },
+      "language-rheumatism-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "病態と生活上の注意を日本語2段落で説明。目立つ混入・欠落なし。"
+        ]
+      },
+      "language-coronary-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "冠動脈・心筋・血流不足を日本語3段落で説明。目立つ混入なし。"
+        ]
+      },
+      "language-coronary-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「虚血（きそく）」と誤読を付記。正しくは「きょけつ」。"
+        ],
+        "sources": [
+          {
+            "title": "難病情報センター：虚血（きょけつ）",
+            "url": "https://www.nanbyou.or.jp/glossary/%E8%99%9A%E8%A1%80"
+          }
+        ]
+      },
+      "language-coronary-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "混入・用語欠落なし。「血流がさらに進んで」は表現が不正確だが、悪化して途絶える趣旨は読める。"
+        ]
+      },
+      "language-thyroid-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "症状と受診の意味を日本語2段落で説明。目立つ混入・欠落なし。"
+        ]
+      },
+      "language-thyroid-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「骨粗しょうし」と誤記。「甲状腺の目の腫れ」も不自然な表現。"
+        ],
+        "sources": [
+          {
+            "title": "日本整形外科学会：骨粗鬆症（骨粗しょう症）",
+            "url": "https://www.joa.or.jp/public/sick/condition/osteoporosis.html"
+          }
+        ]
+      },
+      "language-thyroid-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "症状と受診の意味を日本語2段落で説明。目立つ混入・欠落なし。"
+        ]
+      },
+      "language-kidney-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定された尿沈渣・蛋白・血尿を保持。日本語2段落で説明。"
+        ]
+      },
+      "language-kidney-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定語を保持し、日本語2段落で説明。混入なし。"
+        ]
+      },
+      "language-kidney-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定語を保持し、日本語2段落で説明。混入なし。"
+        ]
+      },
+      "language-gout-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿酸・飲酒・食生活を日本語3段落で説明。混入や語の欠落なし。"
+        ]
+      },
+      "language-gout-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "混入・語の欠落なし。食品由来に偏る説明と「濃いきつねうどん」という食品例は専門内容の要確認点として残すが、今回の言語評価では断定しない。"
+        ]
+      },
+      "language-gout-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿酸・飲酒・食生活を日本語3段落で説明。混入・語の欠落なし。"
+        ]
+      },
+      "language-vaccine-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定された警備員のたとえを使用。混入なし。ワクチンを病原体そのものではないと一括する説明は単純化が強く、専門内容の監査対象とは別に留意。"
+        ]
+      },
+      "language-vaccine-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "警備員と記憶のたとえで日本語2段落。混入なし。"
+        ]
+      },
+      "language-vaccine-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定されたたとえを用い、日本語2段落で説明。混入なし。"
+        ]
+      },
+      "language-docker-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "WSL側の保存先とWindows共有時の注意を日本語で説明。混入・欠落なし。"
+        ]
+      },
+      "language-docker-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "本文の混入・用語欠落なし。Windows/Linux切替をWSLの利点とする記述はDocker Desktopの機能との混同があり、説明は粗い。"
+        ]
+      },
+      "language-docker-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "WSL側の保存先とWindows側を使う場合の注意を日本語で説明。混入・欠落なし。"
+        ]
+      },
+      "language-cache-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "混入・用語欠落なし。「大きなモデルの計算回数を増やしつつ」は計算量と実行回数を区別しない粗い説明。"
+        ]
+      },
+      "language-cache-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "再利用と先読み検証の違いを日本語3段落で説明。混入なし。"
+        ]
+      },
+      "language-cache-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "再利用と先読み検証の違いを日本語2段落で説明。混入なし。"
+        ]
+      },
+      "language-sql-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複調べる手順」と助詞が欠けている。人数とセッション数を同列に扱う説明にも注意が必要。"
+        ]
+      },
+      "language-sql-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "回数と実人数、識別条件、重複集計の関係を説明。混入・用語欠落なし。"
+        ]
+      },
+      "language-sql-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「視聴者数は重複を除いた延べ人数」とし、ユニーク人数と延べ人数を混同している。"
+        ]
+      },
+      "language-backup-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "世代管理と復元確認を日本語2段落で説明。保存期間などは提案値で、根拠の提示はない。"
+        ]
+      },
+      "language-backup-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "世代管理・別媒体・復元操作と記録を説明。目立つ混入・欠落なし。"
+        ]
+      },
+      "language-backup-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「バックアップtaken」と不要な英語が混入。「最初は全文ではなく重要フォルダ」も対象の表現が不自然。"
+        ]
+      },
+      "language-china_trip-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "料理名は日本語で使える漢字表記。中国語の文章の混入なし。「器や人の手を丁寧に扱う」は不自然だが、具体的な誤用とは断定しない。"
+        ]
+      },
+      "language-china_trip-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語で四川料理と茶文化を説明。料理名を中国語の文章混入とは判定しない。「辛さを無理に食べ切る」は軽い不自然さがある。"
+        ]
+      },
+      "language-china_trip-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語で旅行者向けに回答。茉莉花茶・蓋碗茶などの料理・茶の固有名は保持対象として扱った。"
+        ]
+      },
+      "language-china_history-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の貿易・都市生活を日本語で対比。年代・制度の専門的な網羅検証は対象外。"
+        ]
+      },
+      "language-china_history-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の相違を日本語で説明。意図しない外国語の本文混入なし。"
+        ]
+      },
+      "language-china_history-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の貿易・都市生活の対比が読み取れる。意図しない外国語の本文混入なし。"
+        ]
+      },
+      "language-korea_trip-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "交通カード・食事・あいさつを日本語3段落で説明。現地語は指定どおりカタカナ。交通カード名の「ティモニ」は表記の揺れとして記録し、単独で誤りとは判定しない。"
+        ]
+      },
+      "language-korea_trip-29": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "8192トークンすべてが思考で、回答本文は空。finish_reason=length、約255.25秒。本文がないため、混入抑制の成功とは扱わない。"
+        ]
+      },
+      "language-korea_trip-43": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "思考だけで8192トークンの上限に達し、回答本文なし。finish_reason=length、約249.37秒。本文がないため混入抑制の成功とは扱わない。"
+        ]
+      },
+      "language-korea_food-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "ビビンバ・キムチ・参鶏湯を日本語2段落で説明。意図しない外国語の本文混入なし。"
+        ]
+      },
+      "language-korea_food-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "参鶏湯の説明に「中にともち米」と余分な「と」が入る。"
+        ]
+      },
+      "language-korea_food-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定した料理3品を日本語で説明。目立つ語の欠落・混入なし。"
+        ]
+      },
+      "language-business-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原因分析、是正措置、翌週の再確認を保持した日本語の報告例。"
+        ]
+      },
+      "language-business-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原因分析、是正措置、翌週の再確認を保持した日本語の報告例。"
+        ]
+      },
+      "language-business-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "件名付きの日本語報告例。「是正措置」と翌週の再確認を保持。"
+        ]
+      },
+      "language-biology-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "両性具有は保持。「卵を授精させる」は、卵と精子の結合を述べる文脈で「受精」と「授精」を取り違えている。"
+        ],
+        "sources": [
+          {
+            "title": "動物生殖工学研究会：受精と授精の用語の違い",
+            "url": "https://sarb.weebly.com/answer/q11"
+          }
+        ]
+      },
+      "language-biology-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "雌雄同株・両性花・両性具有を欠字なく保持し、株・花・動物個体の違いを説明。"
+        ]
+      },
+      "language-biology-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "雌雄同株・両性花・両性具有を保持し、株・花・動物個体の区別を説明。"
+        ]
+      },
+      "language-zh_medical-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文の腎機能検査、自己判断の服薬中止禁止、症状時の相談、水分・飲酒の要点を日本語で保持。"
+        ]
+      },
+      "language-zh_medical-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文の主要な注意事項を保持して日本語化。「用量を変えない」は原文にない補足。"
+        ]
+      },
+      "language-zh_medical-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文の主要な注意事項を日本語3段落で保持。"
+        ]
+      },
+      "language-zh_software-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新内容・バックアップ・ログ確認・起動失敗時の設定復旧・データ削除禁止を保持。"
+        ]
+      },
+      "language-zh_software-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文の更新内容と作業上の注意を日本語で保持。"
+        ]
+      },
+      "language-zh_software-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文の更新内容と作業上の注意を日本語で保持。"
+        ]
+      },
+      "language-ko_notice-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "9時〜18時、ふた付き容器、周囲への静粛配慮を日本語で保持。"
+        ]
+      },
+      "language-ko_notice-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "9時〜18時、ふた付き容器、周囲への静粛配慮を日本語で保持。"
+        ]
+      },
+      "language-ko_notice-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "原文は飲み物についての案内だが「ご飲食の際」と食事にも範囲を広げた。図書館の案内として原文にない利用条件を付け加えている。開館時刻と静粛の要点は保持。"
+        ]
+      },
+      "language-ko_software-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新前の設定バックアップ、更新後の再起動とログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      },
+      "language-ko_software-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新前の設定バックアップ、更新後の再起動とログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      },
+      "language-ko_software-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新前の設定バックアップ、更新後の再起動とログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      }
+    },
+    "edited": {
+      "language-rheumatism-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "病態と生活上の注意を日本語3段落で説明。目立つ混入・語の欠落なし。"
+        ]
+      },
+      "language-rheumatism-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "病態と生活上の注意を日本語3段落で説明。目立つ混入・語の欠落なし。"
+        ]
+      },
+      "language-rheumatism-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "病態と生活上の注意を日本語2段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-coronary-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "冠動脈・心筋・血流不足を日本語3段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-coronary-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「虚血（きそく）」という誤読が残る。元モデルの同じ課題でも発生しており、編集固有の新規問題とは扱わない。"
+        ],
+        "sources": [
+          {
+            "title": "難病情報センター：虚血（きょけつ）",
+            "url": "https://www.nanbyou.or.jp/glossary/%E8%99%9A%E8%A1%80"
+          }
+        ]
+      },
+      "language-coronary-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "冠動脈・心筋・血流不足を日本語2段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-thyroid-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "症状と医療機関で確認する意味を日本語2段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-thyroid-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「骨粗しょうし」の誤記と「甲状腺の目の腫れ」の不自然さが元モデルから残っている。"
+        ],
+        "sources": [
+          {
+            "title": "日本整形外科学会：骨粗鬆症（骨粗しょう症）",
+            "url": "https://www.joa.or.jp/public/sick/condition/osteoporosis.html"
+          }
+        ]
+      },
+      "language-thyroid-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "症状と医療機関で確認する意味を日本語2段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-kidney-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿沈渣・蛋白・血尿を欠字なく保持し、日本語で説明。"
+        ]
+      },
+      "language-kidney-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿沈渣・蛋白・血尿を欠字なく保持し、日本語で説明。"
+        ]
+      },
+      "language-kidney-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿沈渣・蛋白・血尿を欠字なく保持し、日本語で説明。"
+        ]
+      },
+      "language-gout-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿酸・飲酒・食生活を日本語3段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-gout-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "尿酸・飲酒・食生活を日本語3段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-gout-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語3段落で回答。高プリン体食品を「控えすぎず」とする説明は食事指導の適否に確認余地があるが、専門的な妥当性を未確認のまま確定した誤りには数えていない。"
+        ]
+      },
+      "language-vaccine-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "日本語の説明に「 training 用資料」と不要な英語が挿入される。中国語・ハングル混入の件数には含めない。「病原体そのものではなく」は元モデルにもある単純化で、専門的な網羅検証はしていない。"
+        ]
+      },
+      "language-vaccine-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "警備員・記憶の比喩で免疫とワクチンを日本語で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-vaccine-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "警備員・記憶の比喩で免疫とワクチンを日本語で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-docker-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "WSL上のDockerと保存先について日本語で説明。必要な技術用語やパスは外国語の不要な混入と区別。"
+        ]
+      },
+      "language-docker-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "WSL上のDockerと保存先について日本語で説明。必要な技術用語やパスは外国語の不要な混入と区別。"
+        ]
+      },
+      "language-docker-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "元モデルと同様、Windows/Linuxコンテナの切替をWSLの利点としてまとめる説明には粗さがある。本文の日本語やパスに目立つ混入・欠字はない。"
+        ]
+      },
+      "language-cache-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "元モデルと同じ「大きなモデルの計算回数を増やしつつ」は、計算量と呼び出し回数の説明が粗い。再利用と先読み検証の区別は読み取れる。混入・欠字なし。"
+        ]
+      },
+      "language-cache-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "計算の再利用と先読み検証の違いを日本語で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-cache-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "計算の再利用と先読み検証の違いを日本語で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-sql-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複調べる手順」と助詞が欠落。元モデルでも同じ表現が出ている。視聴者とセッションを同列に扱う説明にも粗さがある。"
+        ]
+      },
+      "language-sql-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "延べ回数と実人数を区別し、重複の確認手順を日本語で説明。"
+        ]
+      },
+      "language-sql-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「重複を除いた延べ人数」は実人数と延べ人数が矛盾する表現。元モデルでも発生。"
+        ]
+      },
+      "language-backup-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "世代管理と復元確認を日本語で説明。保存期間30〜90日の提案は個別要件を確認した値ではなく、一般的な提案として扱う。"
+        ]
+      },
+      "language-backup-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "世代管理と別マシン・別フォルダへの復元確認を日本語で説明。"
+        ]
+      },
+      "language-backup-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「バックアップtaken」と不要な英語が挿入される。「最初は全文ではなく重要フォルダ」も不自然。元モデルと共通の問題。"
+        ]
+      },
+      "language-china_trip-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "四川料理名を保持し、茶文化や旅行上の注意を日本語3段落で説明。料理名そのものは不要な中国語文章の混入に数えない。地域ごとの作法の網羅確認はしていない。"
+        ]
+      },
+      "language-china_trip-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「具を短時間だけ火を通し」は助詞のつながりが不自然（具に火を通す）。「微辣」「中辣」はメニュー表示の説明なので意図しない中国語の文章混入には数えない。"
+        ]
+      },
+      "language-china_trip-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「共食いで少量ずつ味わう」は、料理を分け合って食べる文脈で意味の異なる語を使っている。元モデルの同じ課題にはこの表現はない。四川料理を「シチュアン料理」と表記すること自体は混入とは判定しない。"
+        ]
+      },
+      "language-china_history-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の貿易・都市生活の違いを日本語で説明。意図しない外国語文章の混入なし。年代・貿易制度の専門的な網羅確認は対象外。"
+        ]
+      },
+      "language-china_history-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の貿易・都市生活の違いを日本語で説明。意図しない外国語文章の混入なし。年代・貿易制度の専門的な網羅確認は対象外。"
+        ]
+      },
+      "language-china_history-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "明と清の貿易・都市生活を日本語2段落で説明。目立つ混入・欠字なし。約160秒で正常終了。"
+        ]
+      },
+      "language-korea_trip-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「混雑で道を求めるや人をかき分けるには」は日本語のつながりが崩れている。",
+          "道を空けてもらう場面に「マンサセヨ」を案内。公的な会話集の「失礼します」は「シルレハムニダ」で、この用途で「マンサセヨ」を使う根拠は確認できなかった。確認できた日本語の崩れを理由にissueとし、疑わしい韓国語表現は補足扱い。",
+          "参照資料の検索結果には対応表現が表示されたが、PDF本文の文字検索は一致せず、画像表示もwebツールのエラーで未確認。韓国語表現の正誤は確定せず、要確認の補足にとどめる。"
+        ],
+        "sources": [
+          {
+            "title": "国土交通省 東北運輸局：おもてなし会話集の基本フレーズ",
+            "url": "https://wwwtb.mlit.go.jp/tohoku/content/000174943.pdf"
+          }
+        ]
+      },
+      "language-korea_trip-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "元モデルは本文未完了だったがコピーは約171秒で完成。",
+          "飲食店で使う語として「水はス」と案内する誤り。国立国語院の辞書本文では水は물（ムル）。ほかの疑わしいカタカナ表現は、全件検証済みとは扱わない。",
+          "高知県の会話集PDFは43MBでweb取得不可。代わりに国立国語院の辞書一覧本文でwater=물を確認した。辞書個別ページはwebでアクセス不可だった。"
+        ],
+        "sources": [
+          {
+            "title": "国立国語院 韓国語基礎辞典：waterに対応する물の項目",
+            "url": "https://krdict.korean.go.kr/eng/dicMarinerSearch/search?mainSearchWord=Water"
+          }
+        ]
+      },
+      "language-korea_trip-43": {
+        "reviewed": true,
+        "status": "incomplete",
+        "unexpected_mixing": false,
+        "notes": [
+          "思考だけで8192トークンの上限に達し、本文なし。約239.64秒。元モデルでも同じ課題は本文未完了。混入抑制の成功には数えない。"
+        ]
+      },
+      "language-korea_food-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "ビビンバ・キムチ・参鶏湯を日本語2段落で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-korea_food-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「中にともち米」と余分な「と」が入る。元モデルと同じ誤字。"
+        ]
+      },
+      "language-korea_food-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "指定した料理3品を日本語で説明。目立つ混入・欠字なし。"
+        ]
+      },
+      "language-business-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "「是正措置」は暫定・恒久対策などに言い換えたが、原因分析と翌週の再確認を含め、報告例として意味は通る。単語の逐語保持はこの課題の必須条件ではない。"
+        ]
+      },
+      "language-business-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "原因分析・再発防止・翌週の再確認を含む報告例。「先週」は入力にない補足である点を記録。プレースホルダーを含む例文として回答し、目立つ混入・欠字なし。"
+        ]
+      },
+      "language-business-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "「是正措置」を「対策措置」に言い換えたが、原因分析と翌週の再確認を含む報告として意味は保たれている。"
+        ]
+      },
+      "language-biology-17": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "「一つの花的におしべとめしべを」と日本語が崩れ、説明対象の用語「両性具有」を「両性具有的」として繰り返す。"
+        ]
+      },
+      "language-biology-29": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "説明対象の用語「両性具有」が「両性具」に欠けた。元モデルは同じ課題で完全な語を保持。"
+        ]
+      },
+      "language-biology-43": {
+        "reviewed": true,
+        "status": "issue",
+        "unexpected_mixing": false,
+        "notes": [
+          "説明対象の用語「両性具有」が「両性有」に欠けた。元モデルは同じ課題で完全な語を保持。"
+        ]
+      },
+      "language-zh_medical-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "中国語入力の腎機能検査・自己判断での薬中止禁止・症状時の相談・適度な水分・大量飲酒を避ける要点を、日本語で保持。"
+        ]
+      },
+      "language-zh_medical-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "中国語入力の腎機能検査・自己判断での薬中止禁止・症状時の相談・適度な水分・大量飲酒を避ける要点を、日本語で保持。"
+        ]
+      },
+      "language-zh_medical-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "中国語入力の腎機能検査・自己判断での薬中止禁止・症状時の相談・適度な水分・大量飲酒を避ける要点を、日本語で保持。"
+        ]
+      },
+      "language-zh_software-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新内容、設定バックアップ、ログ確認、起動失敗時の設定復旧、データ削除禁止を日本語で保持。"
+        ]
+      },
+      "language-zh_software-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新内容、設定バックアップ、ログ確認、起動失敗時の設定復旧、データ削除禁止を日本語で保持。"
+        ]
+      },
+      "language-zh_software-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "更新内容、設定バックアップ、ログ確認、起動失敗時の設定復旧、データ削除禁止を日本語で保持。"
+        ]
+      },
+      "language-ko_notice-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "9時〜18時、ふた付き飲料容器、周囲への静粛配慮を日本語で保持。飲料を食事へ広げる変更はない。"
+        ]
+      },
+      "language-ko_notice-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "9時〜18時、ふた付き飲料容器、周囲への静粛配慮を日本語で保持。飲料を食事へ広げる変更はない。"
+        ]
+      },
+      "language-ko_notice-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "9時〜18時、ふた付き飲料容器、周囲への静粛配慮を日本語で保持。飲料を食事へ広げる変更はない。"
+        ]
+      },
+      "language-ko_software-17": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "設定バックアップ、更新後の再起動・ログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      },
+      "language-ko_software-29": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "設定バックアップ、更新後の再起動・ログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      },
+      "language-ko_software-43": {
+        "reviewed": true,
+        "status": "ok",
+        "unexpected_mixing": false,
+        "notes": [
+          "設定バックアップ、更新後の再起動・ログ確認、問題時の設定復旧を日本語で保持。"
+        ]
+      }
+    },
+    "reviewer": "Codex",
+    "classification": "issue は明瞭な誤記・読み誤り・文法上の欠落・不要な外国語・意味の混同・指示違反を記録。軽微な不自然さや未確認の専門内容は notes に残し、確定問題と混同しない。unexpected_mixing は意図しない中国語・ハングルの本文混入のみ。",
+    "tool_followup_notes": {
+      "edited/tool-0": {
+        "reviewed": true,
+        "notes": [
+          "実ファイルの読み取りと未処理3件・CASE-0の報告は成功。ただし自発的に付けたファイル本文の引用を「是正措置」から「は正措置」に改変している。"
+        ]
+      },
+      "edited/tool-1": {
+        "reviewed": true,
+        "notes": [
+          "指定名「是正措置.md」を「 là正措置.md」へ変えて失敗。失敗通知後も「正措置.md」「là正措置.md」の別名を要求し、指定ファイルの結果は報告できなかった。追加要求は実行していない。"
+        ]
+      },
+      "edited/tool-2": {
+        "reviewed": true,
+        "notes": [
+          "実ファイルの読み取りと未処理3件・CASE-2の報告は成功。ただし付記した本文引用は「は正措置」に改変。"
+        ]
+      },
+      "edited/tool-3": {
+        "reviewed": true,
+        "notes": [
+          "実ファイルを読み、未処理3件・CASE-3を正しく報告。付記した引用範囲にも目立つ改変なし。"
+        ]
+      },
+      "edited/tool-4": {
+        "reviewed": true,
+        "notes": [
+          "実ファイルの読み取りと未処理3件・CASE-4の報告は成功。ただし点検結果の「是正措置」が「正措置」に欠落。"
+        ]
+      }
+    }
+  },
+  "cases_sha256": "9b603c6a09e3745f527424833f061c63825c8741455dad8445ccbe15acb87df7"
+}

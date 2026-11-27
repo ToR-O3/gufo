@@ -1,0 +1,47 @@
+{
+  "status": "passed_minimal_validation_running",
+  "completed_at_jst": "2026-10-31T21:27:32.442922+09:00",
+  "scope": "Two short requests only. No full benchmark or long-context stress test.",
+  "requests": [
+    {
+      "case": "short",
+      "http_status": 200,
+      "content": "BF16 n-gramの動作確認が完了しました。",
+      "prompt_tokens": 33,
+      "completion_tokens": 13,
+      "draft_proposed": 17,
+      "draft_accepted": 9
+    },
+    {
+      "case": "small-repetition",
+      "http_status": 200,
+      "content": "反復確認OK",
+      "prompt_tokens": 256,
+      "completion_tokens": 4,
+      "draft_proposed": 4,
+      "draft_accepted": 2
+    }
+  ],
+  "loader": {
+    "elapsed_ms": 32127,
+    "rss_mib": 4145,
+    "host_available_mib": 17260,
+    "gpu_device_used_mib": 79121,
+    "gpu_device_total_mib": 114151
+  },
+  "memory": {
+    "wsl_min_observed_available_bytes": 18063745024,
+    "wsl_sample_count": 9,
+    "windows_after_KiB": {
+      "TotalVisibleMemorySize": 66739012,
+      "FreePhysicalMemory": 5271336
+    },
+    "windows_peak": "not measured; before/after snapshots only",
+    "gpu_scope": "ROCm device heap including UMA; not dedicated VRAM-only usage"
+  },
+  "served_model_name": "Qwen3.8-FN-UD-IQ4_XS",
+  "image": "gufo:v0.27.0-ud-iq4xs-ple-bf16-rocm101-20261031",
+  "bf16_sidecar_selected": true,
+  "normal_container_running": true,
+  "rollback_container": "Gufo-pre-ple-bf16-20261031"
+}

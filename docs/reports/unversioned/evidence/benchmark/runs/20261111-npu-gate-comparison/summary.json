@@ -1,0 +1,2725 @@
+{
+  "gpu": {
+    "started": "2026-11-11T15:28:59+09:00",
+    "mode": "gpu",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 11511.6
+        },
+        "1": {
+          "ms": 11410.9
+        },
+        "2": {
+          "ms": 11070.9
+        },
+        "3": {
+          "ms": 11027.6
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 22673.3
+        },
+        "1": {
+          "ms": 22661.7
+        },
+        "2": {
+          "ms": 22560.0
+        },
+        "3": {
+          "ms": 23008.0
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 11552.9,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 11447.2,
+          "first_token": 248046
+        },
+        "2": {
+          "ms": 11107.6,
+          "first_token": 248046
+        },
+        "3": {
+          "ms": 11067.1,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 22711.1,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 22697.6,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 22598.3,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 23046.7,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118383284224,
+        "hip_total": 119696543744,
+        "pss_kib": 179812,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46479110144,
+        "hip_total": 119696543744,
+        "pss_kib": 820348,
+        "private_dirty_kib": 629036
+      },
+      "wsl_min_available_kib": 20739816,
+      "wsl_max_swap_kib": 5052496,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 853737472,
+      "docker_peak_anon_bytes": 778084352,
+      "hip_start_free_gib": 110.25302505493164,
+      "hip_load_delta_gib": 66.96598052978516
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      },
+      "32768": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      }
+    },
+    "errors": [],
+    "model_load_ms": 22969,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 171.79293,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 11070.9,
+        "32768": 22661.7
+      },
+      "ttft": {
+        "16384": 11107.6,
+        "32768": 22697.6
+      }
+    }
+  },
+  "npu-late": {
+    "started": "2026-11-11T15:31:45+09:00",
+    "mode": "npu-late",
+    "prefill": {},
+    "ttft": {},
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118383841280,
+        "hip_total": 119696543744,
+        "pss_kib": 179860,
+        "private_dirty_kib": 43276
+      },
+      "bridge": {
+        "weights": 0,
+        "pinned": 17694720,
+        "mapped-used": 17698816,
+        "jobs": 0,
+        "slices": 0,
+        "healthy": 0
+      },
+      "wsl_min_available_kib": 20740312,
+      "wsl_max_swap_kib": 5051392,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 811687936,
+      "docker_peak_anon_bytes": 616660992,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86487040,
+          "peak_ws": 86671360,
+          "private_commit": 78049280,
+          "system_available": 31130402816,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.109375
+        }
+      }
+    },
+    "logit_diff": {},
+    "errors": [
+      "NPU WSL mailbox state 11 while waiting for 12",
+      "NPU WSL mailbox state 14 while waiting for 15",
+      "Error creating Qwen3.8-Flash-Next model: NPU gate weight registration failed"
+    ],
+    "model_load_ms": 43183,
+    "docker_cpu_last_s": 22.073956,
+    "completed": false,
+    "logit_vs_gpu_control": {},
+    "medians_ms": {
+      "prefill": {},
+      "ttft": {}
+    }
+  },
+  "npu-pair": {
+    "started": "2026-11-11T15:32:29+09:00",
+    "mode": "npu-pair",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 13217.8
+        },
+        "1": {
+          "ms": 11666.3
+        },
+        "2": {
+          "ms": 11487.2
+        },
+        "3": {
+          "ms": 11638.8
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 24007.9
+        },
+        "1": {
+          "ms": 23805.2
+        },
+        "2": {
+          "ms": 23879.3
+        },
+        "3": {
+          "ms": 24275.4
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 13258.0,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 11702.8,
+          "first_token": 248046
+        },
+        "2": {
+          "ms": 11526.4,
+          "first_token": 248046
+        },
+        "3": {
+          "ms": 11676.1,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 24046.7,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 23846.3,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 23918.1,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 24314.0,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118389379072,
+        "hip_total": 119696543744,
+        "pss_kib": 179908,
+        "private_dirty_kib": 43280
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46319656960,
+        "hip_total": 119696543744,
+        "pss_kib": 1548916,
+        "private_dirty_kib": 1357380
+      },
+      "bridge": {
+        "weights": 583925760,
+        "pinned": 160432128,
+        "mapped-used": 744361984,
+        "jobs": 1584,
+        "slices": 9504,
+        "healthy": 1
+      },
+      "wsl_min_available_kib": 20692252,
+      "wsl_max_swap_kib": 5049444,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 1016356864,
+      "docker_peak_anon_bytes": 778555392,
+      "hip_start_free_gib": 110.25870132446289,
+      "hip_load_delta_gib": 67.12015914916992,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86474752,
+          "peak_ws": 86745088,
+          "private_commit": 78635008,
+          "system_available": 31260663808,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.078125
+        },
+        "registering": {
+          "working_set": 464089088,
+          "peak_ws": 464089088,
+          "private_commit": 80089088,
+          "system_available": 20105568256,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 128,
+          "cpu_s": 0.953125
+        },
+        "first_run": {
+          "working_set": 670572544,
+          "peak_ws": 670572544,
+          "private_commit": 80089088,
+          "system_available": 12752310272,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 198,
+          "cpu_s": 1.1875
+        },
+        "pass_1": {
+          "working_set": 831197184,
+          "peak_ws": 831197184,
+          "private_commit": 80121856,
+          "system_available": 12658651136,
+          "jobs": 132,
+          "slices": 792,
+          "registered_weights": 198,
+          "cpu_s": 1.890625
+        },
+        "pass_2": {
+          "working_set": 831221760,
+          "peak_ws": 831221760,
+          "private_commit": 80162816,
+          "system_available": 12629336064,
+          "jobs": 264,
+          "slices": 1584,
+          "registered_weights": 198,
+          "cpu_s": 2.734375
+        },
+        "pass_3": {
+          "working_set": 831156224,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12626833408,
+          "jobs": 396,
+          "slices": 2376,
+          "registered_weights": 198,
+          "cpu_s": 3.6875
+        },
+        "pass_4": {
+          "working_set": 831156224,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12593967104,
+          "jobs": 528,
+          "slices": 3168,
+          "registered_weights": 198,
+          "cpu_s": 4.78125
+        },
+        "pass_5": {
+          "working_set": 831156224,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12502179840,
+          "jobs": 660,
+          "slices": 3960,
+          "registered_weights": 198,
+          "cpu_s": 5.828125
+        },
+        "pass_6": {
+          "working_set": 831156224,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12470398976,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 6.921875
+        },
+        "pass_7": {
+          "working_set": 831156224,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12411019264,
+          "jobs": 924,
+          "slices": 5544,
+          "registered_weights": 198,
+          "cpu_s": 7.734375
+        },
+        "pass_8": {
+          "working_set": 831160320,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12389699584,
+          "jobs": 1056,
+          "slices": 6336,
+          "registered_weights": 198,
+          "cpu_s": 8.734375
+        },
+        "pass_9": {
+          "working_set": 831180800,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12402921472,
+          "jobs": 1188,
+          "slices": 7128,
+          "registered_weights": 198,
+          "cpu_s": 9.578125
+        },
+        "pass_10": {
+          "working_set": 831180800,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12447141888,
+          "jobs": 1320,
+          "slices": 7920,
+          "registered_weights": 198,
+          "cpu_s": 10.640625
+        },
+        "pass_11": {
+          "working_set": 831180800,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 12464680960,
+          "jobs": 1452,
+          "slices": 8712,
+          "registered_weights": 198,
+          "cpu_s": 11.578125
+        },
+        "pass_12": {
+          "working_set": 831180800,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 13305077760,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 12.671875
+        },
+        "before_release": {
+          "working_set": 831180800,
+          "peak_ws": 831221760,
+          "private_commit": 80048128,
+          "system_available": 29749035008,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 12.71875
+        }
+      },
+      "npu_attributed_gib": 0.917205810546875
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 5,
+        "rmse": 0.5242793008679741,
+        "max_absolute": 4.503148078918457,
+        "kl_gpu_to_candidate": 0.520378170668939
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20186239442423082,
+        "max_absolute": 1.3909587860107422,
+        "kl_gpu_to_candidate": 0.0032598209740431145
+      }
+    },
+    "errors": [],
+    "model_load_ms": 32675,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 249.706869,
+    "completed": true,
+    "logit_vs_gpu_control": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 5,
+        "rmse": 0.5242793008679741,
+        "max_absolute": 4.503148078918457,
+        "kl_gpu_to_candidate": 0.520378170668939
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20186239442423082,
+        "max_absolute": 1.3909587860107422,
+        "kl_gpu_to_candidate": 0.0032598209740431145
+      }
+    },
+    "medians_ms": {
+      "prefill": {
+        "16384": 11638.8,
+        "32768": 23879.3
+      },
+      "ttft": {
+        "16384": 11676.1,
+        "32768": 23918.1
+      }
+    },
+    "bridge_distribution_ms": {
+      "send_ms": {
+        "min": 0.61373,
+        "median": 1.007248,
+        "p95": 1.359136,
+        "p99": 2.124286,
+        "max": 3.61039
+      },
+      "remote_ms": {
+        "min": 5.866576,
+        "median": 8.304572,
+        "p95": 9.050024,
+        "p99": 10.726476,
+        "max": 38.535584
+      },
+      "receive_ms": {
+        "min": 1.659578,
+        "median": 2.852402,
+        "p95": 5.839521,
+        "p99": 6.323699,
+        "max": 7.455512
+      },
+      "total_ms": {
+        "min": 8.946438,
+        "median": 12.570304,
+        "p95": 15.025524,
+        "p99": 16.054783,
+        "max": 41.879166
+      },
+      "windows_xrt_ms": {
+        "min": 5.5835,
+        "median": 7.8445,
+        "p95": 8.274025,
+        "p99": 8.532429,
+        "max": 10.9363
+      },
+      "remote_minus_xrt_ms": {
+        "min": 0.037929,
+        "median": 0.442406,
+        "p95": 0.985021,
+        "p99": 2.393594,
+        "max": 30.556384
+      }
+    }
+  },
+  "gpu-pair": {
+    "started": "2026-11-11T15:35:32+09:00",
+    "mode": "gpu-pair",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 12097.4
+        },
+        "1": {
+          "ms": 11527.4
+        },
+        "2": {
+          "ms": 11730.9
+        },
+        "3": {
+          "ms": 11611.2
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 23921.6
+        },
+        "1": {
+          "ms": 23961.2
+        },
+        "2": {
+          "ms": 23825.6
+        },
+        "3": {
+          "ms": 24168.7
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 12137.3,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 11566.2,
+          "first_token": 248046
+        },
+        "2": {
+          "ms": 11768.1,
+          "first_token": 248046
+        },
+        "3": {
+          "ms": 11648.8,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 23967.4,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 23999.1,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 23863.9,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 24206.0,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118390214656,
+        "hip_total": 119696543744,
+        "pss_kib": 179640,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46481059840,
+        "hip_total": 119696543744,
+        "pss_kib": 820256,
+        "private_dirty_kib": 629048
+      },
+      "wsl_min_available_kib": 20922728,
+      "wsl_max_swap_kib": 5049140,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 855154688,
+      "docker_peak_anon_bytes": 778100736,
+      "hip_start_free_gib": 110.25947952270508,
+      "hip_load_delta_gib": 66.97061920166016
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      },
+      "32768": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      }
+    },
+    "errors": [],
+    "model_load_ms": 23329,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 180.029497,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 11611.2,
+        "32768": 23961.2
+      },
+      "ttft": {
+        "16384": 11648.8,
+        "32768": 23999.1
+      }
+    }
+  },
+  "gpu-late": {
+    "started": "2026-11-11T15:38:23+09:00",
+    "mode": "gpu-late",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 14502.8
+        },
+        "1": {
+          "ms": 14061.7
+        },
+        "2": {
+          "ms": 14041.7
+        },
+        "3": {
+          "ms": 14407.5
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 28603.9
+        },
+        "1": {
+          "ms": 29247.2
+        },
+        "2": {
+          "ms": 29810.2
+        },
+        "3": {
+          "ms": 29924.9
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 14543.6,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 14102.5,
+          "first_token": 248046
+        },
+        "2": {
+          "ms": 14080.7,
+          "first_token": 248046
+        },
+        "3": {
+          "ms": 14446.1,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 28645.2,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 29284.8,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 29847.3,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 29965.2,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118407024640,
+        "hip_total": 119696543744,
+        "pss_kib": 179752,
+        "private_dirty_kib": 43280
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46497869824,
+        "hip_total": 119696543744,
+        "pss_kib": 820296,
+        "private_dirty_kib": 629044
+      },
+      "wsl_min_available_kib": 20804692,
+      "wsl_max_swap_kib": 5046064,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 853790720,
+      "docker_peak_anon_bytes": 778059776,
+      "hip_start_free_gib": 110.2751350402832,
+      "hip_load_delta_gib": 66.97061920166016
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.28171671424174133,
+        "max_absolute": 1.510265588760376,
+        "kl_gpu_to_candidate": 0.04794453675456781
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20319574137354174,
+        "max_absolute": 1.2532143592834473,
+        "kl_gpu_to_candidate": 0.0009252126989735588
+      }
+    },
+    "errors": [],
+    "model_load_ms": 22569,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 211.066474,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 14061.7,
+        "32768": 29810.2
+      },
+      "ttft": {
+        "16384": 14102.5,
+        "32768": 29847.3
+      }
+    }
+  },
+  "gpu4k": {
+    "started": "2026-11-11T15:41:46+09:00",
+    "mode": "gpu4k",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 12483.6
+        },
+        "1": {
+          "ms": 12235.4
+        },
+        "2": {
+          "ms": 12385.4
+        },
+        "3": {
+          "ms": 13557.9
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 25978.8
+        },
+        "1": {
+          "ms": 26088.9
+        },
+        "2": {
+          "ms": 25961.9
+        },
+        "3": {
+          "ms": 26002.8
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 12528.9,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 12274.3,
+          "first_token": 248046
+        },
+        "2": {
+          "ms": 12424.4,
+          "first_token": 248046
+        },
+        "3": {
+          "ms": 13710.3,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 26019.0,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 26130.3,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 26005.4,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 26044.8,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118392377344,
+        "hip_total": 119696543744,
+        "pss_kib": 179836,
+        "private_dirty_kib": 43280
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 50930479104,
+        "hip_total": 119696543744,
+        "pss_kib": 697416,
+        "private_dirty_kib": 506016
+      },
+      "wsl_min_available_kib": 20828632,
+      "wsl_max_swap_kib": 5045532,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 773255168,
+      "docker_peak_anon_bytes": 596729856,
+      "hip_start_free_gib": 110.26149368286133,
+      "hip_load_delta_gib": 62.82878875732422
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      },
+      "32768": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      }
+    },
+    "errors": [],
+    "model_load_ms": 23685,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 205.239646,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 12385.4,
+        "32768": 26002.8
+      },
+      "ttft": {
+        "16384": 12424.4,
+        "32768": 26044.8
+      }
+    }
+  },
+  "profile-pair": {
+    "started": "2026-11-11T15:44:49+09:00",
+    "mode": "npu-pair",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 13245.9
+        },
+        "1": {
+          "ms": 12012.9
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 24835.2
+        },
+        "1": {
+          "ms": 24823.6
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 13285.7,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 12053.2,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 24873.2,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 24859.6,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118361071616,
+        "hip_total": 119696543744,
+        "pss_kib": 179760,
+        "private_dirty_kib": 43280
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46291345408,
+        "hip_total": 119696543744,
+        "pss_kib": 1548712,
+        "private_dirty_kib": 1357388
+      },
+      "bridge": {
+        "weights": 583925760,
+        "pinned": 160432128,
+        "mapped-used": 744361984,
+        "jobs": 792,
+        "slices": 4752,
+        "healthy": 1
+      },
+      "wsl_min_available_kib": 20645600,
+      "wsl_max_swap_kib": 5045296,
+      "telemetry_errors": 8,
+      "docker_peak_bytes": 1016459264,
+      "docker_peak_anon_bytes": 778436608,
+      "hip_start_free_gib": 110.23233795166016,
+      "hip_load_delta_gib": 67.12016296386719,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86552576,
+          "peak_ws": 86708224,
+          "private_commit": 78573568,
+          "system_available": 28606955520,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.078125
+        },
+        "registering": {
+          "working_set": 464097280,
+          "peak_ws": 464097280,
+          "private_commit": 79917056,
+          "system_available": 19290279936,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 128,
+          "cpu_s": 1.796875
+        },
+        "first_run": {
+          "working_set": 670580736,
+          "peak_ws": 670580736,
+          "private_commit": 79917056,
+          "system_available": 12139216896,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 198,
+          "cpu_s": 2.09375
+        },
+        "pass_1": {
+          "working_set": 831135744,
+          "peak_ws": 831135744,
+          "private_commit": 79949824,
+          "system_available": 12082069504,
+          "jobs": 132,
+          "slices": 792,
+          "registered_weights": 198,
+          "cpu_s": 2.65625
+        },
+        "pass_2": {
+          "working_set": 831172608,
+          "peak_ws": 831172608,
+          "private_commit": 79990784,
+          "system_available": 12139372544,
+          "jobs": 264,
+          "slices": 1584,
+          "registered_weights": 198,
+          "cpu_s": 3.625
+        },
+        "pass_3": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79994880,
+          "system_available": 12176101376,
+          "jobs": 396,
+          "slices": 2376,
+          "registered_weights": 198,
+          "cpu_s": 4.71875
+        },
+        "pass_4": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79994880,
+          "system_available": 12189831168,
+          "jobs": 528,
+          "slices": 3168,
+          "registered_weights": 198,
+          "cpu_s": 6.0625
+        },
+        "pass_5": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79994880,
+          "system_available": 12201136128,
+          "jobs": 660,
+          "slices": 3960,
+          "registered_weights": 198,
+          "cpu_s": 7.25
+        },
+        "pass_6": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79994880,
+          "system_available": 12189323264,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 8.28125
+        },
+        "before_release": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79994880,
+          "system_available": 27048947712,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 8.3125
+        }
+      },
+      "npu_attributed_gib": 0.9171562194824219
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 5,
+        "rmse": 0.5242793008679741,
+        "max_absolute": 4.503148078918457,
+        "kl_gpu_to_candidate": 0.520378170668939
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20186239442423082,
+        "max_absolute": 1.3909587860107422,
+        "kl_gpu_to_candidate": 0.0032598209740431145
+      }
+    },
+    "errors": [],
+    "model_load_ms": 78552,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 140.997285,
+    "completed": true,
+    "logit_vs_gpu_control": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 5,
+        "rmse": 0.5242793008679741,
+        "max_absolute": 4.503148078918457,
+        "kl_gpu_to_candidate": 0.520378170668939
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20186239442423082,
+        "max_absolute": 1.3909587860107422,
+        "kl_gpu_to_candidate": 0.0032598209740431145
+      }
+    },
+    "medians_ms": {
+      "prefill": {
+        "16384": 12012.9,
+        "32768": 24823.6
+      },
+      "ttft": {
+        "16384": 12053.2,
+        "32768": 24859.6
+      }
+    },
+    "bridge_distribution_ms": {
+      "send_ms": {
+        "min": 0.550426,
+        "median": 1.027528,
+        "p95": 1.474441,
+        "p99": 1.768652,
+        "max": 2.973627
+      },
+      "remote_ms": {
+        "min": 5.927148,
+        "median": 8.311922,
+        "p95": 9.298954,
+        "p99": 19.566478,
+        "max": 35.103548
+      },
+      "receive_ms": {
+        "min": 1.963897,
+        "median": 3.065586,
+        "p95": 5.168249,
+        "p99": 5.417934,
+        "max": 5.754029
+      },
+      "total_ms": {
+        "min": 8.897367,
+        "median": 12.511156,
+        "p95": 15.018197,
+        "p99": 25.635879,
+        "max": 38.512615
+      },
+      "windows_xrt_ms": {
+        "min": 5.5177,
+        "median": 7.8545,
+        "p95": 8.103175,
+        "p99": 8.404635,
+        "max": 9.1795
+      },
+      "remote_minus_xrt_ms": {
+        "min": 0.056401,
+        "median": 0.470784,
+        "p95": 1.181723,
+        "p99": 11.762143,
+        "max": 27.218348
+      }
+    },
+    "phase_totals_ms": [
+      {
+        "prompt": 16384,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 277.942824,
+        "wait_ms": 971.8962230000001,
+        "after_ms": 530.131491
+      },
+      {
+        "prompt": 16384,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 301.973499,
+        "wait_ms": 56.621704,
+        "after_ms": 533.400439
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 311.135723,
+        "wait_ms": 74.240577,
+        "after_ms": 533.434759
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 16384,
+        "before_ms": 306.517957,
+        "wait_ms": 66.523786,
+        "after_ms": 533.535513
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 305.813523,
+        "wait_ms": 79.365749,
+        "after_ms": 550.694553
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 16384,
+        "before_ms": 305.606496,
+        "wait_ms": 64.551973,
+        "after_ms": 536.798389
+      }
+    ]
+  },
+  "profile-late": {
+    "started": "2026-11-11T15:47:27+09:00",
+    "mode": "npu-late",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 16403.8
+        },
+        "1": {
+          "ms": 15461.6
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 31570.5
+        },
+        "1": {
+          "ms": 31941.0
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 16443.7,
+          "first_token": 37441
+        },
+        "1": {
+          "ms": 15498.1,
+          "first_token": 37441
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 31608.9,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 31977.9,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118361907200,
+        "hip_total": 119696543744,
+        "pss_kib": 179572,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46291628032,
+        "hip_total": 119696543744,
+        "pss_kib": 1548652,
+        "private_dirty_kib": 1357384
+      },
+      "bridge": {
+        "weights": 583925760,
+        "pinned": 160432128,
+        "mapped-used": 744361984,
+        "jobs": 792,
+        "slices": 4752,
+        "healthy": 1
+      },
+      "wsl_min_available_kib": 20709004,
+      "wsl_max_swap_kib": 5045176,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 1016459264,
+      "docker_peak_anon_bytes": 778407936,
+      "hip_start_free_gib": 110.23311614990234,
+      "hip_load_delta_gib": 67.12067794799805,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86556672,
+          "peak_ws": 86769664,
+          "private_commit": 78651392,
+          "system_available": 28892655616,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.078125
+        },
+        "registering": {
+          "working_set": 464121856,
+          "peak_ws": 464121856,
+          "private_commit": 80023552,
+          "system_available": 19539566592,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 128,
+          "cpu_s": 1.859375
+        },
+        "first_run": {
+          "working_set": 670609408,
+          "peak_ws": 670609408,
+          "private_commit": 80023552,
+          "system_available": 12179386368,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 198,
+          "cpu_s": 2.140625
+        },
+        "pass_1": {
+          "working_set": 831176704,
+          "peak_ws": 831176704,
+          "private_commit": 80060416,
+          "system_available": 12095029248,
+          "jobs": 132,
+          "slices": 792,
+          "registered_weights": 198,
+          "cpu_s": 2.859375
+        },
+        "pass_2": {
+          "working_set": 831176704,
+          "peak_ws": 831176704,
+          "private_commit": 80060416,
+          "system_available": 12136148992,
+          "jobs": 264,
+          "slices": 1584,
+          "registered_weights": 198,
+          "cpu_s": 3.6875
+        },
+        "pass_3": {
+          "working_set": 831188992,
+          "peak_ws": 831188992,
+          "private_commit": 80064512,
+          "system_available": 12130287616,
+          "jobs": 396,
+          "slices": 2376,
+          "registered_weights": 198,
+          "cpu_s": 4.734375
+        },
+        "pass_4": {
+          "working_set": 831188992,
+          "peak_ws": 831209472,
+          "private_commit": 80027648,
+          "system_available": 12002652160,
+          "jobs": 528,
+          "slices": 3168,
+          "registered_weights": 198,
+          "cpu_s": 5.734375
+        },
+        "pass_5": {
+          "working_set": 831213568,
+          "peak_ws": 831213568,
+          "private_commit": 80064512,
+          "system_available": 12065615872,
+          "jobs": 660,
+          "slices": 3960,
+          "registered_weights": 198,
+          "cpu_s": 6.875
+        },
+        "pass_6": {
+          "working_set": 831213568,
+          "peak_ws": 831213568,
+          "private_commit": 80064512,
+          "system_available": 12119232512,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 8.1875
+        },
+        "before_release": {
+          "working_set": 831213568,
+          "peak_ws": 831213568,
+          "private_commit": 80064512,
+          "system_available": 26767757312,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 8.203125
+        }
+      },
+      "npu_attributed_gib": 0.9172210693359375
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.5038921281898693,
+        "max_absolute": 4.128732681274414,
+        "kl_gpu_to_candidate": 0.46574282506627823
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.1852765456319486,
+        "max_absolute": 1.0769386291503906,
+        "kl_gpu_to_candidate": 0.0018436759526195565
+      }
+    },
+    "errors": [],
+    "model_load_ms": 76885,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 160.262094,
+    "completed": true,
+    "logit_vs_gpu_control": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.568156069863167,
+        "max_absolute": 4.625175952911377,
+        "kl_gpu_to_candidate": 0.5525270871521721
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.1832508866515227,
+        "max_absolute": 1.0855408906936646,
+        "kl_gpu_to_candidate": 0.001428777665285331
+      }
+    },
+    "medians_ms": {
+      "prefill": {
+        "16384": 15461.6,
+        "32768": 31941.0
+      },
+      "ttft": {
+        "16384": 15498.1,
+        "32768": 31977.9
+      }
+    },
+    "bridge_distribution_ms": {
+      "send_ms": {
+        "min": 0.634129,
+        "median": 0.98043,
+        "p95": 1.943547,
+        "p99": 2.840513,
+        "max": 3.96657
+      },
+      "remote_ms": {
+        "min": 5.269358,
+        "median": 8.13176,
+        "p95": 11.41866,
+        "p99": 34.00412,
+        "max": 78.698826
+      },
+      "receive_ms": {
+        "min": 1.505158,
+        "median": 2.419421,
+        "p95": 5.541567,
+        "p99": 8.244992,
+        "max": 11.085235
+      },
+      "total_ms": {
+        "min": 7.794534,
+        "median": 11.666296,
+        "p95": 17.281931,
+        "p99": 37.423746,
+        "max": 80.896236
+      },
+      "windows_xrt_ms": {
+        "min": 4.8846,
+        "median": 7.6016,
+        "p95": 8.527125,
+        "p99": 8.94671,
+        "max": 9.9862
+      },
+      "remote_minus_xrt_ms": {
+        "min": 0.059139,
+        "median": 0.451118,
+        "p95": 3.078677,
+        "p99": 25.987005,
+        "max": 73.701926
+      }
+    },
+    "phase_totals_ms": [
+      {
+        "prompt": 16384,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 4508.012713,
+        "wait_ms": 1203.397114,
+        "after_ms": 169.605095
+      },
+      {
+        "prompt": 16384,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 5097.471811,
+        "wait_ms": 47.966738,
+        "after_ms": 170.687583
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 5178.477478,
+        "wait_ms": 105.211447,
+        "after_ms": 169.717537
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 16384,
+        "before_ms": 5310.302551,
+        "wait_ms": 25.872563,
+        "after_ms": 172.677742
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 5251.021619,
+        "wait_ms": 26.375624,
+        "after_ms": 173.494204
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 16384,
+        "before_ms": 5388.929666,
+        "wait_ms": 24.522014,
+        "after_ms": 169.639428
+      }
+    ]
+  },
+  "profile-gpu-pair": {
+    "started": "2026-11-11T15:50:25+09:00",
+    "mode": "gpu-pair",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 12613.7
+        },
+        "1": {
+          "ms": 12046.9
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 25308.5
+        },
+        "1": {
+          "ms": 24898.9
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 12657.9,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 12082.9,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 25351.2,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 24941.7,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118362185728,
+        "hip_total": 119696543744,
+        "pss_kib": 179716,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46452752384,
+        "hip_total": 119696543744,
+        "pss_kib": 820248,
+        "private_dirty_kib": 629028
+      },
+      "wsl_min_available_kib": 20823444,
+      "wsl_max_swap_kib": 5045056,
+      "telemetry_errors": 12,
+      "docker_peak_bytes": 854634496,
+      "docker_peak_anon_bytes": 778080256,
+      "hip_start_free_gib": 110.2333755493164,
+      "hip_load_delta_gib": 66.97087860107422
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      },
+      "32768": {
+        "equal": 248320,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.0,
+        "max_absolute": 0.0,
+        "kl_gpu_to_candidate": 0.0
+      }
+    },
+    "errors": [],
+    "model_load_ms": 29908,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 102.251054,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 12046.9,
+        "32768": 24898.9
+      },
+      "ttft": {
+        "16384": 12082.9,
+        "32768": 24941.7
+      }
+    },
+    "phase_totals_ms": [
+      {
+        "prompt": 16384,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 278.746101,
+        "wait_ms": 18.647086,
+        "after_ms": 537.56374
+      },
+      {
+        "prompt": 16384,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 292.531696,
+        "wait_ms": 38.404786,
+        "after_ms": 542.510575
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 300.069325,
+        "wait_ms": 41.286467,
+        "after_ms": 548.563109
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 16384,
+        "before_ms": 303.358095,
+        "wait_ms": 53.664311,
+        "after_ms": 559.955993
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 304.051422,
+        "wait_ms": 43.525467,
+        "after_ms": 552.023593
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 16384,
+        "before_ms": 302.198318,
+        "wait_ms": 43.976985,
+        "after_ms": 572.092394
+      }
+    ]
+  },
+  "profile-gpu-late": {
+    "started": "2026-11-11T15:52:13+09:00",
+    "mode": "gpu-late",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 18873.2
+        },
+        "1": {
+          "ms": 16186.6
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 32181.7
+        },
+        "1": {
+          "ms": 32478.1
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 18918.9,
+          "first_token": 248046
+        },
+        "1": {
+          "ms": 16224.2,
+          "first_token": 248046
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 32224.0,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 32516.2,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118362464256,
+        "hip_total": 119696543744,
+        "pss_kib": 179820,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46470328320,
+        "hip_total": 119696543744,
+        "pss_kib": 820424,
+        "private_dirty_kib": 629040
+      },
+      "wsl_min_available_kib": 20901896,
+      "wsl_max_swap_kib": 5044948,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 854024192,
+      "docker_peak_anon_bytes": 778121216,
+      "hip_start_free_gib": 110.23363494873047,
+      "hip_load_delta_gib": 66.95476913452148
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          248046
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.28171671424174133,
+        "max_absolute": 1.510265588760376,
+        "kl_gpu_to_candidate": 0.04794453675456781
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.20319574137354174,
+        "max_absolute": 1.2532143592834473,
+        "kl_gpu_to_candidate": 0.0009252126989735588
+      }
+    },
+    "errors": [],
+    "model_load_ms": 21851,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 124.320755,
+    "completed": true,
+    "medians_ms": {
+      "prefill": {
+        "16384": 16186.6,
+        "32768": 32478.1
+      },
+      "ttft": {
+        "16384": 16224.2,
+        "32768": 32516.2
+      }
+    },
+    "phase_totals_ms": [
+      {
+        "prompt": 16384,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 5477.714236,
+        "wait_ms": 17.653986,
+        "after_ms": 171.615247
+      },
+      {
+        "prompt": 16384,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 5471.42874,
+        "wait_ms": 15.960302,
+        "after_ms": 171.002301
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 0,
+        "before_ms": 5338.953383,
+        "wait_ms": 17.508422,
+        "after_ms": 171.323635
+      },
+      {
+        "prompt": 32768,
+        "repetition": 0,
+        "pass_start": 16384,
+        "before_ms": 5480.915271,
+        "wait_ms": 17.711757,
+        "after_ms": 171.676886
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 0,
+        "before_ms": 5575.641099,
+        "wait_ms": 16.290302,
+        "after_ms": 171.300286
+      },
+      {
+        "prompt": 32768,
+        "repetition": 1,
+        "pass_start": 16384,
+        "before_ms": 5471.660277,
+        "wait_ms": 19.436515,
+        "after_ms": 172.04935
+      }
+    ]
+  },
+  "npu-late-retry": {
+    "started": "2026-11-11T15:54:22+09:00",
+    "mode": "npu-late",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 17771.9
+        },
+        "1": {
+          "ms": 15939.9
+        },
+        "2": {
+          "ms": 16117.2
+        },
+        "3": {
+          "ms": 16042.2
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 33099.9
+        },
+        "1": {
+          "ms": 32815.6
+        },
+        "2": {
+          "ms": 33938.7
+        },
+        "3": {
+          "ms": 33891.3
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 17812.2,
+          "first_token": 37441
+        },
+        "1": {
+          "ms": 15975.7,
+          "first_token": 37441
+        },
+        "2": {
+          "ms": 16153.4,
+          "first_token": 37441
+        },
+        "3": {
+          "ms": 16078.7,
+          "first_token": 37441
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 33136.8,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 32852.3,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 33977.0,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 33932.8,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118365888512,
+        "hip_total": 119696543744,
+        "pss_kib": 179796,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 46292463616,
+        "hip_total": 119696543744,
+        "pss_kib": 1548936,
+        "private_dirty_kib": 1357380
+      },
+      "bridge": {
+        "weights": 583925760,
+        "pinned": 160432128,
+        "mapped-used": 744361984,
+        "jobs": 1584,
+        "slices": 9504,
+        "healthy": 1
+      },
+      "wsl_min_available_kib": 20751976,
+      "wsl_max_swap_kib": 5044884,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 1016967168,
+      "docker_peak_anon_bytes": 778510336,
+      "hip_start_free_gib": 110.23682403564453,
+      "hip_load_delta_gib": 67.12360763549805,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86540288,
+          "peak_ws": 86712320,
+          "private_commit": 78577664,
+          "system_available": 29037821952,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.046875
+        },
+        "registering": {
+          "working_set": 464166912,
+          "peak_ws": 464166912,
+          "private_commit": 80035840,
+          "system_available": 20012535808,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 128,
+          "cpu_s": 0.96875
+        },
+        "first_run": {
+          "working_set": 670674944,
+          "peak_ws": 670674944,
+          "private_commit": 80035840,
+          "system_available": 12673941504,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 198,
+          "cpu_s": 1.328125
+        },
+        "pass_1": {
+          "working_set": 831148032,
+          "peak_ws": 831217664,
+          "private_commit": 79949824,
+          "system_available": 12591890432,
+          "jobs": 132,
+          "slices": 792,
+          "registered_weights": 198,
+          "cpu_s": 2.25
+        },
+        "pass_2": {
+          "working_set": 831152128,
+          "peak_ws": 831217664,
+          "private_commit": 79949824,
+          "system_available": 12679159808,
+          "jobs": 264,
+          "slices": 1584,
+          "registered_weights": 198,
+          "cpu_s": 3.109375
+        },
+        "pass_3": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79990784,
+          "system_available": 12592746496,
+          "jobs": 396,
+          "slices": 2376,
+          "registered_weights": 198,
+          "cpu_s": 4.234375
+        },
+        "pass_4": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79990784,
+          "system_available": 12595945472,
+          "jobs": 528,
+          "slices": 3168,
+          "registered_weights": 198,
+          "cpu_s": 5.09375
+        },
+        "pass_5": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79990784,
+          "system_available": 14152929280,
+          "jobs": 660,
+          "slices": 3960,
+          "registered_weights": 198,
+          "cpu_s": 5.90625
+        },
+        "pass_6": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79990784,
+          "system_available": 12640493568,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 6.90625
+        },
+        "pass_7": {
+          "working_set": 831242240,
+          "peak_ws": 831242240,
+          "private_commit": 79990784,
+          "system_available": 12823191552,
+          "jobs": 924,
+          "slices": 5544,
+          "registered_weights": 198,
+          "cpu_s": 8.1875
+        },
+        "pass_8": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 12997054464,
+          "jobs": 1056,
+          "slices": 6336,
+          "registered_weights": 198,
+          "cpu_s": 9.46875
+        },
+        "pass_9": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 13044809728,
+          "jobs": 1188,
+          "slices": 7128,
+          "registered_weights": 198,
+          "cpu_s": 10.9375
+        },
+        "pass_10": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 12990144512,
+          "jobs": 1320,
+          "slices": 7920,
+          "registered_weights": 198,
+          "cpu_s": 12.171875
+        },
+        "pass_11": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 12866351104,
+          "jobs": 1452,
+          "slices": 8712,
+          "registered_weights": 198,
+          "cpu_s": 13.4375
+        },
+        "pass_12": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 12909559808,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 14.875
+        },
+        "before_release": {
+          "working_set": 831246336,
+          "peak_ws": 831246336,
+          "private_commit": 79990784,
+          "system_available": 27378061312,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 14.96875
+        }
+      },
+      "npu_attributed_gib": 0.9171524047851562
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.5038921281898693,
+        "max_absolute": 4.128732681274414,
+        "kl_gpu_to_candidate": 0.46574282506627823
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.1852765456319486,
+        "max_absolute": 1.0769386291503906,
+        "kl_gpu_to_candidate": 0.0018436759526195565
+      }
+    },
+    "errors": [],
+    "model_load_ms": 46753,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 326.989618,
+    "completed": true,
+    "logit_vs_gpu_control": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.568156069863167,
+        "max_absolute": 4.625175952911377,
+        "kl_gpu_to_candidate": 0.5525270871521721
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 9,
+        "rmse": 0.1832508866515227,
+        "max_absolute": 1.0855408906936646,
+        "kl_gpu_to_candidate": 0.001428777665285331
+      }
+    },
+    "medians_ms": {
+      "prefill": {
+        "16384": 16042.2,
+        "32768": 33891.3
+      },
+      "ttft": {
+        "16384": 16078.7,
+        "32768": 33932.8
+      }
+    },
+    "bridge_distribution_ms": {
+      "send_ms": {
+        "min": 0.637696,
+        "median": 0.976364,
+        "p95": 1.356251,
+        "p99": 1.939266,
+        "max": 4.213113
+      },
+      "remote_ms": {
+        "min": 6.24571,
+        "median": 8.077739,
+        "p95": 9.368415,
+        "p99": 16.727185,
+        "max": 46.353512
+      },
+      "receive_ms": {
+        "min": 1.531209,
+        "median": 2.347552,
+        "p95": 3.110976,
+        "p99": 3.808033,
+        "max": 4.504595
+      },
+      "total_ms": {
+        "min": 9.069304,
+        "median": 11.504343,
+        "p95": 13.48061,
+        "p99": 19.997712,
+        "max": 48.711804
+      },
+      "windows_xrt_ms": {
+        "min": 5.886,
+        "median": 7.5982,
+        "p95": 7.998195,
+        "p99": 8.607521,
+        "max": 15.7206
+      },
+      "remote_minus_xrt_ms": {
+        "min": 0.036513,
+        "median": 0.444204,
+        "p95": 1.422501,
+        "p99": 9.178676,
+        "max": 38.965212
+      }
+    }
+  },
+  "npu-late4k": {
+    "started": "2026-11-11T15:58:36+09:00",
+    "mode": "npu-late4k",
+    "prefill": {
+      "16384": {
+        "0": {
+          "ms": 14336.7
+        },
+        "1": {
+          "ms": 14078.7
+        },
+        "2": {
+          "ms": 14165.4
+        },
+        "3": {
+          "ms": 14463.9
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 28456.7
+        },
+        "1": {
+          "ms": 28735.6
+        },
+        "2": {
+          "ms": 29153.9
+        },
+        "3": {
+          "ms": 29183.6
+        }
+      }
+    },
+    "ttft": {
+      "16384": {
+        "0": {
+          "ms": 14433.3,
+          "first_token": 37441
+        },
+        "1": {
+          "ms": 14114.9,
+          "first_token": 37441
+        },
+        "2": {
+          "ms": 14202.4,
+          "first_token": 37441
+        },
+        "3": {
+          "ms": 14500.3,
+          "first_token": 37441
+        }
+      },
+      "32768": {
+        "0": {
+          "ms": 28498.3,
+          "first_token": 1118
+        },
+        "1": {
+          "ms": 28773.9,
+          "first_token": 1118
+        },
+        "2": {
+          "ms": 29195.6,
+          "first_token": 1118
+        },
+        "3": {
+          "ms": 29225.7,
+          "first_token": 1118
+        }
+      }
+    },
+    "memory": {
+      "before_model": {
+        "hip_status": 0,
+        "hip_free": 118394114048,
+        "hip_total": 119696543744,
+        "pss_kib": 179800,
+        "private_dirty_kib": 43276
+      },
+      "ready": {
+        "hip_status": 0,
+        "hip_free": 50891972608,
+        "hip_total": 119696543744,
+        "pss_kib": 1308316,
+        "private_dirty_kib": 1116824
+      },
+      "bridge": {
+        "weights": 583925760,
+        "pinned": 40108032,
+        "mapped-used": 624037888,
+        "jobs": 1584,
+        "slices": 9504,
+        "healthy": 1
+      },
+      "wsl_min_available_kib": 20984224,
+      "wsl_max_swap_kib": 5044556,
+      "telemetry_errors": 0,
+      "docker_peak_bytes": 811761664,
+      "docker_peak_anon_bytes": 616660992,
+      "hip_start_free_gib": 110.26311111450195,
+      "hip_load_delta_gib": 62.866268157958984,
+      "windows": {
+        "before_mapping": {
+          "working_set": 86396928,
+          "peak_ws": 86671360,
+          "private_commit": 77864960,
+          "system_available": 28849840128,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 0,
+          "cpu_s": 0.109375
+        },
+        "registering": {
+          "working_set": 464035840,
+          "peak_ws": 464035840,
+          "private_commit": 79171584,
+          "system_available": 20130402304,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 128,
+          "cpu_s": 1.234375
+        },
+        "first_run": {
+          "working_set": 670531584,
+          "peak_ws": 670531584,
+          "private_commit": 79224832,
+          "system_available": 17431793664,
+          "jobs": 0,
+          "slices": 0,
+          "registered_weights": 198,
+          "cpu_s": 1.40625
+        },
+        "pass_1": {
+          "working_set": 710713344,
+          "peak_ws": 710782976,
+          "private_commit": 79175680,
+          "system_available": 17398779904,
+          "jobs": 132,
+          "slices": 792,
+          "registered_weights": 198,
+          "cpu_s": 1.921875
+        },
+        "pass_2": {
+          "working_set": 710713344,
+          "peak_ws": 710782976,
+          "private_commit": 79175680,
+          "system_available": 17407930368,
+          "jobs": 264,
+          "slices": 1584,
+          "registered_weights": 198,
+          "cpu_s": 3.203125
+        },
+        "pass_3": {
+          "working_set": 710717440,
+          "peak_ws": 710782976,
+          "private_commit": 79175680,
+          "system_available": 17414062080,
+          "jobs": 396,
+          "slices": 2376,
+          "registered_weights": 198,
+          "cpu_s": 4.375
+        },
+        "pass_4": {
+          "working_set": 710717440,
+          "peak_ws": 710782976,
+          "private_commit": 79175680,
+          "system_available": 17393627136,
+          "jobs": 528,
+          "slices": 3168,
+          "registered_weights": 198,
+          "cpu_s": 5.484375
+        },
+        "pass_5": {
+          "working_set": 710717440,
+          "peak_ws": 710782976,
+          "private_commit": 79175680,
+          "system_available": 17758900224,
+          "jobs": 660,
+          "slices": 3960,
+          "registered_weights": 198,
+          "cpu_s": 6.484375
+        },
+        "pass_6": {
+          "working_set": 710725632,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17774100480,
+          "jobs": 792,
+          "slices": 4752,
+          "registered_weights": 198,
+          "cpu_s": 7.5
+        },
+        "pass_7": {
+          "working_set": 710725632,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17729716224,
+          "jobs": 924,
+          "slices": 5544,
+          "registered_weights": 198,
+          "cpu_s": 8.546875
+        },
+        "pass_8": {
+          "working_set": 710729728,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17766715392,
+          "jobs": 1056,
+          "slices": 6336,
+          "registered_weights": 198,
+          "cpu_s": 9.515625
+        },
+        "pass_9": {
+          "working_set": 710729728,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17661222912,
+          "jobs": 1188,
+          "slices": 7128,
+          "registered_weights": 198,
+          "cpu_s": 10.75
+        },
+        "pass_10": {
+          "working_set": 710729728,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17734905856,
+          "jobs": 1320,
+          "slices": 7920,
+          "registered_weights": 198,
+          "cpu_s": 11.875
+        },
+        "pass_11": {
+          "working_set": 710729728,
+          "peak_ws": 710782976,
+          "private_commit": 79147008,
+          "system_available": 17741058048,
+          "jobs": 1452,
+          "slices": 8712,
+          "registered_weights": 198,
+          "cpu_s": 13.109375
+        },
+        "pass_12": {
+          "working_set": 710750208,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 17741893632,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 14.46875
+        },
+        "before_release": {
+          "working_set": 710750208,
+          "peak_ws": 710782976,
+          "private_commit": 79183872,
+          "system_available": 27187486720,
+          "jobs": 1584,
+          "slices": 9504,
+          "registered_weights": 198,
+          "cpu_s": 14.484375
+        }
+      },
+      "npu_attributed_gib": 0.6922798156738281
+    },
+    "logit_diff": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.5038921281898693,
+        "max_absolute": 4.128732681274414,
+        "kl_gpu_to_candidate": 0.46574282506627823
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.1852765456319486,
+        "max_absolute": 1.0769386291503906,
+        "kl_gpu_to_candidate": 0.0018436759526195565
+      }
+    },
+    "errors": [],
+    "model_load_ms": 49033,
+    "corpus_tokens": 36192,
+    "docker_cpu_last_s": 323.215157,
+    "completed": true,
+    "logit_vs_gpu_control": {
+      "16384": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          248046,
+          37441
+        ],
+        "top10_overlap": 7,
+        "rmse": 0.5038921281898693,
+        "max_absolute": 4.128732681274414,
+        "kl_gpu_to_candidate": 0.46574282506627823
+      },
+      "32768": {
+        "equal": 0,
+        "finite": 248320,
+        "top1": [
+          1118,
+          1118
+        ],
+        "top10_overlap": 10,
+        "rmse": 0.1852765456319486,
+        "max_absolute": 1.0769386291503906,
+        "kl_gpu_to_candidate": 0.0018436759526195565
+      }
+    },
+    "medians_ms": {
+      "prefill": {
+        "16384": 14165.4,
+        "32768": 29153.9
+      },
+      "ttft": {
+        "16384": 14202.4,
+        "32768": 29195.6
+      }
+    },
+    "bridge_distribution_ms": {
+      "send_ms": {
+        "min": 0.539386,
+        "median": 0.849228,
+        "p95": 1.420611,
+        "p99": 2.070373,
+        "max": 3.390414
+      },
+      "remote_ms": {
+        "min": 6.3655,
+        "median": 8.369851,
+        "p95": 8.956103,
+        "p99": 9.908599,
+        "max": 13.986015
+      },
+      "receive_ms": {
+        "min": 1.620814,
+        "median": 2.064838,
+        "p95": 2.598795,
+        "p99": 3.452788,
+        "max": 4.081234
+      },
+      "total_ms": {
+        "min": 8.780813,
+        "median": 11.374326,
+        "p95": 12.566909,
+        "p99": 13.406539,
+        "max": 17.358887
+      },
+      "windows_xrt_ms": {
+        "min": 5.9595,
+        "median": 7.92465,
+        "p95": 8.16526,
+        "p99": 8.59693,
+        "max": 9.7014
+      },
+      "remote_minus_xrt_ms": {
+        "min": 0.061191,
+        "median": 0.454093,
+        "p95": 0.926107,
+        "p99": 1.467991,
+        "max": 5.980315
+      }
+    }
+  }
+}

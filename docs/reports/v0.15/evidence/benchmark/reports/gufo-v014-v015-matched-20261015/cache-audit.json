@@ -1,0 +1,47 @@
+[
+  {
+    "block": "r1-v014",
+    "first_formal_utc": "2026-10-15T01:49:05.889043+00:00",
+    "backing_growth_log_lines": [
+      "2026-10-15 01:46:16 [INFO] [cache] schema=component-cache-v1 event=backing_grown committed_bytes=950599680 segments=1 acquire_ms=733.800489"
+    ],
+    "all_logged_growth_before_formal": true
+  },
+  {
+    "block": "r1-v015",
+    "first_formal_utc": "2026-10-15T01:57:24.919152+00:00",
+    "backing_growth_log_lines": [],
+    "all_logged_growth_before_formal": null,
+    "observation": "No backing_grown event in this version log; absence is not proof that no internal allocation occurred."
+  },
+  {
+    "block": "r2-v015",
+    "first_formal_utc": "2026-10-15T02:05:35.167220+00:00",
+    "backing_growth_log_lines": [],
+    "all_logged_growth_before_formal": null,
+    "observation": "No backing_grown event in this version log; absence is not proof that no internal allocation occurred."
+  },
+  {
+    "block": "r2-v014",
+    "first_formal_utc": "2026-10-15T02:14:20.291508+00:00",
+    "backing_growth_log_lines": [
+      "2026-10-15 02:11:21 [INFO] [cache] schema=component-cache-v1 event=backing_grown committed_bytes=950599680 segments=1 acquire_ms=692.609913"
+    ],
+    "all_logged_growth_before_formal": true
+  },
+  {
+    "block": "r3-v014",
+    "first_formal_utc": "2026-10-15T02:23:03.619803+00:00",
+    "backing_growth_log_lines": [
+      "2026-10-15 02:20:08 [INFO] [cache] schema=component-cache-v1 event=backing_grown committed_bytes=950599680 segments=1 acquire_ms=695.012749"
+    ],
+    "all_logged_growth_before_formal": true
+  },
+  {
+    "block": "r3-v015",
+    "first_formal_utc": "2026-10-15T02:31:23.898204+00:00",
+    "backing_growth_log_lines": [],
+    "all_logged_growth_before_formal": null,
+    "observation": "No backing_grown event in this version log; absence is not proof that no internal allocation occurred."
+  }
+]

@@ -1,0 +1,117 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo v0.16.0 統合・検証</title><style>body{font:16px/1.7 system-ui,sans-serif;max-width:1250px;margin:40px auto;padding:0 24px;background:#111820;color:#e4edf5}h1,h2{color:#9bdcbe}a{color:#8fc5ff}code{overflow-wrap:anywhere}.box{background:#1b2935;border-radius:12px;padding:20px;margin:20px 0}.scroll{overflow:auto}table{border-collapse:collapse;font-size:13px;white-space:nowrap}th,td{padding:8px 12px;border-bottom:1px solid #354657;text-align:right}th:first-child,td:first-child{text-align:left}pre{white-space:pre-wrap;overflow-wrap:anywhere}.muted{color:#b4c4cf}</style><h1>Gufo v0.16.0 統合・検証</h1><p>2026年10月17日。公式v0.15.1・v0.16.0を取り込み、Orca IQ4と採用済みAを維持して通常設定へ切り替えました。</p><div class="box"><b>gufo version 0.16.0 (046a113)</b><br>ソース <code>046a1136c643a9d089193b908a9753b53fdf260d</code><br>イメージ <code>gufo:v0.16.0-orca-iq4-046a113-runtime</code><br>SHA-256 <code>9ad6ef02e7906c757779491ecb46e0dfb76d47a97d8b02524666c8b2eef526e9</code><p>context 131072 / sessions 2 / RAM cache 4 GiB / thinking off / adaptive MTP 1–7 / prefill-chunk 512 / Vision。モデル・互換MTP・Visionファイルと起動引数は変更していません。旧版コンテナは停止状態で保管しています。</p></div><h2>統合内容</h2><p>公式のRAMキャッシュ時の起動処理、長文キャッシュの保存・復元改善、MTP候補計算、読み込み中の待機応答を採用。OrcaのネイティブIQ4・Q6_K出力層、既存の互換処理、採用済みAを維持しました。Aの最終FP32積の丸め条件は変更していません。B1/B2/Cや過去の未採用実験は導入していません。</p><p><a href="https://github.com/gufo-org/gufo/releases/tag/v0.15.1">公式v0.15.1</a> / <a href="https://github.com/gufo-org/gufo/releases/tag/v0.16.0">公式v0.16.0</a> / <span title="参照先はローカル保管">統合判断</span></p><h2>検証設計の修正記録</h2><p>旧版128Kの再送は4GiB予算のため63,488 tokenを再利用し、残り67,334 tokenを処理しました。ログでも容量不足による保存拒否を確認しました。当初の「全量再利用必須」という検証側の誤りを修正し、既存17要求は保存したまま未実施部分から再開しています。要求内容、正解条件、精度許容誤差は変えていません。途中の待機時間は比較条件の制約として残します。</p><p><span title="参照先はローカル保管">修正の根拠と保存結果</span></p><h2>検証</h2><p>CPU 11件、GPU 4件、Aの丸め一致、新MTPの候補表・混合バッチ・復元・サンプリング・キャッシュのモデル試験を実施。通常設定のHTTP試験では32K/128Kの初回・再送・継続、同時2セッション、RAM復帰、Vision、キャンセル後の再開を確認しました。検査の許容誤差は変更していません。</p><p>修正済み32K「検算表→JSON」は旧版・新版とも元の正解JSONと一致。表の8行も独立したDecimal計算と各条件で検査しました。ランダム生成は各版内で固定seedの再現性を確認し、版をまたぐ乱数消費の同一性は合格条件にしていません。</p><p>サーバーログのモデル読み込み時間（各1回）：v0.15 81.3秒、v0.16 29.3秒。v0.16は読み込み中の503応答から利用可能への切り替えを公式の検査関数で確認しました。これは反復した起動ベンチマークではありません。</p><h2>公式MTP試験の未達と切り分け</h2><p>公式のタイ語反復ケースでは、8 roundで37候補中16採用となり「50%以上」という採用率条件を満たしませんでした。この公式テストは変更せず、未達として残しています。同一モデルの全語彙方式でも37候補中16採用となり、新方式と出力は一致しました。64 tokenの出力と最終logitもビット一致、Q6_Kの47行の重み、98,304個の先頭logit、追加47候補のlogitも厳密一致しました。</p><p>このケースでは新方式による劣化ではなく、Orcaで全語彙方式も満たせない採用率の前提でした。追加の診断では全語彙方式との出力・計算値・処理量の厳密一致を条件とし、後続の候補表復元・混合バッチの検査を継続しています。精度の許容誤差は変更していません。<span title="参照先はローカル保管">詳細</span> / <span title="参照先はローカル保管">公式試験の未達ログ</span> / <span title="参照先はローカル保管">全語彙対照と後続検査</span></p><h2>各要求の計測記録</h2><p>機能検証に付随する各1回の値です。初回確保・復元・MTP処理量を含むため、速度改善率を断定するための反復ベンチマークではありません。5%かつ3msを超えた遅延フラグを削除せず、以下の確認結果に残しています。</p><div class="box"><p>初回の7フラグは再比較で同じ工程に再現せず、再比較では別の5フラグがありました。速度差は未確定として扱い、両方の記録を残します。</p><details><summary>要求・工程ごとの確認結果を開く</summary><pre>{
+  &quot;reviewed&quot;: true,
+  &quot;判定&quot;: &quot;初回の7遅延フラグは逆順の対照で再現せず。再比較では別の5フラグがあり、速度差の評価は未確定。安定した退行を確認したとは扱わず、速度向上の証明にも使わない。&quot;,
+  &quot;初回フラグ数&quot;: 7,
+  &quot;同じ工程で再現した数&quot;: 0,
+  &quot;再比較の別フラグ数&quot;: 5,
+  &quot;方法&quot;: &quot;初回 v0.15→v0.16、追加 v0.16→v0.15。影響のある短文履歴と32K冷開始、Vision冷開始/再送だけを各1回。128K一式は再実行していない。&quot;,
+  &quot;MTP&quot;: &quot;同時2要求では候補数・採用数・round数が変動。Decode時間の差を単純なカーネル速度差と扱わない。&quot;,
+  &quot;制約&quot;: [
+    &quot;少数回の機能検証で、統計的な速度保証ではない。&quot;,
+    &quot;最初の旧版測定は128K再送の後で検証設計訂正のため一時中断した。&quot;,
+    &quot;追加Vision対照は両版で同じ短い履歴を使うが、初回の128K後という履歴とは異なる。&quot;,
+    &quot;追加試験のclient wall_msは結果の保存処理を含み、判定には使用しない。比較はサーバー報告の各工程時間を使用。&quot;
+  ],
+  &quot;原フラグの各回&quot;: [
+    {
+      &quot;case&quot;: &quot;concurrent-1&quot;,
+      &quot;phase&quot;: &quot;decode_ms&quot;,
+      &quot;first_v015_ms&quot;: 2358.270273,
+      &quot;first_v016_ms&quot;: 2602.713472,
+      &quot;control_v015_ms&quot;: 2315.9324500000002,
+      &quot;control_v016_ms&quot;: 2282.46158,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;cache-b&quot;,
+      &quot;phase&quot;: &quot;prefill_ms&quot;,
+      &quot;first_v015_ms&quot;: 1579.781975,
+      &quot;first_v016_ms&quot;: 1681.095571,
+      &quot;control_v015_ms&quot;: 1571.70039,
+      &quot;control_v016_ms&quot;: 1615.415929,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;cache-b&quot;,
+      &quot;phase&quot;: &quot;ttft_ms&quot;,
+      &quot;first_v015_ms&quot;: 1594.005885,
+      &quot;first_v016_ms&quot;: 1696.442357,
+      &quot;control_v015_ms&quot;: 1586.00998,
+      &quot;control_v016_ms&quot;: 1631.677774,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;continuation-replay&quot;,
+      &quot;phase&quot;: &quot;ttft_ms&quot;,
+      &quot;first_v015_ms&quot;: 21.016616,
+      &quot;first_v016_ms&quot;: 32.100336,
+      &quot;control_v015_ms&quot;: 27.639355,
+      &quot;control_v016_ms&quot;: 26.17997,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;continuation-replay&quot;,
+      &quot;phase&quot;: &quot;cache_restore_ms&quot;,
+      &quot;first_v015_ms&quot;: 8.628801,
+      &quot;first_v016_ms&quot;: 15.106485,
+      &quot;control_v015_ms&quot;: 10.753809,
+      &quot;control_v016_ms&quot;: 12.69064,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;long-32k-cold&quot;,
+      &quot;phase&quot;: &quot;decode_ms&quot;,
+      &quot;first_v015_ms&quot;: 504.18712600000003,
+      &quot;first_v016_ms&quot;: 567.0082170000001,
+      &quot;control_v015_ms&quot;: 506.379024,
+      &quot;control_v016_ms&quot;: 502.806286,
+      &quot;reproduced&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;vision-replay&quot;,
+      &quot;phase&quot;: &quot;cache_restore_ms&quot;,
+      &quot;first_v015_ms&quot;: 8.642782,
+      &quot;first_v016_ms&quot;: 12.132014,
+      &quot;control_v015_ms&quot;: 9.597768,
+      &quot;control_v016_ms&quot;: 8.934583,
+      &quot;reproduced&quot;: false
+    }
+  ],
+  &quot;追加フラグ&quot;: [
+    {
+      &quot;case&quot;: &quot;concurrent-0&quot;,
+      &quot;phase&quot;: &quot;cache_snapshot_ms&quot;,
+      &quot;baseline_ms&quot;: 21.356665,
+      &quot;candidate_ms&quot;: 76.169497,
+      &quot;mtp_work_equal&quot;: false
+    },
+    {
+      &quot;case&quot;: &quot;cache-c&quot;,
+      &quot;phase&quot;: &quot;prefill_ms&quot;,
+      &quot;baseline_ms&quot;: 1566.216632,
+      &quot;candidate_ms&quot;: 1684.675551,
+      &quot;mtp_work_equal&quot;: true
+    },
+    {
+      &quot;case&quot;: &quot;cache-c&quot;,
+      &quot;phase&quot;: &quot;ttft_ms&quot;,
+      &quot;baseline_ms&quot;: 1580.398573,
+      &quot;candidate_ms&quot;: 1699.965749,
+      &quot;mtp_work_equal&quot;: true
+    },
+    {
+      &quot;case&quot;: &quot;vision-cold&quot;,
+      &quot;phase&quot;: &quot;ttft_ms&quot;,
+      &quot;baseline_ms&quot;: 2665.292419,
+      &quot;candidate_ms&quot;: 2921.633929,
+      &quot;mtp_work_equal&quot;: true
+    },
+    {
+      &quot;case&quot;: &quot;vision-replay&quot;,
+      &quot;phase&quot;: &quot;decode_ms&quot;,
+      &quot;baseline_ms&quot;: 703.918757,
+      &quot;candidate_ms&quot;: 839.164033,
+      &quot;mtp_work_equal&quot;: true
+    }
+  ]
+}</pre></details></div><div class="scroll"><table><thead><tr><th>試験</th><th>版</th><th>入力</th><th>再利用</th><th>出力</th><th>Prefill tok/s</th><th>TTFT 秒</th><th>Decode tok/s</th><th>MTP 提案/採用/round</th><th>版</th><th>入力</th><th>再利用</th><th>出力</th><th>Prefill tok/s</th><th>TTFT 秒</th><th>Decode tok/s</th><th>MTP 提案/採用/round</th></tr></thead><tbody><tr><td>text-0</td><td>v0.15</td><td>25</td><td>0</td><td>64</td><td>30.77</td><td>0.833</td><td>36.90</td><td>44/33/31</td><td>v0.16</td><td>25</td><td>0</td><td>64</td><td>41.07</td><td>0.613</td><td>38.99</td><td>44/33/31</td></tr><tr><td>text-1</td><td>v0.15</td><td>21</td><td>0</td><td>64</td><td>110.58</td><td>0.194</td><td>36.57</td><td>54/32/31</td><td>v0.16</td><td>21</td><td>0</td><td>64</td><td>116.81</td><td>0.183</td><td>37.66</td><td>54/32/31</td></tr><tr><td>concurrent-1</td><td>v0.15</td><td>21</td><td>0</td><td>64</td><td>120.18</td><td>0.392</td><td>27.14</td><td>43/29/30</td><td>v0.16</td><td>21</td><td>0</td><td>64</td><td>122.82</td><td>0.391</td><td>24.59</td><td>66/34/27</td></tr><tr><td>concurrent-0</td><td>v0.15</td><td>25</td><td>0</td><td>64</td><td>134.64</td><td>0.393</td><td>25.28</td><td>44/27/31</td><td>v0.16</td><td>25</td><td>0</td><td>64</td><td>135.72</td><td>0.391</td><td>25.99</td><td>63/37/25</td></tr><tr><td>sampled-first</td><td>v0.15</td><td>34</td><td>0</td><td>64</td><td>154.30</td><td>0.235</td><td>32.98</td><td>36/20/31</td><td>v0.16</td><td>34</td><td>0</td><td>64</td><td>158.30</td><td>0.223</td><td>33.75</td><td>36/20/31</td></tr><tr><td>sampled-replay</td><td>v0.15</td><td>34</td><td>0</td><td>64</td><td>167.82</td><td>0.211</td><td>33.51</td><td>36/20/31</td><td>v0.16</td><td>34</td><td>0</td><td>64</td><td>173.76</td><td>0.210</td><td>32.72</td><td>36/20/31</td></tr><tr><td>cache-a-cold</td><td>v0.15</td><td>1580</td><td>0</td><td>13</td><td>983.42</td><td>1.620</td><td>30.47</td><td>18/7/6</td><td>v0.16</td><td>1580</td><td>0</td><td>13</td><td>992.27</td><td>1.607</td><td>31.53</td><td>18/7/6</td></tr><tr><td>cache-b</td><td>v0.15</td><td>1580</td><td>0</td><td>13</td><td>1000.14</td><td>1.594</td><td>31.35</td><td>18/7/6</td><td>v0.16</td><td>1580</td><td>0</td><td>13</td><td>939.86</td><td>1.696</td><td>31.55</td><td>18/7/6</td></tr><tr><td>cache-c</td><td>v0.15</td><td>1580</td><td>0</td><td>13</td><td>750.14</td><td>2.122</td><td>28.98</td><td>18/7/6</td><td>v0.16</td><td>1580</td><td>0</td><td>13</td><td>909.82</td><td>1.753</td><td>29.80</td><td>18/7/6</td></tr><tr><td>cache-a-return</td><td>v0.15</td><td>1580</td><td>1580</td><td>13</td><td>0.00</td><td>0.024</td><td>30.91</td><td>18/7/6</td><td>v0.16</td><td>1580</td><td>1580</td><td>13</td><td>0.00</td><td>0.026</td><td>31.98</td><td>18/7/6</td></tr><tr><td>continuation</td><td>v0.15</td><td>1620</td><td>1593</td><td>25</td><td>107.88</td><td>0.251</td><td>39.30</td><td>23/17/8</td><td>v0.16</td><td>1620</td><td>1593</td><td>25</td><td>136.67</td><td>0.198</td><td>47.23</td><td>23/17/8</td></tr><tr><td>continuation-replay</td><td>v0.15</td><td>1620</td><td>1620</td><td>25</td><td>0.00</td><td>0.021</td><td>46.53</td><td>23/17/8</td><td>v0.16</td><td>1620</td><td>1620</td><td>25</td><td>0.00</td><td>0.032</td><td>44.80</td><td>23/17/8</td></tr><tr><td>long-32k-cold</td><td>v0.15</td><td>32764</td><td>0</td><td>32</td><td>1008.43</td><td>32.549</td><td>63.47</td><td>27/27/5</td><td>v0.16</td><td>32764</td><td>0</td><td>32</td><td>1014.85</td><td>32.335</td><td>56.44</td><td>27/27/5</td></tr><tr><td>long-32k-replay</td><td>v0.15</td><td>32764</td><td>32764</td><td>32</td><td>0.00</td><td>0.041</td><td>64.15</td><td>27/27/5</td><td>v0.16</td><td>32764</td><td>32764</td><td>32</td><td>0.00</td><td>0.040</td><td>64.69</td><td>27/27/5</td></tr><tr><td>long-32k-continuation</td><td>v0.15</td><td>32816</td><td>32796</td><td>32</td><td>98.46</td><td>0.207</td><td>59.86</td><td>28/26/6</td><td>v0.16</td><td>32816</td><td>32796</td><td>32</td><td>100.80</td><td>0.201</td><td>61.20</td><td>28/26/6</td></tr><tr><td>long-128k-cold</td><td>v0.15</td><td>130822</td><td>0</td><td>32</td><td>979.69</td><td>133.716</td><td>57.18</td><td>27/27/5</td><td>v0.16</td><td>130822</td><td>0</td><td>32</td><td>1010.80</td><td>129.507</td><td>62.84</td><td>27/27/5</td></tr><tr><td>long-128k-replay</td><td>v0.15</td><td>130822</td><td>63488</td><td>32</td><td>959.50</td><td>70.307</td><td>55.77</td><td>27/27/5</td><td>v0.16</td><td>130822</td><td>63488</td><td>32</td><td>961.98</td><td>70.086</td><td>58.99</td><td>27/27/5</td></tr><tr><td>long-128k-continuation</td><td>v0.15</td><td>130874</td><td>130854</td><td>32</td><td>83.54</td><td>0.246</td><td>60.72</td><td>27/27/5</td><td>v0.16</td><td>130874</td><td>130854</td><td>32</td><td>95.59</td><td>0.215</td><td>65.34</td><td>27/27/5</td></tr><tr><td>vision-cold</td><td>v0.15</td><td>201</td><td>0</td><td>38</td><td>101.27</td><td>9.866</td><td>49.91</td><td>41/30/8</td><td>v0.16</td><td>201</td><td>0</td><td>38</td><td>108.59</td><td>6.296</td><td>50.58</td><td>41/30/8</td></tr><tr><td>vision-replay</td><td>v0.15</td><td>201</td><td>201</td><td>38</td><td>0.00</td><td>0.031</td><td>51.10</td><td>41/30/8</td><td>v0.16</td><td>201</td><td>201</td><td>38</td><td>0.00</td><td>0.033</td><td>51.50</td><td>41/30/8</td></tr><tr><td>speed-2k-warmup</td><td>v0.15</td><td>2036</td><td>0</td><td>128</td><td>972.74</td><td>2.119</td><td>46.46</td><td>119/88/39</td><td>v0.16</td><td>2036</td><td>0</td><td>128</td><td>1006.61</td><td>2.048</td><td>45.81</td><td>119/88/39</td></tr><tr><td>speed-2k</td><td>v0.15</td><td>2036</td><td>0</td><td>128</td><td>986.62</td><td>2.103</td><td>47.09</td><td>119/88/39</td><td>v0.16</td><td>2036</td><td>0</td><td>128</td><td>995.40</td><td>2.072</td><td>46.87</td><td>119/88/39</td></tr><tr><td>quality-32k</td><td>v0.15</td><td>32748</td><td>0</td><td>1228</td><td>995.99</td><td>32.963</td><td>58.06</td><td>1110/988/240</td><td>v0.16</td><td>32748</td><td>0</td><td>1228</td><td>961.02</td><td>34.143</td><td>58.85</td><td>1110/988/240</td></tr></tbody></table></div><p>検算問題は一つの固定課題で、一般的なモデル能力の総合評価ではありません。以前のキャッシュ拡張時に起きた12.8〜17.6秒の停止についても、解消済みとは判定していません。</p><h2>保存資料</h2><p><span title="参照先はローカル保管">全結果</span> / <a href="../../../../evidence/benchmark/reports/gufo-v0160-20261017/timing-comparison.json">要求・工程ごとの時間とフラグ</a> / <a href="../../../../evidence/benchmark/reports/gufo-v0160-20261017/timing-followup-comparison.json">対象を絞った再比較</a> / <span title="参照先はローカル保管">検算表</span> / <span title="参照先はローカル保管">固定ビルド条件</span> / <span title="参照先はローカル保管">通常設定の最終確認</span></p><p class="muted">実行コードのコミット後に追加する記録コミットは、稼働バイナリを変更しません。</p></html>

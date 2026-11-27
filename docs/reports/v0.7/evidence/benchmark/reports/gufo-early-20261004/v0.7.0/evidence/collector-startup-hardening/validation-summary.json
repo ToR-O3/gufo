@@ -1,0 +1,113 @@
+{
+  "schema": "sc117-v070-collector-startup-hardening-v1",
+  "created_utc": "2026-10-04T14:51:59.445380+00:00",
+  "status": "validated",
+  "scope": "Only two delivery runtime helpers changed; no production/model/kernel source or inference binary changed.",
+  "changes": {
+    "collect_memory.py": {
+      "before_sha256": "6ab38f4c39d4a535ffcb32c8e006cc8864e18097011aea13bd7636e5904a9fae",
+      "after_sha256": "e5d9bd1790564b28304b9a2c59314629a6d7929407dfe7f485e3e39f93e6b9fd",
+      "bytes": 9970
+    },
+    "run_final_qualification.py": {
+      "before_sha256": "7e0f0753c9d7836ab5a99221425afd97ae4268bf72b77bee3a88be2648e59d1a",
+      "after_sha256": "fc9998c6eb90e0ae431a79c2a9f3bfcef09d7561789a8ae5d0d37ac052503754",
+      "bytes": 19652
+    }
+  },
+  "path_conversion": {
+    "resolve_before_children": true,
+    "paths": [
+      "PowerShell script",
+      "owned stop file"
+    ],
+    "maximum_attempts_per_path": 3,
+    "timeout_seconds_per_attempt": 3,
+    "retry_delays_seconds": [
+      0.2,
+      0.4
+    ],
+    "failure_evidence": "telemetry/telemetry-startup.jsonl logs each attempt; persistent failure raises explicit error before any child starts."
+  },
+  "child_lifetime": "finally covers path conversion, partial process/thread startup, main loop and errors; only this instance's child objects receive wait/terminate/kill escalation. Open stderr handles close on failed Popen. Unexpected child exit becomes explicit collector error.",
+  "formal_baseline": {
+    "minimum_seconds": 10,
+    "additional_bounded_wait_seconds": 20,
+    "required": [
+      "Collector process remains live",
+      "Windows physical status ok with integer total/available counters",
+      "Windows GPU status ok with nonempty adapter counter data",
+      "Linux before-container-launch sample"
+    ],
+    "sample_contract": "Correct before_load phase, at or after baseline start, at most5seconds old. No memory value threshold.",
+    "failure_behavior": "Save failed readiness checks; do not attempt Gufo launch; finally signal owned collector stop and preserve missing-data status."
+  },
+  "mock_validation": {
+    "tests": 9,
+    "status": "passed",
+    "log": "mock-tests.log",
+    "fixture": "test-collector-startup.py",
+    "fixture_sha256": "f23c123a0d26582d06d462cd07667e4297f2a14b399cf595a976b2fedb6c7791",
+    "covered": [
+      "Transient ENOENT succeeds on retry and records failure",
+      "Persistent conversion stops at3 attempts",
+      "Second path conversion fails before any Popen",
+      "Second child Popen failure cleans first child and both stderr handles",
+      "Delayed GPU samples succeed within extra bound",
+      "RAM values zero accepted: no memory quantity threshold",
+      "Missing Linux baseline fails at deadline",
+      "Empty GPU adapter array is not ready",
+      "Collector death rejects launch",
+      "Coordinator failure invokes no runtime launch and stops only its collector"
+    ]
+  },
+  "isolated_read_only_validation": {
+    "path": "isolated-read-only/result.json",
+    "status": "passed",
+    "started_utc": "2026-10-04T14:50:25.388500+00:00",
+    "finished_utc": "2026-10-04T14:50:42.423981+00:00",
+    "duration_seconds": 17.03548940800829,
+    "collector_exit_code": 0,
+    "physical_ok_samples": 15,
+    "gpu_ok_samples": 15,
+    "linux_prelaunch_samples": 16,
+    "children": [
+      {
+        "timestamp_utc": "2026-10-04T14:50:25.533079+00:00",
+        "event": "child-started",
+        "mode": "physical",
+        "pid": 903653
+      },
+      {
+        "timestamp_utc": "2026-10-04T14:50:25.539618+00:00",
+        "event": "child-started",
+        "mode": "gpu",
+        "pid": 903655
+      }
+    ],
+    "cleanup": [
+      {
+        "timestamp_utc": "2026-10-04T14:50:42.379500+00:00",
+        "event": "child-cleanup",
+        "mode": "physical",
+        "pid": 903653,
+        "status": "ok",
+        "exit_code": 0
+      },
+      {
+        "timestamp_utc": "2026-10-04T14:50:42.380283+00:00",
+        "event": "child-cleanup",
+        "mode": "gpu",
+        "pid": 903655,
+        "status": "ok",
+        "exit_code": 0
+      }
+    ],
+    "model_container_touched": false
+  },
+  "limits": [
+    "The original C converted collector gap remains a historical gap. This does not repair or backfill missing samples.",
+    "This is collector startup/cleanup validation, not model/GPU numerical qualification or formal performance/headroom measurement.",
+    "Retry handles bounded transient failures; persistent Windows or path failures still stop qualification before model launch."
+  ]
+}

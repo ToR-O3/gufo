@@ -1,0 +1,118 @@
+{
+  "recorded_at": "2026-10-19T06:02:25.169595+00:00",
+  "decision_date": "2026-10-19",
+  "decision_by": "user",
+  "decision": "Continue using v0.17.1 with existing Orca IQ4 support and adopted A; retain normal settings.",
+  "runtime_revision": "9b076b115030f1fb036cc9956db0e7dbbb3623ee",
+  "binary_sha256": "5c177a8e7dd1922b413ea6dbe836bc26ab56d4521bd71c4d52d3b3a3d9735f1d",
+  "open_issue": {
+    "id": "local-v0171-prefill-decrease",
+    "status": "open_unresolved",
+    "description": "Observed local Prefill rates fell 1.7–5.0% against retained v0.16 samples. Cause and repeatability are unresolved; neither a confirmed version regression nor dismissed as noise. Continued adoption does not close this issue or waive quality/timing checks.",
+    "depth_means": [
+      {
+        "table": "single-ar",
+        "prefill_tokens_per_second": {
+          "v016": 939.9992461129671,
+          "v0171": 907.2751305386485,
+          "pct": -3.4812916829069285
+        },
+        "server_ttft_ms": {
+          "v016": 2181.342280125,
+          "v0171": 2261.7328535,
+          "pct": 3.6853718055835483
+        }
+      },
+      {
+        "table": "single-mtp",
+        "prefill_tokens_per_second": {
+          "v016": 863.4074559837863,
+          "v0171": 820.1305323950625,
+          "pct": -5.012340730763453
+        },
+        "server_ttft_ms": {
+          "v016": 2380.815800125,
+          "v0171": 2507.668203125,
+          "pct": 5.328106567225421
+        }
+      },
+      {
+        "table": "single-mtp-repetition",
+        "prefill_tokens_per_second": {
+          "v016": 853.8661844104997,
+          "v0171": 838.934303109121,
+          "pct": -1.7487378671269926
+        },
+        "server_ttft_ms": {
+          "v016": 2406.23639025,
+          "v0171": 2446.0333541249997,
+          "pct": 1.653909151912747
+        }
+      }
+    ],
+    "observations": "One warmed observation at each of eight depths per workload. Means cover different depths, not repeated trials.",
+    "existing_followups": "Focused 0K/4K/32K prose control: 4K improved, 0K and 32K remained lower. Recalibrated 32K input differs from the formal sweep, although the control old/new pair matches. All controls remain separate from formal means.",
+    "closure_requirement": "Record matched relevant-history evidence, exact request/token/cache work and per-request Prefill/TTFT phases. Do not close on aggregate averages or changed workloads alone; retain inconclusive outcomes."
+  },
+  "next_update_comparison": {
+    "baseline": "v0.17.1 runtime 9b076b1 and the retained October 19 formal 24-point benchmark",
+    "harness": "Preserve the retained ordered official HTTP driver and calibration/cache history for matched comparisons. Explicitly separate any new official-method or toolchain changes.",
+    "conditions": {
+      "scope": [
+        "single-ar",
+        "single-mtp",
+        "single-mtp-repetition"
+      ],
+      "repetitions": 1,
+      "depths": [
+        0,
+        4096,
+        8192,
+        12288,
+        16384,
+        32768,
+        65536,
+        131072
+      ],
+      "context": 133760,
+      "sessions": 1,
+      "prompt_tokens_target": 2048,
+      "output_tokens": 128,
+      "cache_policy": "Official default cache reuse; cached prefix plus newly processed pp2048, validation gates unchanged.",
+      "sampling": "Official benchmark_sampling: greedy, penalties off; config seed=1 is used for prefix generator, request code does not serialize sampling seed."
+    },
+    "local_settings": "Same Orca IQ4 weights and compatible MTP; thinking off; cache RAM 4GiB; adaptive MTP 1–7; fresh server per sweep; preserve warmup lifecycle and power profile.",
+    "comparability": [
+      "Retain each formal request and input/cached/new/output token counts; isolate calibration, warmup and follow-up requests.",
+      "Check outputs/finish and proposal/acceptance/round counts; record copy and neural MTP separately.",
+      "Report every depth and arithmetic means without removing low values. Retain all per-phase timing flags at the original >5% AND >3ms thresholds.",
+      "Investigate suspect differences with the smallest matching request history; a shortened depth sweep can change calibration and is not an exact replay.",
+      "Keep official Q4 comparisons separate from local-version comparisons.",
+      "After any future benchmark, restore the then-adopted version and normal settings."
+    ],
+    "immediate_action": "Record only. No additional benchmark, restart, rollback or automatic scheduled task requested."
+  },
+  "evidence": {
+    "benchmark_artifact": "gufo-v0171-official-method.json",
+    "gap_analysis_artifact": "gufo-v0171-official-gap.json",
+    "output_directory": "outputs/gufo-v0171-official-method-20261019",
+    "files": [
+      "results.json",
+      "formal-samples.json",
+      "manifest.json",
+      "http/",
+      "telemetry.jsonl",
+      "focused-comparison.json",
+      "functional-controls/comparison.json",
+      "short-comparison.json",
+      "final-verification.json"
+    ],
+    "hashes": {
+      "results.json": "a0446a5765c9d17f65f521d68db8c83d83d3519b6e1e94578564690af35b765e",
+      "manifest.json": "919f2574d40670067aa6e9818e0f7ace66eeeaf5bf292928500d6de4f3c56a52",
+      "formal-samples.json": "66a56230b76fee2fbc948de6f8fb1d2c0fa2be670e2811f46eb5c4662c93bd9f",
+      "final-verification.json": "ac8fce5d6d00c59dccff41c1a820074aba7d5999c110ad48cebd23b4d91326fa"
+    }
+  },
+  "normal_settings": "context 131072, sessions 2, cache RAM 4GiB, adaptive MTP 1–7, thinking off, Vision enabled; Strata stays stopped."
+}

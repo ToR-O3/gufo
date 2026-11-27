@@ -1,0 +1,752 @@
+{
+  "schema": "sc117-http-continuation-audit-v1",
+  "created_utc": "2026-10-04T13:21:21.591091+00:00",
+  "status": "independent_read_only_audit_completed_cause_pending",
+  "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+  "scope": "HTTP/server token history, truncation/cache frontier and benchmark request/SSE identity; no model/build execution",
+  "assessment_ja": {
+    "benchmark": "turn1/2 の送信 JSON 生 bytes は一致し、SSE 再構成は保存 reply/hash と一致する。ベンチ誤比較や SSE 欠落を示す証拠はない。",
+    "server": "AR の最終生成 token は publish 後に Advance せず、Commit が checkpoint を実行済み position に縮める。MTP との cached_tokens 1 token 差は既存仕様と整合する。offset と実 token prefix の検証も存在し、HTTP 層で token を脱落させた証拠はない。",
+    "candidate_cause": "同じ最終 assistant token を AR では次回 prefill、MTP では前 turn の decode/verify で実行する経路非対称がある。本文差との因果は未証明で、native counterfactual 診断待ち。",
+    "turn3": "turn2 の異なる本文をそれぞれ履歴に追加したため request bytes が異なる。ベンチが速度比較を除外する判断は正しい。",
+    "acceptance": "原因不明の本文差を数値許容として合格にしていない。HTTP 監査は engine state の正しさ全体を保証しない。"
+  },
+  "modes": {
+    "ar": [
+      {
+        "name": "same_a_turn1",
+        "request_path": "runs/ar-formal-1/continuation/same_a_turn1.request.json",
+        "request_sha256": "f60533435dcdf60f9ccd71bb9d358dcb3d5c9239b606ae426afaa3f6bc9a23ad",
+        "request_bytes": 11144,
+        "sse_path": "runs/ar-formal-1/continuation/same_a_turn1.response.sse",
+        "sse_sha256": "dcb5ef8f09c21920634f7c520bba2cd95b6445211e2d48d7f9489c30efb466c5",
+        "sse_bytes": 27699,
+        "reply_path": "runs/ar-formal-1/continuation/same_a_turn1.reply.txt",
+        "reply_sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9",
+        "reply_characters": 241,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4084,
+        "output_tokens": 128,
+        "cached_tokens": 0,
+        "prefill_tokens": 4084,
+        "prefill_chunks": 3,
+        "cache_hit": false,
+        "cache_miss_reason": "prefix_changed",
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      },
+      {
+        "name": "same_a_turn2",
+        "request_path": "runs/ar-formal-1/continuation/same_a_turn2.request.json",
+        "request_sha256": "1b9b1176be4d311a6decadfeaf52be47fb5c4a3b1aab22d9604d4814e93539a6",
+        "request_bytes": 11878,
+        "sse_path": "runs/ar-formal-1/continuation/same_a_turn2.response.sse",
+        "sse_sha256": "9b613aff1dcb0c309165a3e9a6d229043624f4d2d7ddd0f096c653294c857b63",
+        "sse_bytes": 27700,
+        "reply_path": "runs/ar-formal-1/continuation/same_a_turn2.reply.txt",
+        "reply_sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f",
+        "reply_characters": 289,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4242,
+        "output_tokens": 128,
+        "cached_tokens": 4211,
+        "prefill_tokens": 31,
+        "prefill_chunks": 2,
+        "cache_hit": true,
+        "cache_miss_reason": null,
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user",
+          "assistant",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802,
+          241,
+          30
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      },
+      {
+        "name": "same_a_turn3",
+        "request_path": "runs/ar-formal-1/continuation/same_a_turn3.request.json",
+        "request_sha256": "8e5e1b6a831737f814660b9b8705dae703471686ed0a9149479bb7d5b6c16775",
+        "request_bytes": 12738,
+        "sse_path": "runs/ar-formal-1/continuation/same_a_turn3.response.sse",
+        "sse_sha256": "783b4a65a07682aa1904794ad9d02c4c8ef9ec068ce21e1e9a06d94bad45a8c9",
+        "sse_bytes": 27699,
+        "reply_path": "runs/ar-formal-1/continuation/same_a_turn3.reply.txt",
+        "reply_sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f",
+        "reply_characters": 289,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4400,
+        "output_tokens": 128,
+        "cached_tokens": 4369,
+        "prefill_tokens": 31,
+        "prefill_chunks": 2,
+        "cache_hit": true,
+        "cache_miss_reason": null,
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user",
+          "assistant",
+          "user",
+          "assistant",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802,
+          241,
+          30,
+          289,
+          30
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      }
+    ],
+    "mtp": [
+      {
+        "name": "same_a_turn1",
+        "request_path": "runs/mtp-formal-1/continuation/same_a_turn1.request.json",
+        "request_sha256": "f60533435dcdf60f9ccd71bb9d358dcb3d5c9239b606ae426afaa3f6bc9a23ad",
+        "request_bytes": 11144,
+        "sse_path": "runs/mtp-formal-1/continuation/same_a_turn1.response.sse",
+        "sse_sha256": "9015e400407eb3114a42722392fa4cd2d1f1a04a1fab3ff475e98948de9c23df",
+        "sse_bytes": 27693,
+        "reply_path": "runs/mtp-formal-1/continuation/same_a_turn1.reply.txt",
+        "reply_sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9",
+        "reply_characters": 241,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4084,
+        "output_tokens": 128,
+        "cached_tokens": 0,
+        "prefill_tokens": 4084,
+        "prefill_chunks": 3,
+        "cache_hit": false,
+        "cache_miss_reason": "prefix_changed",
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      },
+      {
+        "name": "same_a_turn2",
+        "request_path": "runs/mtp-formal-1/continuation/same_a_turn2.request.json",
+        "request_sha256": "1b9b1176be4d311a6decadfeaf52be47fb5c4a3b1aab22d9604d4814e93539a6",
+        "request_bytes": 11878,
+        "sse_path": "runs/mtp-formal-1/continuation/same_a_turn2.response.sse",
+        "sse_sha256": "1fd415abc6a1933590506923386219b47dfa230a4b4fe0f0d381828c21d59e3a",
+        "sse_bytes": 27704,
+        "reply_path": "runs/mtp-formal-1/continuation/same_a_turn2.reply.txt",
+        "reply_sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941",
+        "reply_characters": 293,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4242,
+        "output_tokens": 128,
+        "cached_tokens": 4212,
+        "prefill_tokens": 30,
+        "prefill_chunks": 2,
+        "cache_hit": true,
+        "cache_miss_reason": null,
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user",
+          "assistant",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802,
+          241,
+          30
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      },
+      {
+        "name": "same_a_turn3",
+        "request_path": "runs/mtp-formal-1/continuation/same_a_turn3.request.json",
+        "request_sha256": "4c7af60402f734fe86b85c252909a313f55f5a72aa0a04ae5e828b7d5c10268f",
+        "request_bytes": 12706,
+        "sse_path": "runs/mtp-formal-1/continuation/same_a_turn3.response.sse",
+        "sse_sha256": "3e0a468ade53393789c752cfaf685126102a12a08d805d3afce91890e3f505b8",
+        "sse_bytes": 27661,
+        "reply_path": "runs/mtp-formal-1/continuation/same_a_turn3.reply.txt",
+        "reply_sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941",
+        "reply_characters": 293,
+        "sse_reconstruction_matches_saved_reply": true,
+        "reconstructed_reply_sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941",
+        "reasoning_reconstruction_matches_saved_reasoning": true,
+        "done_count": 1,
+        "json_chunk_count": 131,
+        "finish_reasons": [
+          "length"
+        ],
+        "request_metadata_hash_matches_result": true,
+        "sse_usage_matches_result": true,
+        "input_tokens": 4400,
+        "output_tokens": 128,
+        "cached_tokens": 4370,
+        "prefill_tokens": 30,
+        "prefill_chunks": 2,
+        "cache_hit": true,
+        "cache_miss_reason": null,
+        "client_id": "sc117-ar-mtp-qualification-v1",
+        "http_status": 200,
+        "message_roles": [
+          "system",
+          "user",
+          "assistant",
+          "user",
+          "assistant",
+          "user"
+        ],
+        "message_content_characters": [
+          68,
+          8802,
+          241,
+          30,
+          293,
+          30
+        ],
+        "settings": {
+          "cache_prompt": true,
+          "frequency_penalty": 0,
+          "max_tokens": 128,
+          "model": "sc117-iq3s-q8",
+          "presence_penalty": 0,
+          "reasoning_effort": "none",
+          "repeat_last_n": 0,
+          "repeat_penalty": 1,
+          "seed": 42,
+          "stream": true,
+          "stream_options": {
+            "include_usage": true
+          },
+          "temperature": 0
+        }
+      }
+    ]
+  },
+  "turn_comparisons": [
+    {
+      "turn": 1,
+      "request_bytes_equal": true,
+      "reply_bytes_equal": true,
+      "first_different_unicode_codepoint_index_zero_based": null,
+      "ar_text_around_difference": null,
+      "mtp_text_around_difference": null,
+      "same_request_speed_comparison_allowed": true,
+      "numerical_acceptance": "not_applicable_same_visible_text"
+    },
+    {
+      "turn": 2,
+      "request_bytes_equal": true,
+      "reply_bytes_equal": false,
+      "first_different_unicode_codepoint_index_zero_based": 199,
+      "ar_text_around_difference": " validate counters before changing batch size（独立した監査記録を保持し、バッチサイズを変更する前にカウンタを検証せよ）」を基に、具体的な復旧手順を解説します。\n\nまず、障害検知から復旧開始までの初期段階では、**「カウンタの",
+      "mtp_text_around_difference": " validate counters before changing batch size」を基に、具体的な復旧手順を解説します。\n\nまず、障害検知から復旧開始までの初期段階では、監査証跡（Audit Trail）の完全性を最優先に確認します。例えば、Record 00",
+      "same_request_speed_comparison_allowed": true,
+      "numerical_acceptance": "not_accepted_cause_pending"
+    },
+    {
+      "turn": 3,
+      "request_bytes_equal": false,
+      "reply_bytes_equal": false,
+      "first_different_unicode_codepoint_index_zero_based": 199,
+      "ar_text_around_difference": " validate counters before changing batch size（独立した監査記録を保持し、バッチサイズを変更する前にカウンタを検証せよ）」を基に、具体的な復旧手順を解説します。\n\nまず、障害検知から復旧開始までの初期段階では、**「カウンタの",
+      "mtp_text_around_difference": " validate counters before changing batch size」を基に、具体的な復旧手順を解説します。\n\nまず、障害検知から復旧開始までの初期段階では、監査証跡（Audit Trail）の完全性を最優先に確認します。例えば、Record 00",
+      "same_request_speed_comparison_allowed": false,
+      "numerical_acceptance": "not_accepted_cause_pending"
+    }
+  ],
+  "checkpoint_arithmetic": {
+    "ar_turn1_executed_history_tokens": 4211,
+    "mtp_turn1_executed_history_tokens": 4212,
+    "turn2_prompt_tokens": 4242,
+    "ar_turn2_prefill_tokens": 31,
+    "mtp_turn2_prefill_tokens": 30,
+    "note_ja": "実行済み frontier の長さと cached_tokens は一致する。SSE は生成 token IDs を公開しないため、可視本文一致だけで全 token IDs 一致を断定しない。"
+  },
+  "source_evidence": [
+    {
+      "file": "src/cli/serve/inference_backend.cpp",
+      "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+      "baseline_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+      "baseline_file_sha256": "59deb5931f705c9f655017425886c008c0b9d7a5b5ae11cef7ef8a2a8e14557c",
+      "source_file_sha256": "7b099579b8daf75d9d59e396ebbc83f7e5a25fc14232b03f9504a4e131e98671",
+      "whole_file_byte_identical_to_baseline": false,
+      "baseline_to_source_diff": "diff --git a/src/cli/serve/inference_backend.cpp b/src/cli/serve/inference_backend.cpp\nindex 831e6d7..e3fe57a 100644\n--- a/src/cli/serve/inference_backend.cpp\n+++ b/src/cli/serve/inference_backend.cpp\n@@ -274 +274 @@ std::vector<std::uint8_t> QwenFlashNextCompatibilityIdentity(\n-    std::uint32_t decode_concurrency) {\n+    std::uint32_t decode_concurrency, std::string_view weight_compat) {\n@@ -299,0 +300,2 @@ std::vector<std::uint8_t> QwenFlashNextCompatibilityIdentity(\n+  if (weight_compat != \"off\")\n+    identity << \"weight_compat=\" << weight_compat << \"\\n\";\n@@ -2481 +2483 @@ public:\n-              model_->DecodeConcurrency()),\n+              model_->DecodeConcurrency(), model_->WeightCompatibility()),\n@@ -3045 +3047,2 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,\n-                            TextRunnerRamCacheOptions ram_cache_config) {\n+                            TextRunnerRamCacheOptions ram_cache_config,\n+                            const std::string& weight_compat) {\n@@ -3054,0 +3058,8 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,\n+  if (weight_compat != \"off\" &&\n+      (weight_compat != \"sc117-iq3s-q8\" ||\n+       reader->GetMetadataString(\"general.architecture\") != \"qwen4exp\")) {\n+    SetError(\n+        error,\n+        \"--weight-compat requires sc117-iq3s-q8 with a qwen4exp model, or off\");\n+    return false;\n+  }\n@@ -3166,0 +3178 @@ bool InferenceBackend::load(const std::string& model_path, std::string* error,\n+            .weight_compat = weight_compat,\n",
+      "ranges": [
+        {
+          "start_line": 142,
+          "end_line": 152,
+          "purpose": "Chat options have no MTP branch",
+          "text": "tokenization::ChatTemplateOptions QwenChatOptions(const ChatRequest& request,\n                                                  std::uint32_t max_context) {\n  auto options = tokenization::ResolveQwenChatOptions(request.reasoning,\n                                                      request.add_vision_id);\n  options.require_tool_call =\n      request.tool_choice == ChatRequest::ToolChoice::kRequired;\n  // gufo #285: the rendered prompt may be as long as the context can hold.\n  options.max_output_bytes =\n      tokenization::RenderedPromptBoundBytes(max_context);\n  return options;\n}",
+          "range_sha256": "e8d9b575614b31fab336c24f65150f18768b2a08ae45bd3d0acde0b7360fb4fb"
+        },
+        {
+          "start_line": 2490,
+          "end_line": 2505,
+          "purpose": "final_token_advance_required=false; multi-token decode switches with MTP",
+          "text": "  [[nodiscard]] TextRunnerDescriptor Descriptor() const override {\n    return {\n        .model_id = model_->ModelName(),\n        .state_abi = std::string(kQwenFlashNextStateAbi),\n        .max_context = max_context_,\n        .capabilities =\n            TextRunnerCapabilities{\n                .incremental_prefill = true,\n                .snapshot = true,\n                .fork = true,\n                .final_token_advance_required = false,\n                .incremental_text_is_exact = true,\n                .multi_token_decode = use_mtp_,\n                .batched_multi_token_decode = use_mtp_,\n                .batched_multi_token_decode_max_width = use_mtp_ ? 8u : 0u,\n                .prefix_reuse = true,",
+          "range_sha256": "543ce9204fd1168be9207ed946500c8ff1da7a17d0d869dfefa9a2fedb4bb72b"
+        },
+        {
+          "start_line": 2561,
+          "end_line": 2569,
+          "purpose": "Shared Qwen prompt render/tokenize path",
+          "text": "  [[nodiscard]] std::optional<std::vector<TextRunnerToken>> RenderAndTokenize(\n      const ChatRequest& request) const override {\n    return tokenization::QwenChatTemplate::RenderAndTokenize(\n        model_->tokenizer(), request.messages,\n        request.tool_choice == ChatRequest::ToolChoice::kNone\n            ? std::span<const tokenization::ChatTool>{}\n            : std::span<const tokenization::ChatTool>{request.tools},\n        QwenChatOptions(request, max_context_));\n  }",
+          "range_sha256": "94e9d951305edb800a75e1c26941df59cfc30b7c74bd959f6b76e3ef6faea515"
+        },
+        {
+          "start_line": 2601,
+          "end_line": 2637,
+          "purpose": "Reuse/prefill offset checked against state; session Sync",
+          "text": "  void PreparePrefixReuse(\n      TextRunnerState& state,\n      std::span<const TextRunnerToken> prefix) const override {\n    const auto& qfn = RequireQwenFlashNextState(state);\n    if (qfn.position() != prefix.size()) {\n      throw std::logic_error(\n          \"Qwen3.8-Flash-Next reused prefix does not match checkpoint\");\n    }\n    qfn.session().ResetDraftPolicy();\n  }\n\n  [[nodiscard]] TextPrefillStep Prefill(\n      TextRunnerState& state, std::span<const TextRunnerToken> prompt,\n      std::size_t offset, std::size_t max_input_tokens) const override {\n    auto& qfn = RequireQwenFlashNextState(state);\n    if (offset != qfn.position()) {\n      throw std::logic_error(\n          \"Qwen3.8-Flash-Next prefill offset does not match retained state\");\n    }\n    if (offset >= prompt.size()) {\n      throw std::logic_error(\n          \"Qwen3.8-Flash-Next prefill has no remaining input\");\n    }\n    const std::size_t consumed = std::min<std::size_t>(\n        {max_input_tokens, prompt.size() - offset, model_->PrefillCapacity()});\n    const std::size_t next_position = offset + consumed;\n    const auto prefix = QwenFlashNextEngineTokens(prompt.first(next_position));\n    std::string error;\n    if (!qfn.session().Sync(prefix, &error)) {\n      qfn.set_position(0);\n      throw std::runtime_error(\"Qwen3.8-Flash-Next prefill failed: \" + error);\n    }\n    qfn.set_position(next_position);\n    return {\n        .consumed_tokens = consumed,\n        .decode_ready = next_position == prompt.size(),\n    };",
+          "range_sha256": "21a7b7d37a6d2a3cfe8c396371b4d332db1340f91878edbeed47479b05455db0"
+        },
+        {
+          "start_line": 2820,
+          "end_line": 2824,
+          "purpose": "Physical checkpoint position",
+          "text": "  [[nodiscard]] std::size_t CheckpointPosition(\n      const TextRunnerState& state) const override {\n    return RequireQwenFlashNextState(state).position();\n  }\n",
+          "range_sha256": "9289d2c2ce4dde3d68bf5e6798c452fc6a965c206bdecff7b2b6811541ccd1db"
+        }
+      ]
+    },
+    {
+      "file": "src/cli/serve/text_generation_scheduler.cpp",
+      "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+      "baseline_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+      "baseline_file_sha256": "f572efcaeadb925ca17180de090834c431680950d1d3db876c20e6fb22c11a1d",
+      "source_file_sha256": "f572efcaeadb925ca17180de090834c431680950d1d3db876c20e6fb22c11a1d",
+      "whole_file_byte_identical_to_baseline": true,
+      "baseline_to_source_diff": "",
+      "ranges": [
+        {
+          "start_line": 552,
+          "end_line": 558,
+          "purpose": "Completion usage based on published token vector",
+          "text": "    return snapshot;\n  }\n\n  void FinalizeResult(const std::shared_ptr<ScheduledRequest>& request,\n                      TextGenerationBackend::FinishReason finish_reason) {\n    request->result.completion_tokens = request->result.tokens.size();\n    request->result.finish_reason = finish_reason;",
+          "range_sha256": "0223fac24421f55737d6badf0333a3f952ac7498a93a60e82474350b5edb3554"
+        },
+        {
+          "start_line": 681,
+          "end_line": 709,
+          "purpose": "Successful length termination commits checkpoint",
+          "text": "  void CompleteSuccess(const std::shared_ptr<ScheduledRequest>& request,\n                       TextGenerationBackend::FinishReason finish_reason) {\n    if (request->stop_filter.enabled()) {\n      auto tail = request->stop_filter.Finish();\n      request->result.text += tail;\n      if (!tail.empty() && !PublishPiece(request, std::move(tail)))\n        throw TextGenerationError(\n            TextGenerationErrorCode::kOutputBackpressure,\n            \"text generation buffered output limit exceeded\");\n    }\n    // A stop may land on a preview, an unadvanced AR token, or inside an\n    // accepted speculative block. Retain only correctly labelled executed\n    // state, using the same cache reconciliation as an interrupted request.\n    const auto cache_commit =\n        finish_reason == TextGenerationBackend::FinishReason::kStopSequence\n            ? request->runner_request.Cancel()\n            : request->runner_request.Commit();\n    request->result.cache_snapshot_bytes = cache_commit.snapshot_bytes;\n    request->result.cache_snapshot_ms = cache_commit.snapshot_ms;\n    request->result.cache_disk_queued_bytes = cache_commit.disk_queued_bytes;\n    request->result.cache_disk_enqueue_ms = cache_commit.disk_enqueue_ms;\n    request->result.cache_shared_prefix_snapshots =\n        cache_commit.shared_prefix_snapshots;\n    request->result.cache_shared_prefix_bytes =\n        cache_commit.shared_prefix_bytes;\n    request->result.cache_shared_prefix_ms = cache_commit.shared_prefix_ms;\n    FinalizeResult(request, finish_reason);\n    LogDecodeProgress(request, true);\n    // Recorded here rather than by the HTTP adapter, so a client that leaves",
+          "range_sha256": "1f1ce2ed88475f7e23d6feae2a8e625a4d0287ef34cf76264a1bd6223ec84c13"
+        },
+        {
+          "start_line": 1021,
+          "end_line": 1028,
+          "purpose": "AR length limit completes before final pending Advance",
+          "text": "    if (request->advance_pending) {\n      if (!request->runner_request.PreparePromptSnapshot())\n        return std::nullopt;\n      request->advance_pending = false;\n      if (!final_token_advance_required &&\n          request->result.tokens.size() >= request->token_limit) {\n        CompleteSuccess(request, TextGenerationBackend::FinishReason::kLength);\n        return std::nullopt;",
+          "range_sha256": "140e898cd092408dd7f960166b76dc78c9735131054d5323adeff23cbe0ff313"
+        },
+        {
+          "start_line": 1056,
+          "end_line": 1100,
+          "purpose": "Publish selection increments generated token count and publishes text",
+          "text": "    request->advance_pending = true;\n    return PrepareDecode(request);\n  }\n\n  [[nodiscard]] bool PublishSelection(\n      const std::shared_ptr<ScheduledRequest>& request,\n      const TextDecodeSelection& selection) {\n    const auto now = Clock::now();\n    if (!request->previous_token.has_value()) {\n      request->result.ttft_ms = std::chrono::duration<double, std::milli>(\n                                    now - request->request_start)\n                                    .count();\n    } else {\n      const auto inter_token = now - *request->previous_token;\n      request->inter_token_total += inter_token;\n      request->result.max_inter_token_ms = std::max(\n          request->result.max_inter_token_ms,\n          std::chrono::duration<double, std::milli>(inter_token).count());\n      ++request->inter_token_samples;\n    }\n    request->previous_token = now;\n    if (selection.piece.size() >\n        request->max_output_bytes - request->generated_output_bytes) {\n      CompleteFailure(request,\n                      std::make_exception_ptr(TextGenerationError(\n                          TextGenerationErrorCode::kOutputLimit,\n                          \"text generation output byte limit exceeded\")));\n      return false;\n    }\n    request->generated_output_bytes += selection.piece.size();\n    request->result.tokens.push_back(selection.token);\n    request->live_generated_tokens.store(request->result.tokens.size(),\n                                         std::memory_order_relaxed);\n    detail::TotalGenTokens().fetch_add(1, std::memory_order_relaxed);\n    const auto piece = request->stop_filter.enabled()\n                           ? request->stop_filter.Push(selection.piece)\n                           : selection.piece;\n    if ((!piece.empty() || !request->stop_filter.enabled()) &&\n        !PublishPiece(request, piece)) {\n      CompleteFailure(request,\n                      std::make_exception_ptr(TextGenerationError(\n                          TextGenerationErrorCode::kOutputBackpressure,\n                          \"text generation buffered output limit exceeded\")));\n      return false;\n    }",
+          "range_sha256": "11c1393025f3ca7e71b5243800dfaa38fac27176d661ca631453c4c5d23ffc04"
+        },
+        {
+          "start_line": 1126,
+          "end_line": 1145,
+          "purpose": "AR Advance path",
+          "text": "  void StepDecode(const std::shared_ptr<ScheduledRequest>& request) {\n    consecutive_active_prefill_chunks = 0;\n    if (multi_token_decode) {\n      StepMultiTokenDecode(request);\n      return;\n    }\n    try {\n      const auto decode_start = PrepareDecode(request);\n      if (!decode_start.has_value()) {\n        return;\n      }\n      request->runner_request.Advance();\n      FinishAdvanced(request, *decode_start);\n    } catch (...) {\n      const auto failure = std::current_exception();\n      if (!CompleteIfStopped(request)) {\n        CompleteFailure(request, failure);\n      }\n    }\n  }",
+          "range_sha256": "4197894e2391c559bc610e667f86a1df4d94f59a9816095bbb8f419f37433b60"
+        },
+        {
+          "start_line": 1147,
+          "end_line": 1193,
+          "purpose": "Multi-token decode/length path",
+          "text": "  void StepMultiTokenDecode(const std::shared_ptr<ScheduledRequest>& request) {\n    consecutive_active_prefill_chunks = 0;\n    try {\n      if (CompleteIfStopped(request)) {\n        return;\n      }\n\n      request->phase.store(TextRequestPhase::kDecoding,\n                           std::memory_order_release);\n      if (!PrepareFirstSnapshot(request))\n        return;\n      const auto decode_start = Clock::now();\n      const std::size_t remaining =\n          request->token_limit - request->result.tokens.size() +\n          (request->preview_token.has_value() ? 1 : 0);\n      const auto step = request->runner_request.DecodeStep(remaining);\n      request->result.draft_rounds += step.draft_rounds;\n      request->result.draft_tokens += step.draft_tokens;\n      request->result.draft_accepted_tokens += step.draft_accepted_tokens;\n\n      CheckPreviewResult(request, step);\n      for (const auto& selection : step.selections) {\n        if (!PublishDecodedSelection(request, selection)) {\n          return;\n        }\n        if (request->stop_filter.stopped())\n          break;\n      }\n\n      request->result.decode_ms +=\n          std::chrono::duration<double, std::milli>(Clock::now() - decode_start)\n              .count();\n      LogDecodeProgress(request);\n      if (request->stop_filter.stopped()) {\n        CompleteSuccess(request,\n                        TextGenerationBackend::FinishReason::kStopSequence);\n        return;\n      }\n      if (step.stop) {\n        CompleteSuccess(request, TextGenerationBackend::FinishReason::kStop);\n        return;\n      }\n      if (request->result.tokens.size() >= request->token_limit) {\n        CompleteSuccess(request, TextGenerationBackend::FinishReason::kLength);\n      }\n    } catch (...) {\n      const auto failure = std::current_exception();",
+          "range_sha256": "e163cc60bc9f230ee09fa335599380b9c85351206196b2578b6b7089742049a3"
+        }
+      ]
+    },
+    {
+      "file": "src/cli/serve/text_model_runner.cpp",
+      "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+      "baseline_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+      "baseline_file_sha256": "8d51ff9fba5dfbc01cc30c5664f8f3d82f6d4b17f3ea76953ce38073d29147cc",
+      "source_file_sha256": "8d51ff9fba5dfbc01cc30c5664f8f3d82f6d4b17f3ea76953ce38073d29147cc",
+      "whole_file_byte_identical_to_baseline": true,
+      "baseline_to_source_diff": "",
+      "ranges": [
+        {
+          "start_line": 1242,
+          "end_line": 1286,
+          "purpose": "Selection adds generated history and pending token; Advance executes it",
+          "text": "\nTextDecodeSelection TextRunnerPool::Request::SelectNext() {\n  if (!*this) {\n    throw std::logic_error(\"text runner request is empty\");\n  }\n  if (!impl_->decode_ready) {\n    throw std::logic_error(\n        \"text runner cannot decode before prefill completes\");\n  }\n  if (impl_->pending_selection.has_value()) {\n    throw std::logic_error(\n        \"text runner decode token must be advanced before selecting another\");\n  }\n  if (impl_->stopped) {\n    throw std::logic_error(\"text runner request already stopped\");\n  }\n\n  impl_->state_reusable = false;\n  auto selection = impl_->runner->SelectNext(\n      dynamic_cast<TextRunnerState&>(impl_->lease.state()), impl_->sampler);\n  impl_->state_reusable = true;\n  if (selection.stop) {\n    impl_->stopped = true;\n    return selection;\n  }\n  impl_->sampler.Accept(selection.token);\n  impl_->generated.push_back(selection.token);\n  impl_->pending_selection = selection;\n  return selection;\n}\n\nvoid TextRunnerPool::Request::Advance() {\n  if (!*this) {\n    throw std::logic_error(\"text runner request is empty\");\n  }\n  if (!impl_->pending_selection.has_value()) {\n    throw std::logic_error(\n        \"text runner request has no selected token to advance\");\n  }\n  impl_->CapturePromptSnapshot();\n  impl_->state_reusable = false;\n  impl_->runner->Advance(dynamic_cast<TextRunnerState&>(impl_->lease.state()),\n                         impl_->pending_selection->token);\n  impl_->pending_selection.reset();\n  impl_->state_reusable = true;",
+          "range_sha256": "fd25822bf6780f7be2ee3d570505c7345210d137c42b3b198df507b296c2e602"
+        },
+        {
+          "start_line": 1289,
+          "end_line": 1328,
+          "purpose": "Multi-token returned history",
+          "text": "TextDecodeStep TextRunnerPool::Request::DecodeStep(std::size_t max_tokens) {\n  if (!*this) {\n    throw std::logic_error(\"text runner request is empty\");\n  }\n  if (!impl_->decode_ready) {\n    throw std::logic_error(\n        \"text runner cannot decode before prefill completes\");\n  }\n  if (impl_->pending_selection.has_value()) {\n    throw std::logic_error(\n        \"text runner cannot decode a step with a pending token\");\n  }\n  if (impl_->stopped) {\n    throw std::logic_error(\"text runner request already stopped\");\n  }\n  if (max_tokens == 0) {\n    throw std::invalid_argument(\n        \"text runner decode step budget must be at least one token\");\n  }\n\n  impl_->CapturePromptSnapshot();\n  impl_->state_reusable = false;\n  auto step = impl_->runner->DecodeStep(\n      dynamic_cast<TextRunnerState&>(impl_->lease.state()), max_tokens,\n      impl_->sampler);\n  if (step.selections.size() > max_tokens ||\n      (step.selections.empty() && !step.stop)) {\n    throw std::runtime_error(\"text runner returned an invalid decode step\");\n  }\n  for (const auto& selection : step.selections) {\n    if (selection.stop) {\n      throw std::runtime_error(\n          \"text runner decode step contains an embedded stop selection\");\n    }\n    impl_->sampler.Accept(selection.token);\n    impl_->generated.push_back(selection.token);\n  }\n  impl_->stopped = step.stop;\n  impl_->state_reusable = true;\n  return step;",
+          "range_sha256": "ed23a46f531528d2e17350b736a3a355410168165fbf29d26c06908fe380085f"
+        },
+        {
+          "start_line": 1331,
+          "end_line": 1378,
+          "purpose": "Commit removes allowed pending selection and resizes history to physical CheckpointPosition",
+          "text": "TextRunnerPool::Request::CommitMetrics TextRunnerPool::Request::Commit() {\n  if (!*this) {\n    throw std::logic_error(\"text runner request is empty\");\n  }\n  if (!impl_->decode_ready) {\n    throw std::logic_error(\n        \"text runner cannot commit before prefill completes\");\n  }\n  if (impl_->pending_selection.has_value()) {\n    if (impl_->runner->Descriptor().capabilities.final_token_advance_required) {\n      throw std::logic_error(\n          \"text runner cannot commit an unadvanced decode token\");\n    }\n    impl_->pending_selection.reset();\n  }\n\n  impl_->CapturePromptSnapshot();\n  auto& state = dynamic_cast<TextRunnerState&>(impl_->lease.state());\n  state.SetCancellationCheck({});\n  if (!impl_->runner->Descriptor().capabilities.prefix_reuse) {\n    impl_->lease.Invalidate();\n    impl_.reset();\n    return {};\n  }\n  const auto capabilities = impl_->runner->Descriptor().capabilities;\n  std::vector<ContinuationToken> checkpoint = impl_->prompt;\n  checkpoint.insert(checkpoint.end(), impl_->generated.begin(),\n                    impl_->generated.end());\n  const std::size_t position = impl_->runner->CheckpointPosition(state);\n  if (position < impl_->lease.cached_tokens() || position > checkpoint.size()) {\n    throw std::runtime_error(\n        \"text runner checkpoint is outside executed token history\");\n  }\n  checkpoint.resize(position);\n  if (capabilities.snapshot && capabilities.fork) {\n    CommitMetrics metrics = impl_->snapshot_metrics;\n    metrics.snapshot_bytes += impl_->lease.Commit(\n        std::move(impl_->snapshot_tokens), std::move(impl_->prompt_snapshot),\n        std::move(checkpoint));\n    impl_.reset();\n    return metrics;\n  }\n\n  std::unique_ptr<TextRunnerSnapshot> snapshot;\n  CommitMetrics metrics;\n  metrics.snapshot_bytes =\n      impl_->lease.Commit(std::move(checkpoint), std::move(snapshot));\n  impl_.reset();",
+          "range_sha256": "068e2d9c80e5c9a67e13eb92a3a127667f96b27dc3cc62ba2591f5b84192d053"
+        }
+      ]
+    },
+    {
+      "file": "src/cli/serve/continuation_cache.cpp",
+      "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+      "baseline_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+      "baseline_file_sha256": "af3fa8bf5f70ed2dca09a9788436ffcbf43337261614f83498e6623b10f5ab17",
+      "source_file_sha256": "af3fa8bf5f70ed2dca09a9788436ffcbf43337261614f83498e6623b10f5ab17",
+      "whole_file_byte_identical_to_baseline": true,
+      "baseline_to_source_diff": "",
+      "ranges": [
+        {
+          "start_line": 21,
+          "end_line": 24,
+          "purpose": "Actual token prefix equality",
+          "text": "bool IsPrefix(std::span<const ContinuationToken> prefix,\n              std::span<const ContinuationToken> tokens) {\n  return prefix.size() <= tokens.size() &&\n         std::equal(prefix.begin(), prefix.end(), tokens.begin());",
+          "range_sha256": "6d9de4e0bdbda8a4d4a3ff4fc7a4bb852fc736b7bad93b1ae6b90944fc20da9e"
+        },
+        {
+          "start_line": 451,
+          "end_line": 492,
+          "purpose": "Cache/live frontier prefix validation and cached length",
+          "text": "    };\n    std::size_t source = no_entry;\n    std::size_t cached_tokens = 0;\n    skipped.clear();\n    for (std::size_t index = 0; reuse_prompt && index < impl_->entries.size();\n         ++index) {\n      const auto& entry = *impl_->entries[index];\n      // Evaluated in the original order so the first failing guard is also the\n      // reason reported under --log-level=debug.\n      std::string_view skip_reason;\n      if ((!impl_->snapshot_mode() && !entry.available) || !entry.valid)\n        skip_reason = \"unavailable\";\n      else if (!matches_input(entry.input_identity, entry.tokens.size()))\n        skip_reason = \"input_identity\";\n      else if (!can_reuse(entry.tokens.size()))\n        skip_reason = \"stable_prefix_boundary\";\n      else if (!IsPrefix(entry.tokens, prompt))\n        skip_reason = \"token_prefix\";\n      if (!skip_reason.empty()) {\n        if (debug_cache) {\n          skipped.push_back({index, entry.tokens.size(), skip_reason});\n        }\n        continue;\n      }\n      if (source == no_entry || entry.tokens.size() > cached_tokens) {\n        source = index;\n        cached_tokens = entry.tokens.size();\n      }\n    }\n    // A live final frontier can extend the immutable prompt snapshot. Prefer\n    // it on equal prefix lengths too: no restoration or D2H copy is needed.\n    std::size_t live_source = no_entry;\n    if (reuse_prompt && impl_->snapshot_mode()) {\n      for (std::size_t index = 0; index < impl_->entries.size(); ++index) {\n        const auto& entry = *impl_->entries[index];\n        if (entry.available && !entry.live_tokens.empty() &&\n            entry.live_tokens.size() >= cached_tokens &&\n            can_reuse(entry.live_tokens.size()) &&\n            matches_input(entry.live_identity, entry.live_tokens.size()) &&\n            IsPrefix(entry.live_tokens, prompt)) {\n          live_source = index;\n          cached_tokens = entry.live_tokens.size();",
+          "range_sha256": "5abfd3437af924842667022f8f39c3bb99a43a2af2798e3e4a2abfd29fbcf5c9"
+        }
+      ]
+    },
+    {
+      "file": "src/cli/serve/openai_chat.cpp",
+      "source_commit": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+      "baseline_commit": "8bdde807e57fadfe57f4a1005707559ae6afc82f",
+      "baseline_file_sha256": "6105b463540be03e092ffabf690cc5e76f311aacb0024fee2dea43b152527594",
+      "source_file_sha256": "6105b463540be03e092ffabf690cc5e76f311aacb0024fee2dea43b152527594",
+      "whole_file_byte_identical_to_baseline": true,
+      "baseline_to_source_diff": "",
+      "ranges": [
+        {
+          "start_line": 1591,
+          "end_line": 1606,
+          "purpose": "HTTP usage copies runner counts",
+          "text": "  usage[\"prompt_tokens\"] = result.prompt_tokens;\n  usage[\"completion_tokens\"] = result.completion_tokens;\n  usage[\"total_tokens\"] = result.prompt_tokens + result.completion_tokens;\n  json::Value prompt_details = json::Value::object();\n  prompt_details[\"cached_tokens\"] = result.cached_prompt_tokens;\n  usage[\"prompt_tokens_details\"] = std::move(prompt_details);\n\n  const double prompt_per_second = PrefillTokensPerSecond(result);\n  const double predicted_per_second =\n      (result.decode_ms > 0.0 && result.completion_tokens > 0)\n          ? (static_cast<double>(result.completion_tokens) /\n             (result.decode_ms / 1000.0))\n          : 0.0;\n\n  usage[\"cached_tokens\"] = result.cached_prompt_tokens;\n  usage[\"prompt_tokens_per_second\"] = prompt_per_second;",
+          "range_sha256": "496bcbdc3bdeb97eb35f1c93c8e12443e81f6cad280fe7d30da27da2d1e97883"
+        },
+        {
+          "start_line": 2288,
+          "end_line": 2330,
+          "purpose": "Streaming content and finish handling",
+          "text": "                    return connected;\n                  };\n            }\n\n            try {\n              const auto result = generation->Wait(\n                  [&](std::string_view piece) {\n                    return connected && filter.Push(piece);\n                  },\n                  on_progress);\n              stream_log->details = GenerationLogDetails(result);\n              RecordServerMetrics(result);\n              if (!connected || result.cancelled) {\n                return;\n              }\n              if (!filter.Push({}, true))\n                return;\n\n              const ParsedGeneration generated =\n                  request.chat.response_format || request.chat.constrained_tools\n                      ? ParseStructuredGeneration(\n                            filter.raw(), initial_output_state,\n                            request.chat.tools, request.chat.tool_choice,\n                            result.finish_reason ==\n                                TextGenerationBackend::FinishReason::kStop,\n                            request.chat.constrained_tools &&\n                                !request.chat.response_format,\n                            markers)\n                      : ParseGeneration(\n                            filter.raw(), initial_output_state,\n                            request.chat.tools, request.chat.tool_choice,\n                            result.finish_reason ==\n                                TextGenerationBackend::FinishReason::kStop,\n                            markers);\n              if (!filter.Finish(generated.hide_tool_markup, generated.text)) {\n                return;\n              }\n              for (std::size_t index = 0; index < generated.tool_calls.size();\n                   ++index) {\n                const auto& call = generated.tool_calls[index];\n                json::Value delta = json::Value::object();\n                json::Value tool_calls = json::Value::array();\n                json::Value item = json::Value::object();",
+          "range_sha256": "8a5b1be32a60ee0c630bfd740247aaf1cf47392de0c593430e84047d2ce945e2"
+        }
+      ]
+    }
+  ],
+  "benchmark_evidence": {
+    "file": "runs/mtp-formal-1/continuation/benchmark-script-snapshot.py",
+    "sha256": "9c0b939e9c6c9694eeab8c78eca88db94cc281a28b70dd8fa30ba78288a94a13",
+    "ranges": [
+      {
+        "start_line": 256,
+        "end_line": 355,
+        "purpose": "Canonical bytes saved, hashed and posted; raw SSE saved; content joined and hashed",
+        "text": "    def call(self, name, group, body, target=0, repeat=0, semantic=False):\n        if self.cancel():\n            raise RuntimeError(\"cancelled before request\")\n        encoded = canonical(body)\n        if len(encoded) > MAX_BODY:\n            raise ValueError(\"request body exceeds 8 MiB\")\n        row = dict(name=name, group=group, target=target, repeat=repeat,\n                   status=\"running\", request_sha256=digest(encoded),\n                   request_bytes=len(encoded), client_id=BASE_CLIENT,\n                   output_budget=body[\"max_tokens\"])\n        self.rows.append(row)\n        (self.out / (name + \".request.json\")).write_bytes(encoded)\n        self.save()\n        self.mark_phase(\"prefill\", name)\n        start = time.perf_counter()\n        first = None\n        text_parts, reasoning_parts, finishes = [], [], []\n        usage, timings, done = None, None, False\n        stop_heartbeat = threading.Event()\n\n        def heartbeat():\n            while not stop_heartbeat.wait(30):\n                print(\"WAIT %s %.0fs\" % (name, time.perf_counter() - start),\n                      flush=True)\n\n        threading.Thread(target=heartbeat, daemon=True).start()\n        request = urllib.request.Request(\n            self.args.base_url.rstrip(\"/\") + \"/v1/chat/completions\",\n            data=encoded, headers={\"Content-Type\": \"application/json\",\n                                   \"Accept\": \"text/event-stream\",\n                                   \"X-Client-ID\": BASE_CLIENT})\n        try:\n            with urllib.request.urlopen(request, timeout=7200) as response:\n                row[\"http_status\"] = response.status\n                row[\"response_headers\"] = dict(response.headers.items())\n                with (self.out / (name + \".response.sse\")).open(\"wb\") as raw:\n                    for event in sse_events(response, raw, self.cancel):\n                        if event == \"[DONE]\":\n                            done = True\n                            break\n                        chunk = json.loads(event)\n                        if \"error\" in chunk:\n                            raise RuntimeError(\"SSE error: \" +\n                                               json.dumps(chunk[\"error\"]))\n                        if chunk.get(\"usage\") is not None:\n                            usage = chunk[\"usage\"]\n                        if chunk.get(\"timings\") is not None:\n                            timings = chunk[\"timings\"]\n                        for choice in chunk.get(\"choices\", []):\n                            delta = choice.get(\"delta\", {})\n                            part = delta.get(\"content\")\n                            if isinstance(part, str) and part:\n                                if first is None:\n                                    first = time.perf_counter()\n                                    self.mark_phase(\"decode\", name)\n                                text_parts.append(part)\n                            reason = delta.get(\"reasoning_content\")\n                            if isinstance(reason, str) and reason:\n                                reasoning_parts.append(reason)\n                            if choice.get(\"finish_reason\") is not None:\n                                finishes.append(choice[\"finish_reason\"])\n            row[\"wall_s\"] = time.perf_counter() - start\n            row[\"ttft_ms\"] = (first - start) * 1000 if first is not None else None\n            row[\"usage\"], row[\"timings\"] = usage, timings\n            row[\"finish_reasons\"] = finishes\n            if not done or not finishes or usage is None or timings is None:\n                raise ValueError(\"incomplete SSE response or missing metrics\")\n            if first is None or reasoning_parts:\n                raise ValueError(\"missing visible content or unexpected reasoning\")\n            row.update(extract_metrics(usage, timings, self.args.mode,\n                                       not body[\"cache_prompt\"]))\n            if row[\"output_tokens\"] > body[\"max_tokens\"]:\n                raise ValueError(\"output exceeded requested max_tokens\")\n            row[\"output_condition\"] = \"budget_reached\" if row[\"output_tokens\"] == body[\"max_tokens\"] else \"short_output\"\n            if row[\"input_tokens\"] + row[\"output_tokens\"] > self.result[\"context\"]:\n                raise ValueError(\"input plus output exceeds actual reported context\")\n            row[\"semantic_pass\"] = semantic_ok(\"\".join(text_parts)) if semantic else None\n            if semantic and not row[\"semantic_pass\"]:\n                raise ValueError(\"three-code retrieval check failed\")\n            row[\"status\"] = \"ok\"\n            return row\n        except urllib.error.HTTPError as error:\n            error_body = error.read().decode(\"utf-8\", errors=\"replace\")\n            row.update(status=\"error\", http_status=error.code, error=error_body)\n            (self.out / (name + \".http-error.txt\")).write_text(\n                error_body, encoding=\"utf-8\")\n            raise HttpFailure(error.code, error_body) from error\n        except Exception as error:\n            row.update(status=\"error\", error=str(error))\n            raise\n        finally:\n            stop_heartbeat.set()\n            self.mark_phase(\"idle\", name)\n            row[\"wall_s\"] = time.perf_counter() - start\n            reply = \"\".join(text_parts)\n            row[\"reply_sha256\"] = digest(reply.encode(\"utf-8\"))\n            row[\"visible_characters\"] = len(reply)\n            (self.out / (name + \".reply.txt\")).write_text(reply, encoding=\"utf-8\")\n            (self.out / (name + \".reasoning.txt\")).write_text(\n                \"\".join(reasoning_parts), encoding=\"utf-8\")"
+      },
+      {
+        "start_line": 446,
+        "end_line": 460,
+        "purpose": "Actual previous response appended to next turn history",
+        "text": "        if self.args.stage in (\"all\", \"continuation\"):\n            a_body = self.plan[\"cold\"][\"4096\"]\n            history = json.loads(json.dumps(a_body[\"messages\"]))\n            for turn in range(1, 4):\n                if turn > 1:\n                    history.append({\"role\": \"user\", \"content\":\n                        \"続きとして、障害時の復旧手順を具体例付きで説明してください。\"})\n                row = self.call(\"same_a_turn%d\" % turn, \"same_a\",\n                                request_body(self.model, history, 128, True),\n                                4096, turn, turn == 1)\n                reply = (self.out / (row[\"name\"] + \".reply.txt\")).read_text(\n                    encoding=\"utf-8\")\n                history.append({\"role\": \"assistant\", \"content\": reply})\n            for repeat in range(1, 4):\n                for branch in (\"a\", \"b\", \"resume\"):"
+      },
+      {
+        "start_line": 631,
+        "end_line": 670,
+        "purpose": "Exact request/client identity; visible output difference warning; different input exclusion",
+        "text": "    for row in mtp[\"rows\"]:\n        if row[\"status\"] != \"ok\" or row[\"group\"] in (\"calibration\", \"warmup\"):\n            continue\n        prior = ar_rows.get(row[\"name\"])\n        if row[\"group\"] == \"capacity\":\n            candidates = [r for r in ar_rows.values() if r[\"group\"] == \"capacity\"\n                          and r[\"target\"] == row[\"target\"] and r.get(\"count_pass\")]\n            prior = candidates[-1] if candidates else None\n        same = (prior is not None\n                and prior[\"request_sha256\"] == row[\"request_sha256\"]\n                and prior.get(\"client_id\") == row.get(\"client_id\"))\n        required = row[\"group\"] in (\"cold\", \"capacity\")\n        if required and not same:\n            raise ValueError(\"required comparison payload differs: \" + row[\"name\"])\n        pair = dict(name=row[\"name\"], group=row[\"group\"], target=row[\"target\"],\n                    comparable=same, reply_matches=None,\n                    ar_output_tokens=prior.get(\"output_tokens\") if prior else None,\n                    mtp_output_tokens=row.get(\"output_tokens\"),\n                    decode_comparable=same and prior.get(\"output_tokens\") == row.get(\"output_tokens\"),\n                    ar_tg=None, mtp_tg=row.get(\"tg_tok_s\"), tg_change_pct=None,\n                    ar_pp=None, mtp_pp=row.get(\"pp_tok_s\"), pp_change_pct=None,\n                    ar_ttft_ms=None, mtp_ttft_ms=row.get(\"ttft_ms\"),\n                    mtp_accepted=row.get(\"draft_accepted\"),\n                    mtp_proposed=row.get(\"draft_proposed\"),\n                    ar_cached=prior.get(\"cached_tokens\") if prior else None,\n                    mtp_cached=row.get(\"cached_tokens\"))\n        if same:\n            pair[\"reply_matches\"] = prior[\"reply_sha256\"] == row[\"reply_sha256\"]\n            pair[\"ar_ttft_ms\"] = prior[\"ttft_ms\"]\n            for short, key in ((\"tg\", \"tg_tok_s\"), (\"pp\", \"pp_tok_s\")):\n                pair[\"ar_\" + short] = prior[key]\n                if prior[key] and row[key] is not None and (short != \"tg\" or pair[\"decode_comparable\"]):\n                    pair[short + \"_change_pct\"] = (row[key] / prior[key] - 1) * 100\n            if not pair[\"reply_matches\"]:\n                warnings.append(\"Visible output differs: \" + row[\"name\"])\n        else:\n            warnings.append(\"Conversation input differs; do not compare speed: \" +\n                            row[\"name\"])\n        pairs.append(pair)\n    cold_summary = []"
+      }
+    ]
+  },
+  "existing_comparison_assessment": "review_required",
+  "existing_comparison_warnings": [
+    "Visible output differs: same_a_turn2",
+    "Conversation input differs; do not compare speed: same_a_turn3"
+  ],
+  "qualification_status": "failed_review_required",
+  "limitations": [
+    "SSE に raw token IDs/logits は含まれず、visible text の一致だけでは token IDs 一致を証明しない。",
+    "同一 token の prefill/decode 経路差から本文差への因果は未証明。",
+    "MTP engine pending/live-prefix/rollback 内部の状態整合性は別の native counterfactual 診断対象。",
+    "追加 HTTP 再現が同じ本文差を示したという root の報告は、この監査で検証した最初の raw 6 streams とは別証拠。"
+  ],
+  "raw_inputs": {
+    "runs/ar-formal-1/continuation/results.json": {
+      "bytes": 172138,
+      "sha256": "a5f965ec11129b7f58b463e8d7f7d7d0e01fdab6d87c5a81db766d473f67b07b"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn1.request.json": {
+      "bytes": 11144,
+      "sha256": "f60533435dcdf60f9ccd71bb9d358dcb3d5c9239b606ae426afaa3f6bc9a23ad"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn1.response.sse": {
+      "bytes": 27699,
+      "sha256": "dcb5ef8f09c21920634f7c520bba2cd95b6445211e2d48d7f9489c30efb466c5"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn1.reply.txt": {
+      "bytes": 577,
+      "sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn1.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn2.request.json": {
+      "bytes": 11878,
+      "sha256": "1b9b1176be4d311a6decadfeaf52be47fb5c4a3b1aab22d9604d4814e93539a6"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn2.response.sse": {
+      "bytes": 27700,
+      "sha256": "9b613aff1dcb0c309165a3e9a6d229043624f4d2d7ddd0f096c653294c857b63"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn2.reply.txt": {
+      "bytes": 705,
+      "sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn2.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn3.request.json": {
+      "bytes": 12738,
+      "sha256": "8e5e1b6a831737f814660b9b8705dae703471686ed0a9149479bb7d5b6c16775"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn3.response.sse": {
+      "bytes": 27699,
+      "sha256": "783b4a65a07682aa1904794ad9d02c4c8ef9ec068ce21e1e9a06d94bad45a8c9"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn3.reply.txt": {
+      "bytes": 705,
+      "sha256": "d2fb62a51585a2f0048c8a086ad044c4c3ae90d0b43d91896ccd266b9460ce5f"
+    },
+    "runs/ar-formal-1/continuation/same_a_turn3.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/mtp-formal-1/continuation/results.json": {
+      "bytes": 165633,
+      "sha256": "ef893d240dc3462a329a3c768c53ec491050ba10d40d9f73b533b3eac003f8b7"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn1.request.json": {
+      "bytes": 11144,
+      "sha256": "f60533435dcdf60f9ccd71bb9d358dcb3d5c9239b606ae426afaa3f6bc9a23ad"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn1.response.sse": {
+      "bytes": 27693,
+      "sha256": "9015e400407eb3114a42722392fa4cd2d1f1a04a1fab3ff475e98948de9c23df"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn1.reply.txt": {
+      "bytes": 577,
+      "sha256": "cee43cbb604b638ae6dbb8096597e9697871ebe5a515bccb811851c293e98df9"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn1.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn2.request.json": {
+      "bytes": 11878,
+      "sha256": "1b9b1176be4d311a6decadfeaf52be47fb5c4a3b1aab22d9604d4814e93539a6"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn2.response.sse": {
+      "bytes": 27704,
+      "sha256": "1fd415abc6a1933590506923386219b47dfa230a4b4fe0f0d381828c21d59e3a"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn2.reply.txt": {
+      "bytes": 673,
+      "sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn2.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn3.request.json": {
+      "bytes": 12706,
+      "sha256": "4c7af60402f734fe86b85c252909a313f55f5a72aa0a04ae5e828b7d5c10268f"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn3.response.sse": {
+      "bytes": 27661,
+      "sha256": "3e0a468ade53393789c752cfaf685126102a12a08d805d3afce91890e3f505b8"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn3.reply.txt": {
+      "bytes": 673,
+      "sha256": "ad7b2ac93f6986561b8b89dcd14882af1afc272354ccef094813ac0822d95941"
+    },
+    "runs/mtp-formal-1/continuation/same_a_turn3.reasoning.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runs/mtp-formal-1/continuation/benchmark-script-snapshot.py": {
+      "bytes": 44673,
+      "sha256": "9c0b939e9c6c9694eeab8c78eca88db94cc281a28b70dd8fa30ba78288a94a13"
+    },
+    "runs/mtp-formal-1/continuation/comparison.json": {
+      "bytes": 13695,
+      "sha256": "0f64eee80aa1f8a94efb71fd48f659860152a243c1d595f530689d5601f1f368"
+    },
+    "runs/mtp-formal-1/qualification.json": {
+      "bytes": 4832,
+      "sha256": "7e46cdd7c3ab6cad0de30f60667bda2efb0c761a7fad9d7b45a35dc7c84eeab9"
+    }
+  },
+  "original_evidence_unchanged": true
+}

@@ -1,0 +1,4283 @@
+{
+  "status": "validated_refresh_with_historical_q4",
+  "finished_utc": "2026-10-06T06:49:30.757526+00:00",
+  "formal_requests": 54,
+  "warmups": 6,
+  "all_payloads_equal_except_api_model_name": true,
+  "rows": {
+    "ar": [
+      [
+        "約32K",
+        32764,
+        829,
+        842,
+        872,
+        35.0,
+        37.8,
+        27.4,
+        936.8,
+        866.5,
+        1197.9,
+        16.8,
+        26.9,
+        24.1,
+        66.8,
+        78.5,
+        93.5
+      ],
+      [
+        "約128K",
+        131066,
+        946,
+        783,
+        912,
+        143.9,
+        155.5,
+        113.8,
+        911.0,
+        843.1,
+        1152.4,
+        16.7,
+        25.9,
+        23.2,
+        66.8,
+        78.5,
+        93.5
+      ],
+      [
+        "約256K",
+        258026,
+        941,
+        1026,
+        1003,
+        284.8,
+        315.6,
+        233.5,
+        906.2,
+        817.7,
+        1105.2,
+        15.7,
+        24.9,
+        22.7,
+        66.8,
+        78.5,
+        93.5
+      ]
+    ],
+    "mtp": [
+      [
+        "約32K",
+        32764,
+        829,
+        842,
+        872,
+        34.7,
+        37.7,
+        27.4,
+        946.6,
+        869.2,
+        1198.9,
+        26.3,
+        34.3,
+        31.9,
+        70.1,
+        81.9,
+        96.8
+      ],
+      [
+        "約128K",
+        131066,
+        946,
+        783,
+        912,
+        142.5,
+        155.4,
+        112.0,
+        919.8,
+        843.4,
+        1170.8,
+        25.2,
+        33.0,
+        30.7,
+        70.1,
+        81.9,
+        96.8
+      ],
+      [
+        "約256K",
+        258026,
+        941,
+        1026,
+        1003,
+        291.2,
+        319.4,
+        232.1,
+        886.2,
+        808.0,
+        1112.1,
+        25.1,
+        32.4,
+        28.2,
+        70.1,
+        81.9,
+        96.8
+      ]
+    ]
+  },
+  "windows_free": [
+    [
+      "AR",
+      "約32K",
+      "26.81 / 23.16",
+      "18.37 / 17.70",
+      "7.01 / 6.86"
+    ],
+    [
+      "AR",
+      "約128K",
+      "26.21 / 23.33",
+      "18.35 / 18.01",
+      "7.03 / 6.87"
+    ],
+    [
+      "AR",
+      "約256K",
+      "27.79 / 23.41",
+      "18.45 / 17.88",
+      "7.06 / 6.75"
+    ],
+    [
+      "MTP",
+      "約32K",
+      "28.06 / 27.26",
+      "12.28 / 11.87",
+      "3.29 / 2.91"
+    ],
+    [
+      "MTP",
+      "約128K",
+      "28.09 / 27.20",
+      "12.41 / 11.87",
+      "3.30 / 2.96"
+    ],
+    [
+      "MTP",
+      "約256K",
+      "27.79 / 25.89",
+      "13.53 / 11.58",
+      "3.39 / 2.87"
+    ]
+  ],
+  "summaries": [
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 829,
+        "minimum": 829,
+        "maximum": 829
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 34.98479926999971,
+        "minimum": 34.908908434001205,
+        "maximum": 36.2534224609999
+      },
+      "prefill": {
+        "n": 3,
+        "median": 936.8227737022869,
+        "minimum": 904.1071425925754,
+        "maximum": 938.8624411516563
+      },
+      "decode": {
+        "n": 3,
+        "median": 16.833986393394255,
+        "minimum": 16.484118830467658,
+        "maximum": 16.91249200589192
+      },
+      "gpu_load_GB": 66.753396736,
+      "windows_free_GB": {
+        "n": 251,
+        "median": 26.80639488,
+        "minimum": 23.1586816,
+        "maximum": 28.769492992
+      },
+      "output_hashes": [
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe",
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe",
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 946,
+        "minimum": 946,
+        "maximum": 946
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 143.88520262300062,
+        "minimum": 140.74398119400027,
+        "maximum": 144.47795280800074
+      },
+      "prefill": {
+        "n": 3,
+        "median": 911.0186640926979,
+        "minimum": 907.2762638800396,
+        "maximum": 931.340065534919
+      },
+      "decode": {
+        "n": 3,
+        "median": 16.656911382176922,
+        "minimum": 16.090856836021597,
+        "maximum": 17.27467581696521
+      },
+      "gpu_load_GB": 66.753396736,
+      "windows_free_GB": {
+        "n": 594,
+        "median": 26.212282368,
+        "minimum": 23.333814272,
+        "maximum": 28.5958144
+      },
+      "output_hashes": [
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9",
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9",
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 941,
+        "minimum": 941,
+        "maximum": 941
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 284.7653981179992,
+        "minimum": 280.7725757309999,
+        "maximum": 302.27672697399976
+      },
+      "prefill": {
+        "n": 3,
+        "median": 906.1784958265821,
+        "minimum": 853.6738984195159,
+        "maximum": 919.0675420674992
+      },
+      "decode": {
+        "n": 3,
+        "median": 15.694892049248779,
+        "minimum": 15.13669384372445,
+        "maximum": 17.01706692083259
+      },
+      "gpu_load_GB": 66.753396736,
+      "windows_free_GB": {
+        "n": 1033,
+        "median": 27.785834496,
+        "minimum": 23.41060608,
+        "maximum": 28.753547264
+      },
+      "output_hashes": [
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e",
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e",
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 829,
+        "minimum": 829,
+        "maximum": 829
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 34.65012579799986,
+        "minimum": 34.612411516000066,
+        "maximum": 34.82903780700144
+      },
+      "prefill": {
+        "n": 3,
+        "median": 946.5515373050397,
+        "minimum": 941.6454045491977,
+        "maximum": 947.5714047339229
+      },
+      "decode": {
+        "n": 3,
+        "median": 26.26164827220171,
+        "minimum": 26.178978855670106,
+        "maximum": 26.544943396129312
+      },
+      "gpu_load_GB": 70.070042624,
+      "windows_free_GB": {
+        "n": 197,
+        "median": 28.055969792,
+        "minimum": 27.26055936,
+        "maximum": 28.292141056
+      },
+      "output_hashes": [
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe",
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe",
+        "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+      ],
+      "draft_proposed": 1809,
+      "draft_accepted": 1182
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 946,
+        "minimum": 946,
+        "maximum": 946
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 142.53610251600006,
+        "minimum": 142.05508890300004,
+        "maximum": 142.71007497100072
+      },
+      "prefill": {
+        "n": 3,
+        "median": 919.7961143356143,
+        "minimum": 918.6538687894889,
+        "maximum": 922.9211486198053
+      },
+      "decode": {
+        "n": 3,
+        "median": 25.192483011325177,
+        "minimum": 25.12093185592602,
+        "maximum": 25.20876921023514
+      },
+      "gpu_load_GB": 70.070042624,
+      "windows_free_GB": {
+        "n": 535,
+        "median": 28.09049088,
+        "minimum": 27.197558784,
+        "maximum": 28.343816192
+      },
+      "output_hashes": [
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9",
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9",
+        "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+      ],
+      "draft_proposed": 2259,
+      "draft_accepted": 1359
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 941,
+        "minimum": 941,
+        "maximum": 941
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 291.207559804001,
+        "minimum": 281.82183991800053,
+        "maximum": 294.93430287699994
+      },
+      "prefill": {
+        "n": 3,
+        "median": 886.2062579178041,
+        "minimum": 874.9980987181415,
+        "maximum": 915.710800527736
+      },
+      "decode": {
+        "n": 3,
+        "median": 25.088223200122215,
+        "minimum": 24.714150247289894,
+        "maximum": 26.03973457924016
+      },
+      "gpu_load_GB": 70.070042624,
+      "windows_free_GB": {
+        "n": 969,
+        "median": 27.793563648,
+        "minimum": 25.891315712,
+        "maximum": 28.620435456
+      },
+      "output_hashes": [
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e",
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e",
+        "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+      ],
+      "draft_proposed": 2835,
+      "draft_accepted": 1557
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 842,
+        "minimum": 842,
+        "maximum": 842
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 37.82624084099916,
+        "minimum": 37.711095197999384,
+        "maximum": 37.98930759900031
+      },
+      "prefill": {
+        "n": 3,
+        "median": 866.4511041959256,
+        "minimum": 862.7617807129178,
+        "maximum": 869.1012236360488
+      },
+      "decode": {
+        "n": 3,
+        "median": 26.885233280623556,
+        "minimum": 26.739295327515684,
+        "maximum": 27.02820941705789
+      },
+      "gpu_load_GB": 78.494302208,
+      "windows_free_GB": {
+        "n": 205,
+        "median": 18.367635456,
+        "minimum": 17.700298752,
+        "maximum": 18.51475968
+      },
+      "output_hashes": [
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0",
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0",
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 783,
+        "minimum": 783,
+        "maximum": 783
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 155.47873881199848,
+        "minimum": 155.14672987700033,
+        "maximum": 157.7336259780004
+      },
+      "prefill": {
+        "n": 3,
+        "median": 843.0750043235216,
+        "minimum": 831.0496523625659,
+        "maximum": 844.8886862378055
+      },
+      "decode": {
+        "n": 3,
+        "median": 25.855677776909292,
+        "minimum": 25.745668641004208,
+        "maximum": 26.021421915257093
+      },
+      "gpu_load_GB": 78.494302208,
+      "windows_free_GB": {
+        "n": 554,
+        "median": 18.353131519999998,
+        "minimum": 18.008825856,
+        "maximum": 18.853445632
+      },
+      "output_hashes": [
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591",
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591",
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 1026,
+        "minimum": 1026,
+        "maximum": 1026
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 315.5618391759999,
+        "minimum": 311.89923398099927,
+        "maximum": 321.6740286610002
+      },
+      "prefill": {
+        "n": 3,
+        "median": 817.7362984407252,
+        "minimum": 802.2052871629611,
+        "maximum": 827.3402233205995
+      },
+      "decode": {
+        "n": 3,
+        "median": 24.869754972854526,
+        "minimum": 24.77432991287925,
+        "maximum": 24.921961613836444
+      },
+      "gpu_load_GB": 78.494302208,
+      "windows_free_GB": {
+        "n": 1062,
+        "median": 18.449049600000002,
+        "minimum": 17.880133632,
+        "maximum": 18.93722112
+      },
+      "output_hashes": [
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701",
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701",
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 842,
+        "minimum": 842,
+        "maximum": 842
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 37.74451839899848,
+        "minimum": 37.71835458900023,
+        "maximum": 37.92179943100018
+      },
+      "prefill": {
+        "n": 3,
+        "median": 869.1583856346265,
+        "minimum": 864.878582585099,
+        "maximum": 869.4953811411634
+      },
+      "decode": {
+        "n": 3,
+        "median": 34.28721803351071,
+        "minimum": 34.18470427151604,
+        "maximum": 34.32635245697308
+      },
+      "gpu_load_GB": 81.88329984,
+      "windows_free_GB": {
+        "n": 185,
+        "median": 12.277153792,
+        "minimum": 11.869872128,
+        "maximum": 15.008083968
+      },
+      "output_hashes": [
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0",
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0",
+        "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+      ],
+      "draft_proposed": 1764,
+      "draft_accepted": 1149
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 783,
+        "minimum": 783,
+        "maximum": 783
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 155.44330558500045,
+        "minimum": 153.9171701180003,
+        "maximum": 156.22668219999832
+      },
+      "prefill": {
+        "n": 3,
+        "median": 843.4269385148046,
+        "minimum": 839.189073415438,
+        "maximum": 851.7878516154312
+      },
+      "decode": {
+        "n": 3,
+        "median": 33.03674018280703,
+        "minimum": 32.749917649275936,
+        "maximum": 33.09705778033134
+      },
+      "gpu_load_GB": 81.88329984,
+      "windows_free_GB": {
+        "n": 531,
+        "median": 12.408291328,
+        "minimum": 11.867783168,
+        "maximum": 15.313604608
+      },
+      "output_hashes": [
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591",
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591",
+        "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+      ],
+      "draft_proposed": 2130,
+      "draft_accepted": 1194
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 1026,
+        "minimum": 1026,
+        "maximum": 1026
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 319.4006569800003,
+        "minimum": 309.25686151300033,
+        "maximum": 323.69153397999986
+      },
+      "prefill": {
+        "n": 3,
+        "median": 807.9591168987893,
+        "minimum": 797.2566876265471,
+        "maximum": 834.483573824238
+      },
+      "decode": {
+        "n": 3,
+        "median": 32.423448429370154,
+        "minimum": 29.5852764980784,
+        "maximum": 32.80526092730882
+      },
+      "gpu_load_GB": 81.88329984,
+      "windows_free_GB": {
+        "n": 1035,
+        "median": 13.525139456,
+        "minimum": 11.582521344,
+        "maximum": 15.320485888
+      },
+      "output_hashes": [
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701",
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701",
+        "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+      ],
+      "draft_proposed": 2487,
+      "draft_accepted": 1563
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 872,
+        "minimum": 872,
+        "maximum": 872
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 27.36184555501677,
+        "minimum": 26.954701800015755,
+        "maximum": 27.83096684300108
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1197.8857102965608,
+        "minimum": 1177.7663321230134,
+        "maximum": 1216.079690824835
+      },
+      "decode": {
+        "n": 3,
+        "median": 24.144387950737308,
+        "minimum": 24.095167405880204,
+        "maximum": 24.301817858245244
+      },
+      "gpu_load_GB": 93.48579328,
+      "windows_free_GB": {
+        "n": 189,
+        "median": 7.009632256,
+        "minimum": 6.860017664,
+        "maximum": 7.216017408
+      },
+      "output_hashes": [
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50",
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50",
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 912,
+        "minimum": 912,
+        "maximum": 912
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 113.75330810697051,
+        "minimum": 113.20769475999987,
+        "maximum": 117.15443611401133
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1152.360821897955,
+        "minimum": 1118.9042798566459,
+        "maximum": 1157.9148327152661
+      },
+      "decode": {
+        "n": 3,
+        "median": 23.22693787440256,
+        "minimum": 21.290186047160983,
+        "maximum": 23.25966360990259
+      },
+      "gpu_load_GB": 93.48579328,
+      "windows_free_GB": {
+        "n": 460,
+        "median": 7.033288704,
+        "minimum": 6.872649728,
+        "maximum": 7.28348672
+      },
+      "output_hashes": [
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b",
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b",
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 1003,
+        "minimum": 1003,
+        "maximum": 1003
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 233.48584328399738,
+        "minimum": 232.73601362796035,
+        "maximum": 236.44360117299948
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1105.2107292707506,
+        "minimum": 1091.390092547408,
+        "maximum": 1108.776217435469
+      },
+      "decode": {
+        "n": 3,
+        "median": 22.65465904409998,
+        "minimum": 20.225413812220648,
+        "maximum": 22.65503016103771
+      },
+      "gpu_load_GB": 93.48579328,
+      "windows_free_GB": {
+        "n": 832,
+        "median": 7.06200576,
+        "minimum": 6.754983936,
+        "maximum": 7.888113664
+      },
+      "output_hashes": [
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1",
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1",
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+      ],
+      "draft_proposed": 0,
+      "draft_accepted": 0
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "input_tokens": {
+        "n": 3,
+        "median": 32764,
+        "minimum": 32764,
+        "maximum": 32764
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 872,
+        "minimum": 872,
+        "maximum": 872
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 27.37291177897714,
+        "minimum": 26.8087305270019,
+        "maximum": 27.79684546997305
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1198.9144839152934,
+        "minimum": 1180.6235863291947,
+        "maximum": 1224.020444435862
+      },
+      "decode": {
+        "n": 3,
+        "median": 31.902449081053724,
+        "minimum": 31.81451427052916,
+        "maximum": 32.058675365293304
+      },
+      "gpu_load_GB": 96.7573504,
+      "windows_free_GB": {
+        "n": 162,
+        "median": 3.286614016,
+        "minimum": 2.909048832,
+        "maximum": 3.52827392
+      },
+      "output_hashes": [
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50",
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50",
+        "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+      ],
+      "draft_proposed": 1860,
+      "draft_accepted": 1221
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "input_tokens": {
+        "n": 3,
+        "median": 131066,
+        "minimum": 131066,
+        "maximum": 131066
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 912,
+        "minimum": 912,
+        "maximum": 912
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 111.99121755897067,
+        "minimum": 111.55930302798515,
+        "maximum": 112.82994425104698
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1170.8102795335192,
+        "minimum": 1162.121568709881,
+        "maximum": 1175.2623872940571
+      },
+      "decode": {
+        "n": 3,
+        "median": 30.662302373544755,
+        "minimum": 30.492716251627836,
+        "maximum": 30.750128755012184
+      },
+      "gpu_load_GB": 96.7573504,
+      "windows_free_GB": {
+        "n": 420,
+        "median": 3.3009889279999998,
+        "minimum": 2.962489344,
+        "maximum": 3.618656256
+      },
+      "output_hashes": [
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b",
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b",
+        "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+      ],
+      "draft_proposed": 2205,
+      "draft_accepted": 1341
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "input_tokens": {
+        "n": 3,
+        "median": 258026,
+        "minimum": 258026,
+        "maximum": 258026
+      },
+      "output_tokens": {
+        "n": 3,
+        "median": 1003,
+        "minimum": 1003,
+        "maximum": 1003
+      },
+      "ttft_seconds": {
+        "n": 3,
+        "median": 232.0702948999824,
+        "minimum": 229.86256893898826,
+        "maximum": 232.62126868701307
+      },
+      "prefill": {
+        "n": 3,
+        "median": 1112.068020373659,
+        "minimum": 1109.4183683218455,
+        "maximum": 1122.7769031877788
+      },
+      "decode": {
+        "n": 3,
+        "median": 28.219221461161787,
+        "minimum": 28.096674785254816,
+        "maximum": 28.24411425583856
+      },
+      "gpu_load_GB": 96.7573504,
+      "windows_free_GB": {
+        "n": 793,
+        "median": 3.390390272,
+        "minimum": 2.869915648,
+        "maximum": 3.664277504
+      },
+      "output_hashes": [
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1",
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1",
+        "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+      ],
+      "draft_proposed": 2265,
+      "draft_accepted": 1326
+    }
+  ],
+  "quality_indicators": [
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ3",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 829,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "5e84984b94cc5b88bf506782d900bef8b360cc89394f4187951a5110f1f0bcbe"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 946,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "4598ccf10d51e70a0c5f86b7786a6914e04a9a3f2637d3156214fcb674b7e6a9"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ3",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 941,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "513f43a48806b79b23aa451407585e52add1858e253044d9d0371a657187c81e"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "IQ4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 842,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "1e0b33bcb4f75eb70602bd5b2c4086e7654b4040cd99ccb7779564445edcc6a0"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 783,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "f57c7f46453720a756904e12b0d09589c27dee7c4302f5fa8b8620d6607e3591"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "IQ4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 1026,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "9d507c4bda04dcd3084f00a1aea9c4158fc3ee505ea5d3d310603f1a405b7701"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    },
+    {
+      "model": "Q4",
+      "mode": "ar",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_32768",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_32768/reply.txt",
+      "output_tokens": 872,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "26d7c2027e071382b63623c39f4be286861383db4c24d2db110bffc8631dbd50"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_131072",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_131072/reply.txt",
+      "output_tokens": 912,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "049e90fe930c7783d6c53f68ddb779c1a35f4b01e6ef09011a678a574a76fc9b"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 1,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 2,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    },
+    {
+      "model": "Q4",
+      "mode": "mtp",
+      "case": "natural_258048",
+      "repeat": 3,
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_258048/reply.txt",
+      "output_tokens": 1003,
+      "literal_needles": {
+        "values": {
+          "CEDAR": {
+            "expected_value": "SILVER-5903",
+            "value_present": true,
+            "key_present": true
+          },
+          "CYPRESS": {
+            "expected_value": "COPPER-2846",
+            "value_present": true,
+            "key_present": true
+          },
+          "LOTUS": {
+            "expected_value": "AMBER-1628",
+            "value_present": true,
+            "key_present": true
+          },
+          "ORCHID": {
+            "expected_value": "VIOLET-7319",
+            "value_present": true,
+            "key_present": true
+          }
+        },
+        "all_expected_values_present": true,
+        "correct_key_value_association_proven": false,
+        "semantic_quality_pass": null,
+        "note": "Literal value retrieval only; a short or wrong response is retained. Full answer quality/structure needs review."
+      },
+      "numbered_sections_detected": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "reply_sha256": "583b475a422fde13b11e1bd3babc4707b78a26459a26d3d7ad68bb2b411013e1"
+    }
+  ],
+  "structure_review": {
+    "formal_answers": 54,
+    "registered_values_correct": 54,
+    "twelve_sections_complete": 54,
+    "strict_first_line_json": 24
+  },
+  "ar_mtp_output_checks": [
+    {
+      "model": "IQ3",
+      "case": "natural_32768",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_32768",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_32768",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_131072",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_131072",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_131072",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_258048",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_258048",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ3",
+      "case": "natural_258048",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_32768",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_131072",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "IQ4",
+      "case": "natural_258048",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_32768",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_32768",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_32768",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_131072",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_131072",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_131072",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_258048",
+      "repeat": 1,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_258048",
+      "repeat": 2,
+      "ar_mtp_visible_reply_identical": true
+    },
+    {
+      "model": "Q4",
+      "case": "natural_258048",
+      "repeat": 3,
+      "ar_mtp_visible_reply_identical": true
+    }
+  ],
+  "warnings": [],
+  "evidence": [
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_32768/results.json",
+      "sha256": "f416d694c682baecd0c8dd3862ae3f6d99c439a510147ab95b4fc300256c9eb8",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_32768/results.json",
+      "sha256": "97f03caf657ce14bfb49c1d7552bcebba10fe380f66b816f6b326c121d39d73c",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_32768/results.json",
+      "sha256": "0255a92fd2afadc26c878ad68b1479939c8e154989252b71126a9cf65e59dd8c",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_131072/results.json",
+      "sha256": "f98d1818a04fbf56b54eb11ea423a41d7d233935529f2e5b9f8d1802921bc45b",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_131072/results.json",
+      "sha256": "335f0bd60182b2742607d92acffcc2798c3ab62463c3c3d86fb457464c19cc92",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_131072/results.json",
+      "sha256": "c0abba1dd2541c5bfbe74e198ccd2c2109e6aff49eee10e5d00775fa8db12e47",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r1-natural_258048/results.json",
+      "sha256": "d3cf3db146c4e8259da13f59a2c7af79fdc597b78e6d34ee79ba5acb9ce1d727",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r2-natural_258048/results.json",
+      "sha256": "297d89734b070110a79772b790c74a01f12307c00d93e4be58e74f686b600c25",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-ar/requests/formal-r3-natural_258048/results.json",
+      "sha256": "d4d445c0b03a72fcf6400581c9da3341629f2b2390b3bb14042a7044b2710799",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_32768/results.json",
+      "sha256": "4eb71b6ab971fe702d4496cc24d128b9e3f43f83322256e4f5ea93f97e9e3724",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_32768/results.json",
+      "sha256": "f3ab57253514b26ddef543224dc7223b9daf46d6cf94415d88b588ebb5741935",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_32768/results.json",
+      "sha256": "3640d1584b9212e7111947b693ceb6f6478572d53c1fa31085ba1e1deb42c0be",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_131072/results.json",
+      "sha256": "3f6c9f702788500e4719396cfd523c7c5649cebe7bf9ba7dbe8bb02a08ba6caf",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_131072/results.json",
+      "sha256": "da0cf865a5d2ae065a41bc9598033461bd9d8d90173544579c882aed6b9bbc09",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_131072/results.json",
+      "sha256": "c07eae834fb62a1605f2e6c43f218148b8482aceecff37ac32539eaa108426cd",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r1-natural_258048/results.json",
+      "sha256": "5818ee7d63f27ef84507f5aa37595b1b1f463cd7b9b87b4482316fb99f736608",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r2-natural_258048/results.json",
+      "sha256": "d72fe5f5bc3aa5408620b07e4e1deccfe2be04977b0f7a7c0de2685772fa6273",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq3-mtp/requests/formal-r3-natural_258048/results.json",
+      "sha256": "07edb0c5332a840a86c1be25fc26ec337d67f5dedad453374889093ee718d42c",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_32768/results.json",
+      "sha256": "5a7f7936c4d35ac34417bda71ab6912d54f27bc7aca4cce576773bc44c2ddf8f",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_32768/results.json",
+      "sha256": "a69458c750ffa0512ba227d28e217635a3c523f22cc29c764989dac28d75dd85",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_32768/results.json",
+      "sha256": "f60a079450017b0f7a79681315e18ea450440235bd563f48ea3045533d5fd8e4",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_131072/results.json",
+      "sha256": "25c41b9260bad7f1835836d9772df9afde636f7460d5f35780464d44b5f4c20b",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_131072/results.json",
+      "sha256": "b9575f4a37236d806a3716d48dcc8985fd32cc770dc3fe2590797d4334021879",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_131072/results.json",
+      "sha256": "93d5f7c2f820726122332e9a61da727f87789eb5fcef8383089bd6f7bab3e747",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r1-natural_258048/results.json",
+      "sha256": "5b82c2ecdbd5b85e522444a385f62d7c0b1debb1a1cd5e8e68a2388dbb0c05bc",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r2-natural_258048/results.json",
+      "sha256": "477de290d3ed1f51e60bc70094e875cc5a017a7900046f0b0466c2479ab1a18e",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-ar/requests/formal-r3-natural_258048/results.json",
+      "sha256": "377dcbf158a8c52930cad7a7690c08e8d098ccda71af0d4a93b8b8bedf8cd9dd",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_32768/results.json",
+      "sha256": "efc3511cccb7950e2062cab1e2b96cbe2f1a2484a7452dbf2639402ebdb6f9ff",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_32768/results.json",
+      "sha256": "6cba3f781d5d49112c6e8cc4d8062394445e7d41686d284c3cc4e36d1d9fd3e2",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_32768/results.json",
+      "sha256": "4be04ef2d929e19bf09e28f3a49968ecba0a6481a7e8a9f44d7e54f506438c00",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_131072/results.json",
+      "sha256": "be3e55f58cdf3dff88afe8b50634aaddd479e5fcb42c09ba9c9db99114207741",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_131072/results.json",
+      "sha256": "1bde70ee023ecf42cdf0e395c74e1a23b2b303f2d681feffb30e6a3ad8c7ddc4",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_131072/results.json",
+      "sha256": "9b50869ffa8012eb73d5aa696f1d29c3fb34898e6e2a8d1aa238cf42ad10588d",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r1-natural_258048/results.json",
+      "sha256": "52e08b5f05c64ccdc0474bcaf6348fc793965cd900023d7f5709aa9aa7c8e795",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r2-natural_258048/results.json",
+      "sha256": "5f35f2520c4ed3cf59bde026b0807ffb48cff0c5f3a263f8b08beb394da19430",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/runs/iq4-mtp/requests/formal-r3-natural_258048/results.json",
+      "sha256": "c1eba6b3ab40a7d9ebdd97855732e72aa67200fd83a10ae028214411028b1e43",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_32768/results.json",
+      "sha256": "105512034a8e0447305c82f5832f7777d3ef57afa4b990bdce24d5e0ec19a99d",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_32768/results.json",
+      "sha256": "197754d4092f9cdf715d1e3d5cb426514b64cbf29203e8a0428ecfc153d82f28",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_32768/results.json",
+      "sha256": "d4c5bcbf103d10c4a44fcf7870478a9f3a1c85b44d5e54600a19116918ef0e89",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_131072/results.json",
+      "sha256": "1e48b17bea4c5f3a61cecd9c02cf5934234c7f128ab6d1723047ff726ff7d89a",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_131072/results.json",
+      "sha256": "43358e8a895619cbae6cbfcc9c2bc458da39f6fca71f02ef60afd3e1ca4226c3",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_131072/results.json",
+      "sha256": "179d108f88d72572471dd1570ee264744f81b849e2b62acfc92ffae168368cbc",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r1-natural_258048/results.json",
+      "sha256": "c0feea1a18307521cdf67efc0c521627c7f52afa91622ce2796fd2dc23fe189a",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r2-natural_258048/results.json",
+      "sha256": "2826bee90d38484f9ed1076d93ace28b4106f9e81fe8d64e06ad5e26cd630307",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-ar/requests/formal-r3-natural_258048/results.json",
+      "sha256": "2efe762144f28ea9d75e28dee3f9f41398e95fb4508e00a1477e70ea7f97b46c",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_32768/results.json",
+      "sha256": "0eab2c4cdbfeac0c271ea150f79707a38272c33d9fbc9cfb7e8fbe662a3802f1",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_32768/results.json",
+      "sha256": "394b2c3379c38059654cc3774c1f98cac989a4c75b86175164ab352bd958137e",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_32768/results.json",
+      "sha256": "e468232ec2d034c7d821844377623cb8d8d3c96cfe7bd3502d5bef2d4fa63777",
+      "normalized_payload_sha256": "67d95d3e069bf5efd88743b0ba82472f05008d453ee9310335bcd8fa66eb832e"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_131072/results.json",
+      "sha256": "44c2f1b62f47206e9d9dcb83970b016e1f69be5da915461c01cfc26a8debdc73",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_131072/results.json",
+      "sha256": "e96488a2b4921e970c6c7ef158f79754f53638a91fce6f0e80d5798c507a7687",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_131072/results.json",
+      "sha256": "976da55173c39a5307c25094d721c2e7084ca25e1e3e525bc1c50e876d3023ea",
+      "normalized_payload_sha256": "46c9d489804845ad6ed1fb70afd4aa7456bbbb8c5325163222155e9be87b49d1"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r1-natural_258048/results.json",
+      "sha256": "26361ff94f0f7cc08c059c94e1c233bedcd82895ae3f23d999150a82c1fa7263",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r2-natural_258048/results.json",
+      "sha256": "866c8dbe83c8dc5cf5d57f7676f7094de25529e68343669e85397f97e9f01e3e",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/runs/q4-mtp/requests/formal-r3-natural_258048/results.json",
+      "sha256": "a0a7ef665fa49c8821eb366cb7490065a6d6f4b2daa1cdbb823e8bc5c416d104",
+      "normalized_payload_sha256": "5bb93d9e89a1d8ac3d1388094337f2bb6a4a797c858f20ac1db24bde9aa46127"
+    }
+  ],
+  "manual_text_review": {
+    "fresh": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/manual-text-review.json",
+    "historical_q4": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/evidence/before-v080-refresh/manual-text-review.json"
+  },
+  "new_formal_requests": 36,
+  "historical_formal_requests": 18,
+  "measured_sources": {
+    "IQ3": {
+      "version": "v0.8.0",
+      "source_commit": "22327731374340a6f689db2af20fe96594ef5f3e",
+      "image_id": "sha256:57f3f2847e3fdb0c7ed88a0e0ab5ea482be9f23c0cafc4efc58e554067e9b45d",
+      "binary_sha256": "c2301eff57b21ffbae7cb15770b1a63db8d8e769fe88d3eb208e7fc762c3ef85"
+    },
+    "IQ4": {
+      "version": "v0.8.0",
+      "source_commit": "22327731374340a6f689db2af20fe96594ef5f3e",
+      "image_id": "sha256:57f3f2847e3fdb0c7ed88a0e0ab5ea482be9f23c0cafc4efc58e554067e9b45d",
+      "binary_sha256": "c2301eff57b21ffbae7cb15770b1a63db8d8e769fe88d3eb208e7fc762c3ef85"
+    },
+    "Q4": {
+      "version": "v0.7.1",
+      "historical": true,
+      "source_commit": "abdc693ef6686c96003876b0e75502ba0d659505",
+      "image_id": "sha256:8ca821059546480452a14e7c24bb92565295017558fcc15c117d830ae042a784",
+      "binary_sha256": "6ffa430eadb94ca51c68a991b289a3ce4655a4dddd58bcc08e3ccc237d8b4b91"
+    }
+  },
+  "fresh_execution": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-v080-20261006/execution.json",
+  "historical_execution": "/mnt/c/Users/user/documents/codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/orcarouter-iq4xs/longbench-20261006/evidence/before-v080-refresh/execution.json"
+}

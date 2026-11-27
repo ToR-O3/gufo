@@ -1,0 +1,147 @@
+{
+  "schema": "sc117-v070-B-FFN-summary-v1",
+  "source_commit": "8c95dce5a906841709013cbcaf32f838ba9bd04b",
+  "official_base": "aedc129ffa98f00ebb1b1c8b75df60b2d987c48d",
+  "qualification_namespace": "v0.7.0",
+  "binary_sha256": "ff6330ef0711807f5dbbffb8c8c247334639e0253695b8329fba78a63c638613",
+  "image_id": "sha256:2ca5708b963bd09bde1eb944f00fa73ad4897b2e0f9c3963e5a209b032c73871",
+  "exit_code": 0,
+  "oom_killed": false,
+  "started_utc": "2026-10-04T15:40:02.904107693Z",
+  "finished_utc": "2026-10-04T15:40:04.573391911Z",
+  "container_duration_seconds": 1.669284,
+  "omp_environment": {
+    "OMP_NUM_THREADS": "1",
+    "OMP_WAIT_POLICY": "PASSIVE"
+  },
+  "legacy_results_reused": false,
+  "status": "passed",
+  "all_same_input_dot_comparisons_pass_existing_bound": true,
+  "cpu_and_gpu_trace_reproduction_bitwise": true,
+  "actual_q8_single_code_difference": {
+    "code_changes": [
+      {
+        "index": 2439,
+        "reference_code": 4,
+        "other_code": 5
+      }
+    ],
+    "different_stored_scales": 0,
+    "sum_half_ignored": "Bytes2..3 unused by IQ2_S/IQ4_NL/Q8_0 dots in this fixed diagnostic."
+  },
+  "actual_device_weight_bytes": 24958976,
+  "bounded_dot_comparisons": 122880,
+  "max_error_to_bound_ratio": 0.0008051750823417749,
+  "counterfactual_l2_distance_reduction_fraction": 0.9996155629349305,
+  "counterfactual": {
+    "description": "GPU saved input, only Q8 code2439 forced to4; saved GPU routes/weights/shared gate unchanged",
+    "actual_change_vs_gpu": {
+      "code_changes": [
+        {
+          "index": 2439,
+          "reference_code": 5,
+          "other_code": 4
+        }
+      ],
+      "different_stored_scales": 0,
+      "sum_half_ignored": "Bytes2..3 unused by IQ2_S/IQ4_NL/Q8_0 dots in this fixed diagnostic."
+    },
+    "actual_change_vs_cpu": {
+      "code_changes": [],
+      "different_stored_scales": 0,
+      "sum_half_ignored": "Bytes2..3 unused by IQ2_S/IQ4_NL/Q8_0 dots in this fixed diagnostic."
+    },
+    "interpretation": "Describe actual downloaded bytes and measured local-distance change; never infer an unobserved crossing."
+  },
+  "same_input_ffn_errors": {
+    "cpu_saved_input_cpu_vs_gpu": {
+      "max_abs": 1.4901161193847656e-08,
+      "relative_l2": 1.0383817121814778e-07,
+      "bitwise_equal": false
+    },
+    "gpu_saved_input_cpu_vs_gpu": {
+      "max_abs": 1.1175870895385742e-08,
+      "relative_l2": 1.0659374057905048e-07,
+      "bitwise_equal": false
+    }
+  },
+  "predeclared_bound": "gamma_(2K+32)*sum(abs(w*x))+1e-7, u=2^-24",
+  "limitations": [
+    "Only pos0/layer5 selected fixed routes; not a global-model allclose proof.",
+    "Counterfactual preserves actual GPU route weights/shared gate; it does not remove their CPU/GPU differences.",
+    "Ten selected experts are compacted; physical512 stride is separately covered by A.",
+    "Float32 outputs are hidden2560 vectors, not vocabulary logits; q8_1 payload is80blocks x36bytes."
+  ],
+  "raw_artifacts": [
+    {
+      "path": "code4.gpu_output.f32",
+      "bytes": 10240,
+      "sha256": "e94aedd7e06fedeedf9b68c1c2306458424904b61cb7d8a811852b85acccb2c1"
+    },
+    {
+      "path": "code4.gpu_q8.bin",
+      "bytes": 2880,
+      "sha256": "ee0bd226d7e4c8b456ef5a3cd688eff067a4620e18a8e0fd50433ad20a54f1fb"
+    },
+    {
+      "path": "cpu_saved.cpu_output.f32",
+      "bytes": 10240,
+      "sha256": "691aaaaf5c7b66fd6d19c81a7caf516a2cb0777216576d6f6fc056d527b001e6"
+    },
+    {
+      "path": "cpu_saved.gpu_output.f32",
+      "bytes": 10240,
+      "sha256": "2dd1b03a21cc2a180f1e5d45e8336f71ffec7e89053667f96a80d2fef4403ddf"
+    },
+    {
+      "path": "cpu_saved.gpu_q8.bin",
+      "bytes": 2880,
+      "sha256": "b8bbd8c38fb533c1d61249a2623881680b311cae209801371f245b52618cce12"
+    },
+    {
+      "path": "gpu_saved.cpu_output.f32",
+      "bytes": 10240,
+      "sha256": "3af8ae72bb9f44fbd03bd471d2d7cd5d0d98f9263444fdf10609f6fb992aeee7"
+    },
+    {
+      "path": "gpu_saved.gpu_output.f32",
+      "bytes": 10240,
+      "sha256": "063f7d12fcf7864218fc81b69b12c7cae31edc7ce094659d4aad3f97f88e8c9e"
+    },
+    {
+      "path": "gpu_saved.gpu_q8.bin",
+      "bytes": 2880,
+      "sha256": "08a35b3bc6ef1deb1a0053c7e4a457aa3cf455c9c367ad09679098c492f328bb"
+    },
+    {
+      "path": "input-bin-audit.json",
+      "bytes": 1374,
+      "sha256": "115e300f0cc83bbfa85ed9bd6e77c0929fbc81295a82efa22cec139f871a9b3d"
+    },
+    {
+      "path": "launch-console.json",
+      "bytes": 4516,
+      "sha256": "eb9f340a0c95c092857c2a0554e0c1c58a5eb8aa760b080786050957ab2ad87e"
+    },
+    {
+      "path": "replay.json",
+      "bytes": 7694,
+      "sha256": "3d701694c5250b28baaee835fd4654338784d536afc2997135852c32f68aa349"
+    },
+    {
+      "path": "run.log",
+      "bytes": 219,
+      "sha256": "fb3650a4111e873483fd9efd74af7c8fa8bb5113f5593f76782714c338c454b2"
+    },
+    {
+      "path": "source.json",
+      "bytes": 669,
+      "sha256": "8ba22fb789732c0bc0aa1301e6f9e92f8e5bcc831eda50d7d428ba27f2908aac"
+    },
+    {
+      "path": "state.json",
+      "bytes": 4894,
+      "sha256": "c1d998fa7c1fd29f5a1484d30a367ecae19adf54e45824772ad6e7ea51dde20f"
+    }
+  ]
+}

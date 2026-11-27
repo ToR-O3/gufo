@@ -1,0 +1,449 @@
+{
+  "schema": "sc117-continuation-counterfactual-validation-v1",
+  "created_utc": "2026-10-04T13:24:32.429816+00:00",
+  "assessment": "reproduced_serving_final_token_boundary_cause; supports advancing the final AR token before request completion",
+  "scope": "This is a diagnostic attribution, not formal performance qualification or a blanket MTP quality pass. Original AR/MTP failures are preserved.",
+  "execution": {
+    "container_id": "d293e60151746f75249c97c90aaf90b0a05864e2561a3cd2e9dfabfcbe3ee7bb",
+    "exit_code": 0,
+    "oom_killed": false,
+    "finished_utc": "2026-10-04T13:20:29.471676295Z",
+    "gpu_released": true,
+    "binary_sha256": "86aa5fcc0e62dc8cc3d14fa1f4274c3f001e3f82ef429417a85b0d1ad583267f",
+    "image_id": "sha256:41a79dd5bd49eacf1b0d989d8a453cd01217a0e0309a51e8507a1f5abd604f40",
+    "source_commit_base": "dda7daaa4c135ea7f10cea2d480d1a1c01b5158f",
+    "context": 8192,
+    "formal_context": 262144,
+    "omp": {
+      "OMP_NUM_THREADS": "1",
+      "OMP_WAIT_POLICY": "PASSIVE"
+    },
+    "one_model_upload": true,
+    "serial_sessions": true,
+    "max_transient_ar_snapshot_bytes": 225788580
+  },
+  "formal_reproduction": {
+    "input_request_bytes_equal_ar_mtp_turn1_and_turn2": true,
+    "native_input_tokens": [
+      4084,
+      4242
+    ],
+    "ar_turn1_visible_reply_exact": true,
+    "ar_turn2_visible_reply_exact": true,
+    "mtp_turn1_visible_reply_exact": true,
+    "mtp_turn2_visible_reply_exact": true,
+    "limitation": "Formal HTTP SSE does not expose raw generated IDs. Formal identity here is exact visible UTF-8 reply bytes; raw-token comparisons below are between native replay paths. Context differs, but both formal visible outcomes were reproduced exactly."
+  },
+  "native_token_comparisons": {
+    "turn1_ar_vs_mtp_all_128_exact": true,
+    "turn2_original_ar_vs_mtp_first_mismatch_index": 73,
+    "turn2_counterfactual_ar_vs_mtp_all_128_exact": true
+  },
+  "counterfactual_steps": [
+    "Run native AR turn1 with the serving prefill splits [2048,2029,7]. Sample 128 tokens but Evaluate only the first 127, as the original scheduler does. Save the retained state at position4211.",
+    "Run ordinary AR turn2 from saved formal native input4242 with retained4211, split [24,7], and retain all 128 target rows. This reproduces the formal AR response.",
+    "Restore the same post-turn1 snapshot. Evaluate only the final sampled turn1 token in decode mode, reaching4212. Prefill the identical turn2 prompt in chunks[23,7] and generate128 AR tokens.",
+    "Release AR session; run MTP using the same model and first-turn prompt. Its128 committed tokens retain4212. Prefill turn2 with [23,7], save a snapshot and record all actual MTP cycle-start target frontiers.",
+    "Restore only the MTP turn2 prefill snapshot and Evaluate the shared first73 output tokens to obtain its common-prefix ordinary-decode target row. This row is not labeled an interior speculative verifier row."
+  ],
+  "frontier_comparisons": {
+    "original_ar_vs_mtp_prefill": {
+      "bitwise_equal": false,
+      "max_abs": 0.6099886894226074,
+      "relative_l2": 0.054326471057967146
+    },
+    "counterfactual_ar_vs_mtp_prefill_bitwise_exact": true,
+    "counterfactual_ar_vs_actual_mtp_cycle_frontiers": {
+      "checked": 64,
+      "bitwise_exact": 64,
+      "max_abs": 0,
+      "generation_offsets": [
+        0,
+        3,
+        4,
+        7,
+        12,
+        13,
+        15,
+        16,
+        19,
+        21,
+        22,
+        24,
+        27,
+        28,
+        29,
+        31,
+        34,
+        37,
+        41,
+        45,
+        47,
+        49,
+        50,
+        52,
+        55,
+        57,
+        59,
+        60,
+        61,
+        62,
+        64,
+        66,
+        68,
+        70,
+        72,
+        74,
+        75,
+        76,
+        78,
+        79,
+        81,
+        83,
+        85,
+        87,
+        89,
+        90,
+        91,
+        93,
+        95,
+        97,
+        99,
+        101,
+        103,
+        105,
+        107,
+        109,
+        111,
+        112,
+        114,
+        116,
+        118,
+        120,
+        123,
+        126
+      ],
+      "independently_rechecked_saved_binary_rows": true
+    },
+    "common_prefix_decode_replay_vs_actual_mtp_cycle_frontiers_before_mismatch": {
+      "checked": 35,
+      "bitwise_exact": 35,
+      "last_generation_offset": 72,
+      "note": "Comparisons executed inside diagnostic; intermediate replay rows are represented by metrics, while the final replay target is saved as binary."
+    },
+    "limitation": "The 64 actual cycle-start rows are not all128 interior verification target rows. Mismatch index73 lies inside an accepted two-token cycle starting72; no claim that the private verifier logit row was directly dumped."
+  },
+  "first_difference": {
+    "generation_index_zero_based": 73,
+    "target_position": 4315,
+    "ar_token": 9616,
+    "mtp_token": 10119,
+    "topk_from_saved_payloads": {
+      "ar": {
+        "top10": [
+          {
+            "id": 9616,
+            "logit": 18.57474708557129
+          },
+          {
+            "id": 10119,
+            "logit": 18.51580810546875
+          },
+          {
+            "id": 13,
+            "logit": 17.950075149536133
+          },
+          {
+            "id": 183117,
+            "logit": 15.722305297851562
+          },
+          {
+            "id": 63078,
+            "logit": 14.189352035522461
+          },
+          {
+            "id": 26,
+            "logit": 12.468205451965332
+          },
+          {
+            "id": 40938,
+            "logit": 11.492142677307129
+          },
+          {
+            "id": 176751,
+            "logit": 11.40528678894043
+          },
+          {
+            "id": 191980,
+            "logit": 10.680524826049805
+          },
+          {
+            "id": 56632,
+            "logit": 10.656025886535645
+          }
+        ],
+        "top2_margin": 0.05893898010253906
+      },
+      "mtp_common_prefix_decode": {
+        "top10": [
+          {
+            "id": 10119,
+            "logit": 18.492645263671875
+          },
+          {
+            "id": 9616,
+            "logit": 18.46634292602539
+          },
+          {
+            "id": 13,
+            "logit": 18.012027740478516
+          },
+          {
+            "id": 183117,
+            "logit": 15.776777267456055
+          },
+          {
+            "id": 63078,
+            "logit": 14.296923637390137
+          },
+          {
+            "id": 26,
+            "logit": 12.400300979614258
+          },
+          {
+            "id": 40938,
+            "logit": 11.540603637695312
+          },
+          {
+            "id": 176751,
+            "logit": 11.53361701965332
+          },
+          {
+            "id": 1076,
+            "logit": 10.933610916137695
+          },
+          {
+            "id": 56632,
+            "logit": 10.709317207336426
+          }
+        ],
+        "top2_margin": 0.026302337646484375
+      }
+    },
+    "difference_metrics": {
+      "bitwise_equal": false,
+      "max_abs": 0.5707460045814514,
+      "relative_l2": 0.04040146205044949
+    }
+  },
+  "proposed_production_change": "QwenFlashNextTextRunner::Descriptor final_token_advance_required = !use_mtp_; AR evaluates the last sample in decode mode so next continuation starts at the same retained position and prefill partition as MTP. HTTP regression validation remains owned by root.",
+  "diagnostic_source_files": [
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/sc117_continuation_replay.cpp",
+      "repo_path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo/tests/models/qwen38_flash_next/sc117_continuation_replay.cpp",
+      "sha256": "0ac40ea3f60c22f871eb16dcb66a65e302cc2b644a6fbb9509d180698b6403b6",
+      "locations": {
+        "native_chat_prepare": 100,
+        "prefill_stable_splits": 128,
+        "ar_delayed_final_evaluate": 161,
+        "mtp_decode": 185,
+        "first_turn_snapshot": 307,
+        "counterfactual_restore_and_evaluate": 315,
+        "actual_cycle_frontier_compare": 353,
+        "common_prefix_replay": 376
+      }
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/CMakeLists.txt",
+      "repo_path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo/tests/models/qwen38_flash_next/CMakeLists.txt",
+      "sha256": "c8ce56ea0b7e46ad0fa23df603e74e1f93e003bd04a3d169c6a0f6fcf0b116e9",
+      "target_line": 61
+    }
+  ],
+  "verification_record": {
+    "target": "qwen38_flash_next_sc117_continuation_replay",
+    "build_command": "run-gpu.sh cmake --build --preset gpu-test --target qwen38_flash_next_sc117_continuation_replay --parallel 2",
+    "build_exit_code": 0,
+    "build_log_note": "Compilation/link output retained in agent tool transcript (session33668); no original build stdout file was requested or captured. No reconstructed build log is claimed.",
+    "format_command": "run-gpu.sh python3 tools/ci/check-format.py",
+    "format_exit_code": 0,
+    "format_stdout": "PASS: Checked 500 C++ files",
+    "format_log_note": "Observed tool transcript session56395; source was formatted before build and unchanged during execution.",
+    "runtime_log": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/probe.log",
+    "runtime_log_sha256": "2b771974234473ad93fe2080638cecd63ce57ea3b188cf0403e3a78f4ea27142"
+  },
+  "independent_source_review": {
+    "reviewer": "cpu_formats",
+    "finding": "AR sample/accept/deferred-final-evaluate, MTP budget8/maxdraft7, stable-prefix split and fixture checks match serving.",
+    "setting_note": "Diagnostic Sampler seed42 leaves repeat_last_n at default64; formal API explicitly uses0. repeat_penalty=1, frequency_penalty=presence_penalty=0 and temperature0 disable penalty arithmetic, so this storage-history setting does not affect this greedy fixture."
+  },
+  "payloads": [
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/ar.turn1.tokens.i32",
+      "sha256": "f58b2f936943a63ec99c99ca8aa31e9fbe15bc0bfd34240d039515fdd5d557f9",
+      "bytes": 512,
+      "dtype": "int32_le",
+      "shape": [
+        128
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/ar.turn2.target.f32",
+      "sha256": "749efee8cae8a8023b544fdc44e6a982ef56a703302de0c12b4fd77984d35df0",
+      "bytes": 127139840,
+      "dtype": "float32_le",
+      "shape": [
+        128,
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/ar.turn2.tokens.i32",
+      "sha256": "13a4c65aa52f44fac2bcb2d74ad37709238badc9502bffdb9e1f43c54437789a",
+      "bytes": 512,
+      "dtype": "int32_le",
+      "shape": [
+        128
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/first_difference.ar_target.f32",
+      "sha256": "b11e78ac22ab081fa4b7c43aee5f2a76a6176c3986dcfab3ccb773791f0b3516",
+      "bytes": 993280,
+      "dtype": "float32_le",
+      "shape": [
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/first_difference.mtp_decode_target.f32",
+      "sha256": "de89e96ec5f30b37db06b8c5195b2839a76a2274c91ecdd8fd339a52de11906b",
+      "bytes": 993280,
+      "dtype": "float32_le",
+      "shape": [
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/mtp.turn1.frontiers.f32",
+      "sha256": "2fd379001592c93db9970cee7c153e4341e6df5c44f1ab03b021d996840b5692",
+      "bytes": 71516160,
+      "dtype": "float32_le",
+      "shape": [
+        72,
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/mtp.turn1.tokens.i32",
+      "sha256": "f58b2f936943a63ec99c99ca8aa31e9fbe15bc0bfd34240d039515fdd5d557f9",
+      "bytes": 512,
+      "dtype": "int32_le",
+      "shape": [
+        128
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/mtp.turn2.frontiers.f32",
+      "sha256": "1ce6a9104472068a341d74fd3a0b187ae86f79f1d72141271e9e8510ae08cbb8",
+      "bytes": 63569920,
+      "dtype": "float32_le",
+      "shape": [
+        64,
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/mtp.turn2.prefill.f32",
+      "sha256": "71778ff5be9c5feb7ad305ee53d3c617ae2bd5684f02df02bd759595d69003c7",
+      "bytes": 993280,
+      "dtype": "float32_le",
+      "shape": [
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/mtp.turn2.tokens.i32",
+      "sha256": "b9891f8f5bac3b5dfcfeec3ff73e9e0ae16d948fed0fcb7a74bfa6504a14f3d8",
+      "bytes": 512,
+      "dtype": "int32_le",
+      "shape": [
+        128
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/normalized.turn2.target.f32",
+      "sha256": "651237a507d797d308d9b385a0398af24eacf313186cd0832de95669b1301356",
+      "bytes": 127139840,
+      "dtype": "float32_le",
+      "shape": [
+        128,
+        248320
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 993280
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/normalized.turn2.tokens.i32",
+      "sha256": "b9891f8f5bac3b5dfcfeec3ff73e9e0ae16d948fed0fcb7a74bfa6504a14f3d8",
+      "bytes": 512,
+      "dtype": "int32_le",
+      "shape": [
+        128
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/turn1.input.i32",
+      "sha256": "8747a7056573ec3a127c505b380d6efe8652e110242975c7dca238829d79e80a",
+      "bytes": 16336,
+      "dtype": "int32_le",
+      "shape": [
+        4084
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    },
+    {
+      "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/turn2.input.i32",
+      "sha256": "5c1ad15b57ea8a225fd768f0bc042ee410d28cadc3034b5be66c88978bddbfac",
+      "bytes": 16968,
+      "dtype": "int32_le",
+      "shape": [
+        4242
+      ],
+      "data_offset_bytes": 0,
+      "row_stride_bytes": 4
+    }
+  ],
+  "source_provenance": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/source-provenance.json",
+  "replay_result": {
+    "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/replay.json",
+    "sha256": "04cfe6bff174d53c96bbb8803bf28dcb55372f95c3e92e2c8edaf490f9561449"
+  },
+  "state": {
+    "path": "/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/outputs/runs/mtp-cont-native-replay-r1/state.json",
+    "sha256": "8325ae381f2744eceddc7e5ae5bf756f815640efaaed5791acb142398267fc61"
+  }
+}

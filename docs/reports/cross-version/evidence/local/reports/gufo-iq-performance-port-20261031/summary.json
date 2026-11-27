@@ -1,0 +1,115 @@
+{
+  "source": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/source",
+  "branch": "feat/qwen38-iq-performance-series",
+  "image": "gufo:v0.27.0-iq-performance-fbf0a9f8-rocm101",
+  "revision": "fbf0a9f889464dace805e446219bb8e34969dca9",
+  "cpu_tests_passed": 6,
+  "gpu_tests": [
+    {
+      "test": "swiglu_half",
+      "exit_code": 0,
+      "seconds": 5.004,
+      "wsl_available_before_bytes": 18794053632,
+      "wsl_available_min_bytes": 18687946752,
+      "wsl_available_after_bytes": 18793017344,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-swiglu_half.log"
+    },
+    {
+      "test": "hc_mix_ops",
+      "exit_code": 0,
+      "seconds": 2.003,
+      "wsl_available_before_bytes": 18793463808,
+      "wsl_available_min_bytes": 18654253056,
+      "wsl_available_after_bytes": 18795798528,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-hc_mix_ops.log"
+    },
+    {
+      "test": "gdn_ops",
+      "exit_code": 0,
+      "seconds": 2.004,
+      "wsl_available_before_bytes": 18795798528,
+      "wsl_available_min_bytes": 18668646400,
+      "wsl_available_after_bytes": 18801766400,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-gdn_ops.log"
+    },
+    {
+      "test": "float_upload",
+      "exit_code": 0,
+      "seconds": 1.003,
+      "wsl_available_before_bytes": 18801766400,
+      "wsl_available_min_bytes": 18801766400,
+      "wsl_available_after_bytes": 18806513664,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-float_upload.log"
+    },
+    {
+      "test": "native_expert_ops",
+      "exit_code": 0,
+      "seconds": 1.003,
+      "wsl_available_before_bytes": 18806513664,
+      "wsl_available_min_bytes": 18806259712,
+      "wsl_available_after_bytes": 18808012800,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-native_expert_ops.log"
+    },
+    {
+      "test": "iq_expert_ops",
+      "exit_code": 0,
+      "seconds": 1.003,
+      "wsl_available_before_bytes": 18808012800,
+      "wsl_available_min_bytes": 18808012800,
+      "wsl_available_after_bytes": 18807230464,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-iq_expert_ops.log"
+    },
+    {
+      "test": "native_iq4_ops",
+      "exit_code": 0,
+      "seconds": 11.008,
+      "wsl_available_before_bytes": 18807230464,
+      "wsl_available_min_bytes": 18371096576,
+      "wsl_available_after_bytes": 18690437120,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-native_iq4_ops.log"
+    },
+    {
+      "test": "blaslt_ops",
+      "exit_code": 0,
+      "seconds": 3.004,
+      "wsl_available_before_bytes": 18690437120,
+      "wsl_available_min_bytes": 18502492160,
+      "wsl_available_after_bytes": 18694778880,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-blaslt_ops.log"
+    },
+    {
+      "test": "routed_wmma_ops",
+      "exit_code": 0,
+      "seconds": 192.097,
+      "wsl_available_before_bytes": 18694098944,
+      "wsl_available_min_bytes": 17891995648,
+      "wsl_available_after_bytes": 18763124736,
+      "log": "/home/user/Apps/Gufo/deployments/iq-perf-port-20261031-230741/logs/gpu-routed_wmma_ops.log"
+    }
+  ],
+  "model_bindings": [
+    {
+      "model": "Huihui",
+      "exit_code": 0,
+      "seconds": 0.175,
+      "output": "PASS model binding: 1224 tensors, 93671559680 packed bytes; MTP configuration matched\nF32: 557\nQ8_0: 502\nQ6_K: 1\nIQ4_NL: 44\nIQ3_S: 94\nIQ4_XS: 2\nBF16: 24\n"
+    },
+    {
+      "model": "Orca",
+      "exit_code": 0,
+      "seconds": 0.127,
+      "output": "PASS model binding: 1224 tensors, 97462131200 packed bytes; MTP configuration matched\nF32: 388\nF16: 1\nQ5_K: 48\nQ6_K: 1\nIQ4_NL: 194\nIQ4_XS: 568\nBF16: 24\n"
+    },
+    {
+      "model": "SC117",
+      "exit_code": 0,
+      "seconds": 0.14,
+      "output": "PASS model binding: 1224 tensors, 83852561920 packed bytes; MTP configuration matched\nF32: 292\nF16: 1\nQ8_0: 96\nQ4_K: 43\nQ5_K: 31\nQ6_K: 89\nIQ3_XXS: 34\nIQ4_NL: 40\nIQ3_S: 20\nIQ2_S: 40\nIQ4_XS: 45\nBF16: 484\nQ2_0: 9\n"
+    }
+  ],
+  "live_model_switch": false,
+  "full_model_validation": false,
+  "speed_benchmark": false,
+  "new_model_downloads": 0,
+  "cleanup_freed_bytes": 286033196
+}

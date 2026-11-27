@@ -1,0 +1,27 @@
+{
+  "exit_code": 0,
+  "oom_killed": false,
+  "completed_utc": "2026-10-04T10:55:32.056717233Z",
+  "binary_sha256": "6ea886bf0b62086d78f5f7a130f6c4aa4697739e85a16a9ca5ed094f2ef4223e",
+  "source_commit": "49861f01410ec3ae384ffb608969607649b6c7fb",
+  "greedy_generated_tokens": 64,
+  "drafted": 51,
+  "accepted": 34,
+  "rejection_cycles": 8,
+  "all_greedy_tokens_and_completed_frontiers_bitwise_equal": true,
+  "rollback_context_boundary": {
+    "passed": true,
+    "context_tokens": 14,
+    "prompt_tokens": 10,
+    "warm_decode_requested_budget": 2,
+    "boundary_decode_requested_budget": 8,
+    "reason_budget_exceeds_remaining_slots": "The session context is prompt length +4; warm decode commits at least1. Boundary budget8 therefore exceeds at most3 remaining slots.",
+    "checks": [
+      "restore keeps allocated rollback rows and configured allocation bound",
+      "same restored snapshot/sampler produces identical committed tokens, RNG state, and logits",
+      "full-context restore releases unusable rollback",
+      "explicit reset releases rollback"
+    ],
+    "limitation": "Boundary committed token count is not separately logged by the pre-existing CheckRollbackReuse function."
+  }
+}

@@ -1,0 +1,618 @@
+{
+  "schema": "huihui-q4kxl-unlimited-comparison-v1",
+  "status": "completed",
+  "started_utc": "2026-10-05T05:39:21.261021+00:00",
+  "plan": {
+    "schema": "huihui-q4kxl-unlimited-execution-plan-v1",
+    "created_utc": "2026-10-05T05:39:21.229355+00:00",
+    "cases_sha256": "77fc0d3bb337b961d89ce37d32d417f2b5d9de5d4671a5df6faede03c932f3e3",
+    "protocol_sha256": "47ffc5ce742d74bfc2a00d4660362ce3b9e1469aaaf2c5aa7f37c775db42f155",
+    "harness_sha256": "57285faee6db4b9ecb539d32aa5a0e33f55f86a941ed273e8b2419d41daf081c",
+    "coordinator_sha256": "75741bf219e66e08d1a4d4ed89a3bfaadb3c524df55f878e27a1392b5915297a",
+    "lifecycle_sha256": "10f02971e8266a4e97c22dee87657807ee9c12db9709a6091355a142421331f8",
+    "blocks": [
+      {
+        "mode": "ar",
+        "repeat": 1,
+        "order": [
+          "context_full_261632",
+          "natural_258048",
+          "natural_4096",
+          "natural_32768",
+          "natural_512",
+          "natural_131072"
+        ]
+      },
+      {
+        "mode": "mtp",
+        "repeat": 1,
+        "order": [
+          "context_full_261632",
+          "natural_258048",
+          "natural_4096",
+          "natural_32768",
+          "natural_512",
+          "natural_131072"
+        ]
+      },
+      {
+        "mode": "mtp",
+        "repeat": 2,
+        "order": [
+          "natural_258048",
+          "natural_131072",
+          "context_full_261632",
+          "natural_512",
+          "natural_32768",
+          "natural_4096"
+        ]
+      },
+      {
+        "mode": "ar",
+        "repeat": 2,
+        "order": [
+          "natural_258048",
+          "natural_131072",
+          "context_full_261632",
+          "natural_512",
+          "natural_32768",
+          "natural_4096"
+        ]
+      },
+      {
+        "mode": "ar",
+        "repeat": 3,
+        "order": [
+          "natural_4096",
+          "context_full_261632",
+          "natural_258048",
+          "natural_131072",
+          "natural_512",
+          "natural_32768"
+        ]
+      },
+      {
+        "mode": "mtp",
+        "repeat": 3,
+        "order": [
+          "natural_4096",
+          "context_full_261632",
+          "natural_258048",
+          "natural_131072",
+          "natural_512",
+          "natural_32768"
+        ]
+      }
+    ],
+    "warmup_case_id": "natural_4096",
+    "formal_requests": 36,
+    "warmup_requests": 6,
+    "mode_switches": "Keep gufo for consecutive same-mode blocks; save/stop/remove exact owned gufo only when changing mode. Leave final MTP running.",
+    "output_limit_fields": "all omitted; server max-tokens=-1",
+    "new_results_only": true
+  },
+  "requests": [
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--warmup--natural_4096/results.json",
+      "result_sha256": "c657ffc71dd022b85088e865aafab82cabad9aba207865ac68c2f3cbd2cc25a2"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--context_full_261632/results.json",
+      "result_sha256": "eb65b418f9bba8111c894385663ee534fc7cb673c55dbadee54d0106ba8d5380"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--natural_258048/results.json",
+      "result_sha256": "8a75b8fa704a4228c803dc931cf742c742118d501f1d2f8d1ffb690beb286b13"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--natural_4096/results.json",
+      "result_sha256": "5e8c12da2777863dcfabc63308573b65f9ea14f0186f454f95bef9e55db92e82"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--natural_32768/results.json",
+      "result_sha256": "f2fd81fc38d75645f8f42b287823acddb6ee060af231032d03cff816fc3009a8"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--natural_512/results.json",
+      "result_sha256": "b1600f740cd44d91640e452375eda4b5c49e6ab4aef3d43aa0f803023f810896"
+    },
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r1--formal--natural_131072/results.json",
+      "result_sha256": "5c87535181acd32ce78d39dc9bd0ddb97ef1b1967edb3a4ae69365f7291830ae"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--warmup--natural_4096/results.json",
+      "result_sha256": "5eccacc477dd757b0d739f493460388295665be0f13d2ccc812ed089663d398c"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--context_full_261632/results.json",
+      "result_sha256": "6d33150bd30ff3da888adccf44d2f2f915d8cb4efc299e1e547423b3d786294d"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--natural_258048/results.json",
+      "result_sha256": "14005df3028294a91afc208fcc8a035a6cb1106ad5ee1459f094883009b27bf1"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--natural_4096/results.json",
+      "result_sha256": "8e80c0c3cc48da5617aeac305cd8c455e905497c64ef10b4f59cb9b1ad25dc84"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--natural_32768/results.json",
+      "result_sha256": "f1dc1fc5d5328589e73c9105e8818f8826d4ecf4a064be9ca5a8086e65b3a036"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--natural_512/results.json",
+      "result_sha256": "f8b16e9c293927d837a25b985d745928aa812d8ff99f8498a01b046367b818ba"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r1--formal--natural_131072/results.json",
+      "result_sha256": "64cf227ec11e792f3d543d251f33aa9ccfac8b1d27d4cba0566818cc87f78993"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--warmup--natural_4096/results.json",
+      "result_sha256": "4c399f372665f4c795e2a53a8884303a7f5228f487674e8c916a99b0a67e6395"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--natural_258048/results.json",
+      "result_sha256": "a68d0f612247369f292aa29f8083cfeef18b5139f37b52d8ac85bfdcacc004a0"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--natural_131072/results.json",
+      "result_sha256": "2d77b1773afd6792c8d6f1c781c7291d2ca1272e0e247c6623fca4f47819a2cb"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--context_full_261632/results.json",
+      "result_sha256": "2e6cfd62ff45cbce3332e247ab8d2c83415a5c6f9d030c16189777ca8e45e45e"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--natural_512/results.json",
+      "result_sha256": "35983e275dde478ef6a8a894c0cd5e0c9189cc4f5045af33538253c408844b89"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--natural_32768/results.json",
+      "result_sha256": "1edb7d246845fd42d1b70dcf014436e9b6a6468f1f160bc4508ef199fdcc82d9"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r2--formal--natural_4096/results.json",
+      "result_sha256": "4ba47b74db8fceec945c6fc428873a4dfc060fee8aa83b229d7aff4f93e84355"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--warmup--natural_4096/results.json",
+      "result_sha256": "e0ca24bf699124fe445b21185b06d8a77360c9ef87c5558b6927c358b451b80f"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--natural_258048/results.json",
+      "result_sha256": "8ae449ab6d40509210d9e5696ed125078c1ba5dd4408dcc415f9c8b2a2bd1b84"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--natural_131072/results.json",
+      "result_sha256": "8afa8538637cb38f4b7478bc9e9af045c7a4146ed09961b74fc19675e75e479e"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--context_full_261632/results.json",
+      "result_sha256": "cb532b9726f959b14be2206940f6c2a85b113f3c00571f220f85a63782349780"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--natural_512/results.json",
+      "result_sha256": "bcb8351a0d4497c703af65bb479228642cd262c1b6a7cf8b0d4e9bf2dcaadc35"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--natural_32768/results.json",
+      "result_sha256": "7c065eb870aa65289e22e41d47c8b4d50cf12517ed181df9004144a13711befa"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r2--formal--natural_4096/results.json",
+      "result_sha256": "15d136405644c07e400f6a9e11b3d6f922ea6e3d069b4bf341f7e0e45108abde"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--warmup--natural_4096/results.json",
+      "result_sha256": "10ca6d9566e9a6fca26071922593aa221974f24a13b73714d3879e8057c4b1c2"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--natural_4096/results.json",
+      "result_sha256": "6f479ff6147ac07773444458976f7a8bc8b3a8614d942bb26bf79dcc60f51f2a"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--context_full_261632/results.json",
+      "result_sha256": "da14f442ed61b11410e2e8fdd1340b74fbad1ba689097702d674a870a15bf621"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--natural_258048/results.json",
+      "result_sha256": "7bf94ae07a4080d4846f4573a59c8cf85eae6df3c3ec7f7cf9866339efa561f3"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--natural_131072/results.json",
+      "result_sha256": "c344ae5c529d7052c348a0655fae916028360217f554bb6195b5a7bf659ec9b0"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--natural_512/results.json",
+      "result_sha256": "432bb84c296043c55a9637ecebda50e01c378805fe4a1a89e9496b38e910ab95"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/ar-r3--formal--natural_32768/results.json",
+      "result_sha256": "54cf4b2cd1e8ccfba2345bb55568f93f340c26984e4bd4e0fab13671beaea8e1"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "warmup",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--warmup--natural_4096/results.json",
+      "result_sha256": "bfd1a9e91855c36f00095625bfad2358e112e27933622ee5b6876bca3ea3236b"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_4096",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--natural_4096/results.json",
+      "result_sha256": "79e3cfd0f395a3d66d769b43a875a2b9e66c26eb8ef12ac2db3cc0840c21acde"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "context_full_261632",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--context_full_261632/results.json",
+      "result_sha256": "522a2441281a718f869f950cce53e095d356147d79625160c963b61b15040cba"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_258048",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--natural_258048/results.json",
+      "result_sha256": "200166f4935e3b59032854d46a34540c52fb6c3ecf41274646970a0244bc37fd"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_131072",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--natural_131072/results.json",
+      "result_sha256": "b35619f1d88cc92544a5f723b4be925d4fcc61ab78319ff324c36ec5886b5792"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_512",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--natural_512/results.json",
+      "result_sha256": "bac20563e67eac109bb33c72b932493ff5ab2fbdfdd8676f460e3c60cd6a4412"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "role": "formal",
+      "case_id": "natural_32768",
+      "measurement_status": "completed",
+      "case_condition_observed": true,
+      "result_path": "requests/mtp-r3--formal--natural_32768/results.json",
+      "result_sha256": "7baaee1c3a6c1915f3483bbd2f02c92da97fcdcd6e5e76d6c966a83520282f2e"
+    }
+  ],
+  "blocks": [
+    {
+      "block": "ar-r1",
+      "mode": "ar",
+      "repeat": 1,
+      "started_utc": "2026-10-05T05:39:27.308773+00:00",
+      "container_id": "1a2ba2acf043a8ca831f3be3f01a7493a62b5e23d07b934e6761064636cc5032",
+      "state_path": "formal-blocks/ar-r1/state.json",
+      "completed_utc": "2026-10-05T05:55:08.754050+00:00"
+    },
+    {
+      "block": "mtp-r1",
+      "mode": "mtp",
+      "repeat": 1,
+      "started_utc": "2026-10-05T05:56:22.831970+00:00",
+      "container_id": "ec566abcafd8f6523bc18a2381aa8ec21680b9af14994695446153a4411bcc0d",
+      "state_path": "formal-blocks/mtp-r1/state.json",
+      "completed_utc": "2026-10-05T06:12:21.050231+00:00"
+    },
+    {
+      "block": "mtp-r2",
+      "mode": "mtp",
+      "repeat": 2,
+      "started_utc": "2026-10-05T06:12:25.622621+00:00",
+      "container_id": "ec566abcafd8f6523bc18a2381aa8ec21680b9af14994695446153a4411bcc0d",
+      "state_path": "formal-blocks/mtp-r2/state.json",
+      "completed_utc": "2026-10-05T06:26:51.472661+00:00"
+    },
+    {
+      "block": "ar-r2",
+      "mode": "ar",
+      "repeat": 2,
+      "started_utc": "2026-10-05T06:27:57.800379+00:00",
+      "container_id": "2800b6512c8e35732609356c1e3f9239e334dbdd0a31e087881d57f9b7a5c660",
+      "state_path": "formal-blocks/ar-r2/state.json",
+      "completed_utc": "2026-10-05T06:42:48.669730+00:00"
+    },
+    {
+      "block": "ar-r3",
+      "mode": "ar",
+      "repeat": 3,
+      "started_utc": "2026-10-05T06:42:53.169430+00:00",
+      "container_id": "2800b6512c8e35732609356c1e3f9239e334dbdd0a31e087881d57f9b7a5c660",
+      "state_path": "formal-blocks/ar-r3/state.json",
+      "completed_utc": "2026-10-05T06:57:33.622778+00:00"
+    },
+    {
+      "block": "mtp-r3",
+      "mode": "mtp",
+      "repeat": 3,
+      "started_utc": "2026-10-05T06:59:39.999243+00:00",
+      "container_id": "50a4591de9eb313ccbcc5020225d1382a44039d4b6026864b603f16a7e3e663d",
+      "state_path": "formal-blocks/mtp-r3/state.json",
+      "completed_utc": "2026-10-05T07:13:41.384813+00:00"
+    }
+  ],
+  "current_block": "mtp-r3",
+  "current_case": "natural_32768",
+  "finished_utc": "2026-10-05T07:14:41.484908+00:00",
+  "kept_running_container_id": "50a4591de9eb313ccbcc5020225d1382a44039d4b6026864b603f16a7e3e663d"
+}

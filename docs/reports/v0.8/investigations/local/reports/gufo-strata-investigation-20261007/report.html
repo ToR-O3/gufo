@@ -1,0 +1,945 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gufo IQ4_XSへのStrata実装の移植可能性調査</title><style>*{box-sizing:border-box}body{margin:0;background:#f1f4f7;color:#1c2d3d;font:16px/1.8 system-ui,"Yu Gothic UI",sans-serif}main{max-width:1160px;margin:0 auto;padding:32px 24px 64px}header{padding:36px 40px;background:#132d46;color:white;border-radius:16px}.eyebrow{color:#9dcce8;font-size:12px;letter-spacing:.15em}h1{font-size:34px;line-height:1.35;margin:12px 0}.lead{font-size:18px;max-width:850px}.badge{display:inline-block;background:#27516b;border-radius:6px;padding:5px 12px;font-size:13px}section{margin:24px 0;padding:26px 32px;background:white;border:1px solid #dce5ec;border-radius:12px}h2{font-size:23px;margin:0 0 16px;line-height:1.5}h3{font-size:18px;border-left:4px solid #20798e;padding-left:12px;margin-top:28px}p{margin:12px 0}.scroll{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.6}th{background:#eaf1f6;text-align:left;color:#173c56}th,td{padding:12px;border-bottom:1px solid #dce5ec;vertical-align:top}td:first-child{font-weight:600}a{color:#086c99}.ref{font-size:12px;white-space:nowrap}code{font-size:.88em;background:#edf3f6;padding:2px 4px;border-radius:3px;overflow-wrap:anywhere}.note{background:#f8f3e8;border-left:4px solid #bf9235;padding:14px 18px}details{border-top:1px solid #dde6ed;padding:12px 0}summary{cursor:pointer;font-size:14px}.path{font-size:12px;overflow-wrap:anywhere}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px;line-height:1.5;background:#eef3f7;padding:14px}li{margin:12px 0}@media(max-width:700px){main{padding:12px}header,section{padding:22px 18px}h1{font-size:27px}h2{font-size:20px}table{min-width:660px}}@media print{body{background:white;font-size:11px}main{max-width:none;padding:0}header{background:white;color:#173c56;padding:12px 0}.badge{color:black;background:#eee}section{break-inside:auto;border:0;padding:10px 0;margin:10px 0}h2,h3{break-after:avoid}tr{break-inside:avoid}.scroll{overflow:visible}a{color:inherit}details{display:none}h1{font-size:25px}}</style></head><body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><main><header><p class="eyebrow">SOURCE INVESTIGATION · 2026-10-07</p>
+<h1>StrataからGufoのIQ4_XSへ<br>取り入れる価値のある改善</h1>
+<p class="lead">優先するのはPrefill・TTFT。現在Gufoが優位なDecodeを維持しながら、中間データの往復とCPU同期を減らす。</p>
+<div class="badge">調査のみ：ソース変更・サービス再起動・新規GPUベンチなし</div></header>
+<section><h2>判断</h2><p><strong>発展させる余地はある。具体的な実装候補も見つかった。</strong>ただし、Strataの高速化を一括で移せば速くなるという結果ではない。最初に取り組む候補は、GufoのIQ4経路で残っている中間FP32出力とFP16への再変換の省略。その次に小型FP32投影のデータ再利用、GPU内でのMoEタイル生成を検討する。</p>
+<p>StrataのINT8 expert演算やBF16 HC処理は比較対象として有用だが、Gufoの現行計算と数値条件が異なる。性能改善量・品質・Decode維持は、実装後の実測で初めて判断できる。</p></section><section><h2>1. 実測が示している範囲</h2><p>同じOrcaRouter IQ4_XSの3分割GGUFと同じ入力トークン列、再利用キャッシュなし、各3回の中央値。各エンジンの内部演算まで同一という意味ではない。過去の測定結果を再集計したもので、今回は追加実行していない。</p><div class="scroll"><table><thead><tr><th>mode</th><th>入力</th><th>Prefill Gufo → Strata<br>tok/s</th><th>Strataの差</th><th>TTFT Gufo → Strata<br>秒</th><th>Decode Gufo → Strata<br>tok/s</th></tr></thead><tbody><tr><td>AR</td><td>約32K</td><td>866.5 → 1236.9</td><td>+42.8%</td><td>37.83 → 26.65</td><td>26.9 → 11.0</td></tr><tr><td>AR</td><td>約128K</td><td>843.1 → 1161.4</td><td>+37.8%</td><td>155.48 → 113.23</td><td>25.9 → 10.6</td></tr><tr><td>AR</td><td>約256K</td><td>817.7 → 1053.5</td><td>+28.8%</td><td>315.56 → 245.54</td><td>24.9 → 10.2</td></tr><tr><td>MTP</td><td>約32K</td><td>869.2 → 1120.2</td><td>+28.9%</td><td>37.74 → 29.38</td><td>34.3 → 29.7</td></tr><tr><td>MTP</td><td>約128K</td><td>843.4 → 1076.8</td><td>+27.7%</td><td>155.44 → 122.07</td><td>33.0 → 24.2</td></tr><tr><td>MTP</td><td>約256K</td><td>808.0 → 978.9</td><td>+21.2%</td><td>319.40 → 264.23</td><td>32.4 → 23.6</td></tr></tbody></table></div><p>128K・MTPありではTTFTが約33.4秒短い。MTPなしでもPrefillが37.8%速いので、差の全体をdraftモデルや採用率だけでは説明できない。一方、<strong>Decodeは全6条件でGufoが速い</strong>。採用条件は「Prefill・TTFTが改善し、現在のGufoのDecode・MTP挙動・品質を損なわない」とする。</p>
+<p class="note">この表は現在のアプリ構成の比較。Gufoは最大256K・Prefill上限2048、Strataベンチは最大256K・Prefill8192。通常のStrataは128K・Prefill16384へ復帰済み。前回はStrataの16384で途中再起動が発生し、8192へ下げて完走した経緯があるため、再試験でも大きなチャンクを無条件に採用しない。</p>
+<p>元データ：<span title="参照先はローカル保管">比較ベンチレポート</span> ／ <span title="参照先はローカル保管">今回の調査根拠JSON</span></p></section><section><h2>2. 「同じIQ4_XS」でも実行経路は違う</h2>
+<p>Gufoのローカル版はv0.8.0を取り込んだ <code>2232773</code>。既存改修でQ4系のルーティング、FP16 WMMA、SwiGLU、活性値の準備をIQ4へ共有済み。過去の短いpp2048試験は355.5 → 981.7 tok/sへ改善しており、単に未対応形式を読めるようにしただけの状態ではない。これは別条件の過去値で、上の長文ベンチとは混ぜない。</p><a class="ref" href="#G1">[G1]</a> <a class="ref" href="#G11">[G11]</a> <a class="ref" href="#G16">[G16]</a><p>Strataはv0.1.40.1 <code>82f46a8</code> と既存のWSL/Orca対応5ファイルの修正を調査。Orcaパックの実ファイルを確認すると、<code>compat_bf16=true</code> で<strong>363テンソルを丸めを伴ってBF16へ変換</strong>していた。内訳はIQ4_XS 266、IQ4_NL 97。主にHC、SSM alpha/beta、PLE valueであり、さらにF32→BF16が値を変えずに96件ある。重み変換があることだけから意味的品質の優劣は判断できない。</p><a class="ref" href="#S8">[S8]</a><div class="scroll"><table><thead><tr><th>処理</th><th>Gufoの現在のIQ4経路</th><th>Strataの現在のOrca構成</th></tr></thead><tbody><tr><td>大きな通常投影</td><td>量子化重みを読み、必要な部分をFP16化してWMMA</td><td>一時領域へのFP16展開＋専用WMMA/hipBLASLt等</td></tr><tr><td>小さいHC等の投影</td><td>原形式＋FP32内積。小型投影には厳しい誤差条件</td><td>パックのBF16重み＋BF16/FP16系の行列演算・融合</td></tr><tr><td>expertのPrefill</td><td>Q4と共有するFP16 WMMA</td><td>IQ4_XS/IQ4_NL対応の融合INT8 WMMA</td></tr><tr><td>GDN出力の直接FP16化</td><td>既存の専用条件はQ8_0。IQ4はFP32出力後に変換</td><td>不要な最終FP32書き出しを省くGDN_NOY</td></tr><tr><td>MoEタイル表</td><td>GPUカウントをCPUへ戻して計画し再転送</td><td>count/scan/placeをGPU上で実行</td></tr><tr><td>KV・MTP</td><td>FP16 KV、共有Q8_0 draft、最大7案の適応制御</td><td>INT8 KV、Q2系draftとQ4投影、window8192、lookup併用</td></tr></tbody></table></div><a class="ref" href="#G2">[G2]</a> <a class="ref" href="#G3">[G3]</a> <a class="ref" href="#G7">[G7]</a> <a class="ref" href="#G9">[G9]</a> <a class="ref" href="#G11">[G11]</a> <a class="ref" href="#G19">[G19]</a> <a class="ref" href="#G20">[G20]</a> <a class="ref" href="#S1">[S1]</a> <a class="ref" href="#S2">[S2]</a> <a class="ref" href="#S3">[S3]</a> <a class="ref" href="#S6">[S6]</a> <a class="ref" href="#S7">[S7]</a> <a class="ref" href="#S14">[S14]</a> <a class="ref" href="#S15">[S15]</a> <a class="ref" href="#S16">[S16]</a><p class="note">「元GGUFが同じ」から「両エンジンの計算精度・状態・draftも同じ」とは言えない。Strataの速さを全部、純粋な実装効率の差と解釈しない。</p></section><section><h2>3. 優先候補</h2><div class="scroll"><table><thead><tr><th>優先</th><th>候補</th><th>主な狙い</th><th>精度上の扱い</th><th>実装規模の目安</th></tr></thead><tbody><tr><td>A1</td><td>IQ4 GDN/HCの中間データ往復を省く</td><td>Prefillの書き出し・読込・変換launch削減</td><td>現行演算の一致を狙う</td><td>小〜中</td></tr><tr><td>A2</td><td>小型FP32投影の重み・入力再利用</td><td>IQ4固有に残る長い内積の高速化</td><td>積・FMA・和の順序を維持</td><td>中〜大</td></tr><tr><td>A3</td><td>MoEルーティング表をGPUで生成</td><td>CPU待ち合わせとD2H/H2D往復削減</td><td>同じ割当とタイル条件の一致を狙う</td><td>中</td></tr><tr><td>B1</td><td>通常投影の一時FP16展開＋paddingを比較</td><td>IQ4復号の重複と不利なstrideを削減</td><td>丸めと累積順の検証が必要</td><td>中〜大</td></tr><tr><td>B2</td><td>IQ4 expertの融合INT8方式を比較</td><td>長文PrefillのMoE処理時間削減</td><td>現行FP16と異なる数値経路</td><td>大</td></tr><tr><td>B3</td><td>IQ4用チャンク幅を再測定</td><td>層・転送・起動コストの償却</td><td>分割時の状態一致とRAMも検証</td><td>中</td></tr><tr><td>C</td><td>GDN配置、Attention、KV、draft軽量化</td><td>局所処理・メモリ・二次的な速度</td><td>項目ごとに精度・状態互換性が違う</td><td>中〜大</td></tr></tbody></table></div><p>Aは現行品質を保つ設計から着手する候補、Bは測定と数値検証を伴う比較実験、Cは今回の主目的に対する優先度が低い項目。規模は相対評価で、日数や改善率の予測ではない。</p></section><section><h2>4. A1：IQ4で残っている中間出力を省く</h2>
+<p><strong>最初の実装候補として最も具体的。</strong>GufoのGDNにはすでに直接FP16で結果を書く機能があるが、<code>Executor::LinearAttention</code>側の有効条件が<code>ssm_out.type == Q8_0</code>になっている。OrcaのIQ4経路は、GDN結果をFP32で書く → <code>PrepareHalfInput</code>で読み直してFP16化 → IQ4のFP16投影、という流れになる。</p><a class="ref" href="#G2">[G2]</a> <a class="ref" href="#G3">[G3]</a> <a class="ref" href="#G4">[G4]</a><p>Strataの<code>GDN_NOY</code>が使う「次段がFP16しか読まないなら最後のFP32出力を作らない」という考え方を、Gufo既存のGDN epilogueへ適用できる。SSM出力投影のIQ4_XS対応を加え、直接作ったFP16行を<code>NativeIq4DenseF16</code>へ渡す。StrataのGDNカーネル全体を移植する必要はない。</p><a class="ref" href="#S1">[S1]</a><p>2048 tokens × 6144要素のFP32中間は1層48MiB。書き出し＋読み戻しを省ければ、36 GDN層で<strong>最大約3.375GiB相当の論理メモリアクセス</strong>と変換launchを除去できる計算になる。これはDRAM実転送量や速度改善の予測ではない。キャッシュヒットや他処理との重なりがあり、常駐メモリが同じ量だけ減るわけでもない。</p>
+<p>同様に、IQ4側のHC epilogueは現在FP32のmixedだけを書き、その後でFP16行を準備する。FP32の計算・出力は残して、同じ結果のFP16コピーを生成時に作る案もある。Q8用<code>wide_mixer_</code>をIQ4で無条件に有効にするのは不可。そこは正規化やHC downの数値経路まで変わる。</p><a class="ref" href="#G5">[G5]</a> <a class="ref" href="#G6">[G6]</a><p><strong>検証：</strong>元のFP32積の丸めを挟んでからFP16化すること、fast-mathが融合を変えないこと、1/8/9/15/16/2047/2048/2049行の末尾、分割入力、後続全logits、MTP採否とsnapshot復元を確認する。現行のDecode経路は同じままにする。</p></section><section><h2>5. A2：小型FP32投影を保ったまま改善する</h2>
+<p>Gufoでは出力行数512以下のIQ4投影をFP32内積に残している。以前の10240幅のFP16試験は相対誤差4.7e-5で、現行の2e-5条件を満たさなかったためだ。現在は8トークンを同じlaunch gridにまとめる改善済みで、ここを「まだ1トークンずつ大量起動している」と診断するのは誤り。</p><a class="ref" href="#G7">[G7]</a> <a class="ref" href="#G8">[G8]</a> <a class="ref" href="#G16">[G16]</a><p>StrataのHC投影では行列積・後処理の融合や入力の再利用を行っている。持ち帰るべきなのは、同じ入力を使うdown/injectなどを効率よく読むこと、packed IQ4の復号・入力ロードを複数行で再利用すること、出力と後処理の余分な往復を減らす考え方。各dotの積・FMA・和の順序を保つ設計が先になる。</p><a class="ref" href="#S7">[S7]</a><p><code>HCD_EXACT</code>の「exact」はStrataのhipBLASLt/BF16経路に対する一致であり、Gufoの元IQ4＋FP32経路との一致を意味しない。そのまま移してもGufoの精度条件は証明されない。</p>
+<p><strong>参考の過去プロファイル：</strong>IQ4のグループ化＋WMMA段階で、小型FP32投影416.7ms（18.9%）、expert WMMA556.0ms（25.2%）、wide dense502.8ms（22.8%）、FP16変換84.9ms（3.8%）／対象scope2207.6ms。この段階は最終活性値共有前で、今回のv0.8長文測定とは異なる。最終候補用<code>group-final-iq4.json</code>はexit 137で未完了。<strong>現在の128Kの割合や移植後の加速率には転用しない。</strong></p>
+<p><strong>検証：</strong>独立に復号したCPU/FP64 oracleと既存誤差限界、同じ行を異なる列位置に置いた場合、全logits、Q4対照。既存テストの許容誤差を緩めて合格させない。</p></section><section><h2>6. A3：MoEのGPU→CPU→GPU往復を減らす</h2>
+<p>Gufoはexpertごとの件数をGPUで数え、CPUへ転送し、<code>hipEventSynchronize</code>後に48/64/128行などのタイル表を作り直してGPUへ送っている。一方、Strataの融合経路はcount/scan/placeとタイル処理をGPU側で進める。概念として移植する価値がある。</p><a class="ref" href="#G9">[G9]</a> <a class="ref" href="#G10">[G10]</a> <a class="ref" href="#S2">[S2]</a><p>ただしGufoも、件数転送の後ろへshared expertを積んでCPU計画と重ねている。待ち合わせ呼出しがあることだけでは大きな待ち時間を証明できない。既存FP16 WMMAを保ち、まずGPU上で現在と同じ表を作る案を評価する。上限gridで無効タイルを早期終了する方式、または永続gridで有効表を処理する方式を比較できる。</p>
+<p>48層×64チャンク相当の128Kでは、ルーティングのホスト待ち合わせを約3072回通り得る。1回ごとの実際の待ちがどの程度隠れているかを測る必要がある。出力行の配置やタイル幅を変えるとコンパイラの積和まで変わることがあるので、同じルーティングで出力・stateが一致する検証を行う。</p>
+<p><strong>判定：</strong>CPU待ち、転送、GPU時間、wall timeを別々に測り、通常ルーティングと特定expertに偏る場合の双方で有効なら採用する。</p></section><section><h2>7. B：比較実験の価値はあるが、単純移植はできない</h2>
+<h3>B1 — 量子化重みを一時FP16へ展開して再利用</h3>
+<p>Strataは一つの投影を一時領域へ展開し、K+64のpaddingを入れた専用WMMAやhipBLASLtへ渡す。Gufoはpacked重みをLDSへ載せ、タイル内で復号する。長い入力なら一度の展開を多くの行で使い回す方式が勝つ可能性がある一方、展開・追加読込・scratch増加で負ける可能性もある。</p><a class="ref" href="#S6">[S6]</a> <a class="ref" href="#G2">[G2]</a><p>Gufoのwide IQ4投影のうち、K=6144などの実shapeを選んで比較する。FP16化は現行と同じ丸め、投影は同じ積和の順序を目指す。採用する場合も投影単位の一時領域に限定し、全モデルを展開した常駐コピーは作らない。Strataの汎用scratchは32M FP16要素（64MiB）だが、Gufoに同じ量が必要とは未確定。</p>
+<h3>B2 — IQ4_XS/IQ4_NL expertを融合INT8 WMMAで処理</h3>
+<p>Strataは入力活性値を32要素ごとにINT8へ量子化し、IQのcodebook値とINT8 WMMAで積和する。ルーティング、gate/up、SwiGLU、downへの量子化をつなぎ、gfx1151のWGPに合わせたグリッド調整も行う。Orcaの型23/20は対応範囲で、既存ログにも融合INT8経路の利用記録がある。</p><a class="ref" href="#S3">[S3]</a> <a class="ref" href="#S4">[S4]</a> <a class="ref" href="#S5">[S5]</a><p>GufoもQ8向け整数WMMAやMMQを既に持つが、Orcaのexpert Prefillは現在FP16 WMMA。整数方式はブロックごとのスケール処理が必要で、常に速いわけではない。FP16方式を採用した理由もソースに書かれている。</p><a class="ref" href="#G11">[G11]</a> <a class="ref" href="#G12">[G12]</a><p><strong>現行演算と同一ではない。</strong>まずGufoの既存数値条件内で成立するか確認する。満たさない場合は通常経路に入れず、別の数値モードとして扱うべきかを後段で判断する。入力活性値と中間SwiGLUの量子化、scale丸め、per-block累積の誤差を独立に測る。Strataで速いことだけを採用根拠にしない。</p>
+<h3>B3 — IQ4に合わせたチャンク幅</h3>
+<p>Gufoの2048は、過去の512/1024/2048/4096比較で選ばれた値。現在のOrca改修後・深い文脈で8192が試された根拠は今回確認できなかった。Strataの8192/16384をそのまま正解とはしない。2048対4096を先に比較し、必要な場合のみ8192へ広げる。</p><a class="ref" href="#G13">[G13]</a> <a class="ref" href="#G14">[G14]</a><p><code>--prefill-chunk</code>は実行単位の上限を制限するもので、Gufo内部の<code>PrefillCapacity()</code>2048を超えてscratchを増やす機能ではない。この比較には実装上の容量・タイル・末尾の確認が必要。TTFTだけでなく、ピークRAM、Windows空きRAM、入力キャンセルへの応答、分割した会話の状態も測る。</p></section><section><h2>8. 優先度を下げる／そのまま取り入れないもの</h2><div class="scroll"><table><thead><tr><th>対象</th><th>今回の判断・理由</th></tr></thead><tbody><tr><td>SH_STREAM：shared expertの副stream並列化</td><td>Gufoで既に実験し、カーネル同士が帯域等を取り合って0.5〜0.9%遅くなり不採用。IQ4で再評価する余地はあるが、既定で採用する根拠はない。</td></tr><tr><td>StrataのhipBLASLt調整テーブルをそのままコピー</td><td>Gufoは当時のROCm7.2.3を固定、Strataは7.14.1の100401向け。shape・layout・library・algorithm IDが異なる。GufoではF16 denseの全面hipBLASLt化が既存WMMAより遅かった。持ち帰るならshapeごとの選択・検証手法。</td></tr><tr><td>HC重みを一括BF16へ変換</td><td>Strataの実運用では行っているが、Gufoのnative IQ4＋厳しいFP32内積条件を変える。PrefillだけでなくDecodeにも影響し得る。初手にしない。</td></tr><tr><td>EXPERT_V2=1をGufoへ移す</td><td>Gufoが読む変数ではない。さらにStrataのV2専用分岐はgu_type21/IQ3_S＋down20であり、今回Orcaの23/IQ4_XS＋20には一致しない。設定ONと全経路適用は別。</td></tr><tr><td>Attention/selectorのWMMA近似経路</td><td>GufoにもWMMA Attentionと正確なtop-kがある。StrataのSELECT_WMMAは選択が変わり得る。長文の参照先を変えるので、Prefillが速いだけでは採用しない。</td></tr><tr><td>INT8 KV</td><td>GufoはFP16、StrataはINT8。メモリと帯域の比較対象にはなるが、永続状態、Attention、snapshot互換性を変更する大きな作業。今回のPrefill第一候補より後。</td></tr><tr><td>MTP window・Q4 draft・小さい語彙head</td><td>StrataとGufoではdraftが違う。Gufoはfull Q8 headと適応幅制御が既にあり、現状Decodeも優位。まずPrefillを改善し、採用率と総生成時間を保てる場合だけ別に調査。</td></tr><tr><td>prompt lookup draft</td><td>反復コードでは検討余地あり。GufoのngramはPLE処理で同機能ではない。主にDecodeの候補なので今回の優先順位は低い。</td></tr><tr><td>Strataの会話キャッシュ一式</td><td>Gufoはlive再利用・複数checkpoint・非同期保存・disk保存を既に持つ。今回のcold Prefill差の説明にはならない。長文の複数保存に対する差分KV保持は将来の別調査。</td></tr></tbody></table></div><a class="ref" href="#G15">[G15]</a> <a class="ref" href="#G18">[G18]</a> <a class="ref" href="#G19">[G19]</a> <a class="ref" href="#G20">[G20]</a> <a class="ref" href="#G21">[G21]</a> <a class="ref" href="#G22">[G22]</a> <a class="ref" href="#S9">[S9]</a> <a class="ref" href="#S10">[S10]</a> <a class="ref" href="#S11">[S11]</a> <a class="ref" href="#S14">[S14]</a> <a class="ref" href="#S15">[S15]</a> <a class="ref" href="#S16">[S16]</a><p>上表の不採用実験はGufoの別shape・別量子化での根拠を含む。Orcaで永久に不可能という意味ではないが、同じ案を未検討の新規案として提案しない。</p></section><section><h2>9. 公式51tok/sの位置づけ</h2>
+<p>Strata公式の128K・UD-IQ4_XSの51.4 tok/sは、maintainerのRyzen AI Max+395・128GB、Ubuntu26.04/kernel7.0、ROCm7.14.1、指定の高速化設定、MTP、Prefill16384などで測った数字。現在のOrcaRouter IQ4_XS・WSL・独自入力の結果とは条件が違う。</p><a class="ref" href="#S13">[S13]</a><p>特にUD-IQ4_XSというファイル名は、全expertがOrcaと同じIQ4_XS/IQ4_NLであることを保証しない。ソースにも実tensor型で専用経路を分ける分岐がある。公開の51.4を、この実機の速度上限・改修後の到達保証・今回のGufoの目標値として使わない。</p>
+<p><strong>今回の目的は「Gufoの現在のDecode優位を維持して、Prefill/TTFTを縮める」こと。</strong>Strata側の遅いDecode全体を持ち込む置換はしない。Prefillカーネルしか変えなくても、丸めで最終状態が変わればMTP採用率や生成内容が変わるため、Decodeの再測定は必須になる。</p></section><section><h2>10. 実装する場合の検証順序</h2>
+<ol><li><strong>現在のGufoを基準として固定。</strong>同じソース、Releaseバイナリ、モデル、toolchain、context、MTP、入力、cache履歴を保持する。GufoとStrataを同時起動しない。</li>
+<li><strong>現在のOrcaで処理内訳を測る。</strong>まずpp2048と16K/32K。小型FP32投影、通常投影、MoE、GDN、Attention、PLE、CPU同期、割当、snapshotを分離。過去のWSLではrocprofのagent検出が失敗したため、既存のグループHIPイベント方式も候補。プロファイル時の速度は最終性能値に使わない。</li>
+<li><strong>A1を一つずつ実装。</strong>GDNのIQ4直接FP16出力、次にHC epilogueのFP16コピー。A2/A3は測定した支配項に合わせて選ぶ。失敗案を混ぜた大きなパッチにしない。</li>
+<li><strong>独立の演算検証。</strong><code>native_iq4_ops</code>、<code>gdn_ops</code>、<code>hc_mix_ops</code>、<code>routed_wmma_ops</code>、Attention/selectorを該当箇所ごとに実行。既存の誤差限界・goldenを緩めない。</li>
+<li><strong>状態の検証。</strong>全logits、短い末尾、分割Prefill、キャッシュ復元、greedy、sampled MTPの棄却・補正・RNG・EOSを確認する。最初はC1、共通コードを触ったらC2/C4等も確認。FP16/INT8等の別数値経路は、固定token履歴のKL・perplexity、独立teacher、長文検索や日本語/コードを追加し、bit一致試験と混同しない。</li>
+<li><strong>profilerなしのA/B。</strong>元バイナリと候補を交互に測り、pp2048/tg128と今回の長文入力へ展開する。TTFT・Prefill・Decode・MTP採用率・出力量・総完了時間・ピークRAM・Windows最小空きRAMを保存。前回の中央値より一度速いだけでは採用しない。</li>
+<li><strong>通常運用も確認。</strong>coldに加え、同一会話の続き、別会話から戻る、履歴編集を測る。warm TTFTでキャッシュ処理が増えたりDecodeが落ちたりしたら、cold Prefillの改善だけで採用しない。</li></ol>
+<p>採用した案だけを通常経路へ残す。改善量はこの検証の後に報告する。現段階では「+何％」「51tok/sまで届く」といった予測値は置かない。</p></section><section><h2>11. 調査の限界と引き継ぎ</h2>
+<p>確認済み：現在のGufoカスタム版・Strataローカル版の分岐、既存IQ4の検証記録、実Orcaパックの変換記録、以前の比較ベンチ、Gufoの採用・不採用実験。未確認：今回候補の実装後の速度、現在の128Kでの支配項、異なる数値経路の意味的品質、正確な追加RAM。</p>
+<p>Gufoソースは調査時clean。Strataの既存5ファイル修正を保持。ソース・起動設定・キャッシュ設定は変更していない。Gufoは起動せず、新たな推論も実行していない。</p>
+<p>両リポジトリのLICENSEはMIT。コードを取り込む段階では元の著作権表示とライセンス、さらにggml由来の部分などの出典を保持する。現段階での候補は多くが「Strataの考え方をGufoの既存カーネルに適用する」形であり、ファイル単位の丸ごと移植を前提にしない。</p>
+<p>次に着手するなら、<strong>現行OrcaのPrefill内訳を確認 → A1のGDN直接FP16出力を限定実装 → 精度とDecodeを含めてA/B</strong>、の順が最も具体的で検証しやすい。</p></section><section><h2>根拠ソース</h2><p>コードの行番号は調査したローカル版。各ファイルのSHA-256、抜粋、版番号、集計データは<span title="参照先はローカル保管">evidence.json</span>にも保存。</p><details id="G1"><summary><b>G1</b> 既存のIQ4対応と精度の方針</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/docs/models/qwen3.8-flash-next/IQ4_XS.md:11–27</p><pre>11: 
+12: Use `--weight-compat off`. Weights remain in their packed GGUF formats on the
+13: GPU. The file contains IQ4_XS expert gate/up and ordinary projections, IQ4_NL
+14: expert/shared down and HC up projections, Q5_K attention projections, and a
+15: Q6_K output head. Supporting those tensors is necessary to run this IQ4_XS
+16: artifact; it does not qualify every quantization variant.
+17: 
+18: The existing `--weight-compat q8_0` retains its exact SC117 contract: it converts
+19: only the specified 206 weights to Q8_0, not the whole model, and rejects this
+20: OrcaRouter layout. Neither the SC117 allowlist nor its conversion algorithm is
+21: changed. `--served-model-name` is an independent API identifier.
+22: 
+23: Native decode and speculative verification use FP32 activation row dots with
+24: matching per-row arithmetic. Wide prefill projections use packed-weight WMMA
+25: with temporary FP16 activation/weight fragments and FP32 accumulation. Small
+26: projections (at most 512 output rows) keep FP32 row dots even during prefill,
+27: including the long HC down and inject reductions. No converted GGUF is written</pre></details><details id="G2"><summary><b>G2</b> IQ4通常投影：出力行数512を境にFP16/FP32を選択</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:813–830</p><pre>813:   if (IsNativeIq4Dense(w.type)) {
+814:     const auto piece = options_.max_batch;
+815:     for (std::uint32_t first = 0; first &lt; n_tokens; first += piece) {
+816:       const auto rows = std::min(piece, n_tokens - first);
+817:       const float* src = x + std::size_t{first} * w.cols;
+818:       float* dst = out + std::size_t{first} * w.rows;
+819:       if (prefill_phase &amp;&amp; w.rows &gt; 512) {
+820:         // Reuse the Q4/Q8 preparation and its cache of narrowed rows.
+821:         PrepareHalfInput(src, rows, w.cols);
+822:         NativeIq4DenseF16(w.data, w.type, s_.x_half, dst, rows, w.rows, w.cols,
+823:                           stream_);
+824:       } else {
+825:         NativeIq4Dense(w.data, w.type, src, s_.x_half, dst, rows, w.rows,
+826:                        w.cols, MatrixRows(n_tokens), stream_);
+827:         half_src_ = nullptr;
+828:       }
+829:     }
+830:     return true;</pre></details><details id="G3"><summary><b>G3</b> GDNの直接FP16出力は現状Q8_0に限定</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:1358–1400</p><pre>1358:     return false;
+1359:   }
+1360:   // Keep the same activation precision across prefill chunk boundaries.
+1361:   // The F16 epilogue reuses the F32 output allocation. Switching this
+1362:   // projection to Q8 for a short tail changes every subsequent layer.
+1363:   const bool tiled = MatrixRows(n_tokens) &amp;&amp;
+1364:                      l.ssm_out.type == GgmlType::kQ8_0 &amp;&amp;
+1365:                      n_tokens &lt;= options_.max_batch;
+1366:   const bool half_output =
+1367:       tiled &amp;&amp; l.ssm_out.rows == 2560 &amp;&amp; l.ssm_out.cols == 6144;
+1368:   auto* out_half =
+1369:       half_output ? reinterpret_cast&lt;__half*&gt;(s_.gdn_out) : nullptr;
+1370:   GatedDeltaNet(qkv, qkv_stride, z, z_stride, s_.alpha_beta, l.ssm_conv1d.f32(),
+1371:                 l.ssm_a.f32(), l.ssm_dt.f32(), l.ssm_norm.f32(), s.conv_state,
+1372:                 s_.conv_scratch, s_.qn, s_.kn, s_.gdn_raw, s.state, s_.gdn_out,
+1373:                 tiled &amp;&amp; !half_output ? s_.x_q8t : nullptr,
+1374:                 speculative ? s.state_snapshots : RollbackRows{},
+1375:                 speculative ? s.conv_snapshots : RollbackRows{}, n_tokens,
+1376:                 c.ssm_num_k_heads, c.ssm_num_v_heads, c.ssm_head_dim,
+1377:                 c.ssm_conv_kernel, MatrixRows(n_tokens) &amp;&amp; !speculative,
+1378:                 convolved, c.rms_eps, stream_, out_half);
+1379:   if (!project_output) {
+1380:     return true;
+1381:   }
+1382:   if (half_output) {
+1383:     if (!DenseF16Gemm(l.ssm_out.data, out_half, out, n_tokens, l.ssm_out.rows,
+1384:                       l.ssm_out.cols, stream_)) {
+1385:       AssignError(error_msg, &quot;SSM output F16 GEMM failed&quot;);
+1386:       return false;
+1387:     }
+1388:     return true;
+1389:   }
+1390:   if (tiled) {
+1391:     q8t_src_ = nullptr;
+1392:     if (!W8A8Gemm(l.ssm_out.data, s_.x_q8t, out, n_tokens, l.ssm_out.rows,
+1393:                   l.ssm_out.cols, stream_)) {
+1394:       AssignError(error_msg, &quot;W8A8 GEMM failed&quot;);
+1395:       return false;
+1396:     }
+1397:     return true;
+1398:   }
+1399:   return Dense(l.ssm_out, s_.gdn_out, out, n_tokens, error_msg);
+1400: }</pre></details><details id="G4"><summary><b>G4</b> GDN出力時のFP16丸めとFP32書き出し</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp:1487–1503</p><pre>1487:   for (std::uint32_t r = 0; r &lt; per_lane; ++r) {
+1488:     v[r] = src[r * warpSize + lane];
+1489:     ss += v[r] * v[r];
+1490:   }
+1491:   const float scale = rsqrtf(WaveSum(ss) / static_cast&lt;float&gt;(d) + eps);
+1492:   if (out_q8 == nullptr) {
+1493: #pragma unroll
+1494:     for (std::uint32_t r = 0; r &lt; per_lane; ++r) {
+1495:       const std::uint32_t i = r * warpSize + lane;
+1496:       const float value = v[r] * scale * norm_w[i] * SigmoidF(zrow[i]);
+1497:       if (out_half != nullptr)
+1498:         out_half[row * d + i] = __float2half_rn(value);
+1499:       else
+1500:         out[row * d + i] = value;
+1501:     }
+1502:     return;
+1503:   }</pre></details><details id="G5"><summary><b>G5</b> HC epilogue：FP16コピー生成の経路差</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:1199–1224</p><pre>1199:       }
+1200:     } else {
+1201:       HcMixEpilogueVec4F16(s_.xn_half, s_.hc_gate,
+1202:                            fused_inject ? m.inject.f32() : nullptr, mixed,
+1203:                            extras ? static_cast&lt;__half*&gt;(s_.x_half) : nullptr,
+1204:                            extras ? s_.x_q8t : nullptr, inject, n_tokens,
+1205:                            c.hidden_size, stream_);
+1206:     }
+1207:     if (extras) {
+1208:       half_src_ = mixed;
+1209:       half_rows_ = n_tokens;
+1210:       half_cols_ = c.hidden_size;
+1211:       half_bf16_ = false;
+1212:       q8t_src_ = mixed;
+1213:       q8t_rows_ = n_tokens;
+1214:       q8t_cols_ = c.hidden_size;
+1215:     }
+1216:   } else if (vectorized) {
+1217:     HcMixEpilogueVec4(xn, s_.hc_gate, fused_inject ? m.inject.f32() : nullptr,
+1218:                       mixed, inject, n_tokens, c.hidden_size, c.hc_count,
+1219:                       stream_);
+1220:   } else {
+1221:     HcMixEpilogue(xn, s_.hc_gate, fused_inject ? m.inject.f32() : nullptr,
+1222:                   mixed, inject, n_tokens, c.hidden_size, c.hc_count, stream_);
+1223:   }
+1224:   inject_parts_ = fused_inject ? (vectorized ? HcInjectPartsVec4(c.hidden_size)</pre></details><details id="G6"><summary><b>G6</b> wide mixerはQ8_0のHC downが条件</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:455–464</p><pre>455:     e-&gt;tokens_host_ = static_cast&lt;std::int32_t*&gt;(tokens);
+456:     e-&gt;logits_host_ = static_cast&lt;float*&gt;(logits);
+457:   }
+458:   // The wide mixer route (F16 norm for the epilogue, tiled Q8 norm for the
+459:   // W8A8 down projection) needs the four-stream geometry, 32-wide blocks and
+460:   // a Q8_0 down projection.
+461:   e-&gt;wide_mixer_ = c.hc_count == 4 &amp;&amp; c.hidden_size % 32 == 0 &amp;&amp;
+462:                    !model.layers().empty() &amp;&amp;
+463:                    model.layers()[0].hc_ffn.down.type == GgmlType::kQ8_0;
+464:   if (model.has_mtp()) {</pre></details><details id="G7"><summary><b>G7</b> 小型の長い内積をFP32に残す理由</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/native_quant.cpp:9–32</p><pre>9: void NativeIq4Dense(const void* weights, core::GgmlType type,
+10:                     const float* input, void* half_scratch, float* output,
+11:                     std::size_t rows, std::size_t outputs, std::size_t cols,
+12:                     bool prefill, hipStream_t stream) {
+13:   const auto block = type == core::GgmlType::kIQ4_NL ? 32U : 256U;
+14:   if (!IsNativeIq4Dense(type) || !rows || !outputs || !cols || cols % block ||
+15:       (prefill &amp;&amp; half_scratch == nullptr))
+16:     throw std::invalid_argument(&quot;invalid native IQ4 dense projection&quot;);
+17:   // HC down/inject, alpha/beta and indexer projections have few output
+18:   // rows. Keep their long reductions in FP32: a 10240-wide IQ4_XS WMMA
+19:   // probe accumulated 4.7e-5 relative error even after matching half inputs.
+20:   // The exact row-dot path also avoids mostly empty matrix-core tiles.
+21:   if (prefill &amp;&amp; outputs &gt; 512) {
+22:     gufo::hip::LaunchFloatToFp16(input, half_scratch, rows * cols, stream);
+23:     NativeIq4DenseF16(weights, type, half_scratch, output, rows, outputs, cols,
+24:                       stream);
+25:   } else if (prefill) {
+26:     gufo::hip::LaunchGroupedQuantGEMMFp32(type, weights, input, output, rows,
+27:                                           outputs, cols, stream);
+28:   } else {
+29:     gufo::hip::LaunchBatchedQuantGEMMFp32(type, weights, input, output, rows,
+30:                                           outputs, cols, stream);
+31:   }
+32: }</pre></details><details id="G8"><summary><b>G8</b> IQ4 FP32投影は8トークンのグループ化済み</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen/hip/kernels/prefill_quant_gemm.hip:1698–1728</p><pre>1698: void LaunchGroupedQuantGEMMFp32(core::GgmlType type, const void* w,
+1699:                                 const float* x, float* y, std::size_t batch,
+1700:                                 std::size_t m, std::size_t k,
+1701:                                 hipStream_t stream) {
+1702:   const bool iq4 =
+1703:       type == core::GgmlType::kIQ4_XS &amp;&amp; m &lt;= 512 &amp;&amp; (k == 2560 || k == 10240);
+1704:   const bool q5 = type == core::GgmlType::kQ5_K &amp;&amp; m == 512 &amp;&amp; k == 2560;
+1705:   if (batch &gt; 8 &amp;&amp; (iq4 || q5)) {
+1706:     const auto groups = static_cast&lt;unsigned&gt;(batch / 8);
+1707:     if (iq4) {
+1708:       SmallBatchKQuantExactFp32GEMMKernel&lt;16, 8, 3, core::GgmlType::kIQ4_XS, 1,
+1709:                                           12, 1, false, 8, 32, 32, false, false,
+1710:                                           true&gt;
+1711:           &lt;&lt;&lt;dim3((m + 47) / 48, groups), 512, 0, stream&gt;&gt;&gt;(w, x, y, m, k);
+1712:     } else {
+1713:       SmallBatchKQuantExactFp32GEMMKernel&lt;8, 8, 4, core::GgmlType::kQ5_K, 1, 4,
+1714:                                           1, true, 8, 32, 32, false, false,
+1715:                                           true&gt;
+1716:           &lt;&lt;&lt;dim3((m + 31) / 32, groups), 256, 0, stream&gt;&gt;&gt;(w, x, y, m, k);
+1717:     }
+1718:     const auto consumed = std::size_t{groups} * 8;
+1719:     x += consumed * k;
+1720:     y += consumed * m;
+1721:     batch -= consumed;
+1722:   }
+1723:   if (batch != 0)
+1724:     LaunchBatchedQuantGEMMFp32(type, w, x, y, batch, m, k, stream);
+1725: }
+1726: 
+1727: void LaunchBatchedQuantGEMMFp32(core::GgmlType type, const void* w,
+1728:                                 const float* fp32_x, float* y,</pre></details><details id="G9"><summary><b>G9</b> MoEタイル表をCPUで作る際の待ち合わせと転送</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:925–992</p><pre>925: bool Executor::RouteHints(std::uint32_t n_tokens,
+926:                           std::string* error_msg) const {
+927:   // Every column tile past an expert&#x27;s bucket still costs a dispatch and a
+928:   // full shared-memory reservation, so the grid is cut to the real largest
+929:   // bucket. Counts are downloaded before the shared expert; wait only for
+930:   // that download while the shared expert continues on the same stream.
+931:   const Config&amp; c = config();
+932:   routed_max_rows_ = 0;
+933:   routed_64_tiles_ = 0;
+934:   routed_pair_tiles_ = 0;
+935:   routed_pair_offset_ = 0;
+936:   routed_pair_rows_ = 64;
+937:   if (!ExpertMatrixRows(n_tokens)) {
+938:     return true;
+939:   }
+940:   if (!Check(hipEventSynchronize(counts_ready_), &quot;expert counts&quot;, error_msg)) {
+941:     return false;
+942:   }
+943:   // The F16 expert GEMM launches one block per (expert, row tile of its
+944:   // 16-padded bucket): the map is built here and uploaded ahead of the
+945:   // launches on the same stream.
+946:   std::uint32_t max_rows = 0;
+947:   std::uint32_t n_tiles = 0;
+948:   routed_tile_rows_ = RoutedTileRows(
+949:       static_cast&lt;std::size_t&gt;(n_tokens) * c.num_experts_used, c);
+950:   for (std::uint32_t e = 0; e &lt; c.num_experts; ++e) {
+951:     const std::uint32_t padded = (counts_host_[e] + 15u) / 16u * 16u;
+952:     max_rows = std::max(max_rows, counts_host_[e]);
+953:     for (std::uint32_t j = 0;
+954:          j &lt; (padded + routed_tile_rows_ - 1) / routed_tile_rows_; ++j) {
+955:       tiles_host_[n_tiles++] = static_cast&lt;std::int32_t&gt;(e | (j &lt;&lt; 16));
+956:     }
+957:   }
+958:   routed_max_rows_ = std::max&lt;std::uint32_t&gt;(1, max_rows);
+959:   routed_n_tiles_ = n_tiles;
+960:   // Append the 64-token map for gate/up and eligible down projections.
+961:   // Wide expert buckets also get a 128-token gate/up map: it amortizes
+962:   // weight decoding, while short buckets retain the cheaper 64-token tile.
+963:   if (n_tokens &gt;= 1024 &amp;&amp; routed_tile_rows_ == kRoutedTileRowsWide) {
+964:     for (std::uint32_t e = 0; e &lt; c.num_experts; ++e) {
+965:       const std::uint32_t padded = (counts_host_[e] + 15u) / 16u * 16u;
+966:       for (std::uint32_t j = 0; j &lt; (padded + 63u) / 64u; ++j)
+967:         tiles_host_[n_tiles++] = static_cast&lt;std::int32_t&gt;(e | (j &lt;&lt; 16));
+968:     }
+969:     routed_64_tiles_ = n_tiles - routed_n_tiles_;
+970:     routed_pair_offset_ = routed_n_tiles_;
+971:     routed_pair_tiles_ = routed_64_tiles_;
+972:     std::uint32_t tiles_128 = 0;
+973:     for (std::uint32_t e = 0; e &lt; c.num_experts; ++e) {
+974:       tiles_128 += (counts_host_[e] + 127u) / 128u;
+975:     }
+976:     if (tiles_128 * 4 &lt;= routed_64_tiles_ * 3) {
+977:       routed_pair_rows_ = 128;
+978:       routed_pair_offset_ = n_tiles;
+979:       routed_pair_tiles_ = tiles_128;
+980:       for (std::uint32_t e = 0; e &lt; c.num_experts; ++e) {
+981:         for (std::uint32_t j = 0; j &lt; (counts_host_[e] + 127u) / 128u; ++j) {
+982:           tiles_host_[n_tiles++] = static_cast&lt;std::int32_t&gt;(e | (j &lt;&lt; 16));
+983:         }
+984:       }
+985:     }
+986:   }
+987:   routed_tile_cols_ = qfn_mmq_routed_tile_cols_for_counts(
+988:       counts_host_, static_cast&lt;int&gt;(c.num_experts));
+989:   return n_tiles == 0 || Check(hipMemcpyAsync(s_.routed_tiles, tiles_host_,
+990:                                               n_tiles * sizeof(std::int32_t),
+991:                                               hipMemcpyHostToDevice, stream_),
+992:                                &quot;routed tile map upload&quot;, error_msg);</pre></details><details id="G10"><summary><b>G10</b> カウント転送と共有expertの処理は既に重ねている</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:1566–1588</p><pre>1566:     ExpertCounts(s_.ids, s_.expert_counts, n_tokens, c.num_experts, used,
+1567:                  stream_);
+1568:     if (!Check(hipMemcpyAsync(counts_host_, s_.expert_counts,
+1569:                               c.num_experts * sizeof(std::uint32_t),
+1570:                               hipMemcpyDeviceToHost, stream_),
+1571:                &quot;expert counts download&quot;, error_msg) ||
+1572:         !Check(hipEventRecord(counts_ready_, stream_), &quot;expert counts event&quot;,
+1573:                error_msg)) {
+1574:       return false;
+1575:     }
+1576:   }
+1577:   // The shared expert (gated by the last router row) does not depend on
+1578:   // routing. Queue its GEMMs after the count download, then prepare the
+1579:   // routed dispatch on the CPU without waiting for these GEMMs to finish.
+1580:   shexp_half_ready_ = false;
+1581:   if (!GatedDense(l.shexp_up, l.shexp_gate, x, s_.shexp_up, n_tokens,
+1582:                   &amp;l.shexp_down, error_msg)) {
+1583:     return false;
+1584:   }
+1585:   if (shexp_half_ready_) {
+1586:     shexp_half_ready_ = false;
+1587:     if (!DenseF16Gemm(l.shexp_down.data, s_.shexp_half, s_.shexp_out, n_tokens,
+1588:                       l.shexp_down.rows, l.shexp_down.cols, stream_)) {</pre></details><details id="G11"><summary><b>G11</b> IQ4 expertはQ4のFP16 WMMA経路を共有済み</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:1626–1683</p><pre>1626:     return false;
+1627:   }
+1628:   // Tiled batches take the WMMA route: assignments compacted by expert
+1629:   // into 16-row padded buckets, token rows narrowed to F16 once, then the
+1630:   // F16 matrix-core GEMM per (expert, row tile).
+1631:   const bool affine_experts = (l.ffn_gate_exps.type == GgmlType::kQ4_K ||
+1632:                                l.ffn_gate_exps.type == GgmlType::kQ5_K) &amp;&amp;
+1633:                               (l.ffn_down_exps.type == GgmlType::kQ5_1 ||
+1634:                                l.ffn_down_exps.type == GgmlType::kQ8_0);
+1635:   // Keep non-prefill batched verification on its existing MMQ path.
+1636:   // The inspected SC117 and OrcaRouter files keep these experts packed.
+1637:   // Share Q4 routing/WMMA without changing the selective Q8 loader contract.
+1638:   const bool iq_experts = prefill_phase &amp;&amp;
+1639:                           (l.ffn_gate_exps.type == GgmlType::kIQ4_XS ||
+1640:                            l.ffn_gate_exps.type == GgmlType::kIQ2_S ||
+1641:                            l.ffn_gate_exps.type == GgmlType::kIQ3_XXS ||
+1642:                            l.ffn_gate_exps.type == GgmlType::kIQ3_S) &amp;&amp;
+1643:                           (l.ffn_down_exps.type == GgmlType::kIQ4_NL ||
+1644:                            l.ffn_down_exps.type == GgmlType::kQ2_0);
+1645:   const bool wmma_experts = ExpertMatrixRows(n_tokens) &amp;&amp;
+1646:                             (affine_experts || iq_experts) &amp;&amp;
+1647:                             l.ffn_up_exps.type == l.ffn_gate_exps.type &amp;&amp;
+1648:                             c.hidden_size % 256 == 0 &amp;&amp; c.expert_ff % 64 == 0;
+1649:   if (wmma_experts) {
+1650:     RoutedCompact(s_.ids, s_.expert_counts, s_.routed_bounds, s_.routed_cursors,
+1651:                   s_.rows_token, s_.rows_slot, n_tokens, used, c.num_experts,
+1652:                   stream_);
+1653:     // The GEMMs read F16 token rows: the router&#x27;s F16 GEMM (or the mix)
+1654:     // usually left them in s_.x_half already.
+1655:     PrepareHalfInput(x, n_tokens, c.hidden_size);
+1656:     const auto* x_half = static_cast&lt;const __half*&gt;(s_.x_half);
+1657:     // Large batches pair the gate/up projections and apply SwiGLU without
+1658:     // materializing the gate. Smaller buckets favor separate projections.
+1659:     auto* up_half = reinterpret_cast&lt;__half*&gt;(s_.up_e);
+1660:     const WeightType gate_type = static_cast&lt;WeightType&gt;(l.ffn_gate_exps.type);
+1661:     const bool gated_ok =
+1662:         n_tokens &gt;= 1024 &amp;&amp; routed_tile_rows_ == 48
+1663:             ? RoutedGatedF16Gemm(
+1664:                   l.ffn_gate_exps.data, l.ffn_up_exps.data, gate_type, x_half,
+1665:                   s_.routed_tiles + routed_pair_offset_, routed_pair_tiles_,
+1666:                   routed_pair_rows_, s_.routed_bounds, s_.rows_token,
+1667:                   s_.rows_slot, up_half, c.expert_ff, c.hidden_size, stream_)
+1668:             : (RoutedF16Gemm(l.ffn_gate_exps.data, gate_type, x_half,
+1669:                              s_.routed_tiles, routed_n_tiles_,
+1670:                              routed_tile_rows_, s_.routed_bounds, s_.rows_token,
+1671:                              s_.rows_slot, nullptr, s_.gate_e, nullptr,
+1672:                              c.expert_ff, c.hidden_size, stream_) &amp;&amp;
+1673:                RoutedF16Gemm(l.ffn_up_exps.data, gate_type, x_half,
+1674:                              s_.routed_tiles, routed_n_tiles_,
+1675:                              routed_tile_rows_, s_.routed_bounds, s_.rows_token,
+1676:                              s_.rows_slot, s_.gate_e, nullptr, up_half,
+1677:                              c.expert_ff, c.hidden_size, stream_));
+1678:     if (!gated_ok) {
+1679:       AssignError(error_msg, &quot;routed F16 gate/up GEMM failed&quot;);
+1680:       return false;
+1681:     }
+1682:     const WeightType down_type = static_cast&lt;WeightType&gt;(l.ffn_down_exps.type);
+1683:     // Larger down tiles amortize weight decoding. Reuse the 64-token map</pre></details><details id="G12"><summary><b>G12</b> 既存FP16 expert経路が整数方式より有利になる理由</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/kernels.hip.cpp:3822–3847</p><pre>3822: // Routed F16 WMMA expert GEMM. The int8 kernel above pays a float epilogue
+3823: // and an activation-sum correction every K block because the per-32 scales
+3824: // of both operands sit outside the integer dot product; here the weights are
+3825: // dequantized to F16 right after the LDS read (each wave decodes only its own
+3826: // sixteen rows) and the activations are F16 rows, so the matrix core
+3827: // accumulates the whole K extent in F32 with no per-block work. The codes
+3828: // stay packed in LDS (4 bits for Q4_K, 4 + 1 for Q5_1), which keeps a
+3829: // two-K-block stage at 11-12 KB and five blocks resident per WGP.
+3830: //
+3831: // A code becomes a half through a byte permute into the mantissa of 1024.0
+3832: // (0x6400 | q = 1024 + q exactly for q &lt; 32, the half&#x27;s unit being 1 there),
+3833: // a packed subtract of 1024 (exact), then one packed FMA:
+3834: //
+3835: //     w = q * scale + bias
+3836: //
+3837: // with (scale, bias) = (d * sc, -dmin * mn) for Q4_K and (d, m) for Q5_1,
+3838: // staged per (row, K block) as a half2.
+3839: //
+3840: // grid (m / BM, tiles): `tiles[y]` packs the expert in the low 16 bits and
+3841: // the token macro tile index in the high 16, so no block is launched for an
+3842: // empty tile; the row blocks of one tile are consecutive in dispatch order so
+3843: // they share the tile&#x27;s gathered activations through L2. Block (x, y)
+3844: // computes rows x*BM.. of the expert against its
+3845: // compact rows [pad_bounds[e] + j*BN, +BN) and scatters them to
+3846: // out[rows_out[c]][row] (F32, or F16 with the SwiGLU applied when `out_half`
+3847: // is given: the up projection then writes the down projection&#x27;s input).</pre></details><details id="G13"><summary><b>G13</b> Prefill上限2048と過去のチャンク比較</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/engine.cpp:25–29</p><pre>25: namespace {
+26: 
+27: // gfx1151 pp4096 at depths 0/4096: the 512/1024/2048/4096 sweep favored
+28: // 2048; larger chunks used more scratch without improving throughput.
+29: constexpr std::uint32_t kPrefillChunkTokens = 2048;</pre></details><details id="G14"><summary><b>G14</b> 実際のPrefillCapacity</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/engine.cpp:212–214</p><pre>212: std::uint32_t Model::PrefillCapacity() const noexcept {
+213:   return std::min(kPrefillChunkTokens, options_.max_context);
+214: }</pre></details><details id="G15"><summary><b>G15</b> hipBLASLt全面置換・副streamの不採用とAttention改善履歴</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/docs/models/qwen3.8-flash-next/EXPERIMENTS.md:57–65</p><pre>57: | Private shared-expert F16 rows | Retained; the shared expert&#x27;s SwiGLU rows for its F16 down projection get their own buffer instead of overwriting the routed experts&#x27; narrowed token rows, which removes one full-batch narrowing pass per layer. Every GEMM reads identical bytes; greedy output, chunk-boundary logits and the C2–C8 batch checks are exact. Interleaved Nix A/B at d0: 1559.6 → 1568.1 tok/s (+0.6%); the profiled kernel time fell 1362.8 → 1333.1 ms. |
+58: | 256-row routed down-projection blocks | Rejected: exact output, Q5_1 unchanged and Q8_0 slower. The routed kernels already stream expert weights at roughly two thirds of DRAM bandwidth, so per-block prologue/epilogue and activation restaging were not the bound. |
+59: | 64-token HC down-projection tiles | Rejected: exact output, 23% slower than the 128-token tile despite twice the resident blocks. |
+60: | One-tile-ahead LDS fragment prefetch (dense and routed WMMA) | Rejected: exact output, but the explicit double buffer raised register use (dense 221 → 253 VGPRs; the 128-token pair reached 256 with spills) and every GEMM slowed 3–14%. |
+61: | hipBLASLt F16 dense projections | Rejected: the pinned library reaches 19–26 TFLOPS on the 2048-token dense shapes against 30–34 TFLOPS for the Q8→F16 WMMA kernels; `tools/qwen-flash/dense_blaslt_sweep.hip` reproduces the sweep. |
+62: | Side-stream inject/shared-expert overlap | Rejected: exact output and real kernel overlap in the trace, but the co-running kernels slowed each other and interleaved wall-clock runs were 0.5–0.9% slower. |
+63: | Sparse attention tiles cut across selection windows | Retained; distribute tiles across splits using a 64-block carry, keeping four resident blocks/CU. Independent review: AR +6.7% at 32K and +16.5% at 128K, d0 unchanged. Same keys, reassociated FP32 sums; FP64 operator and model-level rounding checks pass. [Evidence](artifacts/attention-tiles-review.json). |
+64: | Whole-tile carry across windows | Rejected: same output, but 16.5 KiB of LDS cost a resident block per CU and slowed d2K eight-row verification 8.5%. |
+65: | GPU greedy penalties and linear CPU anchor selection | Retained; exact FP64 penalties, unchanged proposals and snapshots. Short heat-pump tg400: 32.12 → 33.80 tok/s; C2/4/6/8 improve 7.6/8.5/16.3/14.2%. Unpenalized control unchanged. [Evidence](artifacts/penalty-verification.json). |</pre></details><details id="G16"><summary><b>G16</b> 既存IQ4改善：355.5から981.7 tok/sとFP32条件</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/docs/models/qwen3.8-flash-next/EXPERIMENTS.md:93–105</p><pre>93: ## IQ4_XS prefill against the Q4 path, October 6, 2026
+94: 
+95: | Change | Decision and evidence |
+96: | --- | --- |
+97: | Group exact FP32 small projections in the grid, following Q4&#x27;s launch layout | Retained. The 2048-token body reduces 61,440 IQ4 launches to 240 while retaining each original eight-row dot specialization. Unprofiled pp2048 rises from 355.5 to 717.1 tok/s (three samples). |
+98: | Route IQ4_XS/IQ4_NL experts through Q4&#x27;s existing routed F16 WMMA template | Retained for prefill only. Routing, packed LDS, WMMA, paired SwiGLU and down epilogue share the same implementation; only raw format fetch/codebook decode differs. pp2048 reaches 970.7 tok/s before activation-preparation sharing. Existing FP64 error limits and tile/paired equivalence pass. |
+99: | Share Q4/Q8 PrepareHalfInput and its cache of F16 activations | Retained. Final candidate pp2048 981.7 tok/s; model split/cache/independent MTP checks pass. No extra persistent weight storage. The small incremental timing difference alone is not claimed as statistically significant. |
+100: | Replace the small long-K FP32 reductions with F16/Q4 arithmetic | Not adopted. Their established 2e-5 relative-error and exact per-row contracts are stricter than the earlier F16 probe achieved. |
+101: 
+102: HIP-event profiling is diagnostic, separate from the unprofiled speed runs.
+103: The native rocprofv3 agent discovery fails on this WSL runtime; grouped HIP
+104: events were used instead. Per-launch events disproportionately perturb the
+105: old tiny-kernel path, so those raw traces are not headline performance data.</pre></details><details id="G17"><summary><b>G17</b> IQ4の演算・分割・キャッシュ・MTP検証範囲</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/docs/models/qwen3.8-flash-next/QUALITY.md:80–103</p><pre>80: ## IQ4_XS shared prefill (October 6, 2026)
+81: 
+82: The Q4-based IQ4 prefill candidate passes 240 native projection checks
+83: against independently decoded CPU weights / FP64 dots (maximum relative RMS
+84: 8.25e-6, unchanged limit 2e-5). Its 14 IQ4 routed cases and 10 existing Q4/Q5/Q8
+85: cases pass the existing limits. IQ4 normalized maximum absolute error is
+86: 3.83e-4 versus unrounded FP64 (limit 2e-3); rounded-operand FP64 remains below
+87: 2e-5. The candidate weights/activations use exact allocations, including
+88: ragged tails. Paired SwiGLU and the different token tile widths agree exactly.
+89: 
+90: Eight prefill split histories through 4096 tokens retain all checked logits
+91: and sampled MTP replay. Two seeds, two boundaries, with/without snapshot
+92: restore each replay 200 tokens exactly. C2/C4/C6/C8 retain logits, RNG and
+93: independent session state; rejection/residual correction is exercised.
+94: Greedy continuation and warm rollback reuse also pass.
+95: 
+96: The independent predictor audit covers eight **text** states. Its full-head
+97: candidate IDs and logits are exact. The prior audit hardcoded Q8_0 for the
+98: vocabulary projection, which misread this artifact&#x27;s Q6_K bytes; the audit
+99: now dispatches on the actual head type without relaxing equality or numerical
+100: limits. `--mtp-audit-text-only` makes this scope explicit. Default image
+101: qualification still requires the matching vision sidecar; no new image
+102: quality claim is made here. These numerical/consistency checks are separate
+103: from semantic benchmark scores and from later long-context timing records.</pre></details><details id="G18"><summary><b>G18</b> 既存hipBLASLt選択と検証済み専用GEMM</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/blaslt.cpp:105–128</p><pre>105:   const auto status = hipblasLtMatmulAlgoGetHeuristic(
+106:       handle_, p-&gt;operation, p-&gt;weights, p-&gt;input, p-&gt;output, p-&gt;output,
+107:       preference, candidates.size(), candidates.data(), &amp;count);
+108:   (void)hipblasLtMatmulPreferenceDestroy(preference);
+109: 
+110:   if (status == HIPBLAS_STATUS_SUCCESS) {
+111:     for (int i = 0; i &lt; count; ++i) {
+112:       if (candidates[i].state == HIPBLAS_STATUS_SUCCESS &amp;&amp;
+113:           candidates[i].workspaceSize == 0 &amp;&amp; usable(candidates[i].algo)) {
+114:         p-&gt;algorithm = candidates[i].algo;
+115:         // The indexer projections&#x27; MT32x32x64 kernel runs at ~5 TFLOPS;
+116:         // DenseBf16Gemm reproduces its K order (including the StaggerU
+117:         // rotation) at about 4x the speed. Only the shapes, token counts (up
+118:         // to one 4096-token prefill chunk) and library kernel checked bitwise
+119:         // by dense_gemm_bench take it.
+120:         p-&gt;own_bf16 =
+121:             type == HIP_R_16BF &amp;&amp; k == 2560 &amp;&amp;
+122:             (m == 512 || m == 256 || m == 128 || m == 64) &amp;&amp; n &lt;= 4096 &amp;&amp;
+123:             hipblaslt_ext::getIndexFromAlgo(p-&gt;algorithm) == 4438 &amp;&amp;
+124:             hipblaslt_ext::getKernelNameFromAlgo(handle_, p-&gt;algorithm)
+125:                     .find(&quot;_MT32x32x64_MI16x16x1_&quot;) != std::string::npos;
+126:         return p;
+127:       }
+128:     }</pre></details><details id="G19"><summary><b>G19</b> 実行中KVはFP16</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.hpp:78–86</p><pre>78:     __half* k_cache{nullptr};  ///&lt; [max_context][kv_heads*d]
+79:     __half* v_cache{nullptr};  ///&lt; [max_context][kv_heads*d]
+80:     float* index_k{nullptr};   ///&lt; [index_capacity_][indexer_dim] raw ring
+81:     __half* block_k{nullptr};  ///&lt; [max_context/ratio][indexer_dim]
+82:   };
+83:   /// Per-launch values the kernels read from device memory, so a captured
+84:   /// graph replays at any position.
+85:   struct Control {
+86:     std::uint32_t position;      ///&lt; first position of the trunk batch</pre></details><details id="G20"><summary><b>G20</b> 既存MTPの履歴・文脈長に応じた幅選択</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/mtp_policy.hpp:18–53</p><pre>18:   std::array&lt;float, kMaxMtpDraftTokens&gt; successes;
+19:   std::array&lt;float, kMaxMtpDraftTokens&gt; failures;
+20:   std::uint32_t retry_tokens{0};
+21:   std::uint32_t probe_depth{0};
+22:   std::uint32_t explored_depth{0};
+23:   std::uint32_t probe_delay{0};
+24:   std::uint32_t failed_depths{0};
+25: };
+26: 
+27: // Length depends on committed acceptance history, never request timings.
+28: // Only the first rejected draft is an observed failure; its unverified tail
+29: // and a fully accepted, budget-limited chain are censored observations.
+30: class MtpLengthController {
+31: public:
+32:   explicit MtpLengthController(std::uint32_t limit,
+33:                                std::uint32_t concurrency = 1)
+34:       : limit_(std::clamp(limit, 1U, kMaxMtpDraftTokens)),
+35:         concurrency_(std::clamp(concurrency, 1U, 8U)) {
+36:     Reset();
+37:   }
+38: 
+39:   [[nodiscard]] std::uint32_t Choose(std::uint32_t budget,
+40:                                      std::uint32_t context = 0) const noexcept {
+41:     const auto cap = std::min(budget, limit_);
+42:     if (cap == 0 || state_.retry_tokens != 0) {
+43:       return 0;
+44:     }
+45:     // After a bounded AR interval, try one proposal to detect recovery.
+46:     return std::min(
+47:         cap, std::max({1U, BestLength(cap, context), state_.probe_depth}));
+48:   }
+49: 
+50:   [[nodiscard]] float ExpectedTokens(std::uint32_t drafts) const noexcept {
+51:     float expected = 1.0F, survival = 1.0F;
+52:     for (unsigned depth = 0; depth &lt; std::min(drafts, limit_); ++depth) {
+53:       survival *= Probability(depth);</pre></details><details id="G21"><summary><b>G21</b> ngramはPLE用。prompt lookup drafterとは別</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/ngram.hpp:21–49</p><pre>21: /// Newest-first tail of the previous tokens of one sequence, the complete
+22: /// hash state of the PLE window. Copying it snapshots the state.
+23: struct NgramHistory {
+24:   static constexpr std::int32_t kNone = -1;
+25:   std::array&lt;std::int32_t, Config::kMaxPleNgram - 1&gt; prev{kNone, kNone};
+26: 
+27:   void Reset() noexcept { prev.fill(kNone); }
+28: };
+29: 
+30: /// Computes the table rows every token gathers: `ple_heads` rows per token,
+31: /// head-major, exactly as the reference hashes them. An EOS anywhere in the
+32: /// window cuts every older token; a missing predecessor also reads as EOS.
+33: /// `history` is advanced past `tokens`.
+34: void HashNgramRows(const Config&amp; config, NgramHistory&amp; history,
+35:                    std::span&lt;const std::int32_t&gt; tokens,
+36:                    std::span&lt;std::uint32_t&gt; rows);
+37: 
+38: /// Reads n-gram embedding rows from the GGUF shard with direct I/O and a
+39: /// bounded cache of compressed rows. The table stays out of the page cache.
+40: /// Rows are dequantized to F32 and laid out [token][head][ple_head_dim].
+41: class NgramTable {
+42: public:
+43:   ~NgramTable();
+44:   NgramTable(const NgramTable&amp;) = delete;
+45:   NgramTable&amp; operator=(const NgramTable&amp;) = delete;
+46: 
+47:   /// Borrows the bound GGUF descriptor during Open; retains its own handle.
+48:   [[nodiscard]] static std::unique_ptr&lt;NgramTable&gt; Open(
+49:       int file_descriptor, std::uint64_t file_offset, std::uint64_t rows,</pre></details><details id="G22"><summary><b>G22</b> 既存WMMA Attentionと出力投影</summary><p class="path">/mnt/c/Users/user/Documents/Codex/2026-10-04/chatgpt-qwen3-8-flash-next-strix-3/work/gufo-v0.7.1/src/models/qwen38_flash_next/kernels/rocm/executor.cpp:1532–1555</p><pre>1532:     return false;
+1533:   }
+1534:   if (MatrixRows(n_tokens) &amp;&amp;
+1535:       WmmaCausalAttention(s_.q, s_.attn_gate, s.k_cache, s.v_cache, mask,
+1536:                           mask_words_, s_.ctx, n_tokens, start_pos, c.num_heads,
+1537:                           c.num_kv_heads, c.head_dim, c.compress_ratio, stream_,
+1538:                           last_only)) {
+1539:     return !project_output ||
+1540:            Dense(l.attn_out, s_.ctx, out, n_tokens, error_msg);
+1541:   }
+1542:   // Narrow batches split each row&#x27;s key tiles over kAttnSplits blocks so a
+1543:   // decode step at depth fills the device.
+1544:   const bool split = !MatrixRows(n_tokens);
+1545:   rocm::Attention(s_.q, s.k_cache, s.v_cache, mask, mask_words_, s_.ctx,
+1546:                   split ? s_.attn_partials : nullptr, kAttnSplits, n_tokens,
+1547:                   pos, c.num_heads, c.num_kv_heads, c.head_dim,
+1548:                   c.compress_ratio, stream_);
+1549:   SigmoidMul(s_.ctx, s_.attn_gate,
+1550:              static_cast&lt;std::size_t&gt;(n_tokens) * c.AttentionQDim(), stream_);
+1551:   return !project_output || Dense(l.attn_out, s_.ctx, out, n_tokens, error_msg);
+1552: }
+1553: 
+1554: bool Executor::Moe(const DeviceLayer&amp; l, const float* x, float* out,
+1555:                    std::uint32_t n_tokens, std::string* error_msg,</pre></details><details id="S1"><summary><b>S1</b> StrataのGDN_NOY：不要なFP32出力を省略</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/kernels.cu:1103–1122 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/kernels.cu#L1103">公式の同コミット</a></p><pre>1103:         if ((col &amp; 31) == 0) wsum[col &gt;&gt; 5] = sp;
+1104:         __syncthreads();
+1105:         const float ss = wsum[0] + wsum[1] + wsum[2] + wsum[3];
+1106:         const float bp = oc * rsqrtf(ss / (float) S + eps) * gamma[col], sg = sigm(z[at]);
+1107:         const size_t o16 = (size_t) (row / HV) * ld16 + (size_t) (row % HV) * S + col;
+1108:         if constexpr (WY) {
+1109:             const float v = bp * sg;
+1110:             y[at] = v;
+1111:             y16[o16] = hf(v);
+1112:         } else {
+1113:             // STRATA_GDN_NOY=1: nothing reads the FP32 result (403 MB per 16K chunk).  The FP16 value is what the
+1114:             // compiler makes of hf(v) next to the store: v_fma_mixlo_f16, the product rounded to FP16 once
+1115:             unsigned r;
+1116:             asm(&quot;v_fma_mixlo_f16 %0, %1, %2, 0&quot; : &quot;=v&quot;(r) : &quot;v&quot;(sg), &quot;v&quot;(bp));
+1117:             y16[o16] = (uint16_t) r;
+1118:         }
+1119:     }
+1120: }
+1121: #endif   // __HIPCC__
+1122: __global__ void __launch_bounds__(S) gdn_out_norm_kernel(const float* __restrict__ z, const float* __restrict__ gamma,</pre></details><details id="S2"><summary><b>S2</b> expertのcount/scan/placeをGPU上で実行</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/moe_fused.cu:686–705 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/moe_fused.cu#L686">公式の同コミット</a></p><pre>686: void group(const int32_t* ids, int64_t n, int k, int n_expert, void* scratch, int32_t* slot, int32_t* src,
+687:            void* stream) {
+688:     if (n_expert &lt; 1 || n_expert &gt; 1024) {
+689:         std::fprintf(stderr, &quot;prefill fused experts: %d experts (the grouping takes 1 to 1024)\n&quot;, n_expert);
+690:         std::exit(1);
+691:     }
+692:     const cudaStream_t s = (cudaStream_t) stream;
+693:     const Tables tb = tables(scratch, n_expert);
+694:     ck(cudaMemsetAsync(tb.cnt, 0, (size_t) n_expert * 4, s), &quot;group memset&quot;);
+695:     if (n &gt; 0) {
+696:         const unsigned nb = std::min&lt;unsigned&gt;(blocks(n, 1024), 4u * (unsigned) std::max(dev_info().sms, 1));
+697:         count_kernel&lt;&lt;&lt;nb, 1024, (size_t) n_expert * 4, s&gt;&gt;&gt;(ids, n, n_expert, tb.cnt);
+698:     }
+699:     scan_kernel&lt;&lt;&lt;1, (unsigned) ((n_expert + 31) / 32 * 32), 0, s&gt;&gt;&gt;(tb, n_expert);
+700:     if (n &gt; 0) place_kernel&lt;&lt;&lt;blocks(n, 256), 256, 0, s&gt;&gt;&gt;(ids, n, k, n_expert, tb, slot, src);
+701:     ck(cudaGetLastError(), &quot;group&quot;);
+702: }
+703: 
+704: void experts(const Batch&amp; b, int n_expert, int64_t n, const void* scratch, const void* xa, const int32_t* src,
+705:              void* ha, float* dm, void* stream) {</pre></details><details id="S3"><summary><b>S3</b> 融合IQ演算の量子化・積和の定義</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/moe_fused_iq.cu:3–21 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/moe_fused_iq.cu#L3">公式の同コミット</a></p><pre>3: //
+4: // The arithmetic.  An activation block of 32 values is x = d_x * a, a = round(x / d_x) in -127..127, stored in natural
+5: // order (per 64 values: 64 codes, then {d_0, d_1} and 8 unused bytes - 80 bytes, the Q2_0 path&#x27;s size).  A weight
+6: // block of 32 (or 16) values is w = d_w * q with q an int8: the i-quants&#x27; codebook entries with their signs applied
+7: // (IQ2_XXS / IQ2_XS / IQ2_S: 0..43, IQ3_XXS: 0..62, IQ3_S: 0..15, IQ4_XS / IQ4_NL: -127..113), Q2_0&#x27;s code - 1.  So
+8: //     sum w x = d_w * d_x * sum q a,     |sum q a| &lt;= 32 * 127 * 127 &lt; 2^22,
+9: // and the int32 dot becomes a float exactly with one float add: the mma starts from C = 0x4B400000 (the bits of
+10: // 1.5 * 2^23), so as_float(D) - 1.5 * 2^23 is the dot.  Per output and 32 values: that add, d_w * d_x, one fma (the
+11: // formats with a scale per 16 values: two dots, each times its d_w, then d_x).  d_w is llama.cpp&#x27;s own: IQ2_XXS
+12: // d (2s + 1) / 8, IQ2_XS / IQ2_S d (2s + 1) / 8 per 16, IQ3_XXS d (2s + 1) / 4, IQ3_S d (2s + 1), IQ4_XS d (s - 32),
+13: // IQ4_NL and Q2_0 d (dequantize_row_* in ggml-quants.c, mmq-load-tiles.cuh).
+14: //
+15: // The load stage.  Per 64 values of K (a stage), a thread decodes one 32-value sub-block of one of the work item&#x27;s
+16: // weight rows: its block bytes are read from the blob with 16-bit loads (the GGUF blocks are 2-byte aligned: 66 / 74 /
+17: // 82 / 98 / 110 / 136 / 18 bytes) one stage ahead into registers (and two 256-value blocks ahead into L2), then turned
+18: // into 32 int8 and the sub-block&#x27;s scales in shared memory, double-buffered.  The codebooks live in shared memory (up
+19: // to 8 KB, IQ2_S).  The activations arrive by cp.async, four stages deep, as in moe_fused.cu; the fragments come by
+20: // ldmatrix.  The products are mma.sync m16n8k32 (m16n8k16 for the formats with a scale per 16 values); the epilogues
+21: // (SwiGLU, H to int8 per 32 features; down into the per-slot rows) are moe_fused.cu&#x27;s.</pre></details><details id="S4"><summary><b>S4</b> gfx1151のINT8 WMMA expert経路</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/moe_fused_iq.cu:648–681 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/moe_fused_iq.cu#L648">公式の同コミット</a></p><pre>648: // ---- Aurora (S23): the native packs&#x27; fused experts on gfx11 (RDNA3 / RDNA3.5) matrix cores, v_wmma_i32_16x16x16_iu8
+649: // (wave32).  The CUDA kernel&#x27;s arithmetic: a 32-value sub-block decoded to int8 (load_unit / convert above) and its
+650: // scales; per 32 values the int32 dot starts from MAGIC (the C operand), so as_float(d) - 1.5 * 2^23 is the dot; the
+651: // formats with a scale per 16 values take each 16-value k-step&#x27;s dot alone.  Fragments (gfx11): A lane l holds the 16
+652: // k of row l % 16 (lanes 16..31 repeat lanes 0..15), B lane l the 16 k of column l % 16, C/D lane l holds
+653: // D[2i + l / 16][l % 16].  Both operands are in natural order: the decoded weights (LDS, double-buffered) and the
+654: // activations (quant_act_nat_kernel; read by each lane from global/L2, a stage ahead).
+655: // A work item = NW_ROWS weight rows x a 64-row tile; 8 waves: 4 along the weight rows (32 each) x 2 along the tile
+656: // (32 each), each 2 x 2 WMMA tiles.  Gate/up: local row r is feature r / 2, its gate (r even) or up (r odd) row, so a
+657: // lane pair l, l + 16 holds gate and up of one feature.
+658: #if defined(__gfx1100__) || defined(__gfx1101__) || defined(__gfx1102__) || defined(__gfx1150__) || defined(__gfx1151__)
+659: #define STRATA_NAT_W11 1
+660: #else
+661: #define STRATA_NAT_W11 0
+662: #endif
+663: typedef int nw_i4 __attribute__((ext_vector_type(4)));
+664: typedef int nw_i8 __attribute__((ext_vector_type(8)));
+665: constexpr int NW_ROWS = 128;
+666: constexpr int NW_THREADS = 256;
+667: 
+668: __device__ __forceinline__ nw_i8 nw_wmma(nw_i4 a, nw_i4 b, nw_i8 c) {
+669: #if STRATA_NAT_W11
+670:     return __builtin_amdgcn_wmma_i32_16x16x16_iu8_w32(true, a, true, b, c, false);
+671: #else
+672:     __builtin_trap();
+673:     return c;
+674: #endif
+675: }
+676: __device__ __forceinline__ nw_i4 nw_u4(uint4 v) { return nw_i4{(int) v.x, (int) v.y, (int) v.z, (int) v.w}; }
+677: 
+678: // W (X1): ALIAS = the H tile lives on the weight buffers (one extra barrier); LB &gt; 0 = amdgpu_waves_per_eu(LB) (VGPR cap).
+679: // Disable both with -DSTRATA_W_NO_OCC (the launch sites then use &lt;WT, GU, false, 0&gt; and grid factor wgp_blocks).
+680: template &lt;int WT, bool GU, bool ALIAS = false, int LB = 0&gt;
+681: __global__ void __launch_bounds__(NW_THREADS) __attribute__((amdgpu_waves_per_eu(LB &gt; 0 ? LB : 1)))</pre></details><details id="S5"><summary><b>S5</b> WGPに合わせた永続グリッドの実測調整</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/moe_fused_iq.cu:920–934 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/moe_fused_iq.cu#L920">公式の同コミット</a></p><pre>920: // Resident blocks per multiprocessor for the gfx11 WMMA prompt-expert kernels&#x27; persistent grids.  HIP counts a gfx11
+921: // WGP (two CUs, which these kernels use as one in the default WGP mode) as one multiprocessor, and the occupancy query
+922: // answers 1 block for these kernels where 2 run side by side - so the grid was half the GPU&#x27;s room.  gfx1151 (20
+923: // WGPs), 8192 tokens x top 10, IQ3_S / IQ4_NL, one layer: 1 block per WGP 60.7 ms, 2 44.7, 3 49.9, 4 45.2 (the same
+924: // work items and arithmetic: the results do not change).  STRATA_PF_OCC=N sets the blocks per WGP (an experiment knob).
+925: static int wgp_blocks(int occ) {
+926:     static const int env = [] {
+927:         const char* v = std::getenv(&quot;STRATA_PF_OCC&quot;);
+928:         return v != nullptr ? std::atoi(v) : 0;
+929:     }();
+930:     return env &gt; 0 ? env : 2 * std::max(occ, 1);
+931: }
+932: #endif
+933: const DevInfo&amp; dev_info() {
+934:     int dev = 0;</pre></details><details id="S6"><summary><b>S6</b> 一時FP16展開・行ストライドpadding・行列積</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/gemm.cu:773–825 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/gemm.cu#L773">公式の同コミット</a></p><pre>773: void Gemm::native(const uint16_t* X, int ggml_type, const void* W_blocks, float* Y, int64_t T, int64_t N, int64_t K,
+774:                   int64_t ldy, float beta, int64_t ldx) {
+775: #ifdef STRATA_USE_HIP
+776:     // S23 (opt-in STRATA_PF_PAD=1, with STRATA_PF_GEMM=1 on chunks of STRATA_PF_SWITCH_MIN_T+ tokens): the weight
+777:     // dequantized into the scratch with row stride K + 64 halves, so no 4 KB-multiple stride camps on the memory
+778:     // channels (gemm_probe8: K 6144 19 -&gt; 29 TFLOPS from W alone, 35 with X padded too).  Bitwise the same products.
+779:     static const bool pad_on = [] { const char* v = std::getenv(&quot;STRATA_PF_PAD&quot;); return v &amp;&amp; v[0] == &#x27;1&#x27;; }();
+780:     static const bool pf_on = [] { const char* v = std::getenv(&quot;STRATA_PF_GEMM&quot;); return v &amp;&amp; v[0] == &#x27;1&#x27;; }();
+781:     static const int64_t pf_min_t = [] { const char* v = std::getenv(&quot;STRATA_PF_SWITCH_MIN_T&quot;); return v ? (int64_t) std::atoll(v) : (int64_t) 0; }();
+782:     if (pad_on &amp;&amp; pf_on &amp;&amp; T &gt;= pf_min_t &amp;&amp; T &gt;= 64 &amp;&amp; N &gt;= 512 &amp;&amp; K % 32 == 0 &amp;&amp; N * (K + 64) &lt;= scratch_elems_) {
+783:         const int64_t ldw = K + 64;
+784:         if (strata::kernels::dequant_f16_ld(ggml_type, W_blocks, 0, N, K, ldw, scratch_, stream_) &amp;&amp;
+785:             strata_pf_gemm_f16_ld(X, ldx &gt; 0 ? ldx : K, scratch_, ldw, Y, T, N, K, ldy, beta, stream_)) {
+786:             return;
+787:         }
+788:     }
+789: #endif
+790:     if (ldx &gt; 0 &amp;&amp; ldx != K) {
+791: #ifdef STRATA_USE_HIP
+792:         // X arrived padded but the weight cannot be (an i-quant without a strided dequant, or the scratch is too
+793:         // small for N x (K + 64)): the weight unpadded, X read at its stride - the same products, the same bits
+794:         const int64_t rows = scratch_elems_ / K;
+795:         bool ok = rows &gt; 0;
+796:         if (ldy &lt;= 0) ldy = N;
+797:         for (int64_t r0 = 0; ok &amp;&amp; r0 &lt; N; r0 += rows) {
+798:             const int64_t n = (N - r0 &lt; rows) ? N - r0 : rows;
+799:             strata::kernels::dequant_f16(ggml_type, W_blocks, r0, n, K, scratch_, stream_);
+800:             ok = strata_pf_gemm_f16_ld(X, ldx, scratch_, K, Y + r0, T, n, K, ldy, beta, stream_);
+801:         }
+802:         if (ok) return;
+803: #endif
+804:         std::fprintf(stderr, &quot;prefill gemm: a padded X (ldx %lld, K %lld) needs STRATA_PF_PAD&#x27;s path\n&quot;,
+805:                      (long long) ldx, (long long) K);
+806:         std::exit(1);
+807:     }
+808: #if defined(STRATA_PREFILL_MMQ) &amp;&amp; defined(__HIPCC__)
+809:     if (beta == 0.0f &amp;&amp; (ldx == 0 || ldx == K) &amp;&amp; native_mmq(X, ggml_type, W_blocks, Y, T, N, K, ldy)) return;
+810: #endif
+811:     if (N * K &gt; scratch_elems_) {
+812:         // Too large for the scratch at once: in row slices.
+813:         const int64_t rows = scratch_elems_ / K;
+814:         if (rows &lt;= 0) { std::fprintf(stderr, &quot;prefill gemm: scratch too small for K=%lld\n&quot;, (long long) K); std::exit(1); }
+815:         if (ldy &lt;= 0) ldy = N;
+816:         for (int64_t r0 = 0; r0 &lt; N; r0 += rows) {
+817:             const int64_t n = (N - r0 &lt; rows) ? N - r0 : rows;
+818:             strata::kernels::dequant_f16(ggml_type, W_blocks, r0, n, K, scratch_, stream_);
+819:             f16(X, scratch_, Y + r0, T, n, K, ldy, beta);
+820:         }
+821:         return;
+822:     }
+823:     strata::kernels::dequant_f16(ggml_type, W_blocks, 0, N, K, scratch_, stream_);
+824:     f16(X, scratch_, Y, T, N, K, ldy, beta);
+825: }</pre></details><details id="S7"><summary><b>S7</b> BF16 HC投影と融合epilogue</summary><p class="path">/home/user/strata-wsl/Strata/src/prefill/prefill.cpp:2170–2223 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/prefill/prefill.cpp#L2170">公式の同コミット</a></p><pre>2170:                 const int64_t ldx = hc_pad() &amp;&amp; T &gt;= std::max&lt;int64_t&gt;(pf_switch_min_t(), 64) &amp;&amp; !gr_unfused() &amp;&amp;
+2171:                                             !m.xn16_lo ? D + XN_PAD : D;
+2172:                 if (gr_unfused()) gr_norm(m.R, (const float*) wn-&gt;data, EPS, m.xn, m.xn16, T, m.cs, m.xn16_lo);
+2173:                 else if (!normed) gr_norm_rs(m.R, (const float*) wn-&gt;data, EPS, m.grs, m.xn16, T, m.cs, m.xn16_lo, ldx);
+2174:                 normed = false;
+2175:                 bool hcd = false;
+2176:                 bool hdown = false;
+2177:                 if (ldx != D &amp;&amp; !pf_hcdown()) {   // STRATA_HCD_EXACT: the exact-order down kernel when hipBLASLt would take 1176 / 1177
+2178:                     hdown = wd-&gt;kind == core::WeightKind::Bf16InF32 &amp;&amp; wd-&gt;data &amp;&amp; wd-&gt;ne0 == D &amp;&amp; wd-&gt;ne1 == LR &amp;&amp;
+2179:                             m.gemm.bf16_hcd_exact(m.xn16, ldx, (const uint16_t*) wd-&gt;data, m.lo, T, LR, D);
+2180:                 } else if (ldx != D) {
+2181:                     if (wd-&gt;kind != core::WeightKind::Bf16InF32 || !wd-&gt;data || wd-&gt;ne0 != D || wd-&gt;ne1 != LR ||
+2182:                         wi-&gt;kind != core::WeightKind::Bf16InF32 || !wi-&gt;data || wi-&gt;ne0 != D || wi-&gt;ne1 != HC ||
+2183:                         !strata_pf_hcdown_bf16(m.xn16, ldx, (const uint16_t*) wd-&gt;data, (const uint16_t*) wi-&gt;data, LR,
+2184:                                                HC, m.lo, m.inj, T, D, m.cs)) {
+2185:                         err = &quot;prefill: STRATA_PF_HCDOWN could not run the hyper-connection projections&quot;;
+2186:                         return false;
+2187:                     }
+2188:                     hcd = true;
+2189:                 }
+2190:                 if (!hcd &amp;&amp; !hdown &amp;&amp; !bf16_proj(m.gemm, wd, m.xn16, m.lo, T, sd, err, 0, m.xn16_lo, ldx != D ? ldx : 0)) return false;
+2191:                 gr_silu(m.lo, m.lo16, T, m.cs, m.lo16_lo);
+2192:                 bool upmixed = false;
+2193:                 if (hc_upmix() &amp;&amp; T &gt;= pf_switch_min_t() &amp;&amp; !gr_unfused() &amp;&amp; !m.lo16_lo &amp;&amp; !m.mixed_bf_lo &amp;&amp;
+2194:                     wu-&gt;kind == core::WeightKind::Bf16InF32 &amp;&amp; wu-&gt;data &amp;&amp; wu-&gt;ne0 == LR &amp;&amp; wu-&gt;ne1 == D) {
+2195:                     static int checks = [] { const char* e = std::getenv(&quot;STRATA_HC_UPMIX_CHECK&quot;); return e ? std::atoi(e) : 0; }();
+2196:                     if (checks &gt; 0) {   // the default pair first, kept for the comparison
+2197:                         --checks;
+2198:                         if (!bf16_proj(m.gemm, wu, m.lo16, m.gated, T, su, err)) return false;
+2199:                         gr_mix_r(m.R, m.grs, (const float*) wn-&gt;data, m.gated, m.mixed, m.mixed_bf, T, m.cs, m.mixed_h);
+2200:                         std::vector&lt;float&gt; ref((size_t) T * N), got((size_t) T * N);
+2201:                         cudaMemcpyAsync(ref.data(), m.mixed, ref.size() * 4, cudaMemcpyDeviceToHost, m.cs);
+2202:                         upmixed = gr_upmix(m.lo16, (const uint16_t*) wu-&gt;data, m.R, m.grs, (const float*) wn-&gt;data,
+2203:                                            m.mixed, m.mixed_bf, m.mixed_h, T, m.cs);
+2204:                         cudaMemcpyAsync(got.data(), m.mixed, got.size() * 4, cudaMemcpyDeviceToHost, m.cs);
+2205:                         cudaStreamSynchronize(m.cs);
+2206:                         double e2 = 0, r2 = 0, emax = 0;
+2207:                         for (size_t i = 0; i &lt; ref.size(); ++i) {
+2208:                             const double dd = (double) got[i] - ref[i];
+2209:                             e2 += dd * dd; r2 += (double) ref[i] * ref[i]; emax = std::max(emax, std::fabs(dd));
+2210:                         }
+2211:                         std::fprintf(stderr, &quot;strata: STRATA_HC_UPMIX_CHECK layer %lld half %d T %lld: mixed rel RMS %.3e, &quot;
+2212:                                      &quot;max |diff| %.3e (%s)\n&quot;, (long long) l, half, (long long) T,
+2213:                                      std::sqrt(e2 / std::max(r2, 1e-30)), emax, upmixed ? &quot;upmix&quot; : &quot;upmix refused&quot;);
+2214:                     } else {
+2215:                         upmixed = gr_upmix(m.lo16, (const uint16_t*) wu-&gt;data, m.R, m.grs, (const float*) wn-&gt;data,
+2216:                                            m.mixed, m.mixed_bf, m.mixed_h, T, m.cs);
+2217:                     }
+2218:                 }
+2219:                 if (!upmixed &amp;&amp; !bf16_proj(m.gemm, wu, m.lo16, m.gated, T, su, err, 0, m.lo16_lo)) return false;
+2220:                 if (!hcd &amp;&amp; !bf16_proj(m.gemm, wi, m.xn16, m.inj, T, si, err, 0, m.xn16_lo, ldx != D ? ldx : 0)) return false;
+2221:                 if (upmixed) {
+2222:                 } else if (gr_unfused()) {
+2223:                     gr_mix(m.xn, m.gated, m.mixed, m.mixed_bf, T, m.cs, m.mixed_h, m.mixed_bf_lo);</pre></details><details id="S8"><summary><b>S8</b> compat-bf16は元の重みをBF16へ丸める</summary><p class="path">/home/user/strata-wsl/Strata/tools/iq_pack.py:32–38 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/tools/iq_pack.py#L32">公式の同コミット</a></p><pre>32: tensors stored as F32 whose values are exactly BF16 (Swift 1.5) are written as BF16, the form the engine&#x27;s router
+33: takes (so are the other F32 tensors the engine reads as BF16, when exact); anything else is refused.
+34: 
+35: For ordinary quants, --compat-bf16 dequantizes the small projections that the engine reads as BF16, using
+36: round-to-nearest-even. This introduces BF16 rounding; it does not reconstruct the original full-precision
+37: weights. Experts, native attention projections, token embeddings, a Q2_0/Q8_0 PLE key and the disk-backed PLE
+38: table stay unchanged.</pre></details><details id="S9"><summary><b>S9</b> EXPERT_V2はgu_type21/IQ3_Sとdown20/IQ4_NLが条件</summary><p class="path">/home/user/strata-wsl/Strata/src/kernels/cuda/iq_kernels.cu:3386–3400 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/kernels/cuda/iq_kernels.cu#L3386">公式の同コミット</a></p><pre>3386:     const auto* X = (const block_q8_1*) x_q8_1;
+3387:     static const bool v2 = [] { const char* v = std::getenv(&quot;STRATA_EXPERT_V2&quot;); return v &amp;&amp; v[0] == &#x27;1&#x27;; }();
+3388:     if (v2 &amp;&amp; L.gu_type == 21 &amp;&amp; L.d_type == 20 &amp;&amp; L.n_embd == 2560 &amp;&amp; L.n_ff == 640) {   // S26: see s26_gu_l_kernel
+3389:         // S26 STRATA_TSUM=1: the sums as one transposed butterfly per warp (s26_tsum.cuh; bitwise the same values)
+3390:         static const bool ts = [] { const char* v = std::getenv(&quot;STRATA_TSUM&quot;); return v &amp;&amp; v[0] == &#x27;1&#x27;; }();
+3391:         // (+ down rows&#x27; items spread evenly over the lanes, one load group: bitwise, harness 1.09-1.12x vs 1.03-1.06x;
+3392:         // the same for gate / up was 0.6-0.8x)
+3393:         if (ts) s26_launch_l&lt;true, true, 4, 4, true, true, true, 1&gt;(L, cap_groups, s, grp_ptr, grp_start, n_groups, ent_dst, ent_tok, X, gate, up, h,
+3394:                                                              hq, out, (long long) cap_entries * L.n_ff);
+3395:         else s26_launch_l&lt;true, true, 4, 4, true, true&gt;(L, cap_groups, s, grp_ptr, grp_start, n_groups, ent_dst, ent_tok, X, gate, up, h,
+3396:                                                         hq, out, (long long) cap_entries * L.n_ff);
+3397:         check(&quot;native_expert_grouped (v2)&quot;);
+3398:         return;
+3399:     }
+3400:     // stream B: UD-Q4_K_XL&#x27;s Q4_K / Q5_K gate/up and Q5_1 / Q8_0 down (see S27 above)</pre></details><details id="S10"><summary><b>S10</b> WMMAスコア計算は選択を変え得る</summary><p class="path">/home/user/strata-wsl/Strata/src/kernels/cuda/qsa_select.cu:1051–1073 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/kernels/cuda/qsa_select.cu#L1051">公式の同コミット</a></p><pre>1051:                          int64_t max_blocks, const QsaShapes&amp; s, float* scores, void* stream, int64_t active_blocks) {
+1052:     if (nq &lt;= 0) return true;
+1053:     if (s.idx_dim != IDX_DIM || s.idx_n_head != IDX_HEADS || s.idx_block != R || nq &gt; 65535 * TC_QT) return false;
+1054: #if defined(__HIPCC__)
+1055:     // AMD: the gfx12 (RDNA4) WMMA scorer, opt-in (STRATA_SELECT_WMMA=1): it selects slightly differently from the warp
+1056:     // kernel (254/256 queries the same), so the default keeps the warp kernel; every other target keeps it too (false)
+1057:     static const bool wmma_on = [] {
+1058:         const char* v = std::getenv(&quot;STRATA_SELECT_WMMA&quot;);
+1059:         return v != nullptr &amp;&amp; v[0] != &#x27;\0&#x27; &amp;&amp; v[0] != &#x27;0&#x27;;
+1060:     }();
+1061:     if (!wmma_on || !sel_gfx12_device()) return false;
+1062:     {
+1063:         const int64_t reach = active_blocks &gt; 0 &amp;&amp; active_blocks &lt; max_blocks ? active_blocks : max_blocks;
+1064:         const int64_t per = (int64_t) 4 * WITER * 16;
+1065:         const dim3 grid((unsigned) ((reach + per - 1) / per), (unsigned) ((nq + WQT - 1) / WQT));
+1066:         block_scores_wmma_kernel&lt;&lt;&lt;grid, 128, 0, (cudaStream_t) stream&gt;&gt;&gt;(pooled, q_idx, steps, nq, max_blocks, reach, scores);
+1067:         block_scores_tail_kernel&lt;&lt;&lt;(unsigned) nq, 32, 0, (cudaStream_t) stream&gt;&gt;&gt;(dead, q_idx, steps, max_blocks, scores);
+1068:         const cudaError_t e = cudaGetLastError();
+1069:         if (e != cudaSuccess) { std::fprintf(stderr, &quot;qsa_block_scores_tc: %s\n&quot;, cudaGetErrorString(e)); std::exit(1); }
+1070:         return true;
+1071:     }
+1072: #else
+1073:     {   // sm_80 or newer (TF32 MMA); an older card keeps the warp kernel</pre></details><details id="S11"><summary><b>S11</b> PA_FASTはAttentionの数値経路を変える</summary><p class="path">/home/user/strata-wsl/Strata/src/kernels/cuda/qsa_prompt_attn.cu:1423–1438 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/kernels/cuda/qsa_prompt_attn.cu#L1423">公式の同コミット</a></p><pre>1423: bool launch_wmma(const float* q, const QsaAttnPools&amp; pools, const int32_t* ids, const int32_t* steps, int64_t cap,
+1424:                  const QsaShapes&amp; s, float* attn, int64_t n_q, cudaStream_t st) {
+1425:     const float scale_log2 = 1.4426950408889634f / sqrtf((float) HD);
+1426:     for (int64_t q0 = 0; q0 &lt; n_q; q0 += 65535) {
+1427:         const int64_t nb = n_q - q0 &lt; 65535 ? n_q - q0 : 65535;
+1428:         static const bool fast = [] { const char* e = std::getenv(&quot;STRATA_PA_FAST&quot;); return e != nullptr &amp;&amp; e[0] == &#x27;1&#x27;; }();
+1429:         static const int64_t min_t = [] { const char* e = std::getenv(&quot;STRATA_PF_SWITCH_MIN_T&quot;); return e ? (int64_t) std::atoll(e) : (int64_t) 0; }();
+1430:         if (fast &amp;&amp; n_q &gt;= min_t)
+1431:             prompt_attn_wmma_kernel&lt;false&gt;&lt;&lt;&lt;dim3((unsigned) nb, (unsigned) s.n_head_kv), THREADS, 0, st&gt;&gt;&gt;(
+1432:                 q + q0 * s.n_head * HD, pools, ids + q0 * cap, steps + q0 * kStepCount, (int) s.n_head_kv,
+1433:                 (int) s.page_size, scale_log2, attn + q0 * s.n_head * HD, (int) cap);
+1434:         else
+1435:             prompt_attn_wmma_kernel&lt;true&gt;&lt;&lt;&lt;dim3((unsigned) nb, (unsigned) s.n_head_kv), THREADS, 0, st&gt;&gt;&gt;(
+1436:                 q + q0 * s.n_head * HD, pools, ids + q0 * cap, steps + q0 * kStepCount, (int) s.n_head_kv,
+1437:                 (int) s.page_size, scale_log2, attn + q0 * s.n_head * HD, (int) cap);
+1438:     }</pre></details><details id="S12"><summary><b>S12</b> 自動設定と丸めを変えるopt-in設定</summary><p class="path">/home/user/strata-wsl/Strata/docs/STRIX_HALO.md:80–116 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/docs/STRIX_HALO.md#L80">公式の同コミット</a></p><pre>80: 
+81: ## 4. What is on by default on gfx1151
+82: 
+83: At start the engine looks at GPU 0; on a gfx1151 it sets the switches below unless you set them yourself
+84: (`STRATA_GFX1151_DEFAULTS=0` turns the whole table off, and the start-up line names what was set). **Every one of them gave
+85: byte-identical output on the maintainers&#x27; box** (the same token ids, 4K / 32K / 64K and four models, and a bitwise harness per kernel):
+86: they change speed, not answers. Nothing here applies to CUDA or to another AMD architecture.
+87: 
+88: | Switch | What it does |
+89: |---|---|
+90: | `STRATA_GDN_HEAD`, `STRATA_GDN_PP=2`, `STRATA_GDN_CONVL2`, `STRATA_GDN_NOY` | the prompt&#x27;s gated-delta-net recurrence: four lanes per column, two columns per lane, the convolution and the norms fused |
+91: | `STRATA_HCD_EXACT` | the hyper-connection down projection (N 320, K 10240) in a WMMA kernel that reproduces hipBLASLt solution 1176 / 1177&#x27;s summation order (`hip_prefill_hcd_exact_parity` checks it bit for bit); it runs only where the table makes hipBLASLt pick one of those two, and says once if it cannot |
+92: | `STRATA_CVEC_FUSE`, `STRATA_PF_PAD` | a steered layer&#x27;s write, control vector and next norm in one pass; padded GEMM row strides |
+93: | `STRATA_Q8_PACKED`, `STRATA_Q6_PACKED`, `STRATA_MMVF_ROWS`, `STRATA_ATTN_LANECELL` | decode layouts and kernels (packed Q8_0 / Q6_K weights, 4-row BF16 GEMV, one-cell-per-thread attention scores) |
+94: | `STRATA_EXPERT_V2`, `STRATA_TSUM`, `STRATA_LFUSE` | the grouped decode experts (IQ3_S / IQ4_NL), single-butterfly warp sums, fewer launches around the shared expert and the KV append |
+95: | `STRATA_GDN_SPLIT`, `STRATA_QFUSE`, `STRATA_PLE_BATCH` | the GDN step over four blocks per head, activation images written by their producers, the PLE key / value projections of a verify window at once |
+96: | `STRATA_SH_STREAM=1` | the shared expert on a second stream beside the routed experts. It is off by default on other AMD cards (#816), but it pays on gfx1151: decode +1.8% (UD-IQ4_XS) and +6.7% (UD-Q4_K_XL) at 8K |
+97: 
+98: ## 5. What is not on by default (it changes bits)
+99: 
+100: These are faster on gfx1151 and **round differently** from the default path (a different summation order or a half-precision
+101: intermediate), so they are opt-in and the maintainers gate them with KL against the default (`STRATA_PF_SWITCH_MIN_T=4096` keeps
+102: the short prompts on the default numerics, since these pay on long ones). The maintainers&#x27; fast configuration sets all of
+103: them:
+104: 
+105: ```sh
+106: export STRATA_PF_FUSED=1        # the prompt experts on the matrix cores (IQ2 / IQ3 / IQ4_XS gate/up, Q2_0 / IQ4_NL / Q8_0 down)
+107: export STRATA_PF_GEMM=1         # the prompt&#x27;s FP16 projections on the 128 x 256 WMMA GEMM
+108: export STRATA_HC_UPMIX=1        # the hyper-connection up projection with its epilogue
+109: export STRATA_PA_FAST=1         # the prompt attention with single FP16 q and p
+110: export STRATA_HIP_WMMA=1        # the prompt attention on matrix cores
+111: export STRATA_SELECT_WMMA=1     # the block scorer on matrix cores
+112: export STRATA_HC_Q8=1           # the hyper-connection read from the GGUF&#x27;s own Q8_0 projections
+113: export STRATA_PF_SWITCH_MIN_T=4096
+114: ```
+115: 
+116: Two engine flags help on long contexts and are not Strix-specific: `--mtp-window 8192` (the draft layer attends to the last 8,192</pre></details><details id="S13"><summary><b>S13</b> 公式の測定条件と51.4 tok/s</summary><p class="path">/home/user/strata-wsl/Strata/docs/STRIX_HALO.md:120–140 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/docs/STRIX_HALO.md#L120">公式の同コミット</a></p><pre>120: 
+121: Ryzen AI Max+ 395 (128 GB, gfx1151), the maintainers&#x27; fast configuration of section 5 on top of the defaults of section 4, `--spec 4`,
+122: `--mtp`, `--lookup-chain 3`, `--mtp-q4 all`, `--prefill 16384`, int8 KV, all experts in the unified memory. Prompt tok/s is
+123: (prompt tokens - 1) / prompt time, output tok/s is the tokens / decode time; medians of 3 runs, one fresh process per run, the two
+124: engines interleaved. &quot;Before&quot; is the maintainers&#x27; earlier engine branch (the same switches set by hand), &quot;now&quot; is this release.
+125: Every pair printed the same token ids.
+126: 
+127: | Model | Context | Prompt before -&gt; now | Output before -&gt; now |
+128: |---|---|---|---|
+129: | UD-IQ4_XS | 8K | 1,212 -&gt; 1,293 (+6.7%) | 51.7 -&gt; 53.8 (+4.0%) |
+130: | UD-IQ4_XS | 128K | 1,241 -&gt; 1,320 (+6.4%) | 49.3 -&gt; 51.4 (+4.2%) |
+131: | UD-Q4_K_XL | 8K | 1,136 -&gt; 1,169 (+2.9%) | 50.6 -&gt; 52.6 (+3.9%) |
+132: | UD-Q4_K_XL | 128K | 1,220 -&gt; 1,248 (+2.4%) | 41.6 -&gt; 43.3 (+3.9%) |
+133: | IQ3_S | 8K | 1,202 -&gt; 1,242 (+3.4%) | 56.2 -&gt; 59.7 (+6.3%) |
+134: | IQ3_S | 128K | 1,254 -&gt; 1,312 (+4.6%) | 40.6 -&gt; 42.8 (+5.5%) |
+135: | IQ3_XXS | 8K | 1,237 -&gt; 1,238 (+0.1%) | 48.8 -&gt; 51.5 (+5.6%) |
+136: | IQ3_XXS | 128K | 1,259 -&gt; 1,252 (-0.6%) | 48.4 -&gt; 50.9 (+5.1%) |
+137: 
+138: UD-IQ4_XS at 4K / 32K / 64K (5-6 interleaved pairs): prompt +9.2% / +6.0% / +5.3%, output +5.0% / +3.9% / +4.6%.
+139: IQ3_XXS at 8K was measured again with 6 interleaved pairs (an earlier 3-run set had read 5% low while other jobs shared the GPU): prompt equal, output +5.6%. With the defaults off the same build&#x27;s prompt is 8% lower (1,137), so the table helps there too.
+140: </pre></details><details id="S14"><summary><b>S14</b> draft projectionのQ4化</summary><p class="path">/home/user/strata-wsl/Strata/src/core/mtp.cpp:181–209 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/core/mtp.cpp#L181">公式の同コミット</a></p><pre>181: // --mtp-q4: every Q8_0 tensor of dense.bin as Q4_0 (ggml&#x27;s reference quantizer), in one device buffer
+182: bool MtpDrafter::make_q4_dense(const std::vector&lt;uint8_t&gt;&amp; blob, std::string&amp; err) {
+183: #ifdef STRATA_NATIVE_EXPERTS
+184:     uint64_t total = 0;
+185:     std::vector&lt;std::pair&lt;const Tensor*, uint64_t&gt;&gt; plan;
+186:     for (const auto&amp; t : tensors_) {
+187:         if (t.kind != &quot;q8_0&quot; || t.cols % 32 != 0) continue;
+188:         plan.push_back({&amp;t, total});
+189:         total += ((uint64_t) t.rows * (uint64_t) (t.cols / 32) * 18 + 255) &amp; ~255ull;
+190:     }
+191:     std::vector&lt;uint8_t&gt; host((size_t) total);
+192:     std::vector&lt;float&gt; row;
+193:     const auto* q8t = ggml_get_type_traits(GGML_TYPE_Q8_0);
+194:     for (const auto&amp; [t, off] : plan) {
+195:         row.resize((size_t) t-&gt;cols);
+196:         const uint64_t in_row = (uint64_t) (t-&gt;cols / 32) * 34, out_row = (uint64_t) (t-&gt;cols / 32) * 18;
+197:         for (int64_t r = 0; r &lt; t-&gt;rows; ++r) {
+198:             q8t-&gt;to_float(blob.data() + t-&gt;off + (uint64_t) r * in_row, row.data(), t-&gt;cols);
+199:             ggml_quantize_chunk(GGML_TYPE_Q4_0, row.data(), host.data() + off + (uint64_t) r * out_row, 0, 1, t-&gt;cols,
+200:                                 nullptr);
+201:         }
+202:         q4_off_.push_back({t-&gt;name, off});
+203:     }
+204:     if (cudaMalloc((void**) &amp;dense4_, (size_t) total) != cudaSuccess) { err = &quot;mtp: the Q4_0 projections do not fit&quot;; return false; }
+205:     cudaMemcpy(dense4_, host.data(), (size_t) total, cudaMemcpyHostToDevice);
+206:     vram_ += total;
+207:     std::fprintf(stderr, &quot;strata mtp: --mtp-q4: %zu projections as Q4_0 (%.1f MiB)\n&quot;, plan.size(), (double) total / 1048576.0);
+208:     return true;
+209: #else</pre></details><details id="S15"><summary><b>S15</b> draft参照windowとリング形状</summary><p class="path">/home/user/strata-wsl/Strata/src/core/mtp.cpp:326–358 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/core/mtp.cpp#L326">公式の同コミット</a></p><pre>326:     // KV streaming: the drafter only reads its last `window` cells, so with streaming on its K/V is a ring of the
+327:     // window (plus the cells a round writes ahead of its queries) over a host copy, refilled on a resume. The host copy
+328:     // is pinned after the expert arena has pinned what it could: if it does not fit, the K/V stays whole in VRAM.
+329:     int64_t ring = (window &gt; 0 &amp;&amp; window &lt; max_cells) ? window + 4 * (int64_t) max_t + 64 : 0;
+330:     // K8V4 never applies to the drafter: its own attention paths (below, and verify.cpp) handle whole formats
+331:     // only, whatever ring shape it takes (0, a window, or the -1 fully-resident fallback).
+332:     const bool kv_hybrid_was = qsa_kv_hybrid();
+333:     const bool kv_int8_was = qsa_kv_int8();
+334:     qsa_set_kv_hybrid(false);
+335:     if (kv_hybrid_was) qsa_set_kv_int8(true);   // the drafter under --kv k8v4: plain INT8
+336:     uint64_t sb = qsa_state_bytes(g, max_cells, false, ring);
+337:     if (cudaMalloc(&amp;state_arena_, sb) != cudaSuccess) { err = &quot;mtp: the K/V state does not fit&quot;; return false; }
+338:     if (qsa_state_init(g, max_cells, state_arena_, st_, &amp;ss.qsa_states[ss.qsa_primary()], ring) == 0) {
+339:         if (st_.kv_mode == 0) { err = &quot;mtp: state init failed&quot;; return false; }
+340:         std::fprintf(stderr, &quot;strata mtp: no pinned RAM left for the draft layer&#x27;s K/V copy; keeping it in VRAM\n&quot;);
+341:         cudaGetLastError();
+342:         cudaFree(state_arena_);
+343:         st_ = QsaState{};
+344:         ring = -1;   // fully resident
+345:         sb = qsa_state_bytes(g, max_cells, false, ring);
+346:         if (cudaMalloc(&amp;state_arena_, sb) != cudaSuccess) { err = &quot;mtp: the K/V state does not fit&quot;; return false; }
+347:         if (qsa_state_init(g, max_cells, state_arena_, st_, &amp;ss.qsa_states[ss.qsa_primary()], ring) == 0) { err = &quot;mtp: state init failed&quot;; return false; }
+348:     }
+349:     qsa_set_kv_int8(kv_int8_was);
+350:     qsa_set_kv_hybrid(kv_hybrid_was);
+351:     qsa_state_zero(st_, g, nullptr);
+352:     cudaDeviceSynchronize();
+353:     vram_ += sb;
+354: 
+355:     // ---- buffers
+356:     window_ = (window &gt; 0 &amp;&amp; window &lt; max_cells) ? window : 0;
+357:     cap_ = (((window_ &gt; 0 ? window_ : max_cells) + 63) / 64) * 64;
+358:     attn_scratch_floats_ = (int64_t) strata::kernels::qsa_decode_attn_scratch_floats(cap_, s);</pre></details><details id="S16"><summary><b>S16</b> prompt lookupとMTPの連結</summary><p class="path">/home/user/strata-wsl/Strata/src/program/generate.cpp:614–625 <a href="https://github.com/Niko1221/Strata/blob/82f46a8c8f475f001ad76d92f58f4a4f8ffb0253/src/program/generate.cpp#L614">公式の同コミット</a></p><pre>614:     /// The suffix drafter (prompt lookup): when the text being written repeats an earlier stretch of the context (code
+615:     /// edits, quoted input, tool-call JSON) by at least this many tokens, the window may be filled with what followed
+616:     /// it there instead of the MTP&#x27;s drafts, where the MTP&#x27;s own first guess agrees and the draft policy expects it to
+617:     /// pay (strata/spec/draft_policy.hpp).  On by default; 0 = MTP only.
+618:     int suffix_draft = 3;
+619:     /// The MTP&#x27;s own window cap (0 = --spec): with --spec 6 --mtp-max-t 4 the long windows come from suffix matches.
+620:     int mtp_max_t = 0;
+621:     /// --lookup-chain K (opt-in, 0 = off): prompt lookup CHAINED after the MTP&#x27;s proposal.  The suffix drafter matches
+622:     /// the context followed by the MTP&#x27;s drafts and appends up to K of the tokens that followed that match to the same
+623:     /// verify window (the window grows to at most 8).  Greedy verification keeps the output; its own counts are kept.
+624:     int lookup_chain = 0;
+625:     int lookup_chain_min = 3;   ///&lt; --lookup-chain-min M: the shortest match (in tokens, drafts included) it extends on</pre></details><p>公式資料：<a href="https://github.com/Niko1221/Strata/blob/main/docs/STRIX_HALO.md">Strix Haloガイド</a> ／ <a href="https://github.com/gufo-org/gufo/blob/main/docs/models/qwen3.8-flash-next/EXPERIMENTS.md">Gufo Flash-Next実験記録</a> ／ <a href="https://github.com/gufo-org/gufo/blob/main/LICENSE">Gufo LICENSE</a> ／ <a href="https://github.com/Niko1221/Strata/blob/main/LICENSE">Strata LICENSE</a></p></section></main></body></html>

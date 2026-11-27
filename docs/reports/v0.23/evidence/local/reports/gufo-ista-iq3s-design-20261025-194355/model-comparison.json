@@ -1,0 +1,866 @@
+{
+  "ista_tensor_count": 1224,
+  "sc117_tensor_count": 1224,
+  "only_ista": [],
+  "only_sc117": [],
+  "shape_differences": [],
+  "type_differences": [
+    {
+      "name": "blk.0.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.0.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.1.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.1.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.10.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.10.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.11.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.11.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.12.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.12.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.13.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.13.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.14.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.14.ssm_out.weight",
+      "ista": "Q4_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.15.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.15.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.16.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.16.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.17.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.17.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.18.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.18.ssm_out.weight",
+      "ista": "Q5_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.19.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.19.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.2.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.2.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.20.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.20.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.21.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.21.ssm_out.weight",
+      "ista": "Q5_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.22.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.22.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.23.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.23.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.24.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.24.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.25.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.25.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.26.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.26.ssm_out.weight",
+      "ista": "Q5_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.27.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.27.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.28.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.28.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.29.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.29.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.3.attn_output.weight",
+      "ista": "Q4_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.3.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.30.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.30.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.31.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.31.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.32.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.32.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.33.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.33.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.34.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.34.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.35.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.35.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.36.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.36.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.37.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.37.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.38.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.38.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.39.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.39.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.4.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.4.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.40.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.40.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.41.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.41.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.42.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.42.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.43.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.43.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.44.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.44.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.45.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.45.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.46.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.46.ssm_out.weight",
+      "ista": "Q5_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.47.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.5.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.5.ssm_out.weight",
+      "ista": "Q4_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.6.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.6.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.7.attn_output.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.7.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.8.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.8.ssm_out.weight",
+      "ista": "Q4_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    },
+    {
+      "name": "blk.9.ffn_down_shexp.weight",
+      "ista": "IQ4_NL",
+      "sc117": "Q8_0",
+      "dimensions": [
+        640,
+        2560
+      ]
+    },
+    {
+      "name": "blk.9.ssm_out.weight",
+      "ista": "Q6_K",
+      "sc117": "Q8_0",
+      "dimensions": [
+        6144,
+        2560
+      ]
+    }
+  ],
+  "metadata_value_differences": [],
+  "scope": "Names, types, dimensions and metadata only; weight payload identity and inference are not checked."
+}

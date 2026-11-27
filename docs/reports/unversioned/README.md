@@ -1,0 +1,62 @@
+# 版未特定の調査 の記録
+
+保存済みレポートと作業文書の一覧です。個々の資料に記載されたリビジョン・条件・失敗・制限を確認してください。
+
+[全バージョン一覧](../README.md)
+
+- [Gufo：BF16／内蔵n-gram 128K比較](benchmarks/benchmark/reports/builtin-ple-mtp-prose-128k-20261031-215036/report.ja.html) — builtin-ple-mtp-prose-128k-20261031-215036
+- [Huihui：外部BF16 n-gramを外した128K MTP文章試験](benchmarks/benchmark/reports/builtin-ple-mtp-prose-128k-20261031-215036/report.ja.md) — builtin-ple-mtp-prose-128k-20261031-215036
+- [IQ3_S / AR・MTP 出力上限なしベンチマーク](benchmarks/benchmark/reports/gufo-early-20261004/iq3s-benchmark-20261005/report.html) — iq3s-benchmark-20261005
+- [Huihui Q4_K_XL / AR・MTP 出力上限なしベンチマーク](benchmarks/benchmark/reports/gufo-early-20261004/q4kxl-benchmark-20261005/report.html) — q4kxl-benchmark-20261005
+- [conclusion.html](benchmarks/benchmark/reports/iq4-down-by-expert-20261013/conclusion.html) — iq4-down-by-expert-20261013
+- [IQ4 C：Downの専門家順処理](benchmarks/benchmark/reports/iq4-down-by-expert-20261013/report.html) — iq4-down-by-expert-20261013
+- [Gufo IQ4：② FP32 Prefill 簡易比較](benchmarks/benchmark/reports/iq4-fp32-prefill-20261007/report.html) — iq4-fp32-prefill-20261007
+- [Gufo IQ4 Stage 1 比較](benchmarks/benchmark/reports/iq4-gdn-f16-20261007/report.html) — iq4-gdn-f16-20261007
+- [Gufo IQ4：④ HC FP16直接出力・2回平均比較](benchmarks/benchmark/reports/iq4-hc-f16-20261007/report.html) — iq4-hc-f16-20261007
+- [Gufo ⑤ IQ4 INT8融合MoE — 精度検証](benchmarks/benchmark/reports/iq4-int8-moe-20261008/report.html) — iq4-int8-moe-20261008
+- [IQ4最適化：最終採否](benchmarks/benchmark/reports/iq4-optimization-decisions-20261013/report.html) — iq4-optimization-decisions-20261013
+- [Gufo IQ4 ③A：精度確認で不採用](benchmarks/benchmark/reports/iq4-weight-f16-20261008/report.html) — iq4-weight-f16-20261008
+- [Gufo IQ4配置改善：精度確認で不採用](benchmarks/benchmark/reports/iq4-weight-layout-20261008/report.html) — iq4-weight-layout-20261008
+- [ToR-O3 中国語・ハングル抑制と日本語品質の比較試験案](benchmarks/benchmark/reports/toro3-ban-test-design-20261115/proposal.ja.html) — toro3-ban-test-design-20261115
+- [ToRO3・Huihui・Orca：PLE比較](benchmarks/benchmark/reports/toro3-ple-20261107-164909/report.ja.html) — toro3-ple-20261107-164909
+- [未加工Unsloth v3.1とToRO3・Huihui・Orcaの比較](benchmarks/benchmark/reports/unsloth-v31-builtin-20261107-194247/report.ja.html) — unsloth-v31-builtin-20261107-194247
+- [2026-11-11 NPU 出力の GPU 直接参照](benchmarks/benchmark/runs/20261111-npu-direct/README.md) — 20261111-npu-direct
+- [Q6_K 線形注意ゲートの NPU 分担を比較](benchmarks/benchmark/runs/20261111-npu-gate-comparison/README.md) — 20261111-npu-gate-comparison
+- [ゲートの NPU 分担を比較した条件](benchmarks/benchmark/runs/20261111-npu-gate-comparison/method.md) — 20261111-npu-gate-comparison
+- [GufoへのNPU組み込みはNot Go](benchmarks/benchmark/runs/20261111-npu-go-no-go/README.md) — 20261111-npu-go-no-go
+- [Gufo Q6_Kゲート NPU採否の実機検証](benchmarks/benchmark/runs/20261111-npu-go-no-go/RESULTS.md) — 20261111-npu-go-no-go
+- [Q6_KゲートのNPU採否を判断する試験](benchmarks/benchmark/runs/20261111-npu-go-no-go/method.md) — 20261111-npu-go-no-go
+- [ToR-O3 の NPU 投影別比較](benchmarks/benchmark/runs/20261111-npu-weight-routes/README.md) — 20261111-npu-weight-routes
+- [ToR-O3＋内蔵PLEの全注意投影・２区画プリフィル](benchmarks/benchmark/runs/20261111-npu-whole-two-bank/README.md) — 20261111-npu-whole-two-bank
+- [Flash-Next の Q6_K 共有エキスパート並列化](benchmarks/benchmark/runs/20261111-q6-prefill-overlap/README.md) — 20261111-q6-prefill-overlap
+- [ToR-O3 の Q6_K ssm_in を Windows NPU と分担する単層比較](benchmarks/benchmark/runs/20261111-ssm-in-npu/README.md) — 20261111-ssm-in-npu
+- [Huihui：外部BF16 n-gramを外した128K MTP文章試験](benchmarks/benchmark/runs/builtin-ple-mtp-prose-128k-20261031-215036/report.ja.md) — builtin-ple-mtp-prose-128k-20261031-215036
+- [Flash-Next DFlash2 の信頼度カットと MoE タイル比較](benchmarks/benchmark/runs/dflash2-confidence-moe-20261111/README.md) — dflash2-confidence-moe-20261111
+- [tables.md](benchmarks/benchmark/runs/dflash2-confidence-moe-20261111/tables.md) — dflash2-confidence-moe-20261111
+- [windows-memory.md](benchmarks/benchmark/runs/dflash2-confidence-moe-20261111/windows-memory.md) — dflash2-confidence-moe-20261111
+- [⑳ 検証行数に応じたMoE downタイル](benchmarks/benchmark/runs/dflash2-dynamic-moe-20261112/README.md) — dflash2-dynamic-moe-20261112
+- [windows-memory.md](benchmarks/benchmark/runs/dflash2-dynamic-moe-20261112/windows-memory.md) — dflash2-dynamic-moe-20261112
+- [Flash-Next DFlash2 高速化の実機記録](benchmarks/benchmark/runs/dflash2-optimization-20261111/README.md) — dflash2-optimization-20261111
+- [DFlash2 実機比較の全表](benchmarks/benchmark/runs/dflash2-optimization-20261111/tables.md) — dflash2-optimization-20261111
+- [Flash-Next DFlash2のGDN巻き戻しを採用](benchmarks/benchmark/runs/dflash2-rollback-adoption-20261112/README.md) — dflash2-rollback-adoption-20261112
+- [同一入力での比較表](benchmarks/benchmark/runs/dflash2-rollback-adoption-20261112/tables.md) — dflash2-rollback-adoption-20261112
+- [DFlash2の巻き戻しとロジット転送](benchmarks/benchmark/runs/dflash2-rollback-profile-20261112/README.md) — dflash2-rollback-profile-20261112
+- [windows-memory.md](benchmarks/benchmark/runs/dflash2-rollback-profile-20261112/windows-memory.md) — dflash2-rollback-profile-20261112
+- [⑤の信頼度カットを有効にした①の候補幅試験](benchmarks/benchmark/runs/dflash2-width-on-confidence-20261112/README.md) — dflash2-width-on-confidence-20261112
+- [Huihui・移植候補 外部Q8／内蔵PLE：回答全文](benchmarks/benchmark/runs/huihui-orca-v31-quality/run-20261107-064050/responses.ja.md) — run-20261107-064050
+- [α=1比較の速度記録（品質不合格）](benchmarks/benchmark/runs/luni-a1-20261106/README.ja.md) — luni-a1-20261106
+- [公開Orcaと移植候補：回答全文](benchmarks/benchmark/runs/orca-v31-quality/run-20261107-054638/responses.ja.md) — run-20261107-054638
+- [全回答と採点根拠](benchmarks/benchmark/runs/toro3-ban-thinking-matrix-20261115/long-boundary-revision-4/answers-interim.ja.html) — long-boundary-revision-4
+- [ToR-O3 中国語・ハングル抑制比較](benchmarks/benchmark/runs/toro3-ban-thinking-matrix-20261115/long-boundary-revision-4/interim.ja.html) — long-boundary-revision-4
+- [ToRO3の外部PLE比較](benchmarks/benchmark/runs/toro3-ple-20261107-164909/TASK.ja.md) — toro3-ple-20261107-164909
+- [未加工Unsloth v3.1の内蔵PLE比較](benchmarks/benchmark/runs/unsloth-v31-builtin-20261107-194247/TASK.ja.md) — unsloth-v31-builtin-20261107-194247
+- [Luni差分 α=0.5 の限定品質試験](investigations/local/updates/luni-a0.5-20261106/README.ja.md) — luni-a0.5-20261106
+- [Luni差分 α=1 のGufo比較結果](investigations/local/updates/luni-a1-20261106/README.ja.md) — luni-a1-20261106
+- [Luni変更の群別切り分け](investigations/local/updates/luni-groups-20261106/README.ja.md) — luni-groups-20261106
+- [α=1を維持したGufoの言語・思考条件の切り分け](investigations/local/updates/luni-gufo-diagnosis-20261106/README.ja.md) — luni-gufo-diagnosis-20261106
+- [Luni α=1：別エンジン比較の結果](investigations/local/updates/luni-llama-extended-retry-diagnosis-20261106/README.ja.md) — luni-llama-extended-retry-diagnosis-20261106
+- [Luni α=1 の取り込み・実行経路の調査](investigations/local/updates/luni-reference-20261106/README.ja.md) — luni-reference-20261106
+- [Luni公開モデルの品質報告](investigations/local/updates/luni-reference-20261106/donor-quality-report.ja.md) — luni-reference-20261106
+- [公式BF16の再量子化だけを行った対照試験](investigations/local/updates/luni-reference-requantized-20261106/README.ja.md) — luni-reference-requantized-20261106
+- [モデルディレクトリ名の変更（2026-11-09）](investigations/local/updates/model-directory-rename-20261109/README.ja.md) — model-directory-rename-20261109
+- [ToRO3モデル整理完了](investigations/local/updates/toro3-cleanup-20261107/README.ja.md) — toro3-cleanup-20261107

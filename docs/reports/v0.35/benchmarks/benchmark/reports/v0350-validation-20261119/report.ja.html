@@ -1,0 +1,1280 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gufo v0.35.0 3回測定レポート</title>
+<style>
+:root{color-scheme:dark}
+body{background:#111923;color:#eaf0f7;font:15px/1.7 system-ui,"Yu Gothic",sans-serif;margin:auto;max-width:2200px;padding:24px}
+h1{font-size:28px}
+h2{color:#abd8ff;margin-top:38px}
+h3{margin-top:25px}
+.scroll{overflow:auto;border:1px solid #34465a;border-radius:8px;margin:12px 0}
+table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:10px 12px;border-bottom:1px solid #34465a;text-align:right;white-space:nowrap}
+th{background:#213145;text-align:center}
+thead tr:first-child th:first-child,tbody th[scope="row"],.compact tbody td:first-child{text-align:left;position:sticky;left:0;background:#1a2838;z-index:1}
+th.current,td.current{background:#254839}
+.group-start{border-left:2px solid #5b718a}
+.perf,.compact{min-width:1100px}
+.good{color:#9cd8c0}
+.lower,.warning{color:#f1c88a}
+.muted,.note{color:#b9c7d8}
+small{display:block;font-size:12px}
+.callout{border-left:4px solid #7fb6d9;background:#1d2c3d;padding:12px 16px}
+a{color:#9dd9ff}
+p{max-width:1600px}
+details{margin:20px 0}
+summary{cursor:pointer;color:#b4d9ff}
+pre{white-space:pre-wrap;overflow-wrap:anywhere}
+footer{margin-top:30px;color:#b9c7d8}
+.summary{max-width:1100px}
+details pre{max-height:32em;overflow:auto}
+</style>
+</head>
+<body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><main>
+<h1>Gufo v0.34.0／v0.35.0 Windows＋WSL 性能比較</h1>
+<p>Unsloth v3.1系 IQ4_XS（現在の通常モデル）、Strix Halo gfx1151、Docker、ROCm 10.1。v0.35.0試験版 8296d0a4。ウォームアップを除く各3回、thinking off、温度0、seed 1。</p>
+<div class="callout">v0.35.0を現在の通常モデル・内蔵PLE＋MTP、128K×2セッション、thinking autoで起動し、応答を確認済み。</div>
+<p class="note">今回のターゲットは現在常用している重み移植・漢字/ハングル対象トークン抑制版。v0.34.0の保存値は11月12日の旧モデルであり、モデルとソフトウェアの両方に差がある。差分をGufoのバージョン効果やQ6_K改修単独の効果とは解釈しない。</p>
+<p class="note">上段は外れ値を除いた中央値、下段は全3回の平均 ± 標準偏差。カーソルを合わせると個別値と範囲を確認できる。†は修正Zスコアが3.5を超え、中央値との差が10%を超えた1値を除外。‡は出力差あり。薄緑はv0.35.0の今回実測。v0.34.0は11月12日の保存値。本家参考はv0.35.0タグ掲載のUD-Q4_K_XLの公表値（測定版 fec4759d）。</p>
+<div class="callout"><strong>出力照合</strong>：内蔵PLE AR・MTP 通常文 5/24件一致、外部PLE AR・MTP 通常文 8/24件一致、内蔵PLE AR・DFlash2 通常文 5/24件一致。同時利用などの検証指摘は2件。測定の完了と出力の完全一致は別に評価する。</div>
+<p class="note">検証指摘：external-q8/multi-mixed-c4、dflash2/multi-ar-c2。詳細と生データを後掲。</p>
+<h2>単独利用：Prefill・TTFT・Decode</h2>
+<p>履歴を再利用し、約2,048トークンを追加して128トークンを生成。単独は1セッション、コンテキスト133,760。左端は再利用した履歴の長さ。</p>
+<h3>AR（投機生成なし）</h3>
+<div class="scroll"><table class="perf" data-mode="ar"><thead><tr><th rowspan="2" scope="col">履歴（tokens）</th>
+<th colspan="3" scope="colgroup" class="group-start">内蔵PLE AR<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start">外部PLE Q8_0 AR<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start current">内蔵PLE AR<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start current">外部PLE Q8_0 AR<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">0</th>
+<td class="group-start"><span title="1回目 1,206.86, 2回目 1,241.76, 3回目 1,189.87 ｜ 全回の平均 ± 標準偏差 1,212.83 ± 26.45 ｜ 範囲 1,189.87〜1,241.76">1,206.86</span><small class="muted">1,212.83 ± 26.45</small></td>
+<td class=""><span title="1回目 1.750, 2回目 1.687, 3回目 1.776 ｜ 全回の平均 ± 標準偏差 1.738 ± 0.046 ｜ 範囲 1.687〜1.776">1.750</span><small class="muted">1.738 ± 0.046</small></td>
+<td class=""><span title="1回目 27.93, 2回目 28.27, 3回目 27.81 ｜ 全回の平均 ± 標準偏差 28.00 ± 0.24 ｜ 範囲 27.81〜28.27">27.93</span><small class="muted">28.00 ± 0.24</small></td>
+<td class="group-start"><span title="1回目 1,218.07, 2回目 1,224.12, 3回目 1,189.64 ｜ 全回の平均 ± 標準偏差 1,210.61 ± 18.41 ｜ 範囲 1,189.64〜1,224.12">1,218.07</span><small class="muted">1,210.61 ± 18.41</small></td>
+<td class=""><span title="1回目 1.728, 2回目 1.708, 3回目 1.773 ｜ 全回の平均 ± 標準偏差 1.736 ± 0.033 ｜ 範囲 1.708〜1.773">1.728</span><small class="muted">1.736 ± 0.033</small></td>
+<td class=""><span title="1回目 27.95, 2回目 28.50, 3回目 28.24 ｜ 全回の平均 ± 標準偏差 28.23 ± 0.27 ｜ 範囲 27.95〜28.50">28.24</span><small class="muted">28.23 ± 0.27</small></td>
+<td class="group-start current"><span title="1回目 1,145.20, 2回目 1,143.57, 3回目 1,097.45 ｜ 全回の平均 ± 標準偏差 1,128.74 ± 27.11 ｜ 範囲 1,097.45〜1,145.20">1,143.57</span><small class="muted">1,128.74 ± 27.11</small></td>
+<td class="current"><span title="1回目 1.865, 2回目 1.887, 3回目 1.954 ｜ 全回の平均 ± 標準偏差 1.902 ± 0.046 ｜ 範囲 1.865〜1.954">1.887</span><small class="muted">1.902 ± 0.046</small></td>
+<td class="current"><span title="1回目 27.11, 2回目 26.84, 3回目 25.58 ｜ 全回の平均 ± 標準偏差 26.51 ± 0.82 ｜ 範囲 25.58〜27.11">26.84</span><small class="muted">26.51 ± 0.82</small></td>
+<td class="group-start current"><span title="1回目 1,194.79, 2回目 1,192.10, 3回目 1,157.80 ｜ 全回の平均 ± 標準偏差 1,181.56 ± 20.63 ｜ 範囲 1,157.80〜1,194.79">1,192.10</span><small class="muted">1,181.56 ± 20.63</small></td>
+<td class="current"><span title="1回目 1.784, 2回目 1.781, 3回目 1.844 ｜ 全回の平均 ± 標準偏差 1.803 ± 0.036 ｜ 範囲 1.781〜1.844">1.784</span><small class="muted">1.803 ± 0.036</small></td>
+<td class="current"><span title="1回目 27.82, 2回目 28.53, 3回目 27.77 ｜ 全回の平均 ± 標準偏差 28.04 ± 0.43 ｜ 範囲 27.77〜28.53">27.82</span><small class="muted">28.04 ± 0.43</small></td>
+<td class="group-start">1,801.01</td>
+<td class="">—</td>
+<td class="">28.29</td>
+</tr>
+<tr><th scope="row">4,096</th>
+<td class="group-start"><span title="1回目 1,161.91, 2回目 1,201.29, 3回目 1,165.03 ｜ 全回の平均 ± 標準偏差 1,176.08 ± 21.89 ｜ 範囲 1,161.91〜1,201.29">1,165.03</span><small class="muted">1,176.08 ± 21.89</small></td>
+<td class=""><span title="1回目 1.762, 2回目 1.690, 3回目 1.744 ｜ 全回の平均 ± 標準偏差 1.732 ± 0.038 ｜ 範囲 1.690〜1.762">1.744</span><small class="muted">1.732 ± 0.038</small></td>
+<td class=""><span title="1回目 27.68, 2回目 28.42, 3回目 27.63 ｜ 全回の平均 ± 標準偏差 27.91 ± 0.44 ｜ 範囲 27.63〜28.42">27.68</span><small class="muted">27.91 ± 0.44</small> ‡</td>
+<td class="group-start"><span title="1回目 1,142.77, 2回目 1,188.04, 3回目 1,148.98 ｜ 全回の平均 ± 標準偏差 1,159.93 ± 24.54 ｜ 範囲 1,142.77〜1,188.04">1,148.98</span><small class="muted">1,159.93 ± 24.54</small></td>
+<td class=""><span title="1回目 1.791, 2回目 1.708, 3回目 1.768 ｜ 全回の平均 ± 標準偏差 1.756 ± 0.043 ｜ 範囲 1.708〜1.791">1.768</span><small class="muted">1.756 ± 0.043</small></td>
+<td class=""><span title="1回目 27.98, 2回目 28.20, 3回目 28.01 ｜ 全回の平均 ± 標準偏差 28.07 ± 0.12 ｜ 範囲 27.98〜28.20">28.01</span><small class="muted">28.07 ± 0.12</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,037.98, 2回目 1,104.74, 3回目 1,048.02 ｜ 全回の平均 ± 標準偏差 1,063.58 ± 36.00 ｜ 範囲 1,037.98〜1,104.74">1,048.02</span><small class="muted">1,063.58 ± 36.00</small></td>
+<td class="current"><span title="1回目 1.987, 2回目 1.854, 3回目 1.953 ｜ 全回の平均 ± 標準偏差 1.931 ± 0.069 ｜ 範囲 1.854〜1.987">1.953</span><small class="muted">1.931 ± 0.069</small></td>
+<td class="current"><span title="1回目 25.02, 2回目 25.83, 3回目 26.36 ｜ 全回の平均 ± 標準偏差 25.74 ± 0.67 ｜ 範囲 25.02〜26.36">25.83</span><small class="muted">25.74 ± 0.67</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,134.26, 2回目 909.38, 3回目 784.83 ｜ 全回の平均 ± 標準偏差 942.82 ± 177.10 ｜ 範囲 784.83〜1,134.26">909.38</span><small class="muted">942.82 ± 177.10</small></td>
+<td class="current"><span title="1回目 1.839, 2回目 2.244, 3回目 2.600 ｜ 全回の平均 ± 標準偏差 2.228 ± 0.381 ｜ 範囲 1.839〜2.600">2.244</span><small class="muted">2.228 ± 0.381</small></td>
+<td class="current"><span title="1回目 27.73, 2回目 25.77, 3回目 25.79 ｜ 全回の平均 ± 標準偏差 26.43 ± 1.13 ｜ 範囲 25.77〜27.73">25.79</span><small class="muted">26.43 ± 1.13</small> ‡</td>
+<td class="group-start">1,727.95</td>
+<td class="">—</td>
+<td class="">28.27</td>
+</tr>
+<tr><th scope="row">8,192</th>
+<td class="group-start"><span title="1回目 1,180.15, 2回目 1,167.88, 3回目 1,157.69 ｜ 全回の平均 ± 標準偏差 1,168.57 ± 11.25 ｜ 範囲 1,157.69〜1,180.15">1,167.88</span><small class="muted">1,168.57 ± 11.25</small></td>
+<td class=""><span title="1回目 1.739, 2回目 1.763, 3回目 1.767 ｜ 全回の平均 ± 標準偏差 1.756 ± 0.015 ｜ 範囲 1.739〜1.767">1.763</span><small class="muted">1.756 ± 0.015</small></td>
+<td class=""><span title="1回目 28.33, 2回目 28.20, 3回目 28.70 ｜ 全回の平均 ± 標準偏差 28.41 ± 0.26 ｜ 範囲 28.20〜28.70">28.33</span><small class="muted">28.41 ± 0.26</small> ‡</td>
+<td class="group-start"><span title="1回目 1,149.61, 2回目 1,128.47, 3回目 1,172.69 ｜ 全回の平均 ± 標準偏差 1,150.26 ± 22.12 ｜ 範囲 1,128.47〜1,172.69">1,149.61</span><small class="muted">1,150.26 ± 22.12</small></td>
+<td class=""><span title="1回目 1.786, 2回目 1.825, 3回目 1.745 ｜ 全回の平均 ± 標準偏差 1.785 ± 0.040 ｜ 範囲 1.745〜1.825">1.786</span><small class="muted">1.785 ± 0.040</small></td>
+<td class=""><span title="1回目 28.06, 2回目 28.11, 3回目 28.02 ｜ 全回の平均 ± 標準偏差 28.06 ± 0.05 ｜ 範囲 28.02〜28.11">28.06</span><small class="muted">28.06 ± 0.05</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,132.09, 2回目 1,128.12, 3回目 1,117.43 ｜ 全回の平均 ± 標準偏差 1,125.88 ± 7.58 ｜ 範囲 1,117.43〜1,132.09">1,128.12</span><small class="muted">1,125.88 ± 7.58</small></td>
+<td class="current"><span title="1回目 1.824, 2回目 1.838, 3回目 1.843 ｜ 全回の平均 ± 標準偏差 1.835 ± 0.010 ｜ 範囲 1.824〜1.843">1.838</span><small class="muted">1.835 ± 0.010</small></td>
+<td class="current"><span title="1回目 25.98, 2回目 27.00, 3回目 27.28 ｜ 全回の平均 ± 標準偏差 26.76 ± 0.68 ｜ 範囲 25.98〜27.28">27.00</span><small class="muted">26.76 ± 0.68</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,173.29, 2回目 1,120.16, 3回目 1,154.16 ｜ 全回の平均 ± 標準偏差 1,149.20 ± 26.91 ｜ 範囲 1,120.16〜1,173.29">1,154.16</span><small class="muted">1,149.20 ± 26.91</small></td>
+<td class="current"><span title="1回目 1.757, 2回目 1.849, 3回目 1.788 ｜ 全回の平均 ± 標準偏差 1.798 ± 0.046 ｜ 範囲 1.757〜1.849">1.788</span><small class="muted">1.798 ± 0.046</small></td>
+<td class="current"><span title="1回目 27.73, 2回目 28.25, 3回目 28.07 ｜ 全回の平均 ± 標準偏差 28.02 ± 0.26 ｜ 範囲 27.73〜28.25">28.07</span><small class="muted">28.02 ± 0.26</small> ‡</td>
+<td class="group-start">1,721.41</td>
+<td class="">—</td>
+<td class="">28.27</td>
+</tr>
+<tr><th scope="row">12,288</th>
+<td class="group-start"><span title="1回目 1,179.40, 2回目 1,191.60, 3回目 1,146.05 ｜ 全回の平均 ± 標準偏差 1,172.35 ± 23.58 ｜ 範囲 1,146.05〜1,191.60">1,179.40</span><small class="muted">1,172.35 ± 23.58</small></td>
+<td class=""><span title="1回目 1.741, 2回目 1.723, 3回目 1.795 ｜ 全回の平均 ± 標準偏差 1.753 ± 0.038 ｜ 範囲 1.723〜1.795">1.741</span><small class="muted">1.753 ± 0.038</small></td>
+<td class=""><span title="1回目 28.33, 2回目 28.47, 3回目 28.64 ｜ 全回の平均 ± 標準偏差 28.48 ± 0.15 ｜ 範囲 28.33〜28.64">28.47</span><small class="muted">28.48 ± 0.15</small> ‡</td>
+<td class="group-start"><span title="1回目 1,164.64, 2回目 1,159.86, 3回目 1,148.11 ｜ 全回の平均 ± 標準偏差 1,157.54 ± 8.50 ｜ 範囲 1,148.11〜1,164.64">1,159.86</span><small class="muted">1,157.54 ± 8.50</small></td>
+<td class=""><span title="1回目 1.762, 2回目 1.770, 3回目 1.791 ｜ 全回の平均 ± 標準偏差 1.774 ± 0.015 ｜ 範囲 1.762〜1.791">1.770</span><small class="muted">1.774 ± 0.015</small></td>
+<td class=""><span title="1回目 28.15, 2回目 28.24, 3回目 28.37 ｜ 全回の平均 ± 標準偏差 28.25 ± 0.11 ｜ 範囲 28.15〜28.37">28.24</span><small class="muted">28.25 ± 0.11</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,129.67, 2回目 1,152.43, 3回目 1,090.07 ｜ 全回の平均 ± 標準偏差 1,124.05 ± 31.56 ｜ 範囲 1,090.07〜1,152.43">1,129.67</span><small class="muted">1,124.05 ± 31.56</small></td>
+<td class="current"><span title="1回目 1.820, 2回目 1.782, 3回目 1.887 ｜ 全回の平均 ± 標準偏差 1.830 ± 0.053 ｜ 範囲 1.782〜1.887">1.820</span><small class="muted">1.830 ± 0.053</small></td>
+<td class="current"><span title="1回目 26.20, 2回目 26.52, 3回目 26.97 ｜ 全回の平均 ± 標準偏差 26.57 ± 0.39 ｜ 範囲 26.20〜26.97">26.52</span><small class="muted">26.57 ± 0.39</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,129.69, 2回目 1,152.58, 3回目 1,125.71 ｜ 全回の平均 ± 標準偏差 1,136.00 ± 14.50 ｜ 範囲 1,125.71〜1,152.58">1,129.69</span><small class="muted">1,136.00 ± 14.50</small></td>
+<td class="current"><span title="1回目 1.819, 2回目 1.782, 3回目 1.827 ｜ 全回の平均 ± 標準偏差 1.809 ± 0.024 ｜ 範囲 1.782〜1.827">1.819</span><small class="muted">1.809 ± 0.024</small></td>
+<td class="current"><span title="1回目 27.45, 2回目 28.04, 3回目 28.00 ｜ 全回の平均 ± 標準偏差 27.83 ± 0.33 ｜ 範囲 27.45〜28.04">28.00</span><small class="muted">27.83 ± 0.33</small> ‡</td>
+<td class="group-start">1,710.64</td>
+<td class="">—</td>
+<td class="">28.21</td>
+</tr>
+<tr><th scope="row">16,384</th>
+<td class="group-start"><span title="1回目 1,175.93, 2回目 1,202.41, 3回目 1,186.44 ｜ 全回の平均 ± 標準偏差 1,188.26 ± 13.33 ｜ 範囲 1,175.93〜1,202.41">1,186.44</span><small class="muted">1,188.26 ± 13.33</small></td>
+<td class=""><span title="1回目 1.747, 2回目 1.707, 3回目 1.730 ｜ 全回の平均 ± 標準偏差 1.728 ± 0.020 ｜ 範囲 1.707〜1.747">1.730</span><small class="muted">1.728 ± 0.020</small></td>
+<td class=""><span title="1回目 28.23, 2回目 27.80, 3回目 28.40 ｜ 全回の平均 ± 標準偏差 28.15 ± 0.31 ｜ 範囲 27.80〜28.40">28.23</span><small class="muted">28.15 ± 0.31</small> ‡</td>
+<td class="group-start"><span title="1回目 1,100.17, 2回目 1,177.02, 3回目 1,155.38 ｜ 全回の平均 ± 標準偏差 1,144.19 ± 39.63 ｜ 範囲 1,100.17〜1,177.02">1,155.38</span><small class="muted">1,144.19 ± 39.63</small></td>
+<td class=""><span title="1回目 1.866, 2回目 1.743, 3回目 1.778 ｜ 全回の平均 ± 標準偏差 1.796 ± 0.063 ｜ 範囲 1.743〜1.866">1.778</span><small class="muted">1.796 ± 0.063</small></td>
+<td class=""><span title="1回目 27.88, 2回目 28.35, 3回目 28.18 ｜ 全回の平均 ± 標準偏差 28.14 ± 0.24 ｜ 範囲 27.88〜28.35">28.18</span><small class="muted">28.14 ± 0.24</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,114.57, 2回目 1,167.52, 3回目 1,136.14 ｜ 全回の平均 ± 標準偏差 1,139.41 ± 26.63 ｜ 範囲 1,114.57〜1,167.52">1,136.14</span><small class="muted">1,139.41 ± 26.63</small></td>
+<td class="current"><span title="1回目 1.842, 2回目 1.758, 3回目 1.809 ｜ 全回の平均 ± 標準偏差 1.803 ± 0.042 ｜ 範囲 1.758〜1.842">1.809</span><small class="muted">1.803 ± 0.042</small></td>
+<td class="current"><span title="1回目 27.55, 2回目 27.61, 3回目 27.56 ｜ 全回の平均 ± 標準偏差 27.57 ± 0.03 ｜ 範囲 27.55〜27.61">27.56</span><small class="muted">27.57 ± 0.03</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,117.83, 2回目 1,171.01, 3回目 1,138.52 ｜ 全回の平均 ± 標準偏差 1,142.45 ± 26.81 ｜ 範囲 1,117.83〜1,171.01">1,138.52</span><small class="muted">1,142.45 ± 26.81</small></td>
+<td class="current"><span title="1回目 1.836, 2回目 1.753, 3回目 1.804 ｜ 全回の平均 ± 標準偏差 1.797 ± 0.042 ｜ 範囲 1.753〜1.836">1.804</span><small class="muted">1.797 ± 0.042</small></td>
+<td class="current"><span title="1回目 27.56, 2回目 28.04, 3回目 27.73 ｜ 全回の平均 ± 標準偏差 27.78 ± 0.25 ｜ 範囲 27.56〜28.04">27.73</span><small class="muted">27.78 ± 0.25</small> ‡</td>
+<td class="group-start">1,706.86</td>
+<td class="">—</td>
+<td class="">28.25</td>
+</tr>
+<tr><th scope="row">32,768</th>
+<td class="group-start"><span title="1回目 1,156.98, 2回目 1,131.20, 3回目 1,144.94 ｜ 全回の平均 ± 標準偏差 1,144.38 ± 12.90 ｜ 範囲 1,131.20〜1,156.98">1,144.94</span><small class="muted">1,144.38 ± 12.90</small></td>
+<td class=""><span title="1回目 1.761, 2回目 1.834, 3回目 1.790 ｜ 全回の平均 ± 標準偏差 1.795 ± 0.037 ｜ 範囲 1.761〜1.834">1.790</span><small class="muted">1.795 ± 0.037</small></td>
+<td class=""><span title="1回目 27.88, 2回目 28.47, 3回目 28.40 ｜ 全回の平均 ± 標準偏差 28.25 ± 0.32 ｜ 範囲 27.88〜28.47">28.40</span><small class="muted">28.25 ± 0.32</small> ‡</td>
+<td class="group-start"><span title="1回目 1,134.99, 2回目 1,139.93, 3回目 1,157.08 ｜ 全回の平均 ± 標準偏差 1,144.00 ± 11.60 ｜ 範囲 1,134.99〜1,157.08">1,139.93</span><small class="muted">1,144.00 ± 11.60</small></td>
+<td class=""><span title="1回目 1.795, 2回目 1.820, 3回目 1.772 ｜ 全回の平均 ± 標準偏差 1.796 ± 0.024 ｜ 範囲 1.772〜1.820">1.795</span><small class="muted">1.796 ± 0.024</small></td>
+<td class=""><span title="1回目 28.16, 2回目 28.01, 3回目 27.97 ｜ 全回の平均 ± 標準偏差 28.05 ± 0.10 ｜ 範囲 27.97〜28.16">28.01</span><small class="muted">28.05 ± 0.10</small> ‡</td>
+<td class="group-start current"><span title="1回目 779.30, 2回目 776.86, 3回目 1,090.72 ｜ 全回の平均 ± 標準偏差 882.29 ± 180.50 ｜ 範囲 776.86〜1,090.72 ｜ 中央値から除外 3回目">778.08 †</span><small class="muted">882.29 ± 180.50</small></td>
+<td class="current"><span title="1回目 2.612, 2回目 2.670, 3回目 1.881 ｜ 全回の平均 ± 標準偏差 2.388 ± 0.440 ｜ 範囲 1.881〜2.670 ｜ 中央値から除外 3回目">2.641 †</span><small class="muted">2.388 ± 0.440</small></td>
+<td class="current"><span title="1回目 24.07, 2回目 26.66, 3回目 27.48 ｜ 全回の平均 ± 標準偏差 26.07 ± 1.78 ｜ 範囲 24.07〜27.48">26.66</span><small class="muted">26.07 ± 1.78</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,107.17, 2回目 1,085.92, 3回目 1,116.84 ｜ 全回の平均 ± 標準偏差 1,103.31 ± 15.82 ｜ 範囲 1,085.92〜1,116.84">1,107.17</span><small class="muted">1,103.31 ± 15.82</small></td>
+<td class="current"><span title="1回目 1.842, 2回目 1.911, 3回目 1.836 ｜ 全回の平均 ± 標準偏差 1.863 ± 0.042 ｜ 範囲 1.836〜1.911">1.842</span><small class="muted">1.863 ± 0.042</small></td>
+<td class="current"><span title="1回目 27.39, 2回目 28.12, 3回目 28.03 ｜ 全回の平均 ± 標準偏差 27.85 ± 0.40 ｜ 範囲 27.39〜28.12">28.03</span><small class="muted">27.85 ± 0.40</small> ‡</td>
+<td class="group-start">1,672.60</td>
+<td class="">—</td>
+<td class="">28.18</td>
+</tr>
+<tr><th scope="row">65,536</th>
+<td class="group-start"><span title="1回目 1,107.47, 2回目 1,149.45, 3回目 1,118.75 ｜ 全回の平均 ± 標準偏差 1,125.22 ± 21.72 ｜ 範囲 1,107.47〜1,149.45">1,118.75</span><small class="muted">1,125.22 ± 21.72</small></td>
+<td class=""><span title="1回目 1.868, 2回目 1.794, 3回目 1.864 ｜ 全回の平均 ± 標準偏差 1.842 ± 0.042 ｜ 範囲 1.794〜1.868">1.864</span><small class="muted">1.842 ± 0.042</small></td>
+<td class=""><span title="1回目 27.96, 2回目 28.06, 3回目 28.00 ｜ 全回の平均 ± 標準偏差 28.01 ± 0.05 ｜ 範囲 27.96〜28.06">28.00</span><small class="muted">28.01 ± 0.05</small> ‡</td>
+<td class="group-start"><span title="1回目 1,087.40, 2回目 1,104.99, 3回目 1,065.41 ｜ 全回の平均 ± 標準偏差 1,085.93 ± 19.83 ｜ 範囲 1,065.41〜1,104.99">1,087.40</span><small class="muted">1,085.93 ± 19.83</small></td>
+<td class=""><span title="1回目 1.904, 2回目 1.866, 3回目 1.955 ｜ 全回の平均 ± 標準偏差 1.908 ± 0.045 ｜ 範囲 1.866〜1.955">1.904</span><small class="muted">1.908 ± 0.045</small></td>
+<td class=""><span title="1回目 27.81, 2回目 27.91, 3回目 28.06 ｜ 全回の平均 ± 標準偏差 27.93 ± 0.13 ｜ 範囲 27.81〜28.06">27.91</span><small class="muted">27.93 ± 0.13</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,016.82, 2回目 1,022.63, 3回目 1,043.73 ｜ 全回の平均 ± 標準偏差 1,027.73 ± 14.16 ｜ 範囲 1,016.82〜1,043.73">1,022.63</span><small class="muted">1,027.73 ± 14.16</small></td>
+<td class="current"><span title="1回目 2.036, 2回目 2.017, 3回目 1.995 ｜ 全回の平均 ± 標準偏差 2.016 ± 0.020 ｜ 範囲 1.995〜2.036">2.017</span><small class="muted">2.016 ± 0.020</small></td>
+<td class="current"><span title="1回目 26.67, 2回目 26.73, 3回目 26.86 ｜ 全回の平均 ± 標準偏差 26.76 ± 0.10 ｜ 範囲 26.67〜26.86">26.73</span><small class="muted">26.76 ± 0.10</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,060.40, 2回目 1,106.78, 3回目 1,079.17 ｜ 全回の平均 ± 標準偏差 1,082.12 ± 23.33 ｜ 範囲 1,060.40〜1,106.78">1,079.17</span><small class="muted">1,082.12 ± 23.33</small></td>
+<td class="current"><span title="1回目 1.952, 2回目 1.864, 3回目 1.930 ｜ 全回の平均 ± 標準偏差 1.915 ± 0.046 ｜ 範囲 1.864〜1.952">1.930</span><small class="muted">1.915 ± 0.046</small></td>
+<td class="current"><span title="1回目 27.21, 2回目 27.68, 3回目 27.50 ｜ 全回の平均 ± 標準偏差 27.46 ± 0.24 ｜ 範囲 27.21〜27.68">27.50</span><small class="muted">27.46 ± 0.24</small> ‡</td>
+<td class="group-start">1,602.93</td>
+<td class="">—</td>
+<td class="">28.09</td>
+</tr>
+<tr><th scope="row">131,072</th>
+<td class="group-start"><span title="1回目 1,018.76, 2回目 998.92, 3回目 1,021.31 ｜ 全回の平均 ± 標準偏差 1,013.00 ± 12.26 ｜ 範囲 998.92〜1,021.31">1,018.76</span><small class="muted">1,013.00 ± 12.26</small></td>
+<td class=""><span title="1回目 2.031, 2回目 2.080, 3回目 2.021 ｜ 全回の平均 ± 標準偏差 2.044 ± 0.032 ｜ 範囲 2.021〜2.080">2.031</span><small class="muted">2.044 ± 0.032</small></td>
+<td class=""><span title="1回目 26.77, 2回目 26.86, 3回目 27.13 ｜ 全回の平均 ± 標準偏差 26.92 ± 0.19 ｜ 範囲 26.77〜27.13">26.86</span><small class="muted">26.92 ± 0.19</small> ‡</td>
+<td class="group-start"><span title="1回目 1,007.63, 2回目 1,023.55, 3回目 1,000.16 ｜ 全回の平均 ± 標準偏差 1,010.45 ± 11.95 ｜ 範囲 1,000.16〜1,023.55">1,007.63</span><small class="muted">1,010.45 ± 11.95</small></td>
+<td class=""><span title="1回目 2.049, 2回目 2.031, 3回目 2.064 ｜ 全回の平均 ± 標準偏差 2.048 ± 0.016 ｜ 範囲 2.031〜2.064">2.049</span><small class="muted">2.048 ± 0.016</small></td>
+<td class=""><span title="1回目 26.57, 2回目 27.01, 3回目 26.21 ｜ 全回の平均 ± 標準偏差 26.60 ± 0.40 ｜ 範囲 26.21〜27.01">26.57</span><small class="muted">26.60 ± 0.40</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,007.86, 2回目 999.52, 3回目 1,025.29 ｜ 全回の平均 ± 標準偏差 1,010.89 ± 13.15 ｜ 範囲 999.52〜1,025.29">1,007.86</span><small class="muted">1,010.89 ± 13.15</small></td>
+<td class="current"><span title="1回目 2.060, 2回目 2.086, 3回目 2.013 ｜ 全回の平均 ± 標準偏差 2.053 ± 0.037 ｜ 範囲 2.013〜2.086">2.060</span><small class="muted">2.053 ± 0.037</small></td>
+<td class="current"><span title="1回目 25.89, 2回目 25.72, 3回目 26.43 ｜ 全回の平均 ± 標準偏差 26.01 ± 0.37 ｜ 範囲 25.72〜26.43">25.89</span><small class="muted">26.01 ± 0.37</small> ‡</td>
+<td class="group-start current"><span title="1回目 989.64, 2回目 1,000.70, 3回目 990.59 ｜ 全回の平均 ± 標準偏差 993.64 ± 6.13 ｜ 範囲 989.64〜1,000.70">990.59</span><small class="muted">993.64 ± 6.13</small></td>
+<td class="current"><span title="1回目 2.087, 2回目 2.084, 3回目 2.084 ｜ 全回の平均 ± 標準偏差 2.085 ± 0.002 ｜ 範囲 2.084〜2.087">2.084</span><small class="muted">2.085 ± 0.002</small></td>
+<td class="current"><span title="1回目 26.47, 2回目 26.75, 3回目 26.44 ｜ 全回の平均 ± 標準偏差 26.56 ± 0.17 ｜ 範囲 26.44〜26.75">26.47</span><small class="muted">26.56 ± 0.17</small> ‡</td>
+<td class="group-start">1,557.18</td>
+<td class="">—</td>
+<td class="">27.85</td>
+</tr>
+</tbody></table></div>
+<h3>投機生成・通常文</h3>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">履歴（tokens）</th>
+<th colspan="3" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">0</th>
+<td class="group-start"><span title="1回目 1,110.45, 2回目 1,124.50, 3回目 1,104.03 ｜ 全回の平均 ± 標準偏差 1,112.99 ± 10.47 ｜ 範囲 1,104.03〜1,124.50">1,110.45</span><small class="muted">1,112.99 ± 10.47</small></td>
+<td class=""><span title="1回目 1.895, 2回目 1.865, 3回目 1.912 ｜ 全回の平均 ± 標準偏差 1.891 ± 0.024 ｜ 範囲 1.865〜1.912">1.895</span><small class="muted">1.891 ± 0.024</small></td>
+<td class=""><span title="1回目 30.78, 2回目 32.55, 3回目 34.46 ｜ 全回の平均 ± 標準偏差 32.60 ± 1.84 ｜ 範囲 30.78〜34.46">32.55</span><small class="muted">32.60 ± 1.84</small></td>
+<td class="group-start"><span title="1回目 1,131.33, 2回目 1,101.02, 3回目 1,120.91 ｜ 全回の平均 ± 標準偏差 1,117.76 ± 15.40 ｜ 範囲 1,101.02〜1,131.33">1,120.91</span><small class="muted">1,117.76 ± 15.40</small></td>
+<td class=""><span title="1回目 1.865, 2回目 1.913, 3回目 1.883 ｜ 全回の平均 ± 標準偏差 1.887 ± 0.024 ｜ 範囲 1.865〜1.913">1.883</span><small class="muted">1.887 ± 0.024</small></td>
+<td class=""><span title="1回目 29.59, 2回目 34.11, 3回目 34.63 ｜ 全回の平均 ± 標準偏差 32.78 ± 2.77 ｜ 範囲 29.59〜34.63 ｜ 中央値から除外 1回目">34.37 †</span><small class="muted">32.78 ± 2.77</small></td>
+<td class="group-start"><span title="1回目 1,007.70, 2回目 1,055.34, 3回目 1,036.25 ｜ 全回の平均 ± 標準偏差 1,033.10 ± 23.97 ｜ 範囲 1,007.70〜1,055.34">1,036.25</span><small class="muted">1,033.10 ± 23.97</small></td>
+<td class=""><span title="1回目 2.170, 2回目 2.058, 3回目 2.112 ｜ 全回の平均 ± 標準偏差 2.114 ± 0.056 ｜ 範囲 2.058〜2.170">2.112</span><small class="muted">2.114 ± 0.056</small></td>
+<td class=""><span title="1回目 33.57, 2回目 34.10, 3回目 34.08 ｜ 全回の平均 ± 標準偏差 33.92 ± 0.30 ｜ 範囲 33.57〜34.10">34.08</span><small class="muted">33.92 ± 0.30</small></td>
+<td class="group-start current"><span title="1回目 1,100.94, 2回目 1,133.94, 3回目 1,101.27 ｜ 全回の平均 ± 標準偏差 1,112.05 ± 18.96 ｜ 範囲 1,100.94〜1,133.94">1,101.27</span><small class="muted">1,112.05 ± 18.96</small></td>
+<td class="current"><span title="1回目 1.928, 2回目 1.873, 3回目 1.944 ｜ 全回の平均 ± 標準偏差 1.915 ± 0.037 ｜ 範囲 1.873〜1.944">1.928</span><small class="muted">1.915 ± 0.037</small></td>
+<td class="current"><span title="1回目 27.64, 2回目 33.09, 3回目 33.94 ｜ 全回の平均 ± 標準偏差 31.56 ± 3.42 ｜ 範囲 27.64〜33.94 ｜ 中央値から除外 1回目">33.52 †</span><small class="muted">31.56 ± 3.42</small></td>
+<td class="group-start current"><span title="1回目 1,072.31, 2回目 1,082.53, 3回目 1,081.70 ｜ 全回の平均 ± 標準偏差 1,078.85 ± 5.68 ｜ 範囲 1,072.31〜1,082.53">1,081.70</span><small class="muted">1,078.85 ± 5.68</small></td>
+<td class="current"><span title="1回目 1.983, 2回目 1.963, 3回目 1.977 ｜ 全回の平均 ± 標準偏差 1.974 ± 0.011 ｜ 範囲 1.963〜1.983">1.977</span><small class="muted">1.974 ± 0.011</small></td>
+<td class="current"><span title="1回目 29.54, 2回目 32.53, 3回目 32.56 ｜ 全回の平均 ± 標準偏差 31.54 ± 1.73 ｜ 範囲 29.54〜32.56">32.53</span><small class="muted">31.54 ± 1.73</small></td>
+<td class="group-start current"><span title="1回目 980.07, 2回目 1,013.70, 3回目 1,018.26 ｜ 全回の平均 ± 標準偏差 1,004.01 ± 20.86 ｜ 範囲 980.07〜1,018.26">1,013.70</span><small class="muted">1,004.01 ± 20.86</small></td>
+<td class="current"><span title="1回目 2.291, 2回目 2.212, 3回目 2.226 ｜ 全回の平均 ± 標準偏差 2.243 ± 0.042 ｜ 範囲 2.212〜2.291">2.226</span><small class="muted">2.243 ± 0.042</small></td>
+<td class="current"><span title="1回目 33.46, 2回目 33.57, 3回目 33.74 ｜ 全回の平均 ± 標準偏差 33.59 ± 0.14 ｜ 範囲 33.46〜33.74">33.57</span><small class="muted">33.59 ± 0.14</small></td>
+<td class="group-start">1,728.77</td>
+<td class="">—</td>
+<td class="">35.79</td>
+</tr>
+<tr><th scope="row">4,096</th>
+<td class="group-start"><span title="1回目 1,080.71, 2回目 1,100.73, 3回目 1,089.45 ｜ 全回の平均 ± 標準偏差 1,090.30 ± 10.03 ｜ 範囲 1,080.71〜1,100.73">1,089.45</span><small class="muted">1,090.30 ± 10.03</small></td>
+<td class=""><span title="1回目 1.894, 2回目 1.843, 3回目 1.864 ｜ 全回の平均 ± 標準偏差 1.867 ± 0.026 ｜ 範囲 1.843〜1.894">1.864</span><small class="muted">1.867 ± 0.026</small></td>
+<td class=""><span title="1回目 38.72, 2回目 31.12, 3回目 34.42 ｜ 全回の平均 ± 標準偏差 34.76 ± 3.81 ｜ 範囲 31.12〜38.72">34.42</span><small class="muted">34.76 ± 3.81</small> ‡</td>
+<td class="group-start"><span title="1回目 1,082.25, 2回目 1,099.16, 3回目 1,088.44 ｜ 全回の平均 ± 標準偏差 1,089.95 ± 8.56 ｜ 範囲 1,082.25〜1,099.16">1,088.44</span><small class="muted">1,089.95 ± 8.56</small></td>
+<td class=""><span title="1回目 1.891, 2回目 1.845, 3回目 1.866 ｜ 全回の平均 ± 標準偏差 1.867 ± 0.023 ｜ 範囲 1.845〜1.891">1.866</span><small class="muted">1.867 ± 0.023</small></td>
+<td class=""><span title="1回目 35.53, 2回目 38.69, 3回目 38.50 ｜ 全回の平均 ± 標準偏差 37.57 ± 1.77 ｜ 範囲 35.53〜38.69">38.50</span><small class="muted">37.57 ± 1.77</small> ‡</td>
+<td class="group-start"><span title="1回目 977.66, 2回目 1,009.18, 3回目 997.85 ｜ 全回の平均 ± 標準偏差 994.90 ± 15.96 ｜ 範囲 977.66〜1,009.18">997.85</span><small class="muted">994.90 ± 15.96</small></td>
+<td class=""><span title="1回目 2.163, 2回目 2.083, 3回目 2.114 ｜ 全回の平均 ± 標準偏差 2.120 ± 0.040 ｜ 範囲 2.083〜2.163">2.114</span><small class="muted">2.120 ± 0.040</small></td>
+<td class=""><span title="1回目 37.31, 2回目 34.53, 3回目 34.54 ｜ 全回の平均 ± 標準偏差 35.46 ± 1.60 ｜ 範囲 34.53〜37.31">34.54</span><small class="muted">35.46 ± 1.60</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,081.23, 2回目 1,061.76, 3回目 1,093.83 ｜ 全回の平均 ± 標準偏差 1,078.94 ± 16.16 ｜ 範囲 1,061.76〜1,093.83">1,081.23</span><small class="muted">1,078.94 ± 16.16</small></td>
+<td class="current"><span title="1回目 1.900, 2回目 1.917, 3回目 1.867 ｜ 全回の平均 ± 標準偏差 1.894 ± 0.025 ｜ 範囲 1.867〜1.917">1.900</span><small class="muted">1.894 ± 0.025</small></td>
+<td class="current"><span title="1回目 37.62, 2回目 30.84, 3回目 33.98 ｜ 全回の平均 ± 標準偏差 34.15 ± 3.39 ｜ 範囲 30.84〜37.62">33.98</span><small class="muted">34.15 ± 3.39</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,052.37, 2回目 1,063.83, 3回目 1,082.82 ｜ 全回の平均 ± 標準偏差 1,066.34 ± 15.38 ｜ 範囲 1,052.37〜1,082.82">1,063.83</span><small class="muted">1,066.34 ± 15.38</small></td>
+<td class="current"><span title="1回目 1.952, 2回目 1.916, 3回目 1.884 ｜ 全回の平均 ± 標準偏差 1.917 ± 0.034 ｜ 範囲 1.884〜1.952">1.916</span><small class="muted">1.917 ± 0.034</small></td>
+<td class="current"><span title="1回目 33.33, 2回目 35.98, 3回目 35.48 ｜ 全回の平均 ± 標準偏差 34.93 ± 1.41 ｜ 範囲 33.33〜35.98">35.48</span><small class="muted">34.93 ± 1.41</small> ‡</td>
+<td class="group-start current"><span title="1回目 980.05, 2回目 975.35, 3回目 986.47 ｜ 全回の平均 ± 標準偏差 980.62 ± 5.58 ｜ 範囲 975.35〜986.47">980.05</span><small class="muted">980.62 ± 5.58</small></td>
+<td class="current"><span title="1回目 2.222, 2回目 2.219, 3回目 2.192 ｜ 全回の平均 ± 標準偏差 2.211 ± 0.017 ｜ 範囲 2.192〜2.222">2.219</span><small class="muted">2.211 ± 0.017</small></td>
+<td class="current"><span title="1回目 37.05, 2回目 34.69, 3回目 34.48 ｜ 全回の平均 ± 標準偏差 35.41 ± 1.43 ｜ 範囲 34.48〜37.05">34.69</span><small class="muted">35.41 ± 1.43</small> ‡</td>
+<td class="group-start">1,669.38</td>
+<td class="">—</td>
+<td class="">37.64</td>
+</tr>
+<tr><th scope="row">8,192</th>
+<td class="group-start"><span title="1回目 1,108.32, 2回目 1,076.01, 3回目 1,098.84 ｜ 全回の平均 ± 標準偏差 1,094.39 ± 16.61 ｜ 範囲 1,076.01〜1,108.32">1,098.84</span><small class="muted">1,094.39 ± 16.61</small></td>
+<td class=""><span title="1回目 1.851, 2回目 1.913, 3回目 1.861 ｜ 全回の平均 ± 標準偏差 1.875 ± 0.033 ｜ 範囲 1.851〜1.913">1.861</span><small class="muted">1.875 ± 0.033</small></td>
+<td class=""><span title="1回目 34.41, 2回目 36.45, 3回目 36.33 ｜ 全回の平均 ± 標準偏差 35.73 ± 1.14 ｜ 範囲 34.41〜36.45">36.33</span><small class="muted">35.73 ± 1.14</small> ‡</td>
+<td class="group-start"><span title="1回目 1,071.45, 2回目 1,012.68, 3回目 1,053.69 ｜ 全回の平均 ± 標準偏差 1,045.94 ± 30.14 ｜ 範囲 1,012.68〜1,071.45">1,053.69</span><small class="muted">1,045.94 ± 30.14</small></td>
+<td class=""><span title="1回目 1.914, 2回目 2.033, 3回目 1.941 ｜ 全回の平均 ± 標準偏差 1.962 ± 0.062 ｜ 範囲 1.914〜2.033">1.941</span><small class="muted">1.962 ± 0.062</small></td>
+<td class=""><span title="1回目 31.77, 2回目 28.86, 3回目 32.40 ｜ 全回の平均 ± 標準偏差 31.01 ± 1.89 ｜ 範囲 28.86〜32.40">31.77</span><small class="muted">31.01 ± 1.89</small> ‡</td>
+<td class="group-start"><span title="1回目 965.41, 2回目 1,031.90, 3回目 1,015.99 ｜ 全回の平均 ± 標準偏差 1,004.43 ± 34.71 ｜ 範囲 965.41〜1,031.90">1,015.99</span><small class="muted">1,004.43 ± 34.71</small></td>
+<td class=""><span title="1回目 2.206, 2回目 2.067, 3回目 2.089 ｜ 全回の平均 ± 標準偏差 2.121 ± 0.075 ｜ 範囲 2.067〜2.206">2.089</span><small class="muted">2.121 ± 0.075</small></td>
+<td class=""><span title="1回目 34.58, 2回目 36.60, 3回目 35.23 ｜ 全回の平均 ± 標準偏差 35.47 ± 1.03 ｜ 範囲 34.58〜36.60">35.23</span><small class="muted">35.47 ± 1.03</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,066.56, 2回目 1,093.50, 3回目 1,061.41 ｜ 全回の平均 ± 標準偏差 1,073.82 ± 17.23 ｜ 範囲 1,061.41〜1,093.50">1,066.56</span><small class="muted">1,073.82 ± 17.23</small></td>
+<td class="current"><span title="1回目 1.938, 2回目 1.894, 3回目 1.939 ｜ 全回の平均 ± 標準偏差 1.924 ± 0.026 ｜ 範囲 1.894〜1.939">1.938</span><small class="muted">1.924 ± 0.026</small></td>
+<td class="current"><span title="1回目 33.26, 2回目 35.25, 3回目 31.92 ｜ 全回の平均 ± 標準偏差 33.47 ± 1.68 ｜ 範囲 31.92〜35.25">33.26</span><small class="muted">33.47 ± 1.68</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,048.30, 2回目 1,060.05, 3回目 1,077.41 ｜ 全回の平均 ± 標準偏差 1,061.92 ± 14.65 ｜ 範囲 1,048.30〜1,077.41">1,060.05</span><small class="muted">1,061.92 ± 14.65</small></td>
+<td class="current"><span title="1回目 1.970, 2回目 1.958, 3回目 1.919 ｜ 全回の平均 ± 標準偏差 1.949 ± 0.027 ｜ 範囲 1.919〜1.970">1.958</span><small class="muted">1.949 ± 0.027</small></td>
+<td class="current"><span title="1回目 30.11, 2回目 27.56, 3回目 35.08 ｜ 全回の平均 ± 標準偏差 30.92 ± 3.82 ｜ 範囲 27.56〜35.08">30.11</span><small class="muted">30.92 ± 3.82</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,007.55, 2回目 1,000.10, 3回目 914.99 ｜ 全回の平均 ± 標準偏差 974.21 ± 51.42 ｜ 範囲 914.99〜1,007.55">1,000.10</span><small class="muted">974.21 ± 51.42</small></td>
+<td class="current"><span title="1回目 2.181, 2回目 2.198, 3回目 2.313 ｜ 全回の平均 ± 標準偏差 2.231 ± 0.072 ｜ 範囲 2.181〜2.313">2.198</span><small class="muted">2.231 ± 0.072</small></td>
+<td class="current"><span title="1回目 33.18, 2回目 34.93, 3回目 34.85 ｜ 全回の平均 ± 標準偏差 34.32 ± 0.99 ｜ 範囲 33.18〜34.93">34.85</span><small class="muted">34.32 ± 0.99</small> ‡</td>
+<td class="group-start">1,669.91</td>
+<td class="">—</td>
+<td class="">36.91</td>
+</tr>
+<tr><th scope="row">12,288</th>
+<td class="group-start"><span title="1回目 1,057.16, 2回目 1,084.89, 3回目 1,049.91 ｜ 全回の平均 ± 標準偏差 1,063.99 ± 18.46 ｜ 範囲 1,049.91〜1,084.89">1,057.16</span><small class="muted">1,063.99 ± 18.46</small></td>
+<td class=""><span title="1回目 1.940, 2回目 1.891, 3回目 1.959 ｜ 全回の平均 ± 標準偏差 1.930 ± 0.035 ｜ 範囲 1.891〜1.959">1.940</span><small class="muted">1.930 ± 0.035</small></td>
+<td class=""><span title="1回目 33.28, 2回目 32.88, 3回目 37.25 ｜ 全回の平均 ± 標準偏差 34.47 ± 2.42 ｜ 範囲 32.88〜37.25 ｜ 中央値から除外 3回目">33.08 †</span><small class="muted">34.47 ± 2.42</small> ‡</td>
+<td class="group-start"><span title="1回目 1,037.41, 2回目 1,044.29, 3回目 1,023.92 ｜ 全回の平均 ± 標準偏差 1,035.21 ± 10.36 ｜ 範囲 1,023.92〜1,044.29">1,037.41</span><small class="muted">1,035.21 ± 10.36</small></td>
+<td class=""><span title="1回目 1.978, 2回目 1.966, 3回目 2.008 ｜ 全回の平均 ± 標準偏差 1.984 ± 0.022 ｜ 範囲 1.966〜2.008">1.978</span><small class="muted">1.984 ± 0.022</small></td>
+<td class=""><span title="1回目 32.69, 2回目 31.93, 3回目 34.63 ｜ 全回の平均 ± 標準偏差 33.08 ± 1.39 ｜ 範囲 31.93〜34.63">32.69</span><small class="muted">33.08 ± 1.39</small> ‡</td>
+<td class="group-start"><span title="1回目 958.34, 2回目 988.59, 3回目 975.29 ｜ 全回の平均 ± 標準偏差 974.07 ± 15.16 ｜ 範囲 958.34〜988.59">975.29</span><small class="muted">974.07 ± 15.16</small></td>
+<td class=""><span title="1回目 2.214, 2回目 2.151, 3回目 2.188 ｜ 全回の平均 ± 標準偏差 2.184 ± 0.032 ｜ 範囲 2.151〜2.214">2.188</span><small class="muted">2.184 ± 0.032</small></td>
+<td class=""><span title="1回目 33.25, 2回目 33.77, 3回目 34.16 ｜ 全回の平均 ± 標準偏差 33.73 ± 0.45 ｜ 範囲 33.25〜34.16">33.77</span><small class="muted">33.73 ± 0.45</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,039.03, 2回目 1,074.79, 3回目 1,023.83 ｜ 全回の平均 ± 標準偏差 1,045.88 ± 26.16 ｜ 範囲 1,023.83〜1,074.79">1,039.03</span><small class="muted">1,045.88 ± 26.16</small></td>
+<td class="current"><span title="1回目 1.991, 2回目 1.923, 3回目 2.007 ｜ 全回の平均 ± 標準偏差 1.974 ± 0.045 ｜ 範囲 1.923〜2.007">1.991</span><small class="muted">1.974 ± 0.045</small></td>
+<td class="current"><span title="1回目 33.29, 2回目 31.87, 3回目 38.10 ｜ 全回の平均 ± 標準偏差 34.42 ± 3.27 ｜ 範囲 31.87〜38.10">33.29</span><small class="muted">34.42 ± 3.27</small> ‡</td>
+<td class="group-start current"><span title="1回目 976.69, 2回目 983.35, 3回目 959.23 ｜ 全回の平均 ± 標準偏差 973.09 ± 12.45 ｜ 範囲 959.23〜983.35">976.69</span><small class="muted">973.09 ± 12.45</small></td>
+<td class="current"><span title="1回目 2.118, 2回目 2.107, 3回目 2.142 ｜ 全回の平均 ± 標準偏差 2.122 ± 0.018 ｜ 範囲 2.107〜2.142">2.118</span><small class="muted">2.122 ± 0.018</small></td>
+<td class="current"><span title="1回目 30.40, 2回目 29.24, 3回目 34.80 ｜ 全回の平均 ± 標準偏差 31.48 ± 2.93 ｜ 範囲 29.24〜34.80">30.40</span><small class="muted">31.48 ± 2.93</small> ‡</td>
+<td class="group-start current"><span title="1回目 933.07, 2回目 942.96, 3回目 956.77 ｜ 全回の平均 ± 標準偏差 944.27 ± 11.91 ｜ 範囲 933.07〜956.77">942.96</span><small class="muted">944.27 ± 11.91</small></td>
+<td class="current"><span title="1回目 2.277, 2回目 2.251, 3回目 2.224 ｜ 全回の平均 ± 標準偏差 2.251 ± 0.027 ｜ 範囲 2.224〜2.277">2.251</span><small class="muted">2.251 ± 0.027</small></td>
+<td class="current"><span title="1回目 32.80, 2回目 34.78, 3回目 34.69 ｜ 全回の平均 ± 標準偏差 34.09 ± 1.12 ｜ 範囲 32.80〜34.78">34.69</span><small class="muted">34.09 ± 1.12</small> ‡</td>
+<td class="group-start">1,652.67</td>
+<td class="">—</td>
+<td class="">39.28</td>
+</tr>
+<tr><th scope="row">16,384</th>
+<td class="group-start"><span title="1回目 1,056.91, 2回目 1,078.68, 3回目 1,031.53 ｜ 全回の平均 ± 標準偏差 1,055.70 ± 23.60 ｜ 範囲 1,031.53〜1,078.68">1,056.91</span><small class="muted">1,055.70 ± 23.60</small></td>
+<td class=""><span title="1回目 1.945, 2回目 1.901, 3回目 1.990 ｜ 全回の平均 ± 標準偏差 1.945 ± 0.044 ｜ 範囲 1.901〜1.990">1.945</span><small class="muted">1.945 ± 0.044</small></td>
+<td class=""><span title="1回目 41.04, 2回目 36.57, 3回目 37.86 ｜ 全回の平均 ± 標準偏差 38.49 ± 2.30 ｜ 範囲 36.57〜41.04">37.86</span><small class="muted">38.49 ± 2.30</small> ‡</td>
+<td class="group-start"><span title="1回目 1,009.69, 2回目 1,055.27, 3回目 1,030.74 ｜ 全回の平均 ± 標準偏差 1,031.90 ± 22.81 ｜ 範囲 1,009.69〜1,055.27">1,030.74</span><small class="muted">1,031.90 ± 22.81</small></td>
+<td class=""><span title="1回目 2.031, 2回目 1.943, 3回目 1.990 ｜ 全回の平均 ± 標準偏差 1.988 ± 0.044 ｜ 範囲 1.943〜2.031">1.990</span><small class="muted">1.988 ± 0.044</small></td>
+<td class=""><span title="1回目 33.66, 2回目 37.20, 3回目 33.46 ｜ 全回の平均 ± 標準偏差 34.77 ± 2.10 ｜ 範囲 33.46〜37.20 ｜ 中央値から除外 2回目">33.56 †</span><small class="muted">34.77 ± 2.10</small> ‡</td>
+<td class="group-start"><span title="1回目 935.95, 2回目 948.69, 3回目 972.29 ｜ 全回の平均 ± 標準偏差 952.31 ± 18.44 ｜ 範囲 935.95〜972.29">948.69</span><small class="muted">952.31 ± 18.44</small></td>
+<td class=""><span title="1回目 2.268, 2回目 2.243, 3回目 2.184 ｜ 全回の平均 ± 標準偏差 2.232 ± 0.043 ｜ 範囲 2.184〜2.268">2.243</span><small class="muted">2.232 ± 0.043</small></td>
+<td class=""><span title="1回目 32.55, 2回目 36.29, 3回目 36.30 ｜ 全回の平均 ± 標準偏差 35.05 ± 2.16 ｜ 範囲 32.55〜36.30 ｜ 中央値から除外 1回目">36.30 †</span><small class="muted">35.05 ± 2.16</small> ‡</td>
+<td class="group-start current"><span title="1回目 1,022.25, 2回目 1,023.61, 3回目 1,014.75 ｜ 全回の平均 ± 標準偏差 1,020.20 ± 4.77 ｜ 範囲 1,014.75〜1,023.61">1,022.25</span><small class="muted">1,020.20 ± 4.77</small></td>
+<td class="current"><span title="1回目 2.007, 2回目 2.004, 3回目 2.022 ｜ 全回の平均 ± 標準偏差 2.011 ± 0.010 ｜ 範囲 2.004〜2.022">2.007</span><small class="muted">2.011 ± 0.010</small></td>
+<td class="current"><span title="1回目 39.93, 2回目 36.21, 3回目 36.63 ｜ 全回の平均 ± 標準偏差 37.59 ± 2.03 ｜ 範囲 36.21〜39.93">36.63</span><small class="muted">37.59 ± 2.03</small> ‡</td>
+<td class="group-start current"><span title="1回目 962.44, 2回目 995.66, 3回目 1,016.80 ｜ 全回の平均 ± 標準偏差 991.63 ± 27.40 ｜ 範囲 962.44〜1,016.80">995.66</span><small class="muted">991.63 ± 27.40</small></td>
+<td class="current"><span title="1回目 2.132, 2回目 2.060, 3回目 2.019 ｜ 全回の平均 ± 標準偏差 2.070 ± 0.058 ｜ 範囲 2.019〜2.132">2.060</span><small class="muted">2.070 ± 0.058</small></td>
+<td class="current"><span title="1回目 32.89, 2回目 34.60, 3回目 33.60 ｜ 全回の平均 ± 標準偏差 33.70 ± 0.86 ｜ 範囲 32.89〜34.60">33.60</span><small class="muted">33.70 ± 0.86</small> ‡</td>
+<td class="group-start current"><span title="1回目 921.28, 2回目 971.57, 3回目 946.76 ｜ 全回の平均 ± 標準偏差 946.54 ± 25.15 ｜ 範囲 921.28〜971.57">946.76</span><small class="muted">946.54 ± 25.15</small></td>
+<td class="current"><span title="1回目 2.307, 2回目 2.189, 3回目 2.248 ｜ 全回の平均 ± 標準偏差 2.248 ± 0.059 ｜ 範囲 2.189〜2.307">2.248</span><small class="muted">2.248 ± 0.059</small></td>
+<td class="current"><span title="1回目 33.00, 2回目 37.40, 3回目 36.76 ｜ 全回の平均 ± 標準偏差 35.72 ± 2.38 ｜ 範囲 33.00〜37.40 ｜ 中央値から除外 1回目">37.08 †</span><small class="muted">35.72 ± 2.38</small> ‡</td>
+<td class="group-start">1,635.18</td>
+<td class="">—</td>
+<td class="">40.54</td>
+</tr>
+<tr><th scope="row">32,768</th>
+<td class="group-start"><span title="1回目 1,036.49, 2回目 1,008.44, 3回目 1,044.68 ｜ 全回の平均 ± 標準偏差 1,029.87 ± 19.00 ｜ 範囲 1,008.44〜1,044.68">1,036.49</span><small class="muted">1,029.87 ± 19.00</small></td>
+<td class=""><span title="1回目 1.964, 2回目 2.057, 3回目 1.962 ｜ 全回の平均 ± 標準偏差 1.994 ± 0.054 ｜ 範囲 1.962〜2.057">1.964</span><small class="muted">1.994 ± 0.054</small></td>
+<td class=""><span title="1回目 34.53, 2回目 36.04, 3回目 36.27 ｜ 全回の平均 ± 標準偏差 35.61 ± 0.95 ｜ 範囲 34.53〜36.27">36.04</span><small class="muted">35.61 ± 0.95</small> ‡</td>
+<td class="group-start"><span title="1回目 1,016.10, 2回目 1,007.20, 3回目 1,017.10 ｜ 全回の平均 ± 標準偏差 1,013.46 ± 5.45 ｜ 範囲 1,007.20〜1,017.10">1,016.10</span><small class="muted">1,013.46 ± 5.45</small></td>
+<td class=""><span title="1回目 2.009, 2回目 2.059, 3回目 2.017 ｜ 全回の平均 ± 標準偏差 2.028 ± 0.027 ｜ 範囲 2.009〜2.059">2.017</span><small class="muted">2.028 ± 0.027</small></td>
+<td class=""><span title="1回目 36.21, 2回目 37.36, 3回目 37.13 ｜ 全回の平均 ± 標準偏差 36.90 ± 0.61 ｜ 範囲 36.21〜37.36">37.13</span><small class="muted">36.90 ± 0.61</small> ‡</td>
+<td class="group-start"><span title="1回目 940.10, 2回目 891.69, 3回目 956.19 ｜ 全回の平均 ± 標準偏差 929.32 ± 33.57 ｜ 範囲 891.69〜956.19">940.10</span><small class="muted">929.32 ± 33.57</small></td>
+<td class=""><span title="1回目 2.240, 2回目 2.399, 3回目 2.220 ｜ 全回の平均 ± 標準偏差 2.286 ± 0.098 ｜ 範囲 2.220〜2.399">2.240</span><small class="muted">2.286 ± 0.098</small></td>
+<td class=""><span title="1回目 31.55, 2回目 33.34, 3回目 33.78 ｜ 全回の平均 ± 標準偏差 32.89 ± 1.18 ｜ 範囲 31.55〜33.78">33.34</span><small class="muted">32.89 ± 1.18</small> ‡</td>
+<td class="group-start current"><span title="1回目 984.02, 2回目 998.72, 3回目 1,005.37 ｜ 全回の平均 ± 標準偏差 996.04 ± 10.93 ｜ 範囲 984.02〜1,005.37">998.72</span><small class="muted">996.04 ± 10.93</small></td>
+<td class="current"><span title="1回目 2.071, 2回目 2.076, 3回目 2.039 ｜ 全回の平均 ± 標準偏差 2.062 ± 0.020 ｜ 範囲 2.039〜2.076">2.071</span><small class="muted">2.062 ± 0.020</small></td>
+<td class="current"><span title="1回目 33.19, 2回目 35.36, 3回目 33.24 ｜ 全回の平均 ± 標準偏差 33.93 ± 1.24 ｜ 範囲 33.19〜35.36">33.24</span><small class="muted">33.93 ± 1.24</small> ‡</td>
+<td class="group-start current"><span title="1回目 954.54, 2回目 946.17, 3回目 991.86 ｜ 全回の平均 ± 標準偏差 964.19 ± 24.33 ｜ 範囲 946.17〜991.86">954.54</span><small class="muted">964.19 ± 24.33</small></td>
+<td class="current"><span title="1回目 2.133, 2回目 2.192, 3回目 2.067 ｜ 全回の平均 ± 標準偏差 2.130 ± 0.063 ｜ 範囲 2.067〜2.192">2.133</span><small class="muted">2.130 ± 0.063</small></td>
+<td class="current"><span title="1回目 36.15, 2回目 35.90, 3回目 35.38 ｜ 全回の平均 ± 標準偏差 35.81 ± 0.40 ｜ 範囲 35.38〜36.15">35.90</span><small class="muted">35.81 ± 0.40</small> ‡</td>
+<td class="group-start current"><span title="1回目 903.90, 2回目 888.04, 3回目 946.24 ｜ 全回の平均 ± 標準偏差 912.73 ± 30.09 ｜ 範囲 888.04〜946.24">903.90</span><small class="muted">912.73 ± 30.09</small></td>
+<td class="current"><span title="1回目 2.328, 2回目 2.410, 3回目 2.241 ｜ 全回の平均 ± 標準偏差 2.326 ± 0.085 ｜ 範囲 2.241〜2.410">2.328</span><small class="muted">2.326 ± 0.085</small></td>
+<td class="current"><span title="1回目 31.37, 2回目 33.38, 3回目 34.35 ｜ 全回の平均 ± 標準偏差 33.03 ± 1.52 ｜ 範囲 31.37〜34.35">33.38</span><small class="muted">33.03 ± 1.52</small> ‡</td>
+<td class="group-start">1,618.63</td>
+<td class="">—</td>
+<td class="">39.97</td>
+</tr>
+<tr><th scope="row">65,536</th>
+<td class="group-start"><span title="1回目 968.70, 2回目 996.99, 3回目 995.04 ｜ 全回の平均 ± 標準偏差 986.91 ± 15.80 ｜ 範囲 968.70〜996.99">995.04</span><small class="muted">986.91 ± 15.80</small></td>
+<td class=""><span title="1回目 2.135, 2回目 2.066, 3回目 2.090 ｜ 全回の平均 ± 標準偏差 2.097 ± 0.035 ｜ 範囲 2.066〜2.135">2.090</span><small class="muted">2.097 ± 0.035</small></td>
+<td class=""><span title="1回目 34.98, 2回目 35.21, 3回目 33.28 ｜ 全回の平均 ± 標準偏差 34.49 ± 1.06 ｜ 範囲 33.28〜35.21">34.98</span><small class="muted">34.49 ± 1.06</small> ‡</td>
+<td class="group-start"><span title="1回目 961.31, 2回目 985.35, 3回目 983.37 ｜ 全回の平均 ± 標準偏差 976.68 ± 13.34 ｜ 範囲 961.31〜985.35">983.37</span><small class="muted">976.68 ± 13.34</small></td>
+<td class=""><span title="1回目 2.150, 2回目 2.093, 3回目 2.116 ｜ 全回の平均 ± 標準偏差 2.120 ± 0.029 ｜ 範囲 2.093〜2.150">2.116</span><small class="muted">2.120 ± 0.029</small></td>
+<td class=""><span title="1回目 33.98, 2回目 37.29, 3回目 34.14 ｜ 全回の平均 ± 標準偏差 35.14 ± 1.87 ｜ 範囲 33.98〜37.29">34.14</span><small class="muted">35.14 ± 1.87</small> ‡</td>
+<td class="group-start"><span title="1回目 920.52, 2回目 942.92, 3回目 851.93 ｜ 全回の平均 ± 標準偏差 905.13 ± 47.41 ｜ 範囲 851.93〜942.92">920.52</span><small class="muted">905.13 ± 47.41</small></td>
+<td class=""><span title="1回目 2.322, 2回目 2.264, 3回目 2.517 ｜ 全回の平均 ± 標準偏差 2.368 ± 0.133 ｜ 範囲 2.264〜2.517">2.322</span><small class="muted">2.368 ± 0.133</small></td>
+<td class=""><span title="1回目 34.17, 2回目 34.31, 3回目 34.92 ｜ 全回の平均 ± 標準偏差 34.46 ± 0.40 ｜ 範囲 34.17〜34.92">34.31</span><small class="muted">34.46 ± 0.40</small> ‡</td>
+<td class="group-start current"><span title="1回目 938.82, 2回目 967.28, 3回目 960.44 ｜ 全回の平均 ± 標準偏差 955.51 ± 14.86 ｜ 範囲 938.82〜967.28">960.44</span><small class="muted">955.51 ± 14.86</small></td>
+<td class="current"><span title="1回目 2.205, 2回目 2.134, 3回目 2.167 ｜ 全回の平均 ± 標準偏差 2.168 ± 0.035 ｜ 範囲 2.134〜2.205">2.167</span><small class="muted">2.168 ± 0.035</small></td>
+<td class="current"><span title="1回目 31.71, 2回目 35.71, 3回目 31.84 ｜ 全回の平均 ± 標準偏差 33.09 ± 2.27 ｜ 範囲 31.71〜35.71 ｜ 中央値から除外 2回目">31.77 †</span><small class="muted">33.09 ± 2.27</small> ‡</td>
+<td class="group-start current"><span title="1回目 723.78, 2回目 736.63, 3回目 724.00 ｜ 全回の平均 ± 標準偏差 728.14 ± 7.36 ｜ 範囲 723.78〜736.63">724.00</span><small class="muted">728.14 ± 7.36</small></td>
+<td class="current"><span title="1回目 2.854, 2回目 2.794, 3回目 2.870 ｜ 全回の平均 ± 標準偏差 2.839 ± 0.040 ｜ 範囲 2.794〜2.870">2.854</span><small class="muted">2.839 ± 0.040</small></td>
+<td class="current"><span title="1回目 28.99, 2回目 32.93, 3回目 30.36 ｜ 全回の平均 ± 標準偏差 30.76 ± 2.00 ｜ 範囲 28.99〜32.93">30.36</span><small class="muted">30.76 ± 2.00</small> ‡</td>
+<td class="group-start current"><span title="1回目 891.12, 2回目 927.87, 3回目 843.30 ｜ 全回の平均 ± 標準偏差 887.43 ± 42.40 ｜ 範囲 843.30〜927.87">891.12</span><small class="muted">887.43 ± 42.40</small></td>
+<td class="current"><span title="1回目 2.398, 2回目 2.303, 3回目 2.552 ｜ 全回の平均 ± 標準偏差 2.418 ± 0.126 ｜ 範囲 2.303〜2.552">2.398</span><small class="muted">2.418 ± 0.126</small></td>
+<td class="current"><span title="1回目 34.59, 2回目 34.84, 3回目 34.89 ｜ 全回の平均 ± 標準偏差 34.77 ± 0.16 ｜ 範囲 34.59〜34.89">34.84</span><small class="muted">34.77 ± 0.16</small> ‡</td>
+<td class="group-start">1,556.32</td>
+<td class="">—</td>
+<td class="">39.23</td>
+</tr>
+<tr><th scope="row">131,072</th>
+<td class="group-start"><span title="1回目 960.61, 2回目 966.94, 3回目 968.02 ｜ 全回の平均 ± 標準偏差 965.19 ± 4.00 ｜ 範囲 960.61〜968.02">966.94</span><small class="muted">965.19 ± 4.00</small></td>
+<td class=""><span title="1回目 2.153, 2回目 2.150, 3回目 2.130 ｜ 全回の平均 ± 標準偏差 2.144 ± 0.012 ｜ 範囲 2.130〜2.153">2.150</span><small class="muted">2.144 ± 0.012</small></td>
+<td class=""><span title="1回目 36.52, 2回目 35.96, 3回目 34.48 ｜ 全回の平均 ± 標準偏差 35.65 ± 1.06 ｜ 範囲 34.48〜36.52">35.96</span><small class="muted">35.65 ± 1.06</small> ‡</td>
+<td class="group-start"><span title="1回目 948.91, 2回目 957.00, 3回目 937.60 ｜ 全回の平均 ± 標準偏差 947.84 ± 9.75 ｜ 範囲 937.60〜957.00">948.91</span><small class="muted">947.84 ± 9.75</small></td>
+<td class=""><span title="1回目 2.173, 2回目 2.170, 3回目 2.209 ｜ 全回の平均 ± 標準偏差 2.184 ± 0.022 ｜ 範囲 2.170〜2.209">2.173</span><small class="muted">2.184 ± 0.022</small></td>
+<td class=""><span title="1回目 31.98, 2回目 32.74, 3回目 36.43 ｜ 全回の平均 ± 標準偏差 33.72 ± 2.38 ｜ 範囲 31.98〜36.43">32.74</span><small class="muted">33.72 ± 2.38</small> ‡</td>
+<td class="group-start"><span title="1回目 882.22, 2回目 855.80, 3回目 896.99 ｜ 全回の平均 ± 標準偏差 878.34 ± 20.87 ｜ 範囲 855.80〜896.99">882.22</span><small class="muted">878.34 ± 20.87</small></td>
+<td class=""><span title="1回目 2.418, 2回目 2.502, 3回目 2.373 ｜ 全回の平均 ± 標準偏差 2.431 ± 0.065 ｜ 範囲 2.373〜2.502">2.418</span><small class="muted">2.431 ± 0.065</small></td>
+<td class=""><span title="1回目 31.31, 2回目 33.98, 3回目 34.81 ｜ 全回の平均 ± 標準偏差 33.37 ± 1.83 ｜ 範囲 31.31〜34.81">33.98</span><small class="muted">33.37 ± 1.83</small> ‡</td>
+<td class="group-start current"><span title="1回目 950.91, 2回目 953.50, 3回目 946.50 ｜ 全回の平均 ± 標準偏差 950.30 ± 3.54 ｜ 範囲 946.50〜953.50">950.91</span><small class="muted">950.30 ± 3.54</small></td>
+<td class="current"><span title="1回目 2.186, 2回目 2.188, 3回目 2.180 ｜ 全回の平均 ± 標準偏差 2.185 ± 0.004 ｜ 範囲 2.180〜2.188">2.186</span><small class="muted">2.185 ± 0.004</small></td>
+<td class="current"><span title="1回目 33.52, 2回目 35.26, 3回目 33.60 ｜ 全回の平均 ± 標準偏差 34.13 ± 0.98 ｜ 範囲 33.52〜35.26">33.60</span><small class="muted">34.13 ± 0.98</small> ‡</td>
+<td class="group-start current"><span title="1回目 705.10, 2回目 948.84, 3回目 934.40 ｜ 全回の平均 ± 標準偏差 862.78 ± 136.75 ｜ 範囲 705.10〜948.84 ｜ 中央値から除外 1回目">941.62 †</span><small class="muted">862.78 ± 136.75</small></td>
+<td class="current"><span title="1回目 2.928, 2回目 2.195, 3回目 2.205 ｜ 全回の平均 ± 標準偏差 2.443 ± 0.421 ｜ 範囲 2.195〜2.928 ｜ 中央値から除外 1回目">2.200 †</span><small class="muted">2.443 ± 0.421</small></td>
+<td class="current"><span title="1回目 28.80, 2回目 33.73, 3回目 36.10 ｜ 全回の平均 ± 標準偏差 32.88 ± 3.73 ｜ 範囲 28.80〜36.10">33.73</span><small class="muted">32.88 ± 3.73</small> ‡</td>
+<td class="group-start current"><span title="1回目 875.67, 2回目 807.58, 3回目 881.99 ｜ 全回の平均 ± 標準偏差 855.08 ± 41.26 ｜ 範囲 807.58〜881.99">875.67</span><small class="muted">855.08 ± 41.26</small></td>
+<td class="current"><span title="1回目 2.432, 2回目 2.651, 3回目 2.473 ｜ 全回の平均 ± 標準偏差 2.519 ± 0.117 ｜ 範囲 2.432〜2.651">2.473</span><small class="muted">2.519 ± 0.117</small></td>
+<td class="current"><span title="1回目 31.87, 2回目 33.95, 3回目 34.29 ｜ 全回の平均 ± 標準偏差 33.37 ± 1.31 ｜ 範囲 31.87〜34.29">33.95</span><small class="muted">33.37 ± 1.31</small> ‡</td>
+<td class="group-start">1,481.19</td>
+<td class="">—</td>
+<td class="">39.87</td>
+</tr>
+</tbody></table></div>
+<h3>投機生成・反復文</h3>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">履歴（tokens）</th>
+<th colspan="3" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="3" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="3" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start current">Prefill<br>(tok/s)</th>
+<th scope="col" class="current">TTFT<br>(秒)</th>
+<th scope="col" class="current">Decode<br>(tok/s)</th>
+<th scope="col" class="group-start">Prefill<br>(tok/s)</th>
+<th scope="col" class="">TTFT<br>(秒)</th>
+<th scope="col" class="">Decode<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">0</th>
+<td class="group-start"><span title="1回目 1,152.63, 2回目 1,145.54, 3回目 1,176.69 ｜ 全回の平均 ± 標準偏差 1,158.29 ± 16.33 ｜ 範囲 1,145.54〜1,176.69">1,152.63</span><small class="muted">1,158.29 ± 16.33</small></td>
+<td class=""><span title="1回目 1.827, 2回目 1.819, 3回目 1.790 ｜ 全回の平均 ± 標準偏差 1.812 ± 0.020 ｜ 範囲 1.790〜1.827">1.819</span><small class="muted">1.812 ± 0.020</small></td>
+<td class=""><span title="1回目 90.55, 2回目 97.17, 3回目 98.97 ｜ 全回の平均 ± 標準偏差 95.56 ± 4.43 ｜ 範囲 90.55〜98.97">97.17</span><small class="muted">95.56 ± 4.43</small></td>
+<td class="group-start"><span title="1回目 1,149.89, 2回目 1,131.45, 3回目 1,120.46 ｜ 全回の平均 ± 標準偏差 1,133.94 ± 14.87 ｜ 範囲 1,120.46〜1,149.89">1,131.45</span><small class="muted">1,133.94 ± 14.87</small></td>
+<td class=""><span title="1回目 1.824, 2回目 1.840, 3回目 1.883 ｜ 全回の平均 ± 標準偏差 1.849 ± 0.030 ｜ 範囲 1.824〜1.883">1.840</span><small class="muted">1.849 ± 0.030</small></td>
+<td class=""><span title="1回目 91.91, 2回目 94.05, 3回目 97.03 ｜ 全回の平均 ± 標準偏差 94.33 ± 2.57 ｜ 範囲 91.91〜97.03">94.05</span><small class="muted">94.33 ± 2.57</small></td>
+<td class="group-start"><span title="1回目 1,046.35, 2回目 1,055.72, 3回目 1,071.19 ｜ 全回の平均 ± 標準偏差 1,057.75 ± 12.55 ｜ 範囲 1,046.35〜1,071.19">1,055.72</span><small class="muted">1,057.75 ± 12.55</small></td>
+<td class=""><span title="1回目 2.077, 2回目 2.053, 3回目 2.049 ｜ 全回の平均 ± 標準偏差 2.059 ± 0.015 ｜ 範囲 2.049〜2.077">2.053</span><small class="muted">2.059 ± 0.015</small></td>
+<td class=""><span title="1回目 91.54, 2回目 93.11, 3回目 86.09 ｜ 全回の平均 ± 標準偏差 90.25 ± 3.68 ｜ 範囲 86.09〜93.11">91.54</span><small class="muted">90.25 ± 3.68</small></td>
+<td class="group-start current"><span title="1回目 1,105.65, 2回目 1,023.77, 3回目 1,132.61 ｜ 全回の平均 ± 標準偏差 1,087.34 ± 56.68 ｜ 範囲 1,023.77〜1,132.61">1,105.65</span><small class="muted">1,087.34 ± 56.68</small></td>
+<td class="current"><span title="1回目 1.924, 2回目 2.060, 3回目 1.893 ｜ 全回の平均 ± 標準偏差 1.959 ± 0.089 ｜ 範囲 1.893〜2.060">1.924</span><small class="muted">1.959 ± 0.089</small></td>
+<td class="current"><span title="1回目 82.56, 2回目 93.65, 3回目 96.57 ｜ 全回の平均 ± 標準偏差 90.93 ± 7.39 ｜ 範囲 82.56〜96.57">93.65</span><small class="muted">90.93 ± 7.39</small></td>
+<td class="group-start current"><span title="1回目 1,130.45, 2回目 1,112.19, 3回目 1,153.13 ｜ 全回の平均 ± 標準偏差 1,131.92 ± 20.51 ｜ 範囲 1,112.19〜1,153.13">1,130.45</span><small class="muted">1,131.92 ± 20.51</small></td>
+<td class="current"><span title="1回目 1.877, 2回目 1.899, 3回目 1.859 ｜ 全回の平均 ± 標準偏差 1.878 ± 0.020 ｜ 範囲 1.859〜1.899">1.877</span><small class="muted">1.878 ± 0.020</small></td>
+<td class="current"><span title="1回目 91.14, 2回目 95.17, 3回目 97.51 ｜ 全回の平均 ± 標準偏差 94.61 ± 3.22 ｜ 範囲 91.14〜97.51">95.17</span><small class="muted">94.61 ± 3.22</small></td>
+<td class="group-start current"><span title="1回目 998.00, 2回目 1,027.86, 3回目 1,042.59 ｜ 全回の平均 ± 標準偏差 1,022.82 ± 22.72 ｜ 範囲 998.00〜1,042.59">1,027.86</span><small class="muted">1,022.82 ± 22.72</small></td>
+<td class="current"><span title="1回目 2.239, 2回目 2.172, 3回目 2.162 ｜ 全回の平均 ± 標準偏差 2.191 ± 0.042 ｜ 範囲 2.162〜2.239">2.172</span><small class="muted">2.191 ± 0.042</small></td>
+<td class="current"><span title="1回目 90.74, 2回目 94.81, 3回目 84.99 ｜ 全回の平均 ± 標準偏差 90.18 ± 4.93 ｜ 範囲 84.99〜94.81">90.74</span><small class="muted">90.18 ± 4.93</small></td>
+<td class="group-start">1,734.96</td>
+<td class="">—</td>
+<td class="">116.93</td>
+</tr>
+<tr><th scope="row">4,096</th>
+<td class="group-start"><span title="1回目 1,079.53, 2回目 1,107.75, 3回目 1,117.32 ｜ 全回の平均 ± 標準偏差 1,101.53 ± 19.64 ｜ 範囲 1,079.53〜1,117.32">1,107.75</span><small class="muted">1,101.53 ± 19.64</small></td>
+<td class=""><span title="1回目 1.891, 2回目 1.828, 3回目 1.813 ｜ 全回の平均 ± 標準偏差 1.844 ± 0.041 ｜ 範囲 1.813〜1.891">1.828</span><small class="muted">1.844 ± 0.041</small></td>
+<td class=""><span title="1回目 96.62, 2回目 82.69, 3回目 89.16 ｜ 全回の平均 ± 標準偏差 89.49 ± 6.97 ｜ 範囲 82.69〜96.62">89.16</span><small class="muted">89.49 ± 6.97</small></td>
+<td class="group-start"><span title="1回目 1,085.68, 2回目 1,089.24, 3回目 1,107.39 ｜ 全回の平均 ± 標準偏差 1,094.10 ± 11.64 ｜ 範囲 1,085.68〜1,107.39">1,089.24</span><small class="muted">1,094.10 ± 11.64</small></td>
+<td class=""><span title="1回目 1.881, 2回目 1.860, 3回目 1.829 ｜ 全回の平均 ± 標準偏差 1.857 ± 0.026 ｜ 範囲 1.829〜1.881">1.860</span><small class="muted">1.857 ± 0.026</small></td>
+<td class=""><span title="1回目 94.98, 2回目 81.96, 3回目 90.25 ｜ 全回の平均 ± 標準偏差 89.06 ± 6.59 ｜ 範囲 81.96〜94.98">90.25</span><small class="muted">89.06 ± 6.59</small></td>
+<td class="group-start"><span title="1回目 966.40, 2回目 987.34, 3回目 1,008.13 ｜ 全回の平均 ± 標準偏差 987.29 ± 20.87 ｜ 範囲 966.40〜1,008.13">987.34</span><small class="muted">987.29 ± 20.87</small></td>
+<td class=""><span title="1回目 2.185, 2回目 2.130, 3回目 2.086 ｜ 全回の平均 ± 標準偏差 2.134 ± 0.050 ｜ 範囲 2.086〜2.185">2.130</span><small class="muted">2.134 ± 0.050</small></td>
+<td class=""><span title="1回目 83.11, 2回目 83.16, 3回目 79.73 ｜ 全回の平均 ± 標準偏差 82.00 ± 1.96 ｜ 範囲 79.73〜83.16">83.11</span><small class="muted">82.00 ± 1.96</small></td>
+<td class="group-start current"><span title="1回目 1,063.42, 2回目 1,069.03, 3回目 1,088.48 ｜ 全回の平均 ± 標準偏差 1,073.65 ± 13.15 ｜ 範囲 1,063.42〜1,088.48">1,069.03</span><small class="muted">1,073.65 ± 13.15</small></td>
+<td class="current"><span title="1回目 1.927, 2回目 1.902, 3回目 1.867 ｜ 全回の平均 ± 標準偏差 1.899 ± 0.030 ｜ 範囲 1.867〜1.927">1.902</span><small class="muted">1.899 ± 0.030</small></td>
+<td class="current"><span title="1回目 95.36, 2回目 85.73, 3回目 80.44 ｜ 全回の平均 ± 標準偏差 87.17 ± 7.56 ｜ 範囲 80.44〜95.36">85.73</span><small class="muted">87.17 ± 7.56</small></td>
+<td class="group-start current"><span title="1回目 1,084.62, 2回目 1,087.28, 3回目 1,088.24 ｜ 全回の平均 ± 標準偏差 1,086.71 ± 1.88 ｜ 範囲 1,084.62〜1,088.24">1,087.28</span><small class="muted">1,086.71 ± 1.88</small></td>
+<td class="current"><span title="1回目 1.890, 2回目 1.870, 3回目 1.869 ｜ 全回の平均 ± 標準偏差 1.877 ± 0.011 ｜ 範囲 1.869〜1.890">1.870</span><small class="muted">1.877 ± 0.011</small></td>
+<td class="current"><span title="1回目 93.23, 2回目 82.39, 3回目 91.53 ｜ 全回の平均 ± 標準偏差 89.05 ± 5.83 ｜ 範囲 82.39〜93.23">91.53</span><small class="muted">89.05 ± 5.83</small></td>
+<td class="group-start current"><span title="1回目 980.50, 2回目 982.63, 3回目 988.30 ｜ 全回の平均 ± 標準偏差 983.81 ± 4.03 ｜ 範囲 980.50〜988.30">982.63</span><small class="muted">983.81 ± 4.03</small></td>
+<td class="current"><span title="1回目 2.214, 2回目 2.187, 3回目 2.179 ｜ 全回の平均 ± 標準偏差 2.193 ± 0.019 ｜ 範囲 2.179〜2.214">2.187</span><small class="muted">2.193 ± 0.019</small></td>
+<td class="current"><span title="1回目 82.94, 2回目 83.28, 3回目 82.36 ｜ 全回の平均 ± 標準偏差 82.86 ± 0.47 ｜ 範囲 82.36〜83.28">82.94</span><small class="muted">82.86 ± 0.47</small></td>
+<td class="group-start">1,676.83</td>
+<td class="">—</td>
+<td class="">116.41</td>
+</tr>
+<tr><th scope="row">8,192</th>
+<td class="group-start"><span title="1回目 1,097.84, 2回目 1,088.22, 3回目 1,096.64 ｜ 全回の平均 ± 標準偏差 1,094.23 ± 5.24 ｜ 範囲 1,088.22〜1,097.84">1,096.64</span><small class="muted">1,094.23 ± 5.24</small></td>
+<td class=""><span title="1回目 1.864, 2回目 1.886, 3回目 1.860 ｜ 全回の平均 ± 標準偏差 1.870 ± 0.014 ｜ 範囲 1.860〜1.886">1.864</span><small class="muted">1.870 ± 0.014</small></td>
+<td class=""><span title="1回目 90.82, 2回目 79.99, 3回目 91.04 ｜ 全回の平均 ± 標準偏差 87.28 ± 6.32 ｜ 範囲 79.99〜91.04 ｜ 中央値から除外 2回目">90.93 †</span><small class="muted">87.28 ± 6.32</small></td>
+<td class="group-start"><span title="1回目 1,097.69, 2回目 1,082.14, 3回目 1,103.22 ｜ 全回の平均 ± 標準偏差 1,094.35 ± 10.93 ｜ 範囲 1,082.14〜1,103.22">1,097.69</span><small class="muted">1,094.35 ± 10.93</small></td>
+<td class=""><span title="1回目 1.864, 2回目 1.897, 3回目 1.849 ｜ 全回の平均 ± 標準偏差 1.870 ± 0.025 ｜ 範囲 1.849〜1.897">1.864</span><small class="muted">1.870 ± 0.025</small></td>
+<td class=""><span title="1回目 85.01, 2回目 86.65, 3回目 88.16 ｜ 全回の平均 ± 標準偏差 86.60 ± 1.58 ｜ 範囲 85.01〜88.16">86.65</span><small class="muted">86.60 ± 1.58</small></td>
+<td class="group-start"><span title="1回目 971.57, 2回目 1,021.24, 3回目 999.27 ｜ 全回の平均 ± 標準偏差 997.36 ± 24.89 ｜ 範囲 971.57〜1,021.24">999.27</span><small class="muted">997.36 ± 24.89</small></td>
+<td class=""><span title="1回目 2.496, 2回目 2.087, 3回目 2.121 ｜ 全回の平均 ± 標準偏差 2.235 ± 0.227 ｜ 範囲 2.087〜2.496 ｜ 中央値から除外 1回目">2.104 †</span><small class="muted">2.235 ± 0.227</small></td>
+<td class=""><span title="1回目 81.36, 2回目 80.74, 3回目 80.50 ｜ 全回の平均 ± 標準偏差 80.87 ± 0.44 ｜ 範囲 80.50〜81.36">80.74</span><small class="muted">80.87 ± 0.44</small></td>
+<td class="group-start current"><span title="1回目 1,096.47, 2回目 1,070.43, 3回目 1,107.23 ｜ 全回の平均 ± 標準偏差 1,091.37 ± 18.92 ｜ 範囲 1,070.43〜1,107.23">1,096.47</span><small class="muted">1,091.37 ± 18.92</small></td>
+<td class="current"><span title="1回目 1.881, 2回目 1.932, 3回目 1.856 ｜ 全回の平均 ± 標準偏差 1.890 ± 0.039 ｜ 範囲 1.856〜1.932">1.881</span><small class="muted">1.890 ± 0.039</small></td>
+<td class="current"><span title="1回目 90.83, 2回目 73.02, 3回目 89.56 ｜ 全回の平均 ± 標準偏差 84.47 ± 9.93 ｜ 範囲 73.02〜90.83 ｜ 中央値から除外 2回目">90.19 †</span><small class="muted">84.47 ± 9.93</small></td>
+<td class="group-start current"><span title="1回目 1,084.25, 2回目 1,087.93, 3回目 1,082.94 ｜ 全回の平均 ± 標準偏差 1,085.04 ± 2.59 ｜ 範囲 1,082.94〜1,087.93">1,084.25</span><small class="muted">1,085.04 ± 2.59</small></td>
+<td class="current"><span title="1回目 1.900, 2回目 1.898, 3回目 1.897 ｜ 全回の平均 ± 標準偏差 1.898 ± 0.001 ｜ 範囲 1.897〜1.900">1.898</span><small class="muted">1.898 ± 0.001</small></td>
+<td class="current"><span title="1回目 84.75, 2回目 83.92, 3回目 85.03 ｜ 全回の平均 ± 標準偏差 84.57 ± 0.58 ｜ 範囲 83.92〜85.03">84.75</span><small class="muted">84.57 ± 0.58</small></td>
+<td class="group-start current"><span title="1回目 1,010.89, 2回目 1,006.85, 3回目 1,016.43 ｜ 全回の平均 ± 標準偏差 1,011.39 ± 4.81 ｜ 範囲 1,006.85〜1,016.43">1,010.89</span><small class="muted">1,011.39 ± 4.81</small></td>
+<td class="current"><span title="1回目 2.162, 2回目 2.173, 3回目 2.080 ｜ 全回の平均 ± 標準偏差 2.138 ± 0.051 ｜ 範囲 2.080〜2.173">2.162</span><small class="muted">2.138 ± 0.051</small></td>
+<td class="current"><span title="1回目 81.06, 2回目 79.29, 3回目 80.56 ｜ 全回の平均 ± 標準偏差 80.30 ± 0.91 ｜ 範囲 79.29〜81.06">80.56</span><small class="muted">80.30 ± 0.91</small></td>
+<td class="group-start">1,661.58</td>
+<td class="">—</td>
+<td class="">114.08</td>
+</tr>
+<tr><th scope="row">12,288</th>
+<td class="group-start"><span title="1回目 1,061.61, 2回目 1,106.35, 3回目 1,074.31 ｜ 全回の平均 ± 標準偏差 1,080.75 ± 23.06 ｜ 範囲 1,061.61〜1,106.35">1,074.31</span><small class="muted">1,080.75 ± 23.06</small></td>
+<td class=""><span title="1回目 1.929, 2回目 1.849, 3回目 1.908 ｜ 全回の平均 ± 標準偏差 1.895 ± 0.042 ｜ 範囲 1.849〜1.929">1.908</span><small class="muted">1.895 ± 0.042</small></td>
+<td class=""><span title="1回目 90.08, 2回目 79.62, 3回目 78.75 ｜ 全回の平均 ± 標準偏差 82.82 ± 6.31 ｜ 範囲 78.75〜90.08 ｜ 中央値から除外 1回目">79.19 †</span><small class="muted">82.82 ± 6.31</small></td>
+<td class="group-start"><span title="1回目 1,035.07, 2回目 1,090.41, 3回目 1,063.34 ｜ 全回の平均 ± 標準偏差 1,062.94 ± 27.67 ｜ 範囲 1,035.07〜1,090.41">1,063.34</span><small class="muted">1,062.94 ± 27.67</small></td>
+<td class=""><span title="1回目 1.981, 2回目 1.876, 3回目 1.928 ｜ 全回の平均 ± 標準偏差 1.928 ± 0.052 ｜ 範囲 1.876〜1.981">1.928</span><small class="muted">1.928 ± 0.052</small></td>
+<td class=""><span title="1回目 86.13, 2回目 82.47, 3回目 84.22 ｜ 全回の平均 ± 標準偏差 84.27 ± 1.83 ｜ 範囲 82.47〜86.13">84.22</span><small class="muted">84.27 ± 1.83</small></td>
+<td class="group-start"><span title="1回目 964.82, 2回目 971.09, 3回目 995.48 ｜ 全回の平均 ± 標準偏差 977.13 ± 16.20 ｜ 範囲 964.82〜995.48">971.09</span><small class="muted">977.13 ± 16.20</small></td>
+<td class=""><span title="1回目 2.197, 2回目 2.190, 3回目 2.136 ｜ 全回の平均 ± 標準偏差 2.174 ± 0.033 ｜ 範囲 2.136〜2.197">2.190</span><small class="muted">2.174 ± 0.033</small></td>
+<td class=""><span title="1回目 84.48, 2回目 81.25, 3回目 79.11 ｜ 全回の平均 ± 標準偏差 81.61 ± 2.70 ｜ 範囲 79.11〜84.48">81.25</span><small class="muted">81.61 ± 2.70</small></td>
+<td class="group-start current"><span title="1回目 1,058.71, 2回目 1,022.71, 3回目 1,057.70 ｜ 全回の平均 ± 標準偏差 1,046.37 ± 20.50 ｜ 範囲 1,022.71〜1,058.71">1,057.70</span><small class="muted">1,046.37 ± 20.50</small></td>
+<td class="current"><span title="1回目 1.945, 2回目 2.015, 3回目 1.939 ｜ 全回の平均 ± 標準偏差 1.966 ± 0.042 ｜ 範囲 1.939〜2.015">1.945</span><small class="muted">1.966 ± 0.042</small></td>
+<td class="current"><span title="1回目 84.87, 2回目 78.32, 3回目 80.79 ｜ 全回の平均 ± 標準偏差 81.33 ± 3.30 ｜ 範囲 78.32〜84.87">80.79</span><small class="muted">81.33 ± 3.30</small></td>
+<td class="group-start current"><span title="1回目 1,085.62, 2回目 1,094.16, 3回目 1,059.51 ｜ 全回の平均 ± 標準偏差 1,079.76 ± 18.05 ｜ 範囲 1,059.51〜1,094.16">1,085.62</span><small class="muted">1,079.76 ± 18.05</small></td>
+<td class="current"><span title="1回目 1.900, 2回目 1.883, 3回目 1.935 ｜ 全回の平均 ± 標準偏差 1.906 ± 0.026 ｜ 範囲 1.883〜1.935">1.900</span><small class="muted">1.906 ± 0.026</small></td>
+<td class="current"><span title="1回目 87.71, 2回目 83.91, 3回目 86.37 ｜ 全回の平均 ± 標準偏差 85.99 ± 1.93 ｜ 範囲 83.91〜87.71">86.37</span><small class="muted">85.99 ± 1.93</small></td>
+<td class="group-start current"><span title="1回目 943.55, 2回目 961.48, 3回目 965.22 ｜ 全回の平均 ± 標準偏差 956.75 ± 11.58 ｜ 範囲 943.55〜965.22">961.48</span><small class="muted">956.75 ± 11.58</small></td>
+<td class="current"><span title="1回目 2.242, 2回目 2.198, 3回目 2.196 ｜ 全回の平均 ± 標準偏差 2.212 ± 0.026 ｜ 範囲 2.196〜2.242">2.198</span><small class="muted">2.212 ± 0.026</small></td>
+<td class="current"><span title="1回目 85.62, 2回目 81.91, 3回目 81.26 ｜ 全回の平均 ± 標準偏差 82.93 ± 2.35 ｜ 範囲 81.26〜85.62">81.91</span><small class="muted">82.93 ± 2.35</small></td>
+<td class="group-start">1,660.54</td>
+<td class="">—</td>
+<td class="">105.48</td>
+</tr>
+<tr><th scope="row">16,384</th>
+<td class="group-start"><span title="1回目 1,034.20, 2回目 1,070.13, 3回目 1,044.07 ｜ 全回の平均 ± 標準偏差 1,049.47 ± 18.56 ｜ 範囲 1,034.20〜1,070.13">1,044.07</span><small class="muted">1,049.47 ± 18.56</small></td>
+<td class=""><span title="1回目 1.978, 2回目 1.912, 3回目 1.961 ｜ 全回の平均 ± 標準偏差 1.950 ± 0.034 ｜ 範囲 1.912〜1.978">1.961</span><small class="muted">1.950 ± 0.034</small></td>
+<td class=""><span title="1回目 82.34, 2回目 81.68, 3回目 76.82 ｜ 全回の平均 ± 標準偏差 80.28 ± 3.01 ｜ 範囲 76.82〜82.34">81.68</span><small class="muted">80.28 ± 3.01</small></td>
+<td class="group-start"><span title="1回目 1,042.90, 2回目 1,068.72, 3回目 1,055.65 ｜ 全回の平均 ± 標準偏差 1,055.76 ± 12.91 ｜ 範囲 1,042.90〜1,068.72">1,055.65</span><small class="muted">1,055.76 ± 12.91</small></td>
+<td class=""><span title="1回目 1.962, 2回目 1.914, 3回目 1.939 ｜ 全回の平均 ± 標準偏差 1.938 ± 0.024 ｜ 範囲 1.914〜1.962">1.939</span><small class="muted">1.938 ± 0.024</small></td>
+<td class=""><span title="1回目 82.59, 2回目 82.22, 3回目 80.35 ｜ 全回の平均 ± 標準偏差 81.72 ± 1.20 ｜ 範囲 80.35〜82.59">82.22</span><small class="muted">81.72 ± 1.20</small></td>
+<td class="group-start"><span title="1回目 944.41, 2回目 956.26, 3回目 970.92 ｜ 全回の平均 ± 標準偏差 957.20 ± 13.28 ｜ 範囲 944.41〜970.92">956.26</span><small class="muted">957.20 ± 13.28</small></td>
+<td class=""><span title="1回目 2.242, 2回目 2.215, 3回目 2.193 ｜ 全回の平均 ± 標準偏差 2.217 ± 0.025 ｜ 範囲 2.193〜2.242">2.215</span><small class="muted">2.217 ± 0.025</small></td>
+<td class=""><span title="1回目 84.61, 2回目 79.11, 3回目 79.06 ｜ 全回の平均 ± 標準偏差 80.93 ± 3.19 ｜ 範囲 79.06〜84.61">79.11</span><small class="muted">80.93 ± 3.19</small></td>
+<td class="group-start current"><span title="1回目 1,057.38, 2回目 1,046.65, 3回目 1,016.12 ｜ 全回の平均 ± 標準偏差 1,040.05 ± 21.41 ｜ 範囲 1,016.12〜1,057.38">1,046.65</span><small class="muted">1,040.05 ± 21.41</small></td>
+<td class="current"><span title="1回目 1.939, 2回目 1.956, 3回目 2.016 ｜ 全回の平均 ± 標準偏差 1.970 ± 0.041 ｜ 範囲 1.939〜2.016">1.956</span><small class="muted">1.970 ± 0.041</small></td>
+<td class="current"><span title="1回目 77.53, 2回目 73.61, 3回目 74.87 ｜ 全回の平均 ± 標準偏差 75.34 ± 2.00 ｜ 範囲 73.61〜77.53">74.87</span><small class="muted">75.34 ± 2.00</small></td>
+<td class="group-start current"><span title="1回目 1,019.35, 2回目 1,047.58, 3回目 1,038.84 ｜ 全回の平均 ± 標準偏差 1,035.26 ± 14.45 ｜ 範囲 1,019.35〜1,047.58">1,038.84</span><small class="muted">1,035.26 ± 14.45</small></td>
+<td class="current"><span title="1回目 2.008, 2回目 1.954, 3回目 1.971 ｜ 全回の平均 ± 標準偏差 1.977 ± 0.028 ｜ 範囲 1.954〜2.008">1.971</span><small class="muted">1.977 ± 0.028</small></td>
+<td class="current"><span title="1回目 79.87, 2回目 81.15, 3回目 80.33 ｜ 全回の平均 ± 標準偏差 80.45 ± 0.65 ｜ 範囲 79.87〜81.15">80.33</span><small class="muted">80.45 ± 0.65</small></td>
+<td class="group-start current"><span title="1回目 934.05, 2回目 940.72, 3回目 927.49 ｜ 全回の平均 ± 標準偏差 934.08 ± 6.61 ｜ 範囲 927.49〜940.72">934.05</span><small class="muted">934.08 ± 6.61</small></td>
+<td class="current"><span title="1回目 2.263, 2回目 2.245, 3回目 2.293 ｜ 全回の平均 ± 標準偏差 2.267 ± 0.024 ｜ 範囲 2.245〜2.293">2.263</span><small class="muted">2.267 ± 0.024</small></td>
+<td class="current"><span title="1回目 82.71, 2回目 79.41, 3回目 80.48 ｜ 全回の平均 ± 標準偏差 80.86 ± 1.68 ｜ 範囲 79.41〜82.71">80.48</span><small class="muted">80.86 ± 1.68</small></td>
+<td class="group-start">1,609.90</td>
+<td class="">—</td>
+<td class="">113.32</td>
+</tr>
+<tr><th scope="row">32,768</th>
+<td class="group-start"><span title="1回目 1,025.00, 2回目 1,032.53, 3回目 1,038.72 ｜ 全回の平均 ± 標準偏差 1,032.08 ± 6.87 ｜ 範囲 1,025.00〜1,038.72">1,032.53</span><small class="muted">1,032.08 ± 6.87</small></td>
+<td class=""><span title="1回目 1.981, 2回目 2.004, 3回目 1.966 ｜ 全回の平均 ± 標準偏差 1.984 ± 0.019 ｜ 範囲 1.966〜2.004">1.981</span><small class="muted">1.984 ± 0.019</small></td>
+<td class=""><span title="1回目 82.13, 2回目 84.15, 3回目 74.43 ｜ 全回の平均 ± 標準偏差 80.24 ± 5.13 ｜ 範囲 74.43〜84.15">82.13</span><small class="muted">80.24 ± 5.13</small></td>
+<td class="group-start"><span title="1回目 1,026.56, 2回目 996.75, 3回目 1,018.75 ｜ 全回の平均 ± 標準偏差 1,014.02 ± 15.46 ｜ 範囲 996.75〜1,026.56">1,018.75</span><small class="muted">1,014.02 ± 15.46</small></td>
+<td class=""><span title="1回目 1.977, 2回目 2.078, 3回目 2.005 ｜ 全回の平均 ± 標準偏差 2.020 ± 0.052 ｜ 範囲 1.977〜2.078">2.005</span><small class="muted">2.020 ± 0.052</small></td>
+<td class=""><span title="1回目 81.20, 2回目 77.20, 3回目 75.86 ｜ 全回の平均 ± 標準偏差 78.09 ± 2.78 ｜ 範囲 75.86〜81.20">77.20</span><small class="muted">78.09 ± 2.78</small></td>
+<td class="group-start"><span title="1回目 921.37, 2回目 901.54, 3回目 955.12 ｜ 全回の平均 ± 標準偏差 926.01 ± 27.09 ｜ 範囲 901.54〜955.12">921.37</span><small class="muted">926.01 ± 27.09</small></td>
+<td class=""><span title="1回目 2.283, 2回目 2.372, 3回目 2.216 ｜ 全回の平均 ± 標準偏差 2.290 ± 0.078 ｜ 範囲 2.216〜2.372">2.283</span><small class="muted">2.290 ± 0.078</small></td>
+<td class=""><span title="1回目 82.96, 2回目 80.84, 3回目 78.44 ｜ 全回の平均 ± 標準偏差 80.75 ± 2.26 ｜ 範囲 78.44〜82.96">80.84</span><small class="muted">80.75 ± 2.26</small></td>
+<td class="group-start current"><span title="1回目 1,018.48, 2回目 1,024.30, 3回目 1,045.45 ｜ 全回の平均 ± 標準偏差 1,029.41 ± 14.19 ｜ 範囲 1,018.48〜1,045.45">1,024.30</span><small class="muted">1,029.41 ± 14.19</small></td>
+<td class="current"><span title="1回目 1.995, 2回目 2.022, 3回目 1.955 ｜ 全回の平均 ± 標準偏差 1.991 ± 0.033 ｜ 範囲 1.955〜2.022">1.995</span><small class="muted">1.991 ± 0.033</small></td>
+<td class="current"><span title="1回目 81.75, 2回目 80.69, 3回目 71.79 ｜ 全回の平均 ± 標準偏差 78.07 ± 5.47 ｜ 範囲 71.79〜81.75 ｜ 中央値から除外 3回目">81.22 †</span><small class="muted">78.07 ± 5.47</small></td>
+<td class="group-start current"><span title="1回目 1,013.66, 2回目 997.98, 3回目 998.21 ｜ 全回の平均 ± 標準偏差 1,003.28 ± 8.99 ｜ 範囲 997.98〜1,013.66">998.21</span><small class="muted">1,003.28 ± 8.99</small></td>
+<td class="current"><span title="1回目 2.002, 2回目 2.074, 3回目 2.050 ｜ 全回の平均 ± 標準偏差 2.042 ± 0.036 ｜ 範囲 2.002〜2.074">2.050</span><small class="muted">2.042 ± 0.036</small></td>
+<td class="current"><span title="1回目 80.43, 2回目 75.72, 3回目 75.86 ｜ 全回の平均 ± 標準偏差 77.34 ± 2.68 ｜ 範囲 75.72〜80.43">75.86</span><small class="muted">77.34 ± 2.68</small></td>
+<td class="group-start current"><span title="1回目 903.47, 2回目 886.63, 3回目 948.88 ｜ 全回の平均 ± 標準偏差 912.99 ± 32.20 ｜ 範囲 886.63〜948.88">903.47</span><small class="muted">912.99 ± 32.20</small></td>
+<td class="current"><span title="1回目 2.317, 2回目 2.405, 3回目 2.231 ｜ 全回の平均 ± 標準偏差 2.318 ± 0.087 ｜ 範囲 2.231〜2.405">2.317</span><small class="muted">2.318 ± 0.087</small></td>
+<td class="current"><span title="1回目 83.38, 2回目 80.26, 3回目 78.51 ｜ 全回の平均 ± 標準偏差 80.72 ± 2.46 ｜ 範囲 78.51〜83.38">80.26</span><small class="muted">80.72 ± 2.46</small></td>
+<td class="group-start">1,582.22</td>
+<td class="">—</td>
+<td class="">105.38</td>
+</tr>
+<tr><th scope="row">65,536</th>
+<td class="group-start"><span title="1回目 991.73, 2回目 1,033.29, 3回目 983.97 ｜ 全回の平均 ± 標準偏差 1,003.00 ± 26.52 ｜ 範囲 983.97〜1,033.29">991.73</span><small class="muted">1,003.00 ± 26.52</small></td>
+<td class=""><span title="1回目 2.082, 2回目 1.991, 3回目 2.108 ｜ 全回の平均 ± 標準偏差 2.061 ± 0.061 ｜ 範囲 1.991〜2.108">2.082</span><small class="muted">2.061 ± 0.061</small></td>
+<td class=""><span title="1回目 76.82, 2回目 76.78, 3回目 77.26 ｜ 全回の平均 ± 標準偏差 76.95 ± 0.26 ｜ 範囲 76.78〜77.26">76.82</span><small class="muted">76.95 ± 0.26</small></td>
+<td class="group-start"><span title="1回目 977.93, 2回目 1,015.88, 3回目 931.06 ｜ 全回の平均 ± 標準偏差 974.96 ± 42.49 ｜ 範囲 931.06〜1,015.88">977.93</span><small class="muted">974.96 ± 42.49</small></td>
+<td class=""><span title="1回目 2.111, 2回目 2.026, 3回目 2.228 ｜ 全回の平均 ± 標準偏差 2.122 ± 0.102 ｜ 範囲 2.026〜2.228">2.111</span><small class="muted">2.122 ± 0.102</small></td>
+<td class=""><span title="1回目 80.11, 2回目 76.96, 3回目 80.99 ｜ 全回の平均 ± 標準偏差 79.36 ± 2.12 ｜ 範囲 76.96〜80.99">80.11</span><small class="muted">79.36 ± 2.12</small></td>
+<td class="group-start"><span title="1回目 918.03, 2回目 930.03, 3回目 876.28 ｜ 全回の平均 ± 標準偏差 908.11 ± 28.21 ｜ 範囲 876.28〜930.03">918.03</span><small class="muted">908.11 ± 28.21</small></td>
+<td class=""><span title="1回目 2.320, 2回目 2.292, 3回目 2.444 ｜ 全回の平均 ± 標準偏差 2.352 ± 0.081 ｜ 範囲 2.292〜2.444">2.320</span><small class="muted">2.352 ± 0.081</small></td>
+<td class=""><span title="1回目 78.42, 2回目 84.65, 3回目 75.60 ｜ 全回の平均 ± 標準偏差 79.56 ± 4.63 ｜ 範囲 75.60〜84.65">78.42</span><small class="muted">79.56 ± 4.63</small></td>
+<td class="group-start current"><span title="1回目 949.05, 2回目 1,029.27, 3回目 986.19 ｜ 全回の平均 ± 標準偏差 988.17 ± 40.15 ｜ 範囲 949.05〜1,029.27">986.19</span><small class="muted">988.17 ± 40.15</small></td>
+<td class="current"><span title="1回目 2.173, 2回目 2.001, 3回目 2.104 ｜ 全回の平均 ± 標準偏差 2.093 ± 0.086 ｜ 範囲 2.001〜2.173">2.104</span><small class="muted">2.093 ± 0.086</small></td>
+<td class="current"><span title="1回目 78.84, 2回目 75.80, 3回目 72.64 ｜ 全回の平均 ± 標準偏差 75.76 ± 3.10 ｜ 範囲 72.64〜78.84">75.80</span><small class="muted">75.76 ± 3.10</small></td>
+<td class="group-start current"><span title="1回目 966.54, 2回目 1,018.33, 3回目 969.23 ｜ 全回の平均 ± 標準偏差 984.70 ± 29.16 ｜ 範囲 966.54〜1,018.33">969.23</span><small class="muted">984.70 ± 29.16</small></td>
+<td class="current"><span title="1回目 2.134, 2回目 2.024, 3回目 2.143 ｜ 全回の平均 ± 標準偏差 2.100 ± 0.066 ｜ 範囲 2.024〜2.143">2.134</span><small class="muted">2.100 ± 0.066</small></td>
+<td class="current"><span title="1回目 76.68, 2回目 75.16, 3回目 85.11 ｜ 全回の平均 ± 標準偏差 78.98 ± 5.36 ｜ 範囲 75.16〜85.11 ｜ 中央値から除外 3回目">75.92 †</span><small class="muted">78.98 ± 5.36</small></td>
+<td class="group-start current"><span title="1回目 860.50, 2回目 919.16, 3回目 866.81 ｜ 全回の平均 ± 標準偏差 882.16 ± 32.20 ｜ 範囲 860.50〜919.16">866.81</span><small class="muted">882.16 ± 32.20</small></td>
+<td class="current"><span title="1回目 2.471, 2回目 2.311, 3回目 2.467 ｜ 全回の平均 ± 標準偏差 2.416 ± 0.091 ｜ 範囲 2.311〜2.471">2.467</span><small class="muted">2.416 ± 0.091</small></td>
+<td class="current"><span title="1回目 79.00, 2回目 84.89, 3回目 76.19 ｜ 全回の平均 ± 標準偏差 80.03 ± 4.44 ｜ 範囲 76.19〜84.89">79.00</span><small class="muted">80.03 ± 4.44</small></td>
+<td class="group-start">1,518.16</td>
+<td class="">—</td>
+<td class="">104.78</td>
+</tr>
+<tr><th scope="row">131,072</th>
+<td class="group-start"><span title="1回目 967.14, 2回目 955.13, 3回目 920.55 ｜ 全回の平均 ± 標準偏差 947.61 ± 24.19 ｜ 範囲 920.55〜967.14">955.13</span><small class="muted">947.61 ± 24.19</small></td>
+<td class=""><span title="1回目 2.128, 2回目 2.169, 3回目 2.235 ｜ 全回の平均 ± 標準偏差 2.177 ± 0.054 ｜ 範囲 2.128〜2.235">2.169</span><small class="muted">2.177 ± 0.054</small></td>
+<td class=""><span title="1回目 82.13, 2回目 76.82, 3回目 78.64 ｜ 全回の平均 ± 標準偏差 79.19 ± 2.70 ｜ 範囲 76.82〜82.13">78.64</span><small class="muted">79.19 ± 2.70</small></td>
+<td class="group-start"><span title="1回目 961.26, 2回目 941.01, 3回目 895.52 ｜ 全回の平均 ± 標準偏差 932.60 ± 33.67 ｜ 範囲 895.52〜961.26">941.01</span><small class="muted">932.60 ± 33.67</small></td>
+<td class=""><span title="1回目 2.138, 2回目 2.200, 3回目 2.296 ｜ 全回の平均 ± 標準偏差 2.212 ± 0.080 ｜ 範囲 2.138〜2.296">2.200</span><small class="muted">2.212 ± 0.080</small></td>
+<td class=""><span title="1回目 80.83, 2回目 76.88, 3回目 73.93 ｜ 全回の平均 ± 標準偏差 77.21 ± 3.46 ｜ 範囲 73.93〜80.83">76.88</span><small class="muted">77.21 ± 3.46</small></td>
+<td class="group-start"><span title="1回目 844.43, 2回目 906.30, 3回目 915.65 ｜ 全回の平均 ± 標準偏差 888.80 ± 38.70 ｜ 範囲 844.43〜915.65">906.30</span><small class="muted">888.80 ± 38.70</small></td>
+<td class=""><span title="1回目 2.567, 2回目 2.416, 3回目 2.356 ｜ 全回の平均 ± 標準偏差 2.446 ± 0.109 ｜ 範囲 2.356〜2.567">2.416</span><small class="muted">2.446 ± 0.109</small></td>
+<td class=""><span title="1回目 80.27, 2回目 72.90, 3回目 80.10 ｜ 全回の平均 ± 標準偏差 77.76 ± 4.20 ｜ 範囲 72.90〜80.27">80.10</span><small class="muted">77.76 ± 4.20</small></td>
+<td class="group-start current"><span title="1回目 955.29, 2回目 956.43, 3回目 989.81 ｜ 全回の平均 ± 標準偏差 967.18 ± 19.61 ｜ 範囲 955.29〜989.81">956.43</span><small class="muted">967.18 ± 19.61</small></td>
+<td class="current"><span title="1回目 2.158, 2回目 2.173, 3回目 2.096 ｜ 全回の平均 ± 標準偏差 2.142 ± 0.041 ｜ 範囲 2.096〜2.173">2.158</span><small class="muted">2.142 ± 0.041</small></td>
+<td class="current"><span title="1回目 81.10, 2回目 76.01, 3回目 77.62 ｜ 全回の平均 ± 標準偏差 78.24 ± 2.60 ｜ 範囲 76.01〜81.10">77.62</span><small class="muted">78.24 ± 2.60</small></td>
+<td class="group-start current"><span title="1回目 952.44, 2回目 921.00, 3回目 956.37 ｜ 全回の平均 ± 標準偏差 943.27 ± 19.39 ｜ 範囲 921.00〜956.37">952.44</span><small class="muted">943.27 ± 19.39</small></td>
+<td class="current"><span title="1回目 2.164, 2回目 2.257, 3回目 2.151 ｜ 全回の平均 ± 標準偏差 2.191 ± 0.058 ｜ 範囲 2.151〜2.257">2.164</span><small class="muted">2.191 ± 0.058</small></td>
+<td class="current"><span title="1回目 79.37, 2回目 76.49, 3回目 81.03 ｜ 全回の平均 ± 標準偏差 78.96 ± 2.30 ｜ 範囲 76.49〜81.03">79.37</span><small class="muted">78.96 ± 2.30</small></td>
+<td class="group-start current"><span title="1回目 849.20, 2回目 869.94, 3回目 905.75 ｜ 全回の平均 ± 標準偏差 874.96 ± 28.61 ｜ 範囲 849.20〜905.75">869.94</span><small class="muted">874.96 ± 28.61</small></td>
+<td class="current"><span title="1回目 2.491, 2回目 2.452, 3回目 2.409 ｜ 全回の平均 ± 標準偏差 2.451 ± 0.041 ｜ 範囲 2.409〜2.491">2.452</span><small class="muted">2.451 ± 0.041</small></td>
+<td class="current"><span title="1回目 80.57, 2回目 71.15, 3回目 79.66 ｜ 全回の平均 ± 標準偏差 77.13 ± 5.19 ｜ 範囲 71.15〜80.57 ｜ 中央値から除外 2回目">80.11 †</span><small class="muted">77.13 ± 5.19</small></td>
+<td class="group-start">1,437.91</td>
+<td class="">—</td>
+<td class="">108.37</td>
+</tr>
+</tbody></table></div>
+<h2>同時利用：1・2・4・6・8要求</h2>
+<p>事前処理した入力を使用。各回のTTFTは要求ごとのHTTP値の中央値。全体スループットは、全要求の出力トークン数を最初の要求開始から最後の要求完了までの時間で割った値。</p>
+<h3>AR・通常文</h3>
+<div class="scroll"><table class="perf" data-mode="ar"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="2" scope="colgroup" class="group-start">内蔵PLE AR<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start">外部PLE Q8_0 AR<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start current">内蔵PLE AR<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start current">外部PLE Q8_0 AR<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 0.002, 2回目 0.002, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.002">0.002</span><small class="muted">0.002 ± 0.000</small></td>
+<td class=""><span title="1回目 28.55, 2回目 29.01, 3回目 29.15 ｜ 全回の平均 ± 標準偏差 28.90 ± 0.31 ｜ 範囲 28.55〜29.15">29.01</span><small class="muted">28.90 ± 0.31</small></td>
+<td class="group-start"><span title="1回目 0.002, 2回目 0.002, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.002">0.002</span><small class="muted">0.002 ± 0.000</small></td>
+<td class=""><span title="1回目 28.02, 2回目 28.58, 3回目 28.88 ｜ 全回の平均 ± 標準偏差 28.49 ± 0.44 ｜ 範囲 28.02〜28.88">28.58</span><small class="muted">28.49 ± 0.44</small></td>
+<td class="group-start current"><span title="1回目 0.002, 2回目 0.002, 3回目 0.003 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.003">0.002</span><small class="muted">0.002 ± 0.000</small></td>
+<td class="current"><span title="1回目 27.78, 2回目 28.05, 3回目 28.27 ｜ 全回の平均 ± 標準偏差 28.04 ± 0.25 ｜ 範囲 27.78〜28.27">28.05</span><small class="muted">28.04 ± 0.25</small></td>
+<td class="group-start current"><span title="1回目 0.002, 2回目 0.002, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.002 ｜ 中央値から除外 3回目">0.002 †</span><small class="muted">0.002 ± 0.000</small></td>
+<td class="current"><span title="1回目 28.38, 2回目 28.87, 3回目 28.91 ｜ 全回の平均 ± 標準偏差 28.72 ± 0.29 ｜ 範囲 28.38〜28.91">28.87</span><small class="muted">28.72 ± 0.29</small></td>
+<td class="group-start">0.001</td>
+<td class="">28.23</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 0.002, 2回目 0.002, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.002">0.002</span><small class="muted">0.002 ± 0.000</small></td>
+<td class=""><span title="1回目 48.75, 2回目 49.64, 3回目 49.60 ｜ 全回の平均 ± 標準偏差 49.33 ± 0.50 ｜ 範囲 48.75〜49.64">49.60</span><small class="muted">49.33 ± 0.50</small></td>
+<td class="group-start"><span title="1回目 0.003, 2回目 0.003, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.003">0.003</span><small class="muted">0.002 ± 0.000</small></td>
+<td class=""><span title="1回目 47.90, 2回目 49.27, 3回目 48.60 ｜ 全回の平均 ± 標準偏差 48.59 ± 0.69 ｜ 範囲 47.90〜49.27">48.60</span><small class="muted">48.59 ± 0.69</small></td>
+<td class="group-start current"><span title="1回目 0.002, 2回目 0.003, 3回目 0.003 ｜ 全回の平均 ± 標準偏差 0.003 ± 0.000 ｜ 範囲 0.002〜0.003 ｜ 中央値から除外 1回目">0.003 †</span><small class="muted">0.003 ± 0.000</small></td>
+<td class="current"><span title="1回目 47.22, 2回目 48.03, 3回目 47.61 ｜ 全回の平均 ± 標準偏差 47.62 ± 0.40 ｜ 範囲 47.22〜48.03">47.61</span><small class="muted">47.62 ± 0.40</small></td>
+<td class="group-start current"><span title="1回目 0.003, 2回目 0.002, 3回目 0.002 ｜ 全回の平均 ± 標準偏差 0.002 ± 0.000 ｜ 範囲 0.002〜0.003">0.002</span><small class="muted">0.002 ± 0.000</small></td>
+<td class="current"><span title="1回目 48.41, 2回目 49.25, 3回目 48.73 ｜ 全回の平均 ± 標準偏差 48.80 ± 0.42 ｜ 範囲 48.41〜49.25">48.73</span><small class="muted">48.80 ± 0.42</small></td>
+<td class="group-start">0.002</td>
+<td class="">50.62</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 0.004, 2回目 0.004, 3回目 0.004 ｜ 全回の平均 ± 標準偏差 0.004 ± 0.000 ｜ 範囲 0.004〜0.004">0.004</span><small class="muted">0.004 ± 0.000</small></td>
+<td class=""><span title="1回目 72.36, 2回目 73.08, 3回目 72.23 ｜ 全回の平均 ± 標準偏差 72.56 ± 0.46 ｜ 範囲 72.23〜73.08">72.36</span><small class="muted">72.56 ± 0.46</small></td>
+<td class="group-start"><span title="1回目 0.004, 2回目 0.004, 3回目 0.008 ｜ 全回の平均 ± 標準偏差 0.005 ± 0.002 ｜ 範囲 0.004〜0.008 ｜ 中央値から除外 3回目">0.004 †</span><small class="muted">0.005 ± 0.002</small></td>
+<td class=""><span title="1回目 72.79, 2回目 72.50, 3回目 71.78 ｜ 全回の平均 ± 標準偏差 72.36 ± 0.52 ｜ 範囲 71.78〜72.79">72.50</span><small class="muted">72.36 ± 0.52</small></td>
+<td class="group-start current"><span title="1回目 0.004, 2回目 0.005, 3回目 0.004 ｜ 全回の平均 ± 標準偏差 0.004 ± 0.000 ｜ 範囲 0.004〜0.005">0.004</span><small class="muted">0.004 ± 0.000</small></td>
+<td class="current"><span title="1回目 70.95, 2回目 71.57, 3回目 70.39 ｜ 全回の平均 ± 標準偏差 70.97 ± 0.59 ｜ 範囲 70.39〜71.57">70.95</span><small class="muted">70.97 ± 0.59</small></td>
+<td class="group-start current"><span title="1回目 0.004, 2回目 0.004, 3回目 0.004 ｜ 全回の平均 ± 標準偏差 0.004 ± 0.000 ｜ 範囲 0.004〜0.004">0.004</span><small class="muted">0.004 ± 0.000</small></td>
+<td class="current"><span title="1回目 73.11, 2回目 73.02, 3回目 71.50 ｜ 全回の平均 ± 標準偏差 72.54 ± 0.91 ｜ 範囲 71.50〜73.11">73.02</span><small class="muted">72.54 ± 0.91</small></td>
+<td class="group-start">0.002</td>
+<td class="">85.88</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 0.063, 2回目 0.006, 3回目 0.050 ｜ 全回の平均 ± 標準偏差 0.040 ± 0.030 ｜ 範囲 0.006〜0.063">0.050</span><small class="muted">0.040 ± 0.030</small></td>
+<td class=""><span title="1回目 86.16, 2回目 84.38, 3回目 83.02 ｜ 全回の平均 ± 標準偏差 84.52 ± 1.57 ｜ 範囲 83.02〜86.16">84.38</span><small class="muted">84.52 ± 1.57</small></td>
+<td class="group-start"><span title="1回目 0.006, 2回目 0.045, 3回目 0.006 ｜ 全回の平均 ± 標準偏差 0.019 ± 0.023 ｜ 範囲 0.006〜0.045 ｜ 中央値から除外 2回目">0.006 †</span><small class="muted">0.019 ± 0.023</small></td>
+<td class=""><span title="1回目 78.92, 2回目 84.05, 3回目 81.42 ｜ 全回の平均 ± 標準偏差 81.46 ± 2.57 ｜ 範囲 78.92〜84.05">81.42</span><small class="muted">81.46 ± 2.57</small></td>
+<td class="group-start current"><span title="1回目 0.031, 2回目 0.007, 3回目 0.006 ｜ 全回の平均 ± 標準偏差 0.015 ± 0.014 ｜ 範囲 0.006〜0.031 ｜ 中央値から除外 1回目">0.007 †</span><small class="muted">0.015 ± 0.014</small></td>
+<td class="current"><span title="1回目 85.26, 2回目 83.71, 3回目 82.83 ｜ 全回の平均 ± 標準偏差 83.93 ± 1.23 ｜ 範囲 82.83〜85.26">83.71</span><small class="muted">83.93 ± 1.23</small></td>
+<td class="group-start current"><span title="1回目 0.006, 2回目 0.041, 3回目 0.006 ｜ 全回の平均 ± 標準偏差 0.018 ± 0.020 ｜ 範囲 0.006〜0.041 ｜ 中央値から除外 2回目">0.006 †</span><small class="muted">0.018 ± 0.020</small></td>
+<td class="current"><span title="1回目 85.53, 2回目 83.61, 3回目 83.13 ｜ 全回の平均 ± 標準偏差 84.09 ± 1.27 ｜ 範囲 83.13〜85.53">83.61</span><small class="muted">84.09 ± 1.27</small></td>
+<td class="group-start">0.002</td>
+<td class="">108.12</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 0.043, 2回目 0.007, 3回目 0.048 ｜ 全回の平均 ± 標準偏差 0.033 ± 0.022 ｜ 範囲 0.007〜0.048 ｜ 中央値から除外 2回目">0.045 †</span><small class="muted">0.033 ± 0.022</small></td>
+<td class=""><span title="1回目 94.31, 2回目 90.55, 3回目 89.64 ｜ 全回の平均 ± 標準偏差 91.50 ± 2.48 ｜ 範囲 89.64〜94.31">90.55</span><small class="muted">91.50 ± 2.48</small></td>
+<td class="group-start"><span title="1回目 0.042, 2回目 0.054, 3回目 0.008 ｜ 全回の平均 ± 標準偏差 0.035 ± 0.024 ｜ 範囲 0.008〜0.054">0.042</span><small class="muted">0.035 ± 0.024</small></td>
+<td class=""><span title="1回目 94.04, 2回目 90.47, 3回目 90.50 ｜ 全回の平均 ± 標準偏差 91.67 ± 2.06 ｜ 範囲 90.47〜94.04">90.50</span><small class="muted">91.67 ± 2.06</small></td>
+<td class="group-start current"><span title="1回目 0.037, 2回目 0.044, 3回目 0.009 ｜ 全回の平均 ± 標準偏差 0.030 ± 0.019 ｜ 範囲 0.009〜0.044">0.037</span><small class="muted">0.030 ± 0.019</small></td>
+<td class="current"><span title="1回目 92.91, 2回目 90.43, 3回目 85.34 ｜ 全回の平均 ± 標準偏差 89.56 ± 3.86 ｜ 範囲 85.34〜92.91">90.43</span><small class="muted">89.56 ± 3.86</small></td>
+<td class="group-start current"><span title="1回目 0.008, 2回目 0.034, 3回目 0.008 ｜ 全回の平均 ± 標準偏差 0.017 ± 0.015 ｜ 範囲 0.008〜0.034 ｜ 中央値から除外 2回目">0.008 †</span><small class="muted">0.017 ± 0.015</small></td>
+<td class="current"><span title="1回目 92.74, 2回目 91.02, 3回目 91.47 ｜ 全回の平均 ± 標準偏差 91.74 ± 0.89 ｜ 範囲 91.02〜92.74">91.47</span><small class="muted">91.74 ± 0.89</small></td>
+<td class="group-start">0.002</td>
+<td class="">125.17</td>
+</tr>
+</tbody></table></div>
+<details><summary>要求別Decode速度の合計（本家表との照合用）</summary>
+<p>各要求が生成していた間の速度を合計した値。</p>
+<div class="scroll"><table class="perf" data-mode="ar"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="1" scope="colgroup" class="group-start">内蔵PLE AR<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start">外部PLE Q8_0 AR<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start current">内蔵PLE AR<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start current">外部PLE Q8_0 AR<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 28.58, 2回目 29.04, 3回目 29.18 ｜ 全回の平均 ± 標準偏差 28.93 ± 0.31 ｜ 範囲 28.58〜29.18">29.04</span><small class="muted">28.93 ± 0.31</small></td>
+<td class="group-start"><span title="1回目 28.05, 2回目 28.62, 3回目 28.91 ｜ 全回の平均 ± 標準偏差 28.52 ± 0.44 ｜ 範囲 28.05〜28.91">28.62</span><small class="muted">28.52 ± 0.44</small></td>
+<td class="group-start current"><span title="1回目 27.82, 2回目 28.09, 3回目 28.31 ｜ 全回の平均 ± 標準偏差 28.07 ± 0.25 ｜ 範囲 27.82〜28.31">28.09</span><small class="muted">28.07 ± 0.25</small></td>
+<td class="group-start current"><span title="1回目 28.43, 2回目 28.92, 3回目 28.95 ｜ 全回の平均 ± 標準偏差 28.76 ± 0.29 ｜ 範囲 28.43〜28.95">28.92</span><small class="muted">28.76 ± 0.29</small></td>
+<td class="group-start">28.24</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 48.85, 2回目 49.74, 3回目 49.70 ｜ 全回の平均 ± 標準偏差 49.43 ± 0.51 ｜ 範囲 48.85〜49.74">49.70</span><small class="muted">49.43 ± 0.51</small></td>
+<td class="group-start"><span title="1回目 48.01, 2回目 49.38, 3回目 48.72 ｜ 全回の平均 ± 標準偏差 48.70 ± 0.68 ｜ 範囲 48.01〜49.38">48.72</span><small class="muted">48.70 ± 0.68</small></td>
+<td class="group-start current"><span title="1回目 47.52, 2回目 48.33, 3回目 47.92 ｜ 全回の平均 ± 標準偏差 47.92 ± 0.40 ｜ 範囲 47.52〜48.33">47.92</span><small class="muted">47.92 ± 0.40</small></td>
+<td class="group-start current"><span title="1回目 48.73, 2回目 49.53, 3回目 49.04 ｜ 全回の平均 ± 標準偏差 49.10 ± 0.40 ｜ 範囲 48.73〜49.53">49.04</span><small class="muted">49.10 ± 0.40</small></td>
+<td class="group-start">50.66</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 72.60, 2回目 73.38, 3回目 72.56 ｜ 全回の平均 ± 標準偏差 72.85 ± 0.46 ｜ 範囲 72.56〜73.38">72.60</span><small class="muted">72.85 ± 0.46</small></td>
+<td class="group-start"><span title="1回目 73.02, 2回目 72.80, 3回目 72.12 ｜ 全回の平均 ± 標準偏差 72.64 ± 0.47 ｜ 範囲 72.12〜73.02">72.80</span><small class="muted">72.64 ± 0.47</small></td>
+<td class="group-start current"><span title="1回目 71.68, 2回目 72.34, 3回目 71.24 ｜ 全回の平均 ± 標準偏差 71.75 ± 0.55 ｜ 範囲 71.24〜72.34">71.68</span><small class="muted">71.75 ± 0.55</small></td>
+<td class="group-start current"><span title="1回目 73.87, 2回目 73.88, 3回目 72.34 ｜ 全回の平均 ± 標準偏差 73.36 ± 0.89 ｜ 範囲 72.34〜73.88">73.87</span><small class="muted">73.36 ± 0.89</small></td>
+<td class="group-start">86.01</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 87.05, 2回目 84.87, 3回目 83.97 ｜ 全回の平均 ± 標準偏差 85.30 ± 1.58 ｜ 範囲 83.97〜87.05">84.87</span><small class="muted">85.30 ± 1.58</small></td>
+<td class="group-start"><span title="1回目 79.21, 2回目 84.95, 3回目 82.40 ｜ 全回の平均 ± 標準偏差 82.19 ± 2.87 ｜ 範囲 79.21〜84.95">82.40</span><small class="muted">82.19 ± 2.87</small></td>
+<td class="group-start current"><span title="1回目 86.80, 2回目 84.88, 3回目 83.99 ｜ 全回の平均 ± 標準偏差 85.22 ± 1.44 ｜ 範囲 83.99〜86.80">84.88</span><small class="muted">85.22 ± 1.44</small></td>
+<td class="group-start current"><span title="1回目 86.60, 2回目 85.19, 3回目 84.34 ｜ 全回の平均 ± 標準偏差 85.38 ± 1.14 ｜ 範囲 84.34〜86.60">85.19</span><small class="muted">85.38 ± 1.14</small></td>
+<td class="group-start">108.34</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 95.31, 2回目 91.57, 3回目 90.69 ｜ 全回の平均 ± 標準偏差 92.52 ± 2.45 ｜ 範囲 90.69〜95.31">91.57</span><small class="muted">92.52 ± 2.45</small></td>
+<td class="group-start"><span title="1回目 94.87, 2回目 91.55, 3回目 91.16 ｜ 全回の平均 ± 標準偏差 92.53 ± 2.04 ｜ 範囲 91.16〜94.87">91.55</span><small class="muted">92.53 ± 2.04</small></td>
+<td class="group-start current"><span title="1回目 94.64, 2回目 92.26, 3回目 87.00 ｜ 全回の平均 ± 標準偏差 91.30 ± 3.91 ｜ 範囲 87.00〜94.64">92.26</span><small class="muted">91.30 ± 3.91</small></td>
+<td class="group-start current"><span title="1回目 94.58, 2回目 92.95, 3回目 92.95 ｜ 全回の平均 ± 標準偏差 93.49 ± 0.94 ｜ 範囲 92.95〜94.58">92.95</span><small class="muted">93.49 ± 0.94</small></td>
+<td class="group-start">125.48</td>
+</tr>
+</tbody></table></div>
+</details>
+<h3>投機生成・通常文</h3>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="2" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 0.069, 2回目 0.033, 3回目 0.032 ｜ 全回の平均 ± 標準偏差 0.045 ± 0.021 ｜ 範囲 0.032〜0.069 ｜ 中央値から除外 1回目">0.033 †</span><small class="muted">0.045 ± 0.021</small></td>
+<td class=""><span title="1回目 30.79, 2回目 32.14, 3回目 31.89 ｜ 全回の平均 ± 標準偏差 31.60 ± 0.72 ｜ 範囲 30.79〜32.14">31.89</span><small class="muted">31.60 ± 0.72</small></td>
+<td class="group-start"><span title="1回目 0.071, 2回目 0.035, 3回目 0.035 ｜ 全回の平均 ± 標準偏差 0.047 ± 0.021 ｜ 範囲 0.035〜0.071 ｜ 中央値から除外 1回目">0.035 †</span><small class="muted">0.047 ± 0.021</small></td>
+<td class=""><span title="1回目 25.02, 2回目 29.26, 3回目 30.18 ｜ 全回の平均 ± 標準偏差 28.15 ± 2.75 ｜ 範囲 25.02〜30.18">29.26</span><small class="muted">28.15 ± 2.75</small></td>
+<td class="group-start"><span title="1回目 0.097, 2回目 0.072, 3回目 0.068 ｜ 全回の平均 ± 標準偏差 0.079 ± 0.016 ｜ 範囲 0.068〜0.097 ｜ 中央値から除外 1回目">0.070 †</span><small class="muted">0.079 ± 0.016</small></td>
+<td class=""><span title="1回目 33.51, 2回目 34.50, 3回目 34.61 ｜ 全回の平均 ± 標準偏差 34.20 ± 0.61 ｜ 範囲 33.51〜34.61">34.50</span><small class="muted">34.20 ± 0.61</small></td>
+<td class="group-start current"><span title="1回目 0.084, 2回目 0.201, 3回目 0.043 ｜ 全回の平均 ± 標準偏差 0.109 ± 0.082 ｜ 範囲 0.043〜0.201">0.084</span><small class="muted">0.109 ± 0.082</small></td>
+<td class="current"><span title="1回目 28.07, 2回目 27.86, 3回目 28.97 ｜ 全回の平均 ± 標準偏差 28.30 ± 0.59 ｜ 範囲 27.86〜28.97">28.07</span><small class="muted">28.30 ± 0.59</small></td>
+<td class="group-start current"><span title="1回目 0.077, 2回目 0.039, 3回目 0.053 ｜ 全回の平均 ± 標準偏差 0.056 ± 0.019 ｜ 範囲 0.039〜0.077">0.053</span><small class="muted">0.056 ± 0.019</small></td>
+<td class="current"><span title="1回目 29.64, 2回目 30.49, 3回目 30.29 ｜ 全回の平均 ± 標準偏差 30.14 ± 0.45 ｜ 範囲 29.64〜30.49">30.29</span><small class="muted">30.14 ± 0.45</small></td>
+<td class="group-start current"><span title="1回目 0.154, 2回目 0.121, 3回目 0.122 ｜ 全回の平均 ± 標準偏差 0.132 ± 0.018 ｜ 範囲 0.121〜0.154 ｜ 中央値から除外 1回目">0.122 †</span><small class="muted">0.132 ± 0.018</small></td>
+<td class="current"><span title="1回目 28.91, 2回目 33.91, 3回目 34.40 ｜ 全回の平均 ± 標準偏差 32.41 ± 3.03 ｜ 範囲 28.91〜34.40 ｜ 中央値から除外 1回目">34.15 †</span><small class="muted">32.41 ± 3.03</small></td>
+<td class="group-start">0.005</td>
+<td class="">35.70</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 0.100, 2回目 0.065, 3回目 0.064 ｜ 全回の平均 ± 標準偏差 0.076 ± 0.020 ｜ 範囲 0.064〜0.100 ｜ 中央値から除外 1回目">0.064 †</span><small class="muted">0.076 ± 0.020</small></td>
+<td class=""><span title="1回目 46.64, 2回目 46.67, 3回目 47.79 ｜ 全回の平均 ± 標準偏差 47.04 ± 0.65 ｜ 範囲 46.64〜47.79">46.67</span><small class="muted">47.04 ± 0.65</small></td>
+<td class="group-start"><span title="1回目 0.099, 2回目 0.068, 3回目 0.062 ｜ 全回の平均 ± 標準偏差 0.076 ± 0.020 ｜ 範囲 0.062〜0.099">0.068</span><small class="muted">0.076 ± 0.020</small></td>
+<td class=""><span title="1回目 45.73, 2回目 48.27, 3回目 47.44 ｜ 全回の平均 ± 標準偏差 47.15 ± 1.30 ｜ 範囲 45.73〜48.27">47.44</span><small class="muted">47.15 ± 1.30</small></td>
+<td class="group-start"><span title="1回目 0.218, 2回目 0.164, 3回目 0.160 ｜ 全回の平均 ± 標準偏差 0.181 ± 0.033 ｜ 範囲 0.160〜0.218 ｜ 中央値から除外 1回目">0.162 †</span><small class="muted">0.181 ± 0.033</small></td>
+<td class=""><span title="1回目 33.61, 2回目 34.49, 3回目 34.18 ｜ 全回の平均 ± 標準偏差 34.10 ± 0.45 ｜ 範囲 33.61〜34.49">34.18</span><small class="muted">34.10 ± 0.45</small></td>
+<td class="group-start current"><span title="1回目 0.124, 2回目 0.107, 3回目 0.083 ｜ 全回の平均 ± 標準偏差 0.104 ± 0.020 ｜ 範囲 0.083〜0.124">0.107</span><small class="muted">0.104 ± 0.020</small></td>
+<td class="current"><span title="1回目 47.25, 2回目 45.08, 3回目 47.70 ｜ 全回の平均 ± 標準偏差 46.68 ± 1.40 ｜ 範囲 45.08〜47.70">47.25</span><small class="muted">46.68 ± 1.40</small></td>
+<td class="group-start current"><span title="1回目 0.116, 2回目 0.082, 3回目 0.084 ｜ 全回の平均 ± 標準偏差 0.094 ± 0.019 ｜ 範囲 0.082〜0.116 ｜ 中央値から除外 1回目">0.083 †</span><small class="muted">0.094 ± 0.019</small></td>
+<td class="current"><span title="1回目 49.05, 2回目 47.89, 3回目 45.68 ｜ 全回の平均 ± 標準偏差 47.54 ± 1.71 ｜ 範囲 45.68〜49.05">47.89</span><small class="muted">47.54 ± 1.71</small></td>
+<td class="group-start current"><span title="1回目 0.236, 2回目 0.213, 3回目 0.218 ｜ 全回の平均 ± 標準偏差 0.222 ± 0.012 ｜ 範囲 0.213〜0.236">0.218</span><small class="muted">0.222 ± 0.012</small></td>
+<td class="current"><span title="1回目 33.59, 2回目 34.06, 3回目 33.41 ｜ 全回の平均 ± 標準偏差 33.68 ± 0.33 ｜ 範囲 33.41〜34.06">33.59</span><small class="muted">33.68 ± 0.33</small></td>
+<td class="group-start">0.008</td>
+<td class="">61.17</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 0.165, 2回目 0.130, 3回目 0.123 ｜ 全回の平均 ± 標準偏差 0.139 ± 0.022 ｜ 範囲 0.123〜0.165">0.130</span><small class="muted">0.139 ± 0.022</small></td>
+<td class=""><span title="1回目 66.28, 2回目 64.19, 3回目 60.16 ｜ 全回の平均 ± 標準偏差 63.54 ± 3.11 ｜ 範囲 60.16〜66.28">64.19</span><small class="muted">63.54 ± 3.11</small></td>
+<td class="group-start"><span title="1回目 0.165, 2回目 0.129, 3回目 0.125 ｜ 全回の平均 ± 標準偏差 0.140 ± 0.022 ｜ 範囲 0.125〜0.165 ｜ 中央値から除外 1回目">0.127 †</span><small class="muted">0.140 ± 0.022</small></td>
+<td class=""><span title="1回目 65.04, 2回目 63.68, 3回目 64.11 ｜ 全回の平均 ± 標準偏差 64.28 ± 0.69 ｜ 範囲 63.68〜65.04">64.11</span><small class="muted">64.28 ± 0.69</small> ‡</td>
+<td class="group-start"><span title="1回目 0.439, 2回目 0.380, 3回目 0.372 ｜ 全回の平均 ± 標準偏差 0.397 ± 0.036 ｜ 範囲 0.372〜0.439 ｜ 中央値から除外 1回目">0.376 †</span><small class="muted">0.397 ± 0.036</small></td>
+<td class=""><span title="1回目 33.68, 2回目 33.54, 3回目 33.62 ｜ 全回の平均 ± 標準偏差 33.61 ± 0.07 ｜ 範囲 33.54〜33.68">33.62</span><small class="muted">33.61 ± 0.07</small></td>
+<td class="group-start current"><span title="1回目 0.184, 2回目 0.135, 3回目 0.140 ｜ 全回の平均 ± 標準偏差 0.153 ± 0.027 ｜ 範囲 0.135〜0.184 ｜ 中央値から除外 1回目">0.137 †</span><small class="muted">0.153 ± 0.027</small></td>
+<td class="current"><span title="1回目 55.85, 2回目 65.34, 3回目 55.89 ｜ 全回の平均 ± 標準偏差 59.03 ± 5.46 ｜ 範囲 55.85〜65.34 ｜ 中央値から除外 2回目">55.87 †</span><small class="muted">59.03 ± 5.46</small></td>
+<td class="group-start current"><span title="1回目 0.184, 2回目 0.144, 3回目 0.150 ｜ 全回の平均 ± 標準偏差 0.160 ± 0.022 ｜ 範囲 0.144〜0.184 ｜ 中央値から除外 1回目">0.147 †</span><small class="muted">0.160 ± 0.022</small></td>
+<td class="current"><span title="1回目 64.69, 2回目 62.33, 3回目 58.61 ｜ 全回の平均 ± 標準偏差 61.88 ± 3.06 ｜ 範囲 58.61〜64.69">62.33</span><small class="muted">61.88 ± 3.06</small> ‡</td>
+<td class="group-start current"><span title="1回目 0.437, 2回目 0.411, 3回目 0.401 ｜ 全回の平均 ± 標準偏差 0.416 ± 0.018 ｜ 範囲 0.401〜0.437">0.411</span><small class="muted">0.416 ± 0.018</small></td>
+<td class="current"><span title="1回目 33.15, 2回目 33.21, 3回目 32.93 ｜ 全回の平均 ± 標準偏差 33.10 ± 0.15 ｜ 範囲 32.93〜33.21">33.15</span><small class="muted">33.10 ± 0.15</small></td>
+<td class="group-start">0.013</td>
+<td class="">88.55</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 0.225, 2回目 0.189, 3回目 0.190 ｜ 全回の平均 ± 標準偏差 0.202 ± 0.021 ｜ 範囲 0.189〜0.225 ｜ 中央値から除外 1回目">0.190 †</span><small class="muted">0.202 ± 0.021</small></td>
+<td class=""><span title="1回目 70.69, 2回目 70.64, 3回目 70.75 ｜ 全回の平均 ± 標準偏差 70.69 ± 0.05 ｜ 範囲 70.64〜70.75">70.69</span><small class="muted">70.69 ± 0.05</small></td>
+<td class="group-start"><span title="1回目 0.218, 2回目 0.180, 3回目 0.193 ｜ 全回の平均 ± 標準偏差 0.197 ± 0.019 ｜ 範囲 0.180〜0.218">0.193</span><small class="muted">0.197 ± 0.019</small></td>
+<td class=""><span title="1回目 70.47, 2回目 68.99, 3回目 73.15 ｜ 全回の平均 ± 標準偏差 70.87 ± 2.11 ｜ 範囲 68.99〜73.15">70.47</span><small class="muted">70.87 ± 2.11</small></td>
+<td class="group-start"><span title="1回目 0.628, 2回目 0.558, 3回目 0.557 ｜ 全回の平均 ± 標準偏差 0.581 ± 0.041 ｜ 範囲 0.557〜0.628 ｜ 中央値から除外 1回目">0.557 †</span><small class="muted">0.581 ± 0.041</small></td>
+<td class=""><span title="1回目 33.23, 2回目 33.54, 3回目 33.36 ｜ 全回の平均 ± 標準偏差 33.38 ± 0.16 ｜ 範囲 33.23〜33.54">33.36</span><small class="muted">33.38 ± 0.16</small></td>
+<td class="group-start current"><span title="1回目 0.242, 2回目 0.198, 3回目 0.183 ｜ 全回の平均 ± 標準偏差 0.207 ± 0.031 ｜ 範囲 0.183〜0.242">0.198</span><small class="muted">0.207 ± 0.031</small></td>
+<td class="current"><span title="1回目 68.34, 2回目 61.10, 3回目 60.37 ｜ 全回の平均 ± 標準偏差 63.27 ± 4.41 ｜ 範囲 60.37〜68.34 ｜ 中央値から除外 1回目">60.73 †</span><small class="muted">63.27 ± 4.41</small></td>
+<td class="group-start current"><span title="1回目 0.242, 2回目 0.215, 3回目 0.212 ｜ 全回の平均 ± 標準偏差 0.223 ± 0.017 ｜ 範囲 0.212〜0.242 ｜ 中央値から除外 1回目">0.213 †</span><small class="muted">0.223 ± 0.017</small></td>
+<td class="current"><span title="1回目 67.48, 2回目 62.17, 3回目 62.67 ｜ 全回の平均 ± 標準偏差 64.11 ± 2.93 ｜ 範囲 62.17〜67.48">62.67</span><small class="muted">64.11 ± 2.93</small></td>
+<td class="group-start current"><span title="1回目 0.587, 2回目 0.575, 3回目 0.586 ｜ 全回の平均 ± 標準偏差 0.582 ± 0.007 ｜ 範囲 0.575〜0.587">0.586</span><small class="muted">0.582 ± 0.007</small></td>
+<td class="current"><span title="1回目 32.51, 2回目 32.88, 3回目 32.50 ｜ 全回の平均 ± 標準偏差 32.63 ± 0.22 ｜ 範囲 32.50〜32.88">32.51</span><small class="muted">32.63 ± 0.22</small></td>
+<td class="group-start">0.019</td>
+<td class="">109.41</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 0.298, 2回目 0.251, 3回目 0.255 ｜ 全回の平均 ± 標準偏差 0.268 ± 0.026 ｜ 範囲 0.251〜0.298 ｜ 中央値から除外 1回目">0.253 †</span><small class="muted">0.268 ± 0.026</small></td>
+<td class=""><span title="1回目 82.65, 2回目 81.37, 3回目 81.39 ｜ 全回の平均 ± 標準偏差 81.80 ± 0.74 ｜ 範囲 81.37〜82.65">81.39</span><small class="muted">81.80 ± 0.74</small></td>
+<td class="group-start"><span title="1回目 0.284, 2回目 0.257, 3回目 0.252 ｜ 全回の平均 ± 標準偏差 0.264 ± 0.017 ｜ 範囲 0.252〜0.284 ｜ 中央値から除外 1回目">0.255 †</span><small class="muted">0.264 ± 0.017</small></td>
+<td class=""><span title="1回目 80.89, 2回目 79.78, 3回目 79.89 ｜ 全回の平均 ± 標準偏差 80.19 ± 0.62 ｜ 範囲 79.78〜80.89">79.89</span><small class="muted">80.19 ± 0.62</small></td>
+<td class="group-start"><span title="1回目 0.813, 2回目 0.773, 3回目 0.781 ｜ 全回の平均 ± 標準偏差 0.789 ± 0.021 ｜ 範囲 0.773〜0.813">0.781</span><small class="muted">0.789 ± 0.021</small></td>
+<td class=""><span title="1回目 33.37, 2回目 33.34, 3回目 33.30 ｜ 全回の平均 ± 標準偏差 33.34 ± 0.03 ｜ 範囲 33.30〜33.37">33.34</span><small class="muted">33.34 ± 0.03</small></td>
+<td class="group-start current"><span title="1回目 0.302, 2回目 0.261, 3回目 0.274 ｜ 全回の平均 ± 標準偏差 0.279 ± 0.021 ｜ 範囲 0.261〜0.302">0.274</span><small class="muted">0.279 ± 0.021</small></td>
+<td class="current"><span title="1回目 79.65, 2回目 75.86, 3回目 76.72 ｜ 全回の平均 ± 標準偏差 77.41 ± 1.99 ｜ 範囲 75.86〜79.65">76.72</span><small class="muted">77.41 ± 1.99</small></td>
+<td class="group-start current"><span title="1回目 0.300, 2回目 0.262, 3回目 0.295 ｜ 全回の平均 ± 標準偏差 0.286 ± 0.021 ｜ 範囲 0.262〜0.300 ｜ 中央値から除外 2回目">0.298 †</span><small class="muted">0.286 ± 0.021</small></td>
+<td class="current"><span title="1回目 77.92, 2回目 79.63, 3回目 79.87 ｜ 全回の平均 ± 標準偏差 79.14 ± 1.07 ｜ 範囲 77.92〜79.87">79.63</span><small class="muted">79.14 ± 1.07</small></td>
+<td class="group-start current"><span title="1回目 0.868, 2回目 0.796, 3回目 0.778 ｜ 全回の平均 ± 標準偏差 0.814 ± 0.048 ｜ 範囲 0.778〜0.868">0.796</span><small class="muted">0.814 ± 0.048</small></td>
+<td class="current"><span title="1回目 32.16, 2回目 32.62, 3回目 32.59 ｜ 全回の平均 ± 標準偏差 32.46 ± 0.25 ｜ 範囲 32.16〜32.62">32.59</span><small class="muted">32.46 ± 0.25</small></td>
+<td class="group-start">0.025</td>
+<td class="">126.56</td>
+</tr>
+</tbody></table></div>
+<details><summary>要求別Decode速度の合計（本家表との照合用）</summary>
+<p>各要求が生成していた間の速度を合計した値。</p>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="1" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 31.32, 2回目 32.42, 3回目 32.16 ｜ 全回の平均 ± 標準偏差 31.97 ± 0.57 ｜ 範囲 31.32〜32.42">32.16</span><small class="muted">31.97 ± 0.57</small></td>
+<td class="group-start"><span title="1回目 25.38, 2回目 29.50, 3回目 30.44 ｜ 全回の平均 ± 標準偏差 28.44 ± 2.69 ｜ 範囲 25.38〜30.44">29.50</span><small class="muted">28.44 ± 2.69</small></td>
+<td class="group-start"><span title="1回目 34.39, 2回目 35.19, 3回目 35.27 ｜ 全回の平均 ± 標準偏差 34.95 ± 0.48 ｜ 範囲 34.39〜35.27">35.19</span><small class="muted">34.95 ± 0.48</small></td>
+<td class="group-start current"><span title="1回目 28.61, 2回目 29.15, 3回目 29.26 ｜ 全回の平均 ± 標準偏差 29.01 ± 0.35 ｜ 範囲 28.61〜29.26">29.15</span><small class="muted">29.01 ± 0.35</small></td>
+<td class="group-start current"><span title="1回目 30.19, 2回目 30.79, 3回目 30.68 ｜ 全回の平均 ± 標準偏差 30.56 ± 0.32 ｜ 範囲 30.19〜30.79">30.68</span><small class="muted">30.56 ± 0.32</small></td>
+<td class="group-start current"><span title="1回目 29.96, 2回目 35.05, 3回目 35.57 ｜ 全回の平均 ± 標準偏差 33.53 ± 3.10 ｜ 範囲 29.96〜35.57 ｜ 中央値から除外 1回目">35.31 †</span><small class="muted">33.53 ± 3.10</small></td>
+<td class="group-start">35.74</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 47.54, 2回目 47.27, 3回目 48.41 ｜ 全回の平均 ± 標準偏差 47.74 ± 0.60 ｜ 範囲 47.27〜48.41">47.54</span><small class="muted">47.74 ± 0.60</small></td>
+<td class="group-start"><span title="1回目 46.59, 2回目 48.94, 3回目 48.03 ｜ 全回の平均 ± 標準偏差 47.85 ± 1.18 ｜ 範囲 46.59〜48.94">48.03</span><small class="muted">47.85 ± 1.18</small></td>
+<td class="group-start"><span title="1回目 68.88, 2回目 70.26, 3回目 69.59 ｜ 全回の平均 ± 標準偏差 69.58 ± 0.69 ｜ 範囲 68.88〜70.26">69.59</span><small class="muted">69.58 ± 0.69</small></td>
+<td class="group-start current"><span title="1回目 48.46, 2回目 46.05, 3回目 48.57 ｜ 全回の平均 ± 標準偏差 47.70 ± 1.42 ｜ 範囲 46.05〜48.57">48.46</span><small class="muted">47.70 ± 1.42</small></td>
+<td class="group-start current"><span title="1回目 50.30, 2回目 48.75, 3回目 46.49 ｜ 全回の平均 ± 標準偏差 48.52 ± 1.91 ｜ 範囲 46.49〜50.30">48.75</span><small class="muted">48.52 ± 1.91</small></td>
+<td class="group-start current"><span title="1回目 69.60, 2回目 70.47, 3回目 69.14 ｜ 全回の平均 ± 標準偏差 69.74 ± 0.67 ｜ 範囲 69.14〜70.47">69.60</span><small class="muted">69.74 ± 0.67</small></td>
+<td class="group-start">61.30</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 67.80, 2回目 65.36, 3回目 61.12 ｜ 全回の平均 ± 標準偏差 64.76 ± 3.38 ｜ 範囲 61.12〜67.80">65.36</span><small class="muted">64.76 ± 3.38</small></td>
+<td class="group-start"><span title="1回目 66.52, 2回目 64.83, 3回目 65.25 ｜ 全回の平均 ± 標準偏差 65.53 ± 0.88 ｜ 範囲 64.83〜66.52">65.25</span><small class="muted">65.53 ± 0.88</small> ‡</td>
+<td class="group-start"><span title="1回目 137.70, 2回目 136.74, 3回目 136.99 ｜ 全回の平均 ± 標準偏差 137.14 ± 0.50 ｜ 範囲 136.74〜137.70">136.99</span><small class="muted">137.14 ± 0.50</small></td>
+<td class="group-start current"><span title="1回目 57.19, 2回目 66.76, 3回目 56.96 ｜ 全回の平均 ± 標準偏差 60.30 ± 5.59 ｜ 範囲 56.96〜66.76 ｜ 中央値から除外 2回目">57.08 †</span><small class="muted">60.30 ± 5.59</small></td>
+<td class="group-start current"><span title="1回目 66.53, 2回目 64.25, 3回目 59.86 ｜ 全回の平均 ± 標準偏差 63.55 ± 3.39 ｜ 範囲 59.86〜66.53">64.25</span><small class="muted">63.55 ± 3.39</small> ‡</td>
+<td class="group-start current"><span title="1回目 137.45, 2回目 137.63, 3回目 136.25 ｜ 全回の平均 ± 標準偏差 137.11 ± 0.75 ｜ 範囲 136.25〜137.63">137.45</span><small class="muted">137.11 ± 0.75</small></td>
+<td class="group-start">88.77</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 72.31, 2回目 72.02, 3回目 72.16 ｜ 全回の平均 ± 標準偏差 72.17 ± 0.15 ｜ 範囲 72.02〜72.31">72.16</span><small class="muted">72.17 ± 0.15</small></td>
+<td class="group-start"><span title="1回目 72.02, 2回目 70.26, 3回目 74.69 ｜ 全回の平均 ± 標準偏差 72.32 ± 2.23 ｜ 範囲 70.26〜74.69">72.02</span><small class="muted">72.32 ± 2.23</small></td>
+<td class="group-start"><span title="1回目 203.21, 2回目 204.84, 3回目 203.72 ｜ 全回の平均 ± 標準偏差 203.92 ± 0.83 ｜ 範囲 203.21〜204.84">203.72</span><small class="muted">203.92 ± 0.83</small></td>
+<td class="group-start current"><span title="1回目 70.17, 2回目 62.32, 3回目 61.49 ｜ 全回の平均 ± 標準偏差 64.66 ± 4.79 ｜ 範囲 61.49〜70.17 ｜ 中央値から除外 1回目">61.90 †</span><small class="muted">64.66 ± 4.79</small></td>
+<td class="group-start current"><span title="1回目 69.28, 2回目 63.54, 3回目 64.06 ｜ 全回の平均 ± 標準偏差 65.62 ± 3.17 ｜ 範囲 63.54〜69.28">64.06</span><small class="muted">65.62 ± 3.17</small></td>
+<td class="group-start current"><span title="1回目 201.81, 2回目 203.98, 3回目 202.12 ｜ 全回の平均 ± 標準偏差 202.63 ± 1.17 ｜ 範囲 201.81〜203.98">202.12</span><small class="muted">202.63 ± 1.17</small></td>
+<td class="group-start">109.74</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 84.84, 2回目 83.21, 3回目 83.24 ｜ 全回の平均 ± 標準偏差 83.76 ± 0.93 ｜ 範囲 83.21〜84.84">83.24</span><small class="muted">83.76 ± 0.93</small></td>
+<td class="group-start"><span title="1回目 82.91, 2回目 81.59, 3回目 81.66 ｜ 全回の平均 ± 標準偏差 82.06 ± 0.74 ｜ 範囲 81.59〜82.91">81.66</span><small class="muted">82.06 ± 0.74</small></td>
+<td class="group-start"><span title="1回目 272.05, 2回目 271.59, 3回目 271.35 ｜ 全回の平均 ± 標準偏差 271.66 ± 0.36 ｜ 範囲 271.35〜272.05">271.59</span><small class="muted">271.66 ± 0.36</small></td>
+<td class="group-start current"><span title="1回目 82.06, 2回目 77.79, 3回目 78.73 ｜ 全回の平均 ± 標準偏差 79.53 ± 2.24 ｜ 範囲 77.79〜82.06">78.73</span><small class="muted">79.53 ± 2.24</small></td>
+<td class="group-start current"><span title="1回目 80.16, 2回目 81.78, 3回目 82.22 ｜ 全回の平均 ± 標準偏差 81.39 ± 1.08 ｜ 範囲 80.16〜82.22">81.78</span><small class="muted">81.39 ± 1.08</small></td>
+<td class="group-start current"><span title="1回目 266.77, 2回目 270.04, 3回目 269.56 ｜ 全回の平均 ± 標準偏差 268.79 ± 1.76 ｜ 範囲 266.77〜270.04">269.56</span><small class="muted">268.79 ± 1.76</small></td>
+<td class="group-start">127.02</td>
+</tr>
+</tbody></table></div>
+</details>
+<h3>投機生成・反復文</h3>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="2" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="2" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="2" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start current">TTFT<br>(秒)</th>
+<th scope="col" class="current">全体スループット<br>(tok/s)</th>
+<th scope="col" class="group-start">TTFT<br>(秒)</th>
+<th scope="col" class="">全体スループット<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 0.062, 2回目 0.033, 3回目 0.033 ｜ 全回の平均 ± 標準偏差 0.043 ± 0.017 ｜ 範囲 0.033〜0.062 ｜ 中央値から除外 1回目">0.033 †</span><small class="muted">0.043 ± 0.017</small></td>
+<td class=""><span title="1回目 89.44, 2回目 97.98, 3回目 97.70 ｜ 全回の平均 ± 標準偏差 95.04 ± 4.85 ｜ 範囲 89.44〜97.98">97.70</span><small class="muted">95.04 ± 4.85</small></td>
+<td class="group-start"><span title="1回目 0.070, 2回目 0.034, 3回目 0.033 ｜ 全回の平均 ± 標準偏差 0.046 ± 0.021 ｜ 範囲 0.033〜0.070 ｜ 中央値から除外 1回目">0.034 †</span><small class="muted">0.046 ± 0.021</small></td>
+<td class=""><span title="1回目 87.12, 2回目 93.50, 3回目 98.34 ｜ 全回の平均 ± 標準偏差 92.99 ± 5.63 ｜ 範囲 87.12〜98.34">93.50</span><small class="muted">92.99 ± 5.63</small></td>
+<td class="group-start"><span title="1回目 0.101, 2回目 0.068, 3回目 0.069 ｜ 全回の平均 ± 標準偏差 0.080 ± 0.019 ｜ 範囲 0.068〜0.101 ｜ 中央値から除外 1回目">0.069 †</span><small class="muted">0.080 ± 0.019</small></td>
+<td class=""><span title="1回目 81.06, 2回目 86.00, 3回目 87.35 ｜ 全回の平均 ± 標準偏差 84.80 ± 3.31 ｜ 範囲 81.06〜87.35">86.00</span><small class="muted">84.80 ± 3.31</small></td>
+<td class="group-start current"><span title="1回目 0.081, 2回目 0.038, 3回目 0.039 ｜ 全回の平均 ± 標準偏差 0.052 ± 0.025 ｜ 範囲 0.038〜0.081 ｜ 中央値から除外 1回目">0.038 †</span><small class="muted">0.052 ± 0.025</small></td>
+<td class="current"><span title="1回目 86.52, 2回目 97.80, 3回目 98.72 ｜ 全回の平均 ± 標準偏差 94.35 ± 6.79 ｜ 範囲 86.52〜98.72 ｜ 中央値から除外 1回目">98.26 †</span><small class="muted">94.35 ± 6.79</small></td>
+<td class="group-start current"><span title="1回目 0.080, 2回目 0.041, 3回目 0.041 ｜ 全回の平均 ± 標準偏差 0.054 ± 0.023 ｜ 範囲 0.041〜0.080 ｜ 中央値から除外 1回目">0.041 †</span><small class="muted">0.054 ± 0.023</small></td>
+<td class="current"><span title="1回目 80.54, 2回目 96.38, 3回目 96.24 ｜ 全回の平均 ± 標準偏差 91.05 ± 9.10 ｜ 範囲 80.54〜96.38 ｜ 中央値から除外 1回目">96.31 †</span><small class="muted">91.05 ± 9.10</small></td>
+<td class="group-start current"><span title="1回目 0.158, 2回目 0.126, 3回目 0.125 ｜ 全回の平均 ± 標準偏差 0.136 ± 0.019 ｜ 範囲 0.125〜0.158 ｜ 中央値から除外 1回目">0.126 †</span><small class="muted">0.136 ± 0.019</small></td>
+<td class="current"><span title="1回目 82.16, 2回目 84.93, 3回目 84.96 ｜ 全回の平均 ± 標準偏差 84.02 ± 1.61 ｜ 範囲 82.16〜84.96">84.93</span><small class="muted">84.02 ± 1.61</small></td>
+<td class="group-start">0.005</td>
+<td class="">115.98</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 0.111, 2回目 0.065, 3回目 0.061 ｜ 全回の平均 ± 標準偏差 0.079 ± 0.028 ｜ 範囲 0.061〜0.111 ｜ 中央値から除外 1回目">0.063 †</span><small class="muted">0.079 ± 0.028</small></td>
+<td class=""><span title="1回目 107.30, 2回目 122.03, 3回目 122.10 ｜ 全回の平均 ± 標準偏差 117.14 ± 8.53 ｜ 範囲 107.30〜122.10 ｜ 中央値から除外 1回目">122.07 †</span><small class="muted">117.14 ± 8.53</small></td>
+<td class="group-start"><span title="1回目 0.093, 2回目 0.063, 3回目 0.059 ｜ 全回の平均 ± 標準偏差 0.072 ± 0.018 ｜ 範囲 0.059〜0.093 ｜ 中央値から除外 1回目">0.061 †</span><small class="muted">0.072 ± 0.018</small></td>
+<td class=""><span title="1回目 116.58, 2回目 120.07, 3回目 122.20 ｜ 全回の平均 ± 標準偏差 119.62 ± 2.84 ｜ 範囲 116.58〜122.20">120.07</span><small class="muted">119.62 ± 2.84</small></td>
+<td class="group-start"><span title="1回目 0.230, 2回目 0.185, 3回目 0.195 ｜ 全回の平均 ± 標準偏差 0.203 ± 0.024 ｜ 範囲 0.185〜0.230">0.195</span><small class="muted">0.203 ± 0.024</small></td>
+<td class=""><span title="1回目 86.04, 2回目 87.84, 3回目 88.05 ｜ 全回の平均 ± 標準偏差 87.31 ± 1.10 ｜ 範囲 86.04〜88.05">87.84</span><small class="muted">87.31 ± 1.10</small></td>
+<td class="group-start current"><span title="1回目 0.115, 2回目 0.082, 3回目 0.087 ｜ 全回の平均 ± 標準偏差 0.095 ± 0.017 ｜ 範囲 0.082〜0.115 ｜ 中央値から除外 1回目">0.085 †</span><small class="muted">0.095 ± 0.017</small></td>
+<td class="current"><span title="1回目 111.08, 2回目 112.23, 3回目 118.75 ｜ 全回の平均 ± 標準偏差 114.02 ± 4.13 ｜ 範囲 111.08〜118.75">112.23</span><small class="muted">114.02 ± 4.13</small></td>
+<td class="group-start current"><span title="1回目 0.118, 2回目 0.082, 3回目 0.078 ｜ 全回の平均 ± 標準偏差 0.093 ± 0.022 ｜ 範囲 0.078〜0.118 ｜ 中央値から除外 1回目">0.080 †</span><small class="muted">0.093 ± 0.022</small></td>
+<td class="current"><span title="1回目 111.81, 2回目 118.23, 3回目 119.76 ｜ 全回の平均 ± 標準偏差 116.60 ± 4.22 ｜ 範囲 111.81〜119.76">118.23</span><small class="muted">116.60 ± 4.22</small></td>
+<td class="group-start current"><span title="1回目 0.276, 2回目 0.247, 3回目 0.244 ｜ 全回の平均 ± 標準偏差 0.256 ± 0.018 ｜ 範囲 0.244〜0.276 ｜ 中央値から除外 1回目">0.245 †</span><small class="muted">0.256 ± 0.018</small></td>
+<td class="current"><span title="1回目 82.91, 2回目 83.45, 3回目 84.25 ｜ 全回の平均 ± 標準偏差 83.54 ± 0.68 ｜ 範囲 82.91〜84.25">83.45</span><small class="muted">83.54 ± 0.68</small></td>
+<td class="group-start">0.009</td>
+<td class="">164.44</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 0.172, 2回目 0.122, 3回目 0.125 ｜ 全回の平均 ± 標準偏差 0.140 ± 0.028 ｜ 範囲 0.122〜0.172 ｜ 中央値から除外 1回目">0.123 †</span><small class="muted">0.140 ± 0.028</small></td>
+<td class=""><span title="1回目 135.91, 2回目 142.87, 3回目 142.63 ｜ 全回の平均 ± 標準偏差 140.47 ± 3.95 ｜ 範囲 135.91〜142.87">142.63</span><small class="muted">140.47 ± 3.95</small></td>
+<td class="group-start"><span title="1回目 0.170, 2回目 0.129, 3回目 0.129 ｜ 全回の平均 ± 標準偏差 0.143 ± 0.024 ｜ 範囲 0.129〜0.170 ｜ 中央値から除外 1回目">0.129 †</span><small class="muted">0.143 ± 0.024</small></td>
+<td class=""><span title="1回目 135.32, 2回目 142.55, 3回目 143.34 ｜ 全回の平均 ± 標準偏差 140.40 ± 4.42 ｜ 範囲 135.32〜143.34">142.55</span><small class="muted">140.40 ± 4.42</small></td>
+<td class="group-start"><span title="1回目 0.483, 2回目 0.419, 3回目 0.413 ｜ 全回の平均 ± 標準偏差 0.438 ± 0.039 ｜ 範囲 0.413〜0.483 ｜ 中央値から除外 1回目">0.416 †</span><small class="muted">0.438 ± 0.039</small></td>
+<td class=""><span title="1回目 86.98, 2回目 87.95, 3回目 84.63 ｜ 全回の平均 ± 標準偏差 86.52 ± 1.70 ｜ 範囲 84.63〜87.95">86.98</span><small class="muted">86.52 ± 1.70</small></td>
+<td class="group-start current"><span title="1回目 0.189, 2回目 0.127, 3回目 0.143 ｜ 全回の平均 ± 標準偏差 0.153 ± 0.032 ｜ 範囲 0.127〜0.189">0.143</span><small class="muted">0.153 ± 0.032</small></td>
+<td class="current"><span title="1回目 126.19, 2回目 140.72, 3回目 139.24 ｜ 全回の平均 ± 標準偏差 135.38 ± 8.00 ｜ 範囲 126.19〜140.72">139.24</span><small class="muted">135.38 ± 8.00</small></td>
+<td class="group-start current"><span title="1回目 0.180, 2回目 0.142, 3回目 0.150 ｜ 全回の平均 ± 標準偏差 0.157 ± 0.020 ｜ 範囲 0.142〜0.180">0.150</span><small class="muted">0.157 ± 0.020</small></td>
+<td class="current"><span title="1回目 133.35, 2回目 137.49, 3回目 140.60 ｜ 全回の平均 ± 標準偏差 137.15 ± 3.64 ｜ 範囲 133.35〜140.60">137.49</span><small class="muted">137.15 ± 3.64</small></td>
+<td class="group-start current"><span title="1回目 0.521, 2回目 0.454, 3回目 0.479 ｜ 全回の平均 ± 標準偏差 0.484 ± 0.034 ｜ 範囲 0.454〜0.521">0.479</span><small class="muted">0.484 ± 0.034</small></td>
+<td class="current"><span title="1回目 83.43, 2回目 84.37, 3回目 82.18 ｜ 全回の平均 ± 標準偏差 83.33 ± 1.10 ｜ 範囲 82.18〜84.37">83.43</span><small class="muted">83.33 ± 1.10</small></td>
+<td class="group-start">0.014</td>
+<td class="">216.72</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 0.235, 2回目 0.188, 3回目 0.194 ｜ 全回の平均 ± 標準偏差 0.205 ± 0.026 ｜ 範囲 0.188〜0.235 ｜ 中央値から除外 1回目">0.191 †</span><small class="muted">0.205 ± 0.026</small></td>
+<td class=""><span title="1回目 139.59, 2回目 145.19, 3回目 145.24 ｜ 全回の平均 ± 標準偏差 143.34 ± 3.25 ｜ 範囲 139.59〜145.24">145.19</span><small class="muted">143.34 ± 3.25</small></td>
+<td class="group-start"><span title="1回目 0.227, 2回目 0.184, 3回目 0.199 ｜ 全回の平均 ± 標準偏差 0.203 ± 0.022 ｜ 範囲 0.184〜0.227">0.199</span><small class="muted">0.203 ± 0.022</small></td>
+<td class=""><span title="1回目 137.16, 2回目 143.85, 3回目 142.39 ｜ 全回の平均 ± 標準偏差 141.13 ± 3.52 ｜ 範囲 137.16〜143.85">142.39</span><small class="muted">141.13 ± 3.52</small></td>
+<td class="group-start"><span title="1回目 0.699, 2回目 0.642, 3回目 0.642 ｜ 全回の平均 ± 標準偏差 0.661 ± 0.033 ｜ 範囲 0.642〜0.699">0.642</span><small class="muted">0.661 ± 0.033</small></td>
+<td class=""><span title="1回目 87.34, 2回目 84.66, 3回目 84.23 ｜ 全回の平均 ± 標準偏差 85.41 ± 1.68 ｜ 範囲 84.23〜87.34">84.66</span><small class="muted">85.41 ± 1.68</small></td>
+<td class="group-start current"><span title="1回目 0.224, 2回目 0.183, 3回目 0.187 ｜ 全回の平均 ± 標準偏差 0.198 ± 0.023 ｜ 範囲 0.183〜0.224 ｜ 中央値から除外 1回目">0.185 †</span><small class="muted">0.198 ± 0.023</small></td>
+<td class="current"><span title="1回目 134.28, 2回目 142.62, 3回目 144.98 ｜ 全回の平均 ± 標準偏差 140.63 ± 5.62 ｜ 範囲 134.28〜144.98">142.62</span><small class="muted">140.63 ± 5.62</small></td>
+<td class="group-start current"><span title="1回目 0.248, 2回目 0.211, 3回目 0.189 ｜ 全回の平均 ± 標準偏差 0.216 ± 0.030 ｜ 範囲 0.189〜0.248">0.211</span><small class="muted">0.216 ± 0.030</small></td>
+<td class="current"><span title="1回目 135.67, 2回目 140.12, 3回目 142.95 ｜ 全回の平均 ± 標準偏差 139.58 ± 3.67 ｜ 範囲 135.67〜142.95">140.12</span><small class="muted">139.58 ± 3.67</small></td>
+<td class="group-start current"><span title="1回目 0.681, 2回目 0.625, 3回目 0.655 ｜ 全回の平均 ± 標準偏差 0.654 ± 0.028 ｜ 範囲 0.625〜0.681">0.655</span><small class="muted">0.654 ± 0.028</small></td>
+<td class="current"><span title="1回目 83.60, 2回目 83.40, 3回目 81.76 ｜ 全回の平均 ± 標準偏差 82.92 ± 1.01 ｜ 範囲 81.76〜83.60">83.40</span><small class="muted">82.92 ± 1.01</small></td>
+<td class="group-start">0.019</td>
+<td class="">230.34</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 0.282, 2回目 0.320, 3回目 0.240 ｜ 全回の平均 ± 標準偏差 0.281 ± 0.040 ｜ 範囲 0.240〜0.320">0.282</span><small class="muted">0.281 ± 0.040</small></td>
+<td class=""><span title="1回目 153.89, 2回目 155.17, 3回目 155.42 ｜ 全回の平均 ± 標準偏差 154.83 ± 0.82 ｜ 範囲 153.89〜155.42">155.17</span><small class="muted">154.83 ± 0.82</small></td>
+<td class="group-start"><span title="1回目 0.309, 2回目 0.247, 3回目 0.247 ｜ 全回の平均 ± 標準偏差 0.268 ± 0.036 ｜ 範囲 0.247〜0.309 ｜ 中央値から除外 1回目">0.247 †</span><small class="muted">0.268 ± 0.036</small></td>
+<td class=""><span title="1回目 151.96, 2回目 156.52, 3回目 153.50 ｜ 全回の平均 ± 標準偏差 153.99 ± 2.32 ｜ 範囲 151.96〜156.52">153.50</span><small class="muted">153.99 ± 2.32</small></td>
+<td class="group-start"><span title="1回目 0.917, 2回目 0.851, 3回目 0.857 ｜ 全回の平均 ± 標準偏差 0.875 ± 0.037 ｜ 範囲 0.851〜0.917">0.857</span><small class="muted">0.875 ± 0.037</small></td>
+<td class=""><span title="1回目 86.91, 2回目 83.44, 3回目 84.55 ｜ 全回の平均 ± 標準偏差 84.97 ± 1.77 ｜ 範囲 83.44〜86.91">84.55</span><small class="muted">84.97 ± 1.77</small></td>
+<td class="group-start current"><span title="1回目 0.318, 2回目 0.255, 3回目 0.262 ｜ 全回の平均 ± 標準偏差 0.278 ± 0.034 ｜ 範囲 0.255〜0.318 ｜ 中央値から除外 1回目">0.259 †</span><small class="muted">0.278 ± 0.034</small></td>
+<td class="current"><span title="1回目 147.63, 2回目 154.74, 3回目 150.36 ｜ 全回の平均 ± 標準偏差 150.91 ± 3.58 ｜ 範囲 147.63〜154.74">150.36</span><small class="muted">150.91 ± 3.58</small></td>
+<td class="group-start current"><span title="1回目 0.314, 2回目 0.265, 3回目 0.274 ｜ 全回の平均 ± 標準偏差 0.284 ± 0.026 ｜ 範囲 0.265〜0.314">0.274</span><small class="muted">0.284 ± 0.026</small></td>
+<td class="current"><span title="1回目 150.68, 2回目 154.45, 3回目 151.94 ｜ 全回の平均 ± 標準偏差 152.36 ± 1.92 ｜ 範囲 150.68〜154.45">151.94</span><small class="muted">152.36 ± 1.92</small></td>
+<td class="group-start current"><span title="1回目 0.870, 2回目 0.886, 3回目 0.848 ｜ 全回の平均 ± 標準偏差 0.868 ± 0.019 ｜ 範囲 0.848〜0.886">0.870</span><small class="muted">0.868 ± 0.019</small></td>
+<td class="current"><span title="1回目 83.56, 2回目 80.90, 3回目 81.79 ｜ 全回の平均 ± 標準偏差 82.08 ± 1.35 ｜ 範囲 80.90〜83.56">81.79</span><small class="muted">82.08 ± 1.35</small></td>
+<td class="group-start">0.025</td>
+<td class="">244.14</td>
+</tr>
+</tbody></table></div>
+<details><summary>要求別Decode速度の合計（本家表との照合用）</summary>
+<p>各要求が生成していた間の速度を合計した値。</p>
+<div class="scroll"><table class="perf" data-mode="speculative"><thead><tr><th rowspan="2" scope="col">同時要求</th>
+<th colspan="1" scope="colgroup" class="group-start">内蔵PLE＋MTP<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start">外部PLE Q8_0＋MTP<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start">内蔵PLE＋DFlash2 Q8_0<br>v0.34.0</th>
+<th colspan="1" scope="colgroup" class="group-start current">内蔵PLE＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start current">外部PLE Q8_0＋MTP<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start current">内蔵PLE＋DFlash2 Q8_0<br>v0.35.0（今回実測）</th>
+<th colspan="1" scope="colgroup" class="group-start">本家参考・Q4_K_XL</th>
+</tr><tr>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start current">要求別Decode速度の合計<br>(tok/s)</th>
+<th scope="col" class="group-start">要求別Decode速度の合計<br>(tok/s)</th>
+</tr></thead><tbody>
+<tr><th scope="row">1</th>
+<td class="group-start"><span title="1回目 93.54, 2回目 100.60, 3回目 100.29 ｜ 全回の平均 ± 標準偏差 98.15 ± 3.99 ｜ 範囲 93.54〜100.60">100.29</span><small class="muted">98.15 ± 3.99</small></td>
+<td class="group-start"><span title="1回目 91.55, 2回目 95.99, 3回目 100.94 ｜ 全回の平均 ± 標準偏差 96.16 ± 4.70 ｜ 範囲 91.55〜100.94">95.99</span><small class="muted">96.16 ± 4.70</small></td>
+<td class="group-start"><span title="1回目 86.66, 2回目 90.19, 3回目 91.74 ｜ 全回の平均 ± 標準偏差 89.53 ± 2.60 ｜ 範囲 86.66〜91.74">90.19</span><small class="muted">89.53 ± 2.60</small></td>
+<td class="group-start current"><span title="1回目 91.56, 2回目 100.76, 3回目 101.84 ｜ 全回の平均 ± 標準偏差 98.05 ± 5.65 ｜ 範囲 91.56〜101.84">100.76</span><small class="muted">98.05 ± 5.65</small></td>
+<td class="group-start current"><span title="1回目 84.89, 2回目 99.50, 3回目 99.37 ｜ 全回の平均 ± 標準偏差 94.59 ± 8.40 ｜ 範囲 84.89〜99.50 ｜ 中央値から除外 1回目">99.44 †</span><small class="muted">94.59 ± 8.40</small></td>
+<td class="group-start current"><span title="1回目 91.50, 2回目 92.75, 3回目 92.71 ｜ 全回の平均 ± 標準偏差 92.32 ± 0.71 ｜ 範囲 91.50〜92.75">92.71</span><small class="muted">92.32 ± 0.71</small></td>
+<td class="group-start">116.50</td>
+</tr>
+<tr><th scope="row">2</th>
+<td class="group-start"><span title="1回目 112.61, 2回目 126.11, 3回目 125.93 ｜ 全回の平均 ± 標準偏差 121.55 ± 7.74 ｜ 範囲 112.61〜126.11 ｜ 中央値から除外 1回目">126.02 †</span><small class="muted">121.55 ± 7.74</small></td>
+<td class="group-start"><span title="1回目 121.84, 2回目 123.89, 3回目 125.90 ｜ 全回の平均 ± 標準偏差 123.88 ± 2.03 ｜ 範囲 121.84〜125.90">123.89</span><small class="muted">123.88 ± 2.03</small></td>
+<td class="group-start"><span title="1回目 182.79, 2回目 184.54, 3回目 185.64 ｜ 全回の平均 ± 標準偏差 184.32 ± 1.44 ｜ 範囲 182.79〜185.64">184.54</span><small class="muted">184.32 ± 1.44</small></td>
+<td class="group-start current"><span title="1回目 117.53, 2回目 117.03, 3回目 124.55 ｜ 全回の平均 ± 標準偏差 119.70 ± 4.20 ｜ 範囲 117.03〜124.55">117.53</span><small class="muted">119.70 ± 4.20</small></td>
+<td class="group-start current"><span title="1回目 118.48, 2回目 123.53, 3回目 125.16 ｜ 全回の平均 ± 標準偏差 122.39 ± 3.48 ｜ 範囲 118.48〜125.16">123.53</span><small class="muted">122.39 ± 3.48</small></td>
+<td class="group-start current"><span title="1回目 183.18, 2回目 183.40, 3回目 185.19 ｜ 全回の平均 ± 標準偏差 183.92 ± 1.11 ｜ 範囲 183.18〜185.19">183.40</span><small class="muted">183.92 ± 1.11</small></td>
+<td class="group-start">165.50</td>
+</tr>
+<tr><th scope="row">4</th>
+<td class="group-start"><span title="1回目 142.66, 2回目 148.15, 3回目 148.05 ｜ 全回の平均 ± 標準偏差 146.29 ± 3.14 ｜ 範囲 142.66〜148.15">148.05</span><small class="muted">146.29 ± 3.14</small></td>
+<td class="group-start"><span title="1回目 141.96, 2回目 148.11, 3回目 148.95 ｜ 全回の平均 ± 標準偏差 146.34 ± 3.82 ｜ 範囲 141.96〜148.95">148.11</span><small class="muted">146.34 ± 3.82</small></td>
+<td class="group-start"><span title="1回目 368.18, 2回目 369.63, 3回目 354.72 ｜ 全回の平均 ± 標準偏差 364.18 ± 8.22 ｜ 範囲 354.72〜369.63">368.18</span><small class="muted">364.18 ± 8.22</small></td>
+<td class="group-start current"><span title="1回目 133.40, 2回目 147.16, 3回目 146.21 ｜ 全回の平均 ± 標準偏差 142.25 ± 7.69 ｜ 範囲 133.40〜147.16">146.21</span><small class="muted">142.25 ± 7.69</small></td>
+<td class="group-start current"><span title="1回目 141.14, 2回目 144.24, 3回目 147.93 ｜ 全回の平均 ± 標準偏差 144.44 ± 3.40 ｜ 範囲 141.14〜147.93">144.24</span><small class="muted">144.44 ± 3.40</small></td>
+<td class="group-start current"><span title="1回目 367.70, 2回目 369.58, 3回目 360.08 ｜ 全回の平均 ± 標準偏差 365.79 ± 5.03 ｜ 範囲 360.08〜369.58">367.70</span><small class="muted">365.79 ± 5.03</small></td>
+<td class="group-start">218.12</td>
+</tr>
+<tr><th scope="row">6</th>
+<td class="group-start"><span title="1回目 146.05, 2回目 150.81, 3回目 151.06 ｜ 全回の平均 ± 標準偏差 149.31 ± 2.83 ｜ 範囲 146.05〜151.06">150.81</span><small class="muted">149.31 ± 2.83</small></td>
+<td class="group-start"><span title="1回目 143.21, 2回目 149.23, 3回目 148.13 ｜ 全回の平均 ± 標準偏差 146.86 ± 3.21 ｜ 範囲 143.21〜149.23">148.13</span><small class="muted">146.86 ± 3.21</small></td>
+<td class="group-start"><span title="1回目 552.03, 2回目 531.79, 3回目 529.26 ｜ 全回の平均 ± 標準偏差 537.69 ± 12.48 ｜ 範囲 529.26〜552.03">531.79</span><small class="muted">537.69 ± 12.48</small></td>
+<td class="group-start current"><span title="1回目 141.06, 2回目 149.06, 3回目 151.70 ｜ 全回の平均 ± 標準偏差 147.27 ± 5.54 ｜ 範囲 141.06〜151.70">149.06</span><small class="muted">147.27 ± 5.54</small></td>
+<td class="group-start current"><span title="1回目 143.18, 2回目 147.10, 3回目 149.63 ｜ 全回の平均 ± 標準偏差 146.64 ± 3.25 ｜ 範囲 143.18〜149.63">147.10</span><small class="muted">146.64 ± 3.25</small></td>
+<td class="group-start current"><span title="1回目 547.39, 2回目 543.41, 3回目 533.57 ｜ 全回の平均 ± 標準偏差 541.46 ± 7.11 ｜ 範囲 533.57〜547.39">543.41</span><small class="muted">541.46 ± 7.11</small></td>
+<td class="group-start">231.85</td>
+</tr>
+<tr><th scope="row">8</th>
+<td class="group-start"><span title="1回目 161.04, 2回目 163.50, 3回目 161.63 ｜ 全回の平均 ± 標準偏差 162.05 ± 1.28 ｜ 範囲 161.04〜163.50">161.63</span><small class="muted">162.05 ± 1.28</small></td>
+<td class="group-start"><span title="1回目 159.60, 2回目 163.03, 3回目 159.73 ｜ 全回の平均 ± 標準偏差 160.79 ± 1.94 ｜ 範囲 159.60〜163.03">159.73</span><small class="muted">160.79 ± 1.94</small></td>
+<td class="group-start"><span title="1回目 730.55, 2回目 696.89, 3回目 707.23 ｜ 全回の平均 ± 標準偏差 711.56 ± 17.24 ｜ 範囲 696.89〜730.55">707.23</span><small class="muted">711.56 ± 17.24</small></td>
+<td class="group-start current"><span title="1回目 156.33, 2回目 162.56, 3回目 157.93 ｜ 全回の平均 ± 標準偏差 158.94 ± 3.24 ｜ 範囲 156.33〜162.56">157.93</span><small class="muted">158.94 ± 3.24</small></td>
+<td class="group-start current"><span title="1回目 159.51, 2回目 162.55, 3回目 160.00 ｜ 全回の平均 ± 標準偏差 160.69 ± 1.63 ｜ 範囲 159.51〜162.55">160.00</span><small class="muted">160.69 ± 1.63</small></td>
+<td class="group-start current"><span title="1回目 726.78, 2回目 704.53, 3回目 711.38 ｜ 全回の平均 ± 標準偏差 714.23 ± 11.39 ｜ 範囲 704.53〜726.78">711.38</span><small class="muted">714.23 ± 11.39</small></td>
+<td class="group-start">245.81</td>
+</tr>
+</tbody></table></div>
+</details>
+<h2>投機生成構成の読み込み時間</h2>
+<p>1セッション、コンテキスト262,144。Gufoプロセス起動からHTTP /readyまで。対象ファイルのWSLページキャッシュを解放し、mincoreで0ページを確認した。Windows側のストレージキャッシュは維持した。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>項目</th><th>内蔵PLE＋MTP（v0.34.0）</th><th>外部PLE Q8_0＋MTP（v0.34.0）</th><th>内蔵PLE＋DFlash2 Q8_0（v0.34.0）</th><th class="current">内蔵PLE＋MTP（v0.35.0）（今回実測）</th><th class="current">外部PLE Q8_0＋MTP（v0.35.0）（今回実測）</th><th class="current">内蔵PLE＋DFlash2 Q8_0（v0.35.0）（今回実測）</th><th>本家参考・Q4_K_XL</th></tr></thead><tbody>
+<tr><td>読み込み（秒）</td><td><span title="1回目 55.73, 2回目 40.25, 3回目 40.96 ｜ 全回の平均 ± 標準偏差 45.65 ± 8.74 ｜ 範囲 40.25〜55.73 ｜ 中央値から除外 1回目">40.61 †</span><small class="muted">45.65 ± 8.74</small></td><td><span title="1回目 36.46, 2回目 37.74, 3回目 37.03 ｜ 全回の平均 ± 標準偏差 37.08 ± 0.64 ｜ 範囲 36.46〜37.74">37.03</span><small class="muted">37.08 ± 0.64</small></td><td><span title="1回目 48.55, 2回目 35.56, 3回目 36.13 ｜ 全回の平均 ± 標準偏差 40.08 ± 7.34 ｜ 範囲 35.56〜48.55 ｜ 中央値から除外 1回目">35.84 †</span><small class="muted">40.08 ± 7.34</small></td><td class="current"><span title="1回目 44.75, 2回目 44.82, 3回目 44.20 ｜ 全回の平均 ± 標準偏差 44.59 ± 0.34 ｜ 範囲 44.20〜44.82">44.75</span><small class="muted">44.59 ± 0.34</small></td><td class="current"><span title="1回目 43.10, 2回目 43.29, 3回目 42.98 ｜ 全回の平均 ± 標準偏差 43.12 ± 0.16 ｜ 範囲 42.98〜43.29">43.10</span><small class="muted">43.12 ± 0.16</small></td><td class="current"><span title="1回目 42.47, 2回目 42.04, 3回目 42.71 ｜ 全回の平均 ± 標準偏差 42.41 ± 0.34 ｜ 範囲 42.04〜42.71">42.47</span><small class="muted">42.41 ± 0.34</small></td><td>16.42</td></tr>
+</tbody></table></div>
+<h2>投機生成の固定負荷メモリ</h2>
+<p>1セッション、コンテキスト容量133,121。各3回、HIPが報告するGPU全体の使用量の観測ピーク。本家のメモリ公表値はARであり、モードが異なるためこの表では並べない。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>項目</th><th>内蔵PLE＋MTP（v0.34.0）</th><th>外部PLE Q8_0＋MTP（v0.34.0）</th><th>内蔵PLE＋DFlash2 Q8_0（v0.34.0）</th><th class="current">内蔵PLE＋MTP（v0.35.0）（今回実測）</th><th class="current">外部PLE Q8_0＋MTP（v0.35.0）（今回実測）</th><th class="current">内蔵PLE＋DFlash2 Q8_0（v0.35.0）（今回実測）</th></tr></thead><tbody>
+<tr><td>pp2048 + tg128 / 使用ピーク（GiB）</td><td><span title="1回目 73.32, 2回目 73.31, 3回目 73.30 ｜ 全回の平均 ± 標準偏差 73.31 ± 0.01 ｜ 範囲 73.30〜73.32">73.31</span><small class="muted">73.31 ± 0.01</small></td><td><span title="1回目 73.29, 2回目 73.19, 3回目 73.31 ｜ 全回の平均 ± 標準偏差 73.26 ± 0.06 ｜ 範囲 73.19〜73.31">73.29</span><small class="muted">73.26 ± 0.06</small></td><td><span title="1回目 70.54, 2回目 70.42, 3回目 70.39 ｜ 全回の平均 ± 標準偏差 70.45 ± 0.08 ｜ 範囲 70.39〜70.54">70.42</span><small class="muted">70.45 ± 0.08</small></td><td class="current"><span title="1回目 72.84, 2回目 72.85, 3回目 72.84 ｜ 全回の平均 ± 標準偏差 72.84 ± 0.01 ｜ 範囲 72.84〜72.85">72.84</span><small class="muted">72.84 ± 0.01</small></td><td class="current"><span title="1回目 72.86, 2回目 72.87, 3回目 72.86 ｜ 全回の平均 ± 標準偏差 72.86 ± 0.01 ｜ 範囲 72.86〜72.87">72.86</span><small class="muted">72.86 ± 0.01</small></td><td class="current"><span title="1回目 69.83, 2回目 69.97, 3回目 69.83 ｜ 全回の平均 ± 標準偏差 69.88 ± 0.08 ｜ 範囲 69.83〜69.97">69.83</span><small class="muted">69.88 ± 0.08</small></td></tr>
+<tr><td>pp2048 + tg128 / 起動前使用（GiB）</td><td><span title="1回目 1.31, 2回目 1.31, 3回目 1.31 ｜ 全回の平均 ± 標準偏差 1.31 ± 0.00 ｜ 範囲 1.31〜1.31">1.31</span><small class="muted">1.31 ± 0.00</small></td><td><span title="1回目 1.31, 2回目 1.30, 3回目 1.30 ｜ 全回の平均 ± 標準偏差 1.30 ± 0.01 ｜ 範囲 1.30〜1.31">1.30</span><small class="muted">1.30 ± 0.01</small></td><td><span title="1回目 1.30, 2回目 1.30, 3回目 1.30 ｜ 全回の平均 ± 標準偏差 1.30 ± 0.00 ｜ 範囲 1.30〜1.30">1.30</span><small class="muted">1.30 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td></tr>
+<tr><td>pp2048 + tg128 / 起動前からの増加（GiB）</td><td><span title="1回目 72.01, 2回目 72.00, 3回目 71.99 ｜ 全回の平均 ± 標準偏差 72.00 ± 0.01 ｜ 範囲 71.99〜72.01">72.00</span><small class="muted">72.00 ± 0.01</small></td><td><span title="1回目 71.98, 2回目 71.89, 3回目 72.01 ｜ 全回の平均 ± 標準偏差 71.96 ± 0.06 ｜ 範囲 71.89〜72.01">71.98</span><small class="muted">71.96 ± 0.06</small></td><td><span title="1回目 69.24, 2回目 69.12, 3回目 69.09 ｜ 全回の平均 ± 標準偏差 69.15 ± 0.08 ｜ 範囲 69.09〜69.24">69.12</span><small class="muted">69.15 ± 0.08</small></td><td class="current"><span title="1回目 71.62, 2回目 71.63, 3回目 71.62 ｜ 全回の平均 ± 標準偏差 71.62 ± 0.01 ｜ 範囲 71.62〜71.63">71.62</span><small class="muted">71.62 ± 0.01</small></td><td class="current"><span title="1回目 71.64, 2回目 71.65, 3回目 71.64 ｜ 全回の平均 ± 標準偏差 71.64 ± 0.01 ｜ 範囲 71.64〜71.65">71.64</span><small class="muted">71.64 ± 0.01</small></td><td class="current"><span title="1回目 68.61, 2回目 68.75, 3回目 68.61 ｜ 全回の平均 ± 標準偏差 68.66 ± 0.08 ｜ 範囲 68.61〜68.75">68.61</span><small class="muted">68.66 ± 0.08</small></td></tr>
+<tr><td>16K prefix, pp4096 + tg128 / 使用ピーク（GiB）</td><td><span title="1回目 75.06, 2回目 75.06, 3回目 74.93 ｜ 全回の平均 ± 標準偏差 75.02 ± 0.08 ｜ 範囲 74.93〜75.06">75.06</span><small class="muted">75.02 ± 0.08</small></td><td><span title="1回目 75.02, 2回目 74.94, 3回目 74.94 ｜ 全回の平均 ± 標準偏差 74.97 ± 0.05 ｜ 範囲 74.94〜75.02">74.94</span><small class="muted">74.97 ± 0.05</small></td><td><span title="1回目 72.86, 2回目 72.88, 3回目 72.86 ｜ 全回の平均 ± 標準偏差 72.87 ± 0.01 ｜ 範囲 72.86〜72.88">72.86</span><small class="muted">72.87 ± 0.01</small></td><td class="current"><span title="1回目 74.69, 2回目 74.71, 3回目 74.69 ｜ 全回の平均 ± 標準偏差 74.70 ± 0.01 ｜ 範囲 74.69〜74.71">74.69</span><small class="muted">74.70 ± 0.01</small></td><td class="current"><span title="1回目 74.74, 2回目 74.63, 3回目 74.73 ｜ 全回の平均 ± 標準偏差 74.70 ± 0.06 ｜ 範囲 74.63〜74.74">74.73</span><small class="muted">74.70 ± 0.06</small></td><td class="current"><span title="1回目 72.50, 2回目 72.44, 3回目 72.45 ｜ 全回の平均 ± 標準偏差 72.46 ± 0.03 ｜ 範囲 72.44〜72.50">72.45</span><small class="muted">72.46 ± 0.03</small></td></tr>
+<tr><td>16K prefix, pp4096 + tg128 / 起動前使用（GiB）</td><td><span title="1回目 1.31, 2回目 1.31, 3回目 1.31 ｜ 全回の平均 ± 標準偏差 1.31 ± 0.00 ｜ 範囲 1.31〜1.31">1.31</span><small class="muted">1.31 ± 0.00</small></td><td><span title="1回目 1.31, 2回目 1.30, 3回目 1.30 ｜ 全回の平均 ± 標準偏差 1.30 ± 0.01 ｜ 範囲 1.30〜1.31">1.30</span><small class="muted">1.30 ± 0.01</small></td><td><span title="1回目 1.30, 2回目 1.30, 3回目 1.30 ｜ 全回の平均 ± 標準偏差 1.30 ± 0.00 ｜ 範囲 1.30〜1.30">1.30</span><small class="muted">1.30 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td><td class="current"><span title="1回目 1.22, 2回目 1.22, 3回目 1.22 ｜ 全回の平均 ± 標準偏差 1.22 ± 0.00 ｜ 範囲 1.22〜1.22">1.22</span><small class="muted">1.22 ± 0.00</small></td></tr>
+<tr><td>16K prefix, pp4096 + tg128 / 起動前からの増加（GiB）</td><td><span title="1回目 73.75, 2回目 73.75, 3回目 73.62 ｜ 全回の平均 ± 標準偏差 73.71 ± 0.08 ｜ 範囲 73.62〜73.75">73.75</span><small class="muted">73.71 ± 0.08</small></td><td><span title="1回目 73.71, 2回目 73.64, 3回目 73.64 ｜ 全回の平均 ± 標準偏差 73.66 ± 0.04 ｜ 範囲 73.64〜73.71">73.64</span><small class="muted">73.66 ± 0.04</small></td><td><span title="1回目 71.56, 2回目 71.58, 3回目 71.56 ｜ 全回の平均 ± 標準偏差 71.57 ± 0.01 ｜ 範囲 71.56〜71.58">71.56</span><small class="muted">71.57 ± 0.01</small></td><td class="current"><span title="1回目 73.47, 2回目 73.49, 3回目 73.47 ｜ 全回の平均 ± 標準偏差 73.48 ± 0.01 ｜ 範囲 73.47〜73.49">73.47</span><small class="muted">73.48 ± 0.01</small></td><td class="current"><span title="1回目 73.52, 2回目 73.41, 3回目 73.51 ｜ 全回の平均 ± 標準偏差 73.48 ± 0.06 ｜ 範囲 73.41〜73.52">73.51</span><small class="muted">73.48 ± 0.06</small></td><td class="current"><span title="1回目 71.28, 2回目 71.22, 3回目 71.23 ｜ 全回の平均 ± 標準偏差 71.24 ± 0.03 ｜ 範囲 71.22〜71.28">71.23</span><small class="muted">71.24 ± 0.03</small></td></tr>
+</tbody></table></div>
+<h2>実行期間のメモリ観測</h2><p>使用と空きを分けて表示。Windows・WSL・Docker・HIPは範囲が重複するため合計しない。</p>
+<p class="note">WSL連続監視はDocker統計の15秒タイムアウトで04:00 JSTに停止。WSL空き・swapの全期間の最小/最大は欠測（—）。Windows側、HIP、Gufo RSS、cgroupは別の監視記録を使用。固定負荷メモリ3回の測定は完了している。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>項目</th><th>内蔵PLE＋MTP（v0.34.0）</th><th>外部PLE Q8_0＋MTP（v0.34.0）</th><th>内蔵PLE＋DFlash2 Q8_0（v0.34.0）</th><th class="current">内蔵PLE＋MTP（v0.35.0）（今回実測）</th><th class="current">外部PLE Q8_0＋MTP（v0.35.0）（今回実測）</th><th class="current">内蔵PLE＋DFlash2 Q8_0（v0.35.0）（今回実測）</th></tr></thead><tbody>
+<tr><td>Windows使用 最大（GiB）</td><td>54.91</td><td>51.93</td><td>50.47</td><td class="current">52.23</td><td class="current">51.84</td><td class="current">48.23</td></tr>
+<tr><td>Windows空き 最小（GiB）</td><td>8.72</td><td>11.71</td><td>13.20</td><td class="current">11.40</td><td class="current">11.80</td><td class="current">15.41</td></tr>
+<tr><td>WSL空き 最小（GiB）</td><td>10.10</td><td>10.05</td><td>9.87</td><td class="current">—</td><td class="current">—</td><td class="current">—</td></tr>
+<tr><td>HIP使用 最大（GiB）</td><td>80.32</td><td>80.35</td><td>76.64</td><td class="current">79.23</td><td class="current">78.87</td><td class="current">75.19</td></tr>
+<tr><td>HIP空き 最小（GiB）</td><td>31.15</td><td>31.13</td><td>34.84</td><td class="current">32.25</td><td class="current">32.60</td><td class="current">36.29</td></tr>
+<tr><td>WSL swap使用 最大（GiB）</td><td>3.77</td><td>3.77</td><td>3.77</td><td class="current">—</td><td class="current">—</td><td class="current">—</td></tr>
+<tr><td>Gufo RSS 最大（GiB）</td><td>9.54</td><td>9.54</td><td>10.17</td><td class="current">8.15</td><td class="current">8.05</td><td class="current">8.82</td></tr>
+<tr><td>Docker cgroup使用 最大（GiB）</td><td>9.48</td><td>9.49</td><td>10.07</td><td class="current">8.11</td><td class="current">8.02</td><td class="current">8.76</td></tr>
+<tr><td>Windows AMD GPU専用使用 最大（GiB）</td><td>63.82</td><td>63.82</td><td>63.82</td><td class="current">63.82</td><td class="current">63.82</td><td class="current">63.82</td></tr>
+<tr><td>Windows AMD GPU共有使用 最大（GiB）</td><td>16.70</td><td>16.71</td><td>12.97</td><td class="current">15.62</td><td class="current">15.43</td><td class="current">11.53</td></tr>
+</tbody></table></div>
+<h3>通常運転時の前後</h3><p>WSL終了側は通常起動後の単発採取。開始側は旧通常版の稼働中（ビルド中）、終了側は新版の通常起動を確認した後。実行中ピークとは分けて示す。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>観測範囲</th><th>開始側</th><th>終了側</th></tr></thead><tbody>
+<tr><td>Windows使用（GiB）</td><td>54.72</td><td>54.50</td></tr>
+<tr><td>Windows空き（GiB）</td><td>8.81</td><td>9.13</td></tr>
+<tr><td>WSL空き（GiB）</td><td>9.49</td><td>14.07</td></tr>
+</tbody></table></div>
+<h2>出力の照合</h2><p>同一入力だけを出力一致の分母に含める。数値の外れ値除外で出力差や失敗を消さない。単独試験は公式手順の固定レシピで回番号ごとに入力を変えるため、同じ入力の反復実験ではない。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>比較</th><th>出力一致 / 同一入力</th><th>比較候補</th></tr></thead><tbody>
+<tr><td>内蔵PLE AR・MTP 通常文</td><td>5 / 24</td><td>24</td></tr>
+<tr><td>外部PLE AR・MTP 通常文</td><td>8 / 24</td><td>24</td></tr>
+<tr><td>内蔵PLE AR・DFlash2 通常文</td><td>5 / 24</td><td>24</td></tr>
+<tr><td>内蔵PLE（MTP / DFlash2）通常文</td><td>22 / 24</td><td>24</td></tr>
+<tr><td>内蔵PLE（MTP / DFlash2）反復</td><td>24 / 24</td><td>24</td></tr>
+</tbody></table></div>
+<details><summary>同時利用の照合結果</summary>
+<div class="scroll"><table class="compact"><thead><tr><th>構成</th><th>負荷</th><th>同時要求</th><th>公式照合結果</th></tr></thead><tbody>
+<tr><td>内蔵PLE AR</td><td>multi-ar</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 28.033602249871404, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE AR</td><td>multi-ar</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 47.61856193205605, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE AR</td><td>multi-ar</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 70.96460639947699, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE AR</td><td>multi-ar</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 83.91969988136312, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE AR</td><td>multi-ar</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 89.44938151391926, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-mixed</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 28.291686034072324, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-mixed</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 46.64838895686216, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-mixed</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 58.70571400877035, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-mixed</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 63.06958592667681, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-mixed</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 77.37803841389717, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-repetition</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 94.00739465605079, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-repetition</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 113.9236990321011, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-repetition</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 135.05666675322678, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-repetition</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 140.47530784349541, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋MTP</td><td>multi-repetition</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 150.8544127436984, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0 AR</td><td>multi-ar</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 28.718612492551575, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0 AR</td><td>multi-ar</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 48.795593003881265, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0 AR</td><td>multi-ar</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 72.53605920921798, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0 AR</td><td>multi-ar</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 84.07918965545151, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0 AR</td><td>multi-ar</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 91.73851580611303, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-mixed</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 30.134267906206063, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-mixed</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 47.49698477395751, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-mixed</td><td>4</td><td>{&quot;comparedRequests&quot;: 12, &quot;exactRequests&quot;: 11, &quot;exactRate&quot;: 0.9166666666666666, &quot;comparedCases&quot;: 1, &quot;matchedCases&quot;: 0, &quot;matchedRounds&quot;: 2, &quot;matchedRoundOutputTokensPerSecond&quot;: 61.500594155416145}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-mixed</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 64.01812503562923, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-mixed</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 79.1290324682014, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-repetition</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 90.40860028433929, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-repetition</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 116.4985237378253, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-repetition</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 137.08416810577532, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-repetition</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 139.51416224316256, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>multi-repetition</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 152.34168290414746, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-mixed</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 32.20530139721163, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-mixed</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 33.68222625613919, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-mixed</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 33.098762070371016, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-mixed</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 32.63331739223891, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-mixed</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 32.45591022718294, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-repetition</td><td>1</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 3, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 3, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 83.99637751465713, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-repetition</td><td>2</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 6, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 6, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 83.53251359375105, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-repetition</td><td>4</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 12, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 12, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 83.31598377870424, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-repetition</td><td>6</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 18, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 18, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 82.91276793832309, &quot;matchedRounds&quot;: 3}</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>multi-repetition</td><td>8</td><td>{&quot;comparedCases&quot;: 1, &quot;comparedRequests&quot;: 24, &quot;exactRate&quot;: 1.0, &quot;exactRequests&quot;: 24, &quot;matchedCases&quot;: 1, &quot;matchedRoundOutputTokensPerSecond&quot;: 82.06876130115053, &quot;matchedRounds&quot;: 3}</td></tr>
+</tbody></table></div>
+</details>
+<p class='note'>追加のAR対照（投機生成なし、2要求）でも 5/6件の一致だった。これはDFlash2使用中の結果ではない。<span title="参照先はローカル保管">原記録</span>。</p>
+<h2>所要時間</h2>
+<p>正式ベンチ合計：2時間32分57秒。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>構成（各セル3回）</th><th>分</th><th>秒</th></tr></thead><tbody>
+<tr><td>内蔵PLE＋MTP</td><td>47.3</td><td>2,837.5</td></tr>
+<tr><td>外部PLE Q8_0＋MTP</td><td>47.1</td><td>2,823.9</td></tr>
+<tr><td>内蔵PLE＋DFlash2 Q8_0</td><td>58.5</td><td>3,510.9</td></tr>
+</tbody></table></div>
+<div class="scroll"><table class="compact"><thead><tr><th>追加経路の動作確認</th><th>結果</th><th>秒</th></tr></thead><tbody>
+<tr><td>mtp-ops</td><td>合格</td><td>2.8</td></tr>
+<tr><td>dense-dispatch</td><td>合格</td><td>2.8</td></tr>
+<tr><td>session-batch</td><td>合格</td><td>329.8</td></tr>
+<tr><td>continuation-in-pass</td><td>合格</td><td>379.9</td></tr>
+<tr><td>continuation-reuse</td><td>合格</td><td>58.7</td></tr>
+</tbody></table></div>
+<p>準備・ビルド・確認・正式測定・レポート・通常復帰を含む全体時間：181.7分。</p>
+<h2>判定と注意点</h2>
+<p>正式ベンチ項目：完了。WSL連続メモリ監視は欠測あり。出力一致の指摘：2件。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>対象</th><th>指摘</th></tr></thead><tbody>
+<tr><td>external-q8/multi-mixed-c4</td><td>RuntimeError(&#x27;multi-mixed: C4 output differs from its isolated AR reference&#x27;)</td></tr>
+<tr><td>dflash2/multi-ar-c2</td><td>RuntimeError(&#x27;multi-ar: C2 output differs from its isolated AR reference&#x27;)</td></tr>
+</tbody></table></div>
+<details><summary>外れ値の除外記録</summary>
+<div class="scroll"><table class="compact"><thead><tr><th>セル</th><th>回</th><th>値</th><th>判定</th></tr></thead><tbody>
+<tr><td>builtin/ar/d32768/prefill_tok_s</td><td>3</td><td>1,090.7162</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/ar/d32768/ttft_ms</td><td>3</td><td>1,880.9903</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/prose/d0/decode_tok_s</td><td>1</td><td>27.6412</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/prose/d0/wall_ms</td><td>1</td><td>6,573.8971</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/prose/d65536/decode_tok_s</td><td>2</td><td>35.7095</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/repetition/d8192/decode_tok_s</td><td>2</td><td>73.0231</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/repetition/d8192/wall_ms</td><td>2</td><td>3,706.3235</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/repetition/d32768/decode_tok_s</td><td>3</td><td>71.7859</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-ar/c2/ttft_ms</td><td>1</td><td>2.3692</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-ar/c6/ttft_ms</td><td>1</td><td>31.3385</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-mixed/c4/decode_tok_s</td><td>2</td><td>66.7576</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-mixed/c4/output_tok_s</td><td>2</td><td>65.3357</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-mixed/c4/ttft_ms</td><td>1</td><td>183.6897</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-mixed/c6/decode_tok_s</td><td>1</td><td>70.1692</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-mixed/c6/output_tok_s</td><td>1</td><td>68.3356</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-repetition/c1/output_tok_s</td><td>1</td><td>86.5232</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-repetition/c1/ttft_ms</td><td>1</td><td>80.5376</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-repetition/c2/ttft_ms</td><td>1</td><td>114.5914</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-repetition/c6/ttft_ms</td><td>1</td><td>223.9002</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>builtin/multi-repetition/c8/ttft_ms</td><td>1</td><td>317.7270</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/prose/d131072/prefill_tok_s</td><td>1</td><td>705.0967</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/prose/d131072/ttft_ms</td><td>1</td><td>2,928.3654</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/prose/d131072/wall_ms</td><td>1</td><td>7,398.1810</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/repetition/d65536/decode_tok_s</td><td>3</td><td>85.1136</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-ar/c1/ttft_ms</td><td>3</td><td>2.0135</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-ar/c6/ttft_ms</td><td>2</td><td>41.4161</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-ar/c8/ttft_ms</td><td>2</td><td>33.9154</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-mixed/c2/ttft_ms</td><td>1</td><td>115.5551</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-mixed/c4/ttft_ms</td><td>1</td><td>184.3362</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-mixed/c6/ttft_ms</td><td>1</td><td>242.2858</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-mixed/c8/ttft_ms</td><td>2</td><td>262.2470</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-repetition/c1/decode_tok_s</td><td>1</td><td>84.8899</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-repetition/c1/output_tok_s</td><td>1</td><td>80.5444</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-repetition/c1/ttft_ms</td><td>1</td><td>79.5667</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>external-q8/multi-repetition/c2/ttft_ms</td><td>1</td><td>117.6949</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/prose/d16384/decode_tok_s</td><td>1</td><td>33.0047</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/repetition/d131072/decode_tok_s</td><td>2</td><td>71.1516</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-ar/c6/ttft_ms</td><td>2</td><td>41.4005</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-ar/c8/ttft_ms</td><td>2</td><td>53.3371</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-mixed/c1/decode_tok_s</td><td>1</td><td>29.9630</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-mixed/c1/output_tok_s</td><td>1</td><td>28.9136</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-mixed/c1/ttft_ms</td><td>1</td><td>153.7192</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-repetition/c1/ttft_ms</td><td>1</td><td>158.1184</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+<tr><td>dflash2/multi-repetition/c2/ttft_ms</td><td>1</td><td>276.1651</td><td>modified Z &gt; 3.5 and deviation &gt; 10% of raw median</td></tr>
+</tbody></table></div>
+</details>
+<p>本家参考はv0.35.0タグのFlash-Next資料に掲載されたUD-Q4_K_XL、測定版fec4759d。本家の同時利用の速度は要求別Decode速度の合計であり、主表の全体スループットとは異なる。この試験は全モデルや全入力の品質保証ではない。Q6_K軽量化の単独効果を測る旧版対照試験は含めていない。</p>
+<footer><a href="../../../../evidence/benchmark/runs/v0350-validation-20261119/summary.json">集計と全回の値</a> · <span title="参照先はローカル保管">モデル識別情報</span> · <span title="参照先はローカル保管">測定設定</span> · <span title="参照先はローカル保管">追加経路の検証</span> · <a href="../../../../../v0.34/benchmarks/benchmark/reports/v0340-validation-20261112/report.ja.html">前回レポート</a></footer>
+</main></body>
+</html>

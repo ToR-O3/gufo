@@ -1,0 +1,226 @@
+{
+  "revision": "8296d0a4",
+  "source": "Current four-shard Flash-Next UD-IQ4_XS, GGUF v3 headers read only",
+  "shard_tensor_counts": [
+    0,
+    1186,
+    37,
+    1
+  ],
+  "tensor_count": 1224,
+  "by_type": {
+    "Q6_K": 213,
+    "Q8_0": 284,
+    "F32": 557,
+    "IQ4_XS": 35,
+    "BF16": 24,
+    "Q5_0": 33,
+    "IQ3_XXS": 56,
+    "IQ4_NL": 14,
+    "Q2_0": 2,
+    "IQ2_S": 6
+  },
+  "by_role": {
+    "output.weight": {
+      "Q6_K": 1
+    },
+    "output_hc_down.weight": {
+      "Q8_0": 1
+    },
+    "output_hc_norm.weight": {
+      "F32": 1
+    },
+    "output_hc_up.weight": {
+      "Q8_0": 1
+    },
+    "token_embd.weight": {
+      "IQ4_XS": 1
+    },
+    "attn_gate.weight": {
+      "Q6_K": 35,
+      "Q8_0": 1
+    },
+    "attn_qkv.weight": {
+      "Q6_K": 35,
+      "Q8_0": 1
+    },
+    "ffn_down_shexp.weight": {
+      "Q8_0": 48
+    },
+    "ffn_gate_inp.weight": {
+      "F32": 48
+    },
+    "ffn_gate_inp_shexp.weight": {
+      "F32": 48
+    },
+    "ffn_gate_shexp.weight": {
+      "Q6_K": 47,
+      "Q8_0": 1
+    },
+    "ffn_up_shexp.weight": {
+      "Q6_K": 47,
+      "Q8_0": 1
+    },
+    "hc_attn_down.weight": {
+      "Q8_0": 48
+    },
+    "hc_attn_inject.weight": {
+      "F32": 48
+    },
+    "hc_attn_norm.weight": {
+      "F32": 48
+    },
+    "hc_attn_up.weight": {
+      "Q8_0": 48
+    },
+    "hc_ffn_down.weight": {
+      "Q8_0": 48
+    },
+    "hc_ffn_inject.weight": {
+      "F32": 48
+    },
+    "hc_ffn_norm.weight": {
+      "F32": 48
+    },
+    "hc_ffn_up.weight": {
+      "Q8_0": 48
+    },
+    "ssm_a": {
+      "F32": 36
+    },
+    "ssm_alpha.weight": {
+      "F32": 36
+    },
+    "ssm_beta.weight": {
+      "F32": 36
+    },
+    "ssm_conv1d.weight": {
+      "F32": 36
+    },
+    "ssm_dt.bias": {
+      "F32": 36
+    },
+    "ssm_norm.weight": {
+      "F32": 36
+    },
+    "ssm_out.weight": {
+      "Q8_0": 36
+    },
+    "ple_conv1d.weight": {
+      "F32": 1
+    },
+    "ple_key.weight": {
+      "Q8_0": 1
+    },
+    "ple_norm_conv.weight": {
+      "F32": 1
+    },
+    "ple_norm_key.weight": {
+      "F32": 1
+    },
+    "ple_norm_query.weight": {
+      "F32": 1
+    },
+    "ple_value.weight": {
+      "Q8_0": 1
+    },
+    "attn_k.weight": {
+      "Q6_K": 12
+    },
+    "attn_k_norm.weight": {
+      "F32": 12
+    },
+    "attn_output.weight": {
+      "Q6_K": 12
+    },
+    "attn_q.weight": {
+      "Q6_K": 12
+    },
+    "attn_q_norm.weight": {
+      "F32": 12
+    },
+    "attn_v.weight": {
+      "Q6_K": 12
+    },
+    "indexer.k_norm.weight": {
+      "F32": 12
+    },
+    "indexer.k_proj.weight": {
+      "BF16": 12
+    },
+    "indexer.q_norm.weight": {
+      "F32": 12
+    },
+    "indexer.q_proj.weight": {
+      "BF16": 12
+    },
+    "ffn_down_exps.weight": {
+      "Q5_0": 33,
+      "IQ4_NL": 13,
+      "Q2_0": 2
+    },
+    "ffn_gate_exps.weight": {
+      "IQ3_XXS": 28,
+      "IQ4_XS": 17,
+      "IQ2_S": 3
+    },
+    "ffn_up_exps.weight": {
+      "IQ3_XXS": 28,
+      "IQ4_XS": 17,
+      "IQ2_S": 3
+    },
+    "per_layer_token_embd.weight": {
+      "IQ4_NL": 1
+    }
+  },
+  "expert_gate_up_down_triples": [
+    {
+      "types": [
+        "IQ3_XXS",
+        "IQ3_XXS",
+        "Q5_0"
+      ],
+      "layers": 20
+    },
+    {
+      "types": [
+        "IQ4_XS",
+        "IQ4_XS",
+        "Q5_0"
+      ],
+      "layers": 13
+    },
+    {
+      "types": [
+        "IQ3_XXS",
+        "IQ3_XXS",
+        "IQ4_NL"
+      ],
+      "layers": 8
+    },
+    {
+      "types": [
+        "IQ2_S",
+        "IQ2_S",
+        "Q2_0"
+      ],
+      "layers": 2
+    },
+    {
+      "types": [
+        "IQ2_S",
+        "IQ2_S",
+        "IQ4_NL"
+      ],
+      "layers": 1
+    },
+    {
+      "types": [
+        "IQ4_XS",
+        "IQ4_XS",
+        "IQ4_NL"
+      ],
+      "layers": 4
+    }
+  ]
+}

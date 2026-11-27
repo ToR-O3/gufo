@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "checks": 12591,
+  "failures": [],
+  "formal_records": 300,
+  "memory_raw_samples": 2987,
+  "memory_phase_boundary_excluded": 21,
+  "memory_interval_median": 1.0115445852279663,
+  "memory_interval_max": 1.0390071868896484,
+  "memory_gaps_over_3s": 0,
+  "analysis_script_sha256": "ea99f7f5d7c326521e5c84fd17a628c77228422e4cdd4d1e5524a22a81def827",
+  "scope": "Independent raw SSE reconstruction, scoring, model/settings, paired comparisons, timing, provenance, cleanup and phase-attributed Windows physical RAM."
+}

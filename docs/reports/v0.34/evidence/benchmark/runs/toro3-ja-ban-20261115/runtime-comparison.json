@@ -1,0 +1,10 @@
+{
+  "image": true,
+  "env": true,
+  "args_except_model": true,
+  "Devices": true,
+  "Ulimits": true,
+  "Memory": true,
+  "CpuQuota": true,
+  "CpuPeriod": true
+}

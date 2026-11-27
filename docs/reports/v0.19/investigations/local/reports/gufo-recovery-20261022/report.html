@@ -1,0 +1,17 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><title>Gufo起動障害 調査記録</title><style>body{font:16px/1.8 system-ui;max-width:1050px;margin:40px auto;padding:0 24px;color:#183047}table{border-collapse:collapse;width:100%}th,td{padding:10px;border:1px solid #ccd5df;text-align:left}pre{white-space:pre-wrap;background:#f1f4f7;padding:16px}a{color:#165d9c}</style><h1>Gufo起動障害 — 2026-10-22</h1>
+<p><b>状態：GPU接続の再初期化を伴う復旧は未実施。WSL全体停止の承認待ち。</b></p>
+<p>Gufo v0.19.0 / Orca IQ4_XS。既存コンテナ・バイナリ・モデル・通常設定は変更していない。Strataは起動していない。調査用の一時Gufo診断コンテナは終了・削除済み。</p>
+<h2>確認した時系列（日本時間）</h2><table><tr><th>日時</th><th>証拠</th></tr>
+<tr><td>10/22 05:20:05</td><td>Gufo request r814を受信。05:20:11に最後の進捗ログ。その要求の完了記録なし。</td></tr>
+<tr><td>05:20:22.850</td><td>Windows Kernel-PnP event400：AMD 8060Sのドライバー再構成。Device Updated=true、32.0.32015.7029。</td></tr>
+<tr><td>05:20:29.923</td><td>event410：AMD GPUデバイス再始動。</td></tr>
+<tr><td>その後</td><td>Gufoに要求受信は続くが推論完了しない。</td></tr>
+<tr><td>11:38:11</td><td>GufoにSIGTERMによる終了要求。</td></tr>
+<tr><td>11:38 / 11:40</td><td>再起動後モデル読込に失敗：weight upload staging allocation failed。</td></tr>
+<tr><td>調査時</td><td>Gufo diagnoseは総合PASSと表示する一方、実際のHIPにhipErrorNoDevice。独立したHIP列挙でもstatus100、GPU数0。カーネルにdxgvmb_send_create_process failed -75。</td></tr></table>
+<p><b>評価：</b>AMDドライバーの再構成・GPU再始動後にWSLのGPU接続が復帰していない可能性が高い。時系列と独立診断が一致する。ただしドライバー更新の実行元は未確認。WSL再起動後の復旧確認までは確定原因としない。</p>
+<p>Docker OOMKilled=false、終了コード1。WSL空き約25GiB、ディスク空き十分。staging allocationエラーはhipHostMallocとhipStreamCreate双方に共通するため、メモリ不足と断定できない。04:10にはWSL通信リング用の連続ページ確保失敗もあるが、その後05:20までGufoは応答しており、関連は未確定。</p>
+<h2>復旧手順（未実行）</h2><ol><li>WSL全体停止の承認後、Windows側で <code>wsl.exe --shutdown</code>。</li><li>Docker DesktopとAlmaLinux-10が復帰したことを確認。</li><li>既存Gufoコンテナを同じ設定で起動。モデル応答とUIを確認。</li></ol>
+<p>Gufo以外のWSLターミナル・Codex処理も中断するため、全体停止は承認が必要。Windowsそのものの再起動やドライバー交換は、この段階では行わない。</p>
+<p><span title="参照先はローカル保管">復帰後のGufo起動・最小応答確認スクリプト</span>を準備済み。構文確認のみ完了し、起動動作は未実行。コンテナID・イメージ・引数・マウントの一致を確認してから既存Gufoだけを起動する。UIの復帰確認は別途行う。</p>
+<h2>証拠</h2><ul><li><span title="参照先はローカル保管">before-inspect.json</span></li><li><span title="参照先はローカル保管">before-stderr.log</span></li><li><span title="参照先はローカル保管">before-stdout.log</span></li><li><span title="参照先はローカル保管">diagnose-before.txt</span></li><li><span title="参照先はローカル保管">kernel-before.txt</span></li><li><span title="参照先はローカル保管">windows-gpu-state.txt</span></li><li><span title="参照先はローカル保管">windows-driver-events.json</span></li><li><span title="参照先はローカル保管">gpu-event-timeline.json</span></li><li><span title="参照先はローカル保管">host-hip-enumeration.txt</span></li></ul><p>参考：<a href="https://github.com/microsoft/WSL/issues/41062">同じdxg -75の公開報告</a>は他機種の事例であり、今回の原因をそれだけで証明するものではない。<a href="https://learn.microsoft.com/en-us/windows/wsl/basic-commands#shutdown">MicrosoftのWSL停止コマンド説明</a>。</p></html>

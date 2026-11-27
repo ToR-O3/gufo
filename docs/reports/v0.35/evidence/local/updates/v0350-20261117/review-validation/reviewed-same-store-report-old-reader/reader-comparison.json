@@ -1,0 +1,261 @@
+{
+  "official_status": 0,
+  "same_disk": true,
+  "checks": {
+    "text-cancel": {
+      "candidate": [
+        {
+          "request": "3390f14eca712ee399260e0455cb03aec06d7caa5c77fc10ac307767bdada68b",
+          "output": "e58a8f18ae5a0e9766ed514c5e708803c0d9a65c7ae08ff4993f096d6ae70c56",
+          "http": 200,
+          "cached": 172,
+          "prefill": 14,
+          "prompt": 186,
+          "completion": 12,
+          "draft": 10,
+          "accepted": 10
+        },
+        {
+          "request": "04ed5ba35ff70d0dde9a4a22ada5fd3c5e0fa75ecabf95378dce09e504173700",
+          "output": "25569911103d699ffe97597ca3143f3bc36deecd2599518dbcd72081fe6d9b53",
+          "http": 200,
+          "cached": 217,
+          "prefill": 0,
+          "prompt": 217,
+          "completion": 8,
+          "draft": 6,
+          "accepted": 6
+        }
+      ],
+      "original": [
+        {
+          "request": "3390f14eca712ee399260e0455cb03aec06d7caa5c77fc10ac307767bdada68b",
+          "output": "e58a8f18ae5a0e9766ed514c5e708803c0d9a65c7ae08ff4993f096d6ae70c56",
+          "http": 200,
+          "cached": 172,
+          "prefill": 14,
+          "prompt": 186,
+          "completion": 12,
+          "draft": 10,
+          "accepted": 10
+        },
+        {
+          "request": "04ed5ba35ff70d0dde9a4a22ada5fd3c5e0fa75ecabf95378dce09e504173700",
+          "output": "25569911103d699ffe97597ca3143f3bc36deecd2599518dbcd72081fe6d9b53",
+          "http": 200,
+          "cached": 217,
+          "prefill": 0,
+          "prompt": 217,
+          "completion": 8,
+          "draft": 6,
+          "accepted": 6
+        }
+      ],
+      "match": true
+    },
+    "thinking-tool-cancel": {
+      "candidate": [
+        {
+          "request": "093ad71d45bcd64a839327712dd28ca23de5a78488ae9147a50da2ad615fd5ef",
+          "output": "ac17cf6618b3995534a5f073bc246ab2139a4cd1cdd013112ed1ef7154c12fa9",
+          "http": 200,
+          "cached": 672,
+          "prefill": 37,
+          "prompt": 709,
+          "completion": 12,
+          "draft": 19,
+          "accepted": 8
+        },
+        {
+          "request": "98cac8a50b50a0c97ec4d82059f1a93bcb86861511adae85594cdd1bae05be26",
+          "output": "72e7079f0a9bfbe9fc0e36a1de4af8da572beb633a9b8f837b9d26cd695c5fb7",
+          "http": 200,
+          "cached": 740,
+          "prefill": 6,
+          "prompt": 746,
+          "completion": 8,
+          "draft": 12,
+          "accepted": 5
+        }
+      ],
+      "original": [
+        {
+          "request": "093ad71d45bcd64a839327712dd28ca23de5a78488ae9147a50da2ad615fd5ef",
+          "output": "ac17cf6618b3995534a5f073bc246ab2139a4cd1cdd013112ed1ef7154c12fa9",
+          "http": 200,
+          "cached": 672,
+          "prefill": 37,
+          "prompt": 709,
+          "completion": 12,
+          "draft": 19,
+          "accepted": 8
+        },
+        {
+          "request": "98cac8a50b50a0c97ec4d82059f1a93bcb86861511adae85594cdd1bae05be26",
+          "output": "72e7079f0a9bfbe9fc0e36a1de4af8da572beb633a9b8f837b9d26cd695c5fb7",
+          "http": 200,
+          "cached": 740,
+          "prefill": 6,
+          "prompt": 746,
+          "completion": 8,
+          "draft": 12,
+          "accepted": 5
+        }
+      ],
+      "match": true
+    },
+    "legacy-tool-cancel": {
+      "candidate": [
+        {
+          "request": "e0e958d47af4c2d97a748e0dae003ce0d5d0b78e29294be9aad243097a2acec5",
+          "output": "9299443cb2279e7ef5198fe26b53a6ea8e7febc2dda622a3f999da2c532fc2b3",
+          "http": 200,
+          "cached": 711,
+          "prefill": 0,
+          "prompt": 711,
+          "completion": 1,
+          "draft": 3,
+          "accepted": 0
+        },
+        {
+          "request": "8155b02fca8ea0ebe390669256afae5be3614b96031a87f49416468a1ebc65ec",
+          "output": "9299443cb2279e7ef5198fe26b53a6ea8e7febc2dda622a3f999da2c532fc2b3",
+          "http": 200,
+          "cached": 736,
+          "prefill": 0,
+          "prompt": 736,
+          "completion": 1,
+          "draft": 2,
+          "accepted": 0
+        }
+      ],
+      "original": [
+        {
+          "request": "e0e958d47af4c2d97a748e0dae003ce0d5d0b78e29294be9aad243097a2acec5",
+          "output": "9299443cb2279e7ef5198fe26b53a6ea8e7febc2dda622a3f999da2c532fc2b3",
+          "http": 200,
+          "cached": 711,
+          "prefill": 0,
+          "prompt": 711,
+          "completion": 1,
+          "draft": 3,
+          "accepted": 0
+        },
+        {
+          "request": "8155b02fca8ea0ebe390669256afae5be3614b96031a87f49416468a1ebc65ec",
+          "output": "9299443cb2279e7ef5198fe26b53a6ea8e7febc2dda622a3f999da2c532fc2b3",
+          "http": 200,
+          "cached": 736,
+          "prefill": 0,
+          "prompt": 736,
+          "completion": 1,
+          "draft": 2,
+          "accepted": 0
+        }
+      ],
+      "match": true
+    },
+    "cache-persist": {
+      "candidate": [
+        {
+          "request": "f7d5cb45e5897fece308d18dff6a65fd63f7d58b729c3db65b7331e43d4331b2",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 2828,
+          "prefill": 7,
+          "prompt": 2835,
+          "completion": 2,
+          "draft": 6,
+          "accepted": 1
+        },
+        {
+          "request": "963652be6accd16af9d22d33295d861ea744b06a2819da209e8a064528fb2cb5",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 0,
+          "prefill": 2836,
+          "prompt": 2836,
+          "completion": 2,
+          "draft": 6,
+          "accepted": 1
+        }
+      ],
+      "original": [
+        {
+          "request": "f7d5cb45e5897fece308d18dff6a65fd63f7d58b729c3db65b7331e43d4331b2",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 2828,
+          "prefill": 7,
+          "prompt": 2835,
+          "completion": 2,
+          "draft": 6,
+          "accepted": 1
+        },
+        {
+          "request": "963652be6accd16af9d22d33295d861ea744b06a2819da209e8a064528fb2cb5",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 0,
+          "prefill": 2836,
+          "prompt": 2836,
+          "completion": 2,
+          "draft": 6,
+          "accepted": 1
+        }
+      ],
+      "match": true
+    },
+    "disk-spacing": {
+      "candidate": [
+        {
+          "request": "4d861dd3a5dacc5fdc7a54bfd11ff2d3af13e4034c8bbac4a8b815ba88fe735a",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 6276,
+          "prefill": 300,
+          "prompt": 6576,
+          "completion": 2,
+          "draft": 3,
+          "accepted": 1
+        },
+        {
+          "request": "e5df1c3b2aaff7de44edc07ce5f35c5a76a00b9e987c975bddf489f78e34346e",
+          "output": "1bbaf68fe43ab22f8334f9509ac15ef22592331f58cf5083a63eb749dd5f0637",
+          "http": 200,
+          "cached": 2444,
+          "prefill": 617,
+          "prompt": 3061,
+          "completion": 3,
+          "draft": 4,
+          "accepted": 2
+        }
+      ],
+      "original": [
+        {
+          "request": "4d861dd3a5dacc5fdc7a54bfd11ff2d3af13e4034c8bbac4a8b815ba88fe735a",
+          "output": "354fbdb3ceaa9d269f185e85ce0ea83a641b38ef78eaed9ee8ce31bb8e3d895f",
+          "http": 200,
+          "cached": 6276,
+          "prefill": 300,
+          "prompt": 6576,
+          "completion": 2,
+          "draft": 3,
+          "accepted": 1
+        },
+        {
+          "request": "e5df1c3b2aaff7de44edc07ce5f35c5a76a00b9e987c975bddf489f78e34346e",
+          "output": "1bbaf68fe43ab22f8334f9509ac15ef22592331f58cf5083a63eb749dd5f0637",
+          "http": 200,
+          "cached": 2444,
+          "prefill": 617,
+          "prompt": 3061,
+          "completion": 3,
+          "draft": 4,
+          "accepted": 2
+        }
+      ],
+      "match": true
+    }
+  }
+}

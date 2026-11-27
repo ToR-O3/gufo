@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gufo v0.33.0のWSL向けHIPグラフ比較</title>
+<style>
+:root{color-scheme:dark}body{background:#111923;color:#eaf0f7;font:15px/1.7 system-ui,"Yu Gothic",sans-serif;margin:auto;max-width:2200px;padding:24px}h1{font-size:28px}h2{color:#abd8ff;margin-top:38px}h3{margin-top:25px}.scroll{overflow:auto;border:1px solid #34465a;border-radius:8px;margin:12px 0}table{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}th,td{padding:10px 12px;border-bottom:1px solid #34465a;text-align:right;white-space:nowrap}th{background:#213145;text-align:center}td:first-child,th:first-child{text-align:left;position:sticky;left:0;background:#1a2838;z-index:1}.current,.perf td:nth-child(6n+5),.perf td:nth-child(6n+6),.perf td:nth-child(6n+7){background:#173438}.perf td:nth-child(6n+2){border-left:2px solid #5b718a}.perf{min-width:2900px}.good{color:#9cd8c0}.lower,.warning{color:#f1c88a}.muted,.note{color:#b9c7d8}small{display:block;font-size:12px}.callout{border-left:4px solid #7fb6d9;background:#1d2c3d;padding:12px 16px}a{color:#9dd9ff}p{max-width:1600px}details{margin:20px 0}summary{cursor:pointer;color:#b4d9ff}pre{white-space:pre-wrap;overflow-wrap:anywhere}footer{margin-top:30px;color:#b9c7d8} .perf{min-width:3500px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:4300px}.perf td{background:transparent}.perf td.current{background:#173438}.perf td:nth-child(6n+2){border-left:0}td.group-start{border-left:2px solid #5b718a!important}.compact{min-width:1400px}  .perf{min-width:1100px}.compact{min-width:1100px}.perf td.current{background:#173438}small{display:block}.summary{max-width:1100px}details pre{max-height:32em;overflow:auto} 
+.perf thead tr+tr th:first-child{position:static;text-align:center;background:#213145}
+</style>
+</head>
+<body>
+<p role="note">履歴資料：本文の採用状況・起動状態・未完了事項は作成当時の記録です。現在の仕様は共通カスタム台帳を参照してください。測定値は再集計せず保持し、個人ホームパスを匿名化しています。生ログ・個人設定は公開対象に含めていません。</p><main>
+<h1>Gufo v0.33.0のWSL向けHIPグラフ比較</h1>
+<p>ToR-O3 UD-IQ4_XS＋内蔵PLE、ROCm 10.1、WSL＋Docker。仮実装 e9b30bd8 の同一バイナリで比較。通常の2枠×128Kの設定で、単独は1件ずつ、同時は2件。⑤のDFlash2信頼度カットと⑱の融合巻き戻しを含む。各条件3回、温度0、seed 1、thinking off、生成上限128トークン。</p>
+<p class="note">主値は外れ値除外後の中央値。下段は全3回の平均±標準偏差。†は修正Zスコアと10%の差による除外。個別値と除外はカーソルを合わせて確認できる。TTFTはHTTPストリームの初回出力まで。同時利用の実配信速度は、全件の出力トークンを全件完了までの時間で割った値。</p>
+<p>同時利用は各プロセスの単独利用を測った後に実行。全構成でグラフのキャプチャ・実行の有無をログで確認した。</p>
+<h2>単独利用（新規Prefillあり）</h2>
+<h3>AR</h3>
+<div class="scroll"><table class="perf"><thead><tr><th rowspan="2" scope="col">負荷</th>
+<th colspan="3" scope="colgroup">AR<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">AR<br>グラフ無効</th>
+</tr><tr><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th></tr></thead><tbody>
+<tr><th scope="row">通常文</th>
+<td class=" group-start"><span title="1回目 973.50, 2回目 1,043.64, 3回目 995.63 ／ 範囲 973.50〜1,043.64">995.63</span><small class="muted">1,004.26 ± 35.86</small></td>
+<td class=""><span title="1回目 2.127, 2回目 1.979, 3回目 2.124 ／ 範囲 1.979〜2.127">2.124</span><small class="muted">2.077 ± 0.084</small></td>
+<td class=""><span title="1回目 24.51, 2回目 26.59, 3回目 28.81 ／ 範囲 24.51〜28.81">26.59</span><small class="muted">26.63 ± 2.15</small></td>
+<td class="current group-start"><span title="1回目 1,183.27, 2回目 1,210.00, 3回目 1,081.16 ／ 範囲 1,081.16〜1,210.00">1,183.27</span><small class="muted">1,158.15 ± 68.00</small></td>
+<td class="current"><span title="1回目 1.744, 2回目 1.701, 3回目 1.961 ／ 範囲 1.701〜1.961">1.744</span><small class="muted">1.802 ± 0.139</small></td>
+<td class="current"><span title="1回目 28.32, 2回目 28.00, 3回目 27.41 ／ 範囲 27.41〜28.32">28.00</span><small class="muted">27.91 ± 0.46</small></td>
+</tr>
+<tr><th scope="row">反復文</th>
+<td class=" group-start"><span title="1回目 1,090.06, 2回目 1,088.95, 3回目 1,100.71 ／ 範囲 1,088.95〜1,100.71">1,090.06</span><small class="muted">1,093.24 ± 6.49</small></td>
+<td class=""><span title="1回目 1.919, 2回目 1.933, 3回目 1.924 ／ 範囲 1.919〜1.933">1.924</span><small class="muted">1.925 ± 0.007</small></td>
+<td class=""><span title="1回目 27.88, 2回目 27.89, 3回目 27.82 ／ 範囲 27.82〜27.89">27.88</span><small class="muted">27.87 ± 0.04</small></td>
+<td class="current group-start"><span title="1回目 1,261.87, 2回目 1,327.98, 3回目 1,332.93 ／ 範囲 1,261.87〜1,332.93">1,327.98</span><small class="muted">1,307.59 ± 39.67</small></td>
+<td class="current"><span title="1回目 1.661, 2回目 1.583, 3回目 1.587 ／ 範囲 1.583〜1.661">1.587</span><small class="muted">1.610 ± 0.044</small></td>
+<td class="current"><span title="1回目 27.81, 2回目 28.98, 3回目 28.75 ／ 範囲 27.81〜28.98">28.75</span><small class="muted">28.52 ± 0.62</small></td>
+</tr>
+</tbody></table></div>
+<h3>投機生成</h3>
+<div class="scroll"><table class="perf"><thead><tr><th rowspan="2" scope="col">負荷</th>
+<th colspan="3" scope="colgroup">MTP<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">MTP<br>グラフ無効</th>
+<th colspan="3" scope="colgroup">DFlash2<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">DFlash2<br>グラフ無効</th>
+</tr><tr><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">Decode (tok/s)</th></tr></thead><tbody>
+<tr><th scope="row">通常文</th>
+<td class=" group-start"><span title="1回目 910.85, 2回目 974.31, 3回目 963.05 ／ 範囲 910.85〜974.31">963.05</span><small class="muted">949.41 ± 33.86</small></td>
+<td class=""><span title="1回目 2.274, 2回目 2.118, 3回目 2.189 ／ 範囲 2.118〜2.274">2.189</span><small class="muted">2.194 ± 0.078</small></td>
+<td class=""><span title="1回目 14.53, 2回目 18.08, 3回目 27.67 ／ 範囲 14.53〜27.67">18.08</span><small class="muted">20.09 ± 6.80</small></td>
+<td class="current group-start"><span title="1回目 1,144.76, 2回目 1,123.01, 3回目 1,079.30 ／ 範囲 1,079.30〜1,144.76">1,123.01</span><small class="muted">1,115.69 ± 33.34</small></td>
+<td class="current"><span title="1回目 1.802, 2回目 1.833, 3回目 1.957 ／ 範囲 1.802〜1.957">1.833</span><small class="muted">1.864 ± 0.082</small></td>
+<td class="current"><span title="1回目 28.43, 2回目 32.38, 3回目 33.47 ／ 範囲 28.43〜33.47">32.38</span><small class="muted">31.42 ± 2.65</small></td>
+<td class=" group-start"><span title="1回目 1,015.54, 2回目 1,034.74, 3回目 1,037.67 ／ 範囲 1,015.54〜1,037.67">1,034.74</span><small class="muted">1,029.32 ± 12.02</small></td>
+<td class=""><span title="1回目 2.128, 2回目 2.109, 3回目 2.114 ／ 範囲 2.109〜2.128">2.114</span><small class="muted">2.117 ± 0.010</small></td>
+<td class=""><span title="1回目 34.08, 2回目 34.63, 3回目 34.20 ／ 範囲 34.08〜34.63">34.20</span><small class="muted">34.30 ± 0.29</small></td>
+<td class="current group-start"><span title="1回目 1,023.94, 2回目 1,042.24, 3回目 1,031.68 ／ 範囲 1,023.94〜1,042.24">1,031.68</span><small class="muted">1,032.62 ± 9.19</small></td>
+<td class="current"><span title="1回目 2.104, 2回目 2.072, 3回目 2.112 ／ 範囲 2.072〜2.112">2.104</span><small class="muted">2.096 ± 0.021</small></td>
+<td class="current"><span title="1回目 33.64, 2回目 34.12, 3回目 33.44 ／ 範囲 33.44〜34.12">33.64</span><small class="muted">33.73 ± 0.35</small></td>
+</tr>
+<tr><th scope="row">反復文</th>
+<td class=" group-start"><span title="1回目 1,097.63, 2回目 1,109.33, 3回目 1,120.73 ／ 範囲 1,097.63〜1,120.73">1,109.33</span><small class="muted">1,109.23 ± 11.55</small></td>
+<td class=""><span title="1回目 1.909, 2回目 1.896, 3回目 1.888 ／ 範囲 1.888〜1.909">1.896</span><small class="muted">1.898 ± 0.011</small></td>
+<td class=""><span title="1回目 26.11, 2回目 27.30, 3回目 30.69 ／ 範囲 26.11〜30.69">27.30</span><small class="muted">28.03 ± 2.38</small></td>
+<td class="current group-start"><span title="1回目 1,238.40, 2回目 1,275.64, 3回目 1,284.66 ／ 範囲 1,238.40〜1,284.66">1,275.64</span><small class="muted">1,266.23 ± 24.52</small></td>
+<td class="current"><span title="1回目 1.696, 2回目 1.653, 3回目 1.639 ／ 範囲 1.639〜1.696">1.653</span><small class="muted">1.663 ± 0.030</small></td>
+<td class="current"><span title="1回目 67.97, 2回目 91.54, 3回目 94.79 ／ 範囲 67.97〜94.79 ／ 中央値から除外 1回目">93.17 †</span><small class="muted">84.77 ± 14.64</small></td>
+<td class=" group-start"><span title="1回目 1,135.83, 2回目 1,121.39, 3回目 1,106.46 ／ 範囲 1,106.46〜1,135.83">1,121.39</span><small class="muted">1,121.23 ± 14.68</small></td>
+<td class=""><span title="1回目 1.929, 2回目 1.947, 3回目 1.991 ／ 範囲 1.929〜1.991">1.947</span><small class="muted">1.955 ± 0.032</small></td>
+<td class=""><span title="1回目 87.63, 2回目 92.52, 3回目 82.31 ／ 範囲 82.31〜92.52">87.63</span><small class="muted">87.49 ± 5.10</small></td>
+<td class="current group-start"><span title="1回目 1,137.71, 2回目 1,138.18, 3回目 1,120.54 ／ 範囲 1,120.54〜1,138.18">1,137.71</span><small class="muted">1,132.15 ± 10.05</small></td>
+<td class="current"><span title="1回目 1.901, 2回目 1.913, 3回目 1.955 ／ 範囲 1.901〜1.955">1.913</span><small class="muted">1.923 ± 0.028</small></td>
+<td class="current"><span title="1回目 87.21, 2回目 91.86, 3回目 82.59 ／ 範囲 82.59〜91.86">87.21</span><small class="muted">87.22 ± 4.64</small></td>
+</tr>
+</tbody></table></div>
+<h2>同時利用（2件・事前処理済み）</h2>
+<h3>AR</h3>
+<div class="scroll"><table class="perf"><thead><tr><th rowspan="2" scope="col">負荷</th>
+<th colspan="3" scope="colgroup">AR<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">AR<br>グラフ無効</th>
+</tr><tr><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th></tr></thead><tbody>
+<tr><th scope="row">通常文</th>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.003, 2回目 0.003, 3回目 0.003 ／ 範囲 0.003〜0.003">0.003</span><small class="muted">0.003 ± 0.000</small></td>
+<td class=""><span title="1回目 5.20, 2回目 5.26, 3回目 5.23 ／ 範囲 5.20〜5.26">5.23</span><small class="muted">5.23 ± 0.03</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.003, 2回目 0.003, 3回目 0.003 ／ 範囲 0.003〜0.003 ／ 中央値から除外 1回目">0.003 †</span><small class="muted">0.003 ± 0.000</small></td>
+<td class="current"><span title="1回目 47.27, 2回目 47.08, 3回目 48.36 ／ 範囲 47.08〜48.36">47.27</span><small class="muted">47.57 ± 0.69</small></td>
+</tr>
+<tr><th scope="row">反復文</th>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.003, 2回目 0.003, 3回目 0.003 ／ 範囲 0.003〜0.003">0.003</span><small class="muted">0.003 ± 0.000</small></td>
+<td class=""><span title="1回目 5.21, 2回目 5.29, 3回目 5.27 ／ 範囲 5.21〜5.29">5.27</span><small class="muted">5.25 ± 0.04</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.004, 2回目 0.003, 3回目 0.003 ／ 範囲 0.003〜0.004">0.003</span><small class="muted">0.003 ± 0.000</small></td>
+<td class="current"><span title="1回目 48.50, 2回目 47.93, 3回目 48.21 ／ 範囲 47.93〜48.50">48.21</span><small class="muted">48.22 ± 0.29</small></td>
+</tr>
+</tbody></table></div>
+<h3>投機生成</h3>
+<div class="scroll"><table class="perf"><thead><tr><th rowspan="2" scope="col">負荷</th>
+<th colspan="3" scope="colgroup">MTP<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">MTP<br>グラフ無効</th>
+<th colspan="3" scope="colgroup">DFlash2<br>グラフ有効</th>
+<th colspan="3" scope="colgroup">DFlash2<br>グラフ無効</th>
+</tr><tr><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th><th scope="col">Prefill (tok/s)</th><th scope="col">TTFT (秒)</th><th scope="col">実配信 (tok/s)</th></tr></thead><tbody>
+<tr><th scope="row">通常文</th>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.082, 2回目 0.084, 3回目 0.085 ／ 範囲 0.082〜0.085">0.084</span><small class="muted">0.084 ± 0.001</small></td>
+<td class=""><span title="1回目 7.66, 2回目 7.92, 3回目 8.07 ／ 範囲 7.66〜8.07">7.92</span><small class="muted">7.88 ± 0.21</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.068, 2回目 0.066, 3回目 0.065 ／ 範囲 0.065〜0.068">0.066</span><small class="muted">0.066 ± 0.002</small></td>
+<td class="current"><span title="1回目 46.46, 2回目 43.96, 3回目 48.59 ／ 範囲 43.96〜48.59">46.46</span><small class="muted">46.34 ± 2.32</small></td>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.154, 2回目 0.155, 3回目 0.160 ／ 範囲 0.154〜0.160">0.155</span><small class="muted">0.157 ± 0.003</small></td>
+<td class=""><span title="1回目 34.01, 2回目 33.99, 3回目 33.69 ／ 範囲 33.69〜34.01">33.99</span><small class="muted">33.90 ± 0.18</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.154, 2回目 0.160, 3回目 0.160 ／ 範囲 0.154〜0.160">0.160</span><small class="muted">0.158 ± 0.003</small></td>
+<td class="current"><span title="1回目 33.85, 2回目 33.21, 3回目 33.37 ／ 範囲 33.21〜33.85">33.37</span><small class="muted">33.48 ± 0.33</small></td>
+</tr>
+<tr><th scope="row">反復文</th>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.088, 2回目 0.084, 3回目 0.085 ／ 範囲 0.084〜0.088">0.085</span><small class="muted">0.086 ± 0.002</small></td>
+<td class=""><span title="1回目 23.43, 2回目 25.12, 3回目 25.38 ／ 範囲 23.43〜25.38">25.12</span><small class="muted">24.64 ± 1.06</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.070, 2回目 0.069, 3回目 0.065 ／ 範囲 0.065〜0.070">0.069</span><small class="muted">0.068 ± 0.003</small></td>
+<td class="current"><span title="1回目 98.33, 2回目 98.35, 3回目 99.25 ／ 範囲 98.33〜99.25">98.35</span><small class="muted">98.64 ± 0.53</small></td>
+<td class=" group-start">対象外</td>
+<td class=""><span title="1回目 0.166, 2回目 0.179, 3回目 0.166 ／ 範囲 0.166〜0.179">0.166</span><small class="muted">0.170 ± 0.008</small></td>
+<td class=""><span title="1回目 84.43, 2回目 84.02, 3回目 84.15 ／ 範囲 84.02〜84.43">84.15</span><small class="muted">84.20 ± 0.21</small></td>
+<td class="current group-start">対象外</td>
+<td class="current"><span title="1回目 0.166, 2回目 0.170, 3回目 0.170 ／ 範囲 0.166〜0.170">0.170</span><small class="muted">0.169 ± 0.003</small></td>
+<td class="current"><span title="1回目 83.74, 2回目 84.46, 3回目 83.94 ／ 範囲 83.74〜84.46">83.94</span><small class="muted">84.05 ± 0.37</small></td>
+</tr>
+</tbody></table></div>
+<h2>出力一致</h2>
+<p>生成テキスト、生成トークン数、終了理由を照合。同時の同一入力2件は到着順に依存しない比較。各回の入力と出力、Draft数、採用数、実行方式は生ログと集計JSONに記録。</p>
+<div class="scroll"><table class="compact"><thead><tr><th>比較</th><th>単独・通常文</th><th>単独・反復文</th><th>同時・通常文</th><th>同時・反復文</th></tr></thead><tbody>
+<tr><th scope="row">ar on/off</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">mtp on/off</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">mtp on / AR on</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">mtp off / AR off</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">dflash2 on/off</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">dflash2 on / AR on</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+<tr><th scope="row">dflash2 off / AR off</th><td>3/3</td><td>3/3</td><td>6/6</td><td>6/6</td></tr>
+</tbody></table></div>
+<footer><a href="../../../../evidence/benchmark/runs/wsl-hip-graphs-20261112/summary.json">集計JSON</a> · <span title="参照先はローカル保管">測定ログ</span> · <span title="参照先はローカル保管">仮実装差分</span> · <a href="../v0330-toro3-20261112/report.ja.html">v0.33の正式測定・本家参考値</a></footer>
+</main></body>
+</html>
