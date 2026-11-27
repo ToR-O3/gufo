@@ -1,0 +1,110 @@
+[
+  {
+    "source": "docs/local/updates/v0370-20261126/externalization-review.ja.md",
+    "published": "local/updates/v0370-20261126/externalization-review.ja.md",
+    "source_sha256": "b8a9fbadac4a58db7bcbdf3f867ea5a247a302bc1b1454de0ab9406ae0875d70",
+    "published_sha256": "36f407b7577ba56afe99f0e81f72b0e197efa47b3e9137a1aee8d73b6c5520a2"
+  },
+  {
+    "source": "docs/local/updates/v0370-20261126/timing-comparison.ja.md",
+    "published": "local/updates/v0370-20261126/timing-comparison.ja.md",
+    "source_sha256": "46c9cef509035f3c814b14a995cb916bff47abbd5369553c2c8633f6b43f3301",
+    "published_sha256": "0c34898a3426c9248cbcb6265ba71c029559f47a972509dac1434815ad7094cb"
+  },
+  {
+    "source": "docs/local/updates/v0370-20261126/README.ja.md",
+    "published": "local/updates/v0370-20261126/README.ja.md",
+    "source_sha256": "f8e5f2e78e5720c1826e718f7dabc0b42d34ea643708b9001989780dbfd15aa9",
+    "published_sha256": "0fd70c1c00301fec7c7d4dc65918073f1ba88b6fc5207f11a8185b4fe1fa5b29"
+  },
+  {
+    "source": "docs/local/updates/v0370-defer-v0360-restore-20261127/README.ja.md",
+    "published": "local/updates/v0370-defer-v0360-restore-20261127/README.ja.md",
+    "source_sha256": "e44fffa7f0c0150cd8703886c65b1670ba4445eb721f86df2d24ec3065d53f87",
+    "published_sha256": "13f16290708c89ad9befd52dfbdd8282e79119e18ee0087d4dc3f1ad46898553"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/slowdown-triage.ja.md",
+    "published": "benchmark/runs/v0370-review-20261127/slowdown-triage.ja.md",
+    "source_sha256": "9763b1ee271b88f00f1a514a6c9d11495e0373bdbc0bd2e53e55fcf41454f60f",
+    "published_sha256": "d823d5b5b16333f81e94d2ed3a9db1006fe003fac1abd3282a7b3e5ffd3ec7a3"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/README.ja.md",
+    "published": "benchmark/runs/v0370-review-20261127/README.ja.md",
+    "source_sha256": "3ce0b9bc1c2e9624437072ed757c928e370c42d31d78a542a2658df2e25788d8",
+    "published_sha256": "69eb3d7abe85ff494d8582f4c0a4d00dfe351d30d8503c21afd6292eeb0b1f1e"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/plan.ja.md",
+    "published": "benchmark/runs/v0370-review-20261127/plan.ja.md",
+    "source_sha256": "79b777985e572230d5b1699c421a7b75d88a4116381a4dd75652fa4646aea0dd",
+    "published_sha256": "606e22a8821b95982009ca0e2d61966d9cd76c57fa7b39b859829d19fc2fd475"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/settings-plan.ja.md",
+    "published": "benchmark/runs/v0370-review-20261127/settings-plan.ja.md",
+    "source_sha256": "b90c2bdfda00eb8ad4a2f2538e22f2b29ffabd96c7f387ba276a3376ecc07749",
+    "published_sha256": "7c3008016fc180520edb971186f41996e8b1ad1bf4741bd31a0420a803c9d4f9"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-stages-investigation-20261127/report.ja.md",
+    "published": "benchmark/runs/v0370-stages-investigation-20261127/report.ja.md",
+    "source_sha256": "9f0d2a6faaf4cb75e5b6048db16050a623f8405bbac6e030dc134a6294611e36",
+    "published_sha256": "c720a41918366305cf4de35dfb65c03e1ca8cb2f4b2367fb576c59715c461589"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-stages-investigation-20261127/plan.ja.md",
+    "published": "benchmark/runs/v0370-stages-investigation-20261127/plan.ja.md",
+    "source_sha256": "f7f8085609fb9deaec6ade7803f09e622e1bac2e333f05321ed59217570c0a92",
+    "published_sha256": "c4a978c577cc19e6a851562da182781d24abe197f7755c8cdd7cee0c6ddc9e82"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-wait-investigation-20261127/deferred-token-investigation.ja.md",
+    "published": "benchmark/runs/v0370-wait-investigation-20261127/deferred-token-investigation.ja.md",
+    "source_sha256": "de2def6e1ac28686df0e1aae9c0472df9a7365b87503f98dfd07645074a8c0a7",
+    "published_sha256": "3aaedc0cb89885e6af36dcd246410f60da1875dda659b32c2ddf51cfc2d56303"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-wait-investigation-20261127/report.ja.md",
+    "published": "benchmark/runs/v0370-wait-investigation-20261127/report.ja.md",
+    "source_sha256": "88d346c1119e6613a6927ae4d24835046281aceb5a06966f8b266796790194cd",
+    "published_sha256": "b3a6bf8fcb9d039d5719eaeb75ffee7ae42d9d770c58f651a179e141664ac7c2"
+  },
+  {
+    "source": "docs/local/updates/v0370-20261126/q4-investigation/report.ja.md",
+    "published": "local/updates/v0370-20261126/q4-investigation/report.ja.md",
+    "source_sha256": "ecbcdbe8aadaa243c0391e4627265b006222cda4c3975ce7ae5738562170c028",
+    "published_sha256": "15e037c713d9479aa9a2b3ecbbbe6579223022894f3755b1dfd7ae2b2946bee7"
+  },
+  {
+    "source": "docs/benchmark/reports/v0370-review-20261127/report.ja.html",
+    "published": "benchmark/reports/v0370-review-20261127/report.ja.html",
+    "source_sha256": "721390edae03e1a4f34d06097df6dca7dcf660c9c229e972849ef4b579682c4b",
+    "published_sha256": "1ff7d6965a7257ff7ad0b21bcc45fc263b2a9af7d1e17c52b5972bb0c1d11774"
+  },
+  {
+    "source": "docs/benchmark/reports/v0370-review-20261127/previous-v0360.ja.html",
+    "published": "benchmark/reports/v0370-review-20261127/previous-v0360.ja.html",
+    "source_sha256": "86ffb27ed046d8e8dff933b4b69eaabf934faa3b85c3fbeb39d15edfbf4a7832",
+    "published_sha256": "4b736740e18ac8650dfc8982eae9e717e4e046c1faccc0cbe18f1661de9755e0"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/summary.json",
+    "published": "benchmark/runs/v0370-review-20261127/summary.json",
+    "source_sha256": "fc79791ce1667f37818d074c7b9941d19287246f48fc9a892b6d38e961e9aac5",
+    "published_sha256": "fc79791ce1667f37818d074c7b9941d19287246f48fc9a892b6d38e961e9aac5"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/settings-selection.json",
+    "published": "benchmark/runs/v0370-review-20261127/settings-selection.json",
+    "source_sha256": "00e4b9dfa3418f88cf28cb34d4bce71c32fb22fe0482da57b8c96cd19af8bcd0",
+    "published_sha256": "00e4b9dfa3418f88cf28cb34d4bce71c32fb22fe0482da57b8c96cd19af8bcd0"
+  },
+  {
+    "source": "docs/benchmark/runs/v0370-review-20261127/previous-comparison.json",
+    "published": "benchmark/runs/v0370-review-20261127/previous-comparison.json",
+    "source_sha256": "74057b7b953ee1e39c8ae609af54feecf5c2d49ef5ba086c3f4aed414f149fec",
+    "published_sha256": "74057b7b953ee1e39c8ae609af54feecf5c2d49ef5ba086c3f4aed414f149fec"
+  }
+]

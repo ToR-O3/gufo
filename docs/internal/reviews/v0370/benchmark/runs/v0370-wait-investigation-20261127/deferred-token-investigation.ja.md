@@ -1,0 +1,53 @@
+# 複数トークン生成前の状態修正（#1369）の調査
+
+> この文書は各作業段階の記録です。最終判断（2026-11-27）はv0.37の採用保留・外部化見送り、通常利用はv0.36 main、キャッシュ上限4 GiBです。本文の当時の状態・計画・測定値は維持しています。ローカル生ログは同梱せず、公開用コピーでは利用者ホームパスを匿名化しています。
+
+調査日: 2026-11-27。コード改修・ビルド・追加推論・サービス再起動なし。
+
+## 結論
+
+調査対象のv0.37カスタム版（コードb0e2750b、レビュー作業ツリーHEAD bb1c3e7c）のFlash-Next＋DFlash2では、#1369の追加処理を通らない。通常構成の速度低下の直接原因から除外する。独自の高速化改修は不要で、公式の修正は維持する。
+
+以前の「DFlash2などを使う通常運用で重要」という説明を訂正する。共通スケジューラの修正だが、うちのDFlash2の経路で発火する修正ではなかった。
+
+## 公式修正の目的
+
+上流コミット3a6897bb881d93f0b32d17a46a9958de083ae0a7。
+通常の1トークン生成で選択・公開したトークンを、プロンプトのキャッシュ保存のため内部状態へまだ反映せず保留することがある。保存中に他の要求が終了し、当該要求が単独の投機生成へ戻ると、旧版は未反映トークンを残したままDecodeStepへ進み、pending tokenのlogic_errorになる。
+
+修正は、StepDecodeでmulti_token_decodeかつadvance_pendingの場合にAdvancePendingを呼び、PrepareDecode→Advance→FinishAdvancedを済ませてからStepMultiTokenDecodeへ進む。保存がまだ終わらない場合や停止・トークン数上限の場合は、その回では先へ進まない。
+
+増えるのは、その境界で必要な保留1トークン分の内部状態更新。二重にトークンを選択・公開する処理ではなく、未実施のAdvanceを完了する。全生成ステップで余分に1トークン処理する変更ではない。
+
+公式追加テストTestDeferredAdvanceResumesMultiTokenDecodeは、multi_token_decode=true、batched_multi_token_decode=false、supports_batched_advance=trueのFake runnerを使用。片方のsnapshotを止め、相手が終了してから再開する境界を作り、正確なトークン列で完了することを検査している。今回はテストソースの確認のみで、再実行や実機再現はしていない。
+
+## うちの経路
+
+src/models/qwen38_flash_next/runner.cpp:
+- Descriptor（359〜362行）でDFlash2はmulti_token_decode=true、batched_multi_token_decode=true、最大物理幅2。
+- SupportedPlans（412〜419行）でDFlash2は幅1と、利用可能なら幅2だけを返す。論理同時数が大きくても物理幅4以上の計画は返さない。
+
+src/cli/serve/text_generation_scheduler.cpp:
+- RunDecodeUnit（2322行付近）はStepDecodeBatchへ渡す。
+- StepDecodeBatch（2028行付近）はbatched_multi_token_decode=trueかつ物理幅が上限内なら、先にStepMultiTokenDecodeBatchへ進む。
+- 幅1のときも、この分岐が先に成立する。StepMultiTokenDecodeBatch（2140行付近）からStepMultiTokenDecodeへ直接進む。
+- #1369が変更したStepDecode（1896行付近）およびAdvancePendingを通らない。
+- advance_pendingをtrueにするPrepareDecodeも、このDFlash2の通常の投機生成経路では呼ばれない。
+
+v0.36（53a217cb）にも同じDFlash2能力・SupportedPlansがあることを確認した。今回の差分でDFlash2だけ新たに別経路へ切り替わったわけではない。
+
+Flash-NextのMTPも、対応するバッチ幅の範囲では同じ先行分岐を使う。ARはmulti_token_decode=falseのため今回追加された分岐の対象外。
+
+## キャッシュ処理が重複しないか
+
+PreparePromptSnapshotはCapturePromptSnapshot(false)を呼び、保存が終わっていなければ戻る。AdvanceとDecodeStepにもCapturePromptSnapshotの呼び出しがあるが、prompt_snapshot_attemptedとsnapshot_futureで既に実施した保存の再開始を抑止する。呼び出しが複数あることだけを理由に、同じプロンプトのコピーが何度も発生すると判断するのは誤り。
+
+AdvancePromptTargetが安定した会話境界から完全プロンプトへ対象を進める場合は、保存対象が別であり単純な重複ではない。これは#1369が新設した仕組みでもない。
+
+## 採否と確認範囲
+
+公式修正をそのまま維持し、カスタム追加・撤去は不要。旧版で例外になる境界処理を省くと正しさを壊す。数回の状態確認を共通化するだけでは、今回のDFlash2速度低下の改善につながらない。
+
+結論の根拠は上流コミット、追加テストの内容、調査対象ソースの呼び出し条件の静的確認。今回この関数の実行回数を実機計測したとは扱わない。前回のカーネル起動回数一致は補助情報であり、今回の結論は分岐条件に基づく。
+
+製品コード、稼働設定、通常サービスは変更していない。

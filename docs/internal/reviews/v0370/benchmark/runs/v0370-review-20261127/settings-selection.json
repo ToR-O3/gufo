@@ -1,0 +1,19 @@
+{
+  "cache_gib": 4,
+  "reason_ja": "ユーザー指定の上限4 GiBを採用し、8 GiBの採用判断を撤回。128k・2セッション・内蔵PLE・DFlash2を維持して再起動し、実応答とdraft使用を確認した。4/8 GiB比較の実測は履歴として保持するが、8 GiBは通常利用の候補にしない。",
+  "context": 131072,
+  "sessions": 2,
+  "speculative": "dflash2",
+  "formal_measurements_separate": true,
+  "tested_budgets_gib": [
+    4,
+    8
+  ],
+  "outputs_matched": 5,
+  "outputs_compared": 5,
+  "comparison_seconds": 827.6932440439996,
+  "source": "settings/results.json",
+  "user_max_cache_gib": 4,
+  "previous_selection": "settings-selection-8g-withdrawn.json",
+  "runtime": "normal-cache-4g.json"
+}
